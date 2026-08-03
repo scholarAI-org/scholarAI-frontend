@@ -1,0 +1,27 @@
+{
+  "Common": {
+    "siteName": "ScholarAI"
+  },
+  "Nav": {
+    "login": "Login",
+    "register": "Sign Up",
+    "language": "Language"
+  },
+  "Landing": {
+    "heroTitle": "Welcome to ScholarAI",
+    "heroSubtitle": "Your Smart Learning Platform"
+  },
+  "Login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In"
+  },
+  "Register": {
+    "title": "Create New Account",
+    "name": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Create Account"
+  }
+}

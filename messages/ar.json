@@ -1,0 +1,27 @@
+{
+  "Common": {
+    "siteName": "ScholarAI"
+  },
+  "Nav": {
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "language": "اللغة"
+  },
+  "Landing": {
+    "heroTitle": "مرحباً بك في ScholarAI",
+    "heroSubtitle": "منصتك الذكية للتعلم"
+  },
+  "Login": {
+    "title": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "submit": "دخول"
+  },
+  "Register": {
+    "title": "إنشاء حساب جديد",
+    "name": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "submit": "إنشاء الحساب"
+  }
+}
