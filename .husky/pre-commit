@@ -1,3 +1,2 @@
-pnpm test
 
 pnpm exec lint-staged
