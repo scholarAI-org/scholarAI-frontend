@@ -4,7 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
+import { routing } from '../../i18n/routing';
+import { QueryProvider } from '@/lib/query-provider';
 import '../globals.css';
 
 const geistSans = Geist({
@@ -48,7 +49,9 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <QueryProvider>
+          <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
