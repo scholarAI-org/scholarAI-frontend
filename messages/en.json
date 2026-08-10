@@ -15,7 +15,9 @@
     "title": "Login",
     "email": "Email",
     "password": "Password",
-    "submit": "Sign In"
+    "submit": "Sign In",
+    "emailInvalid": "Invalid email address",
+    "passwordMin": "Password must be at least 6 characters"
   },
   "Register": {
     "title": "Create New Account",
