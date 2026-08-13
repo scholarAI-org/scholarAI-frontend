@@ -21,7 +21,7 @@
   },
   "ForgotPassword": {
     "email": "Email",
-    "ask": "Do you Forget Password",
+    "ask": "Do you Forgot Password",
     "submit": "Send Reset Link",
     "emailInvalid": "Invalid email address"
   },
