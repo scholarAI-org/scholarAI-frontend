@@ -19,6 +19,12 @@
     "emailInvalid": "Invalid email address",
     "passwordMin": "Password must be at least 6 characters"
   },
+  "ForgotPassword": {
+    "email": "Email",
+    "ask": "Do you Forget Password",
+    "submit": "Send Reset Link",
+    "emailInvalid": "Invalid email address"
+  },
   "Register": {
     "title": "Create New Account",
     "name": "Full Name",
