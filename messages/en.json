@@ -30,6 +30,9 @@
     "name": "Full Name",
     "email": "Email",
     "password": "Password",
-    "submit": "Create Account"
+    "submit": "Create Account",
+    "nameMin": "Name must be at least 3 characters",
+    "passwordMin": "Password must be at least 6 characters",
+    "emailInvalid": "Invalid email address"
   }
 }
