@@ -11,7 +11,10 @@ export class ApiError extends Error {
 }
 
 export async function apiClient<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const baseUrl = API_URL?.replace(/\/+$/, '') ?? '';
+  const path = endpoint.replace(/^\/+/, '');
+
+  const response = await fetch(`${baseUrl}/${path}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +24,14 @@ export async function apiClient<T>(endpoint: string, options?: RequestInit): Pro
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    throw new ApiError(errorData?.detail?.[0]?.msg || 'error happen', errorData?.detail || []);
+    const detail = errorData?.detail;
+    // الباك اند بيرجع detail كـ string (مثلاً أخطاء 401/404) أو كـ array من {msg} (أخطاء 422 validation)
+    const message = Array.isArray(detail)
+      ? detail[0]?.msg
+      : typeof detail === 'string'
+        ? detail
+        : null;
+    throw new ApiError(message || 'error happen', Array.isArray(detail) ? detail : []);
   }
   return response.json() as Promise<T>;
 }

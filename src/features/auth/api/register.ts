@@ -10,9 +10,10 @@ type UserResponse = {
 
 export async function register(credentials: RegisterFormData): Promise<UserResponse> {
   const payload = {
+    full_name: credentials.name,
     email: credentials.email,
     password: credentials.password,
-    // name: credentials.name
+    role: 'student',
   };
 
   return apiClient<UserResponse>('/auth/register', {

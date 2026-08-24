@@ -6,6 +6,16 @@ type Token = {
   token_type: string;
 };
 
-export async function login(credentials: LoginFormData): Promise<Token> {
-  return apiClient<Token>('/auth/login', { method: 'POST', body: JSON.stringify(credentials) });
+// rememberMe خاصية إضافية محلية بس، مش جزء من LoginFormData (ما بتحتاج validation)
+type LoginCredentials = LoginFormData & { rememberMe?: boolean };
+
+export async function login(credentials: LoginCredentials): Promise<Token> {
+  // rememberMe مش داخل body عن قصد — الباك اند بيتوقع email/password بس
+  return apiClient<Token>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: credentials.email,
+      password: credentials.password,
+    }),
+  });
 }

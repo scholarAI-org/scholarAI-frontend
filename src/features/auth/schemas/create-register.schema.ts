@@ -5,6 +5,7 @@ export function createRegisterSchema(t: (key: string) => string) {
     name: z.string().min(3, { message: t('nameMin') }),
     email: z.email({ message: t('emailInvalid') }),
     password: z.string().min(6, { message: t('passwordMin') }),
+    agreeTerms: z.literal(true, { message: t('agreeTermsRequired') }),
   });
 }
 
