@@ -1,0 +1,102 @@
+@import 'tailwindcss';
+
+@theme {
+  /* ============================================
+     RAW TOKENS — القيم الخام
+     ============================================ */
+
+  /* -- Raw Colors: Green (Brand/Primary) -- */
+  --color-green-500: #3dc971;
+  --color-green-600: #16c172; /* مؤكدة من صفحة Landing — خلفيات المربعات/الدوائر الخضراء (features icons, step numbers) */
+  --color-green-50: #16c17212; /* TODO: تخمين معقول — أخضر فاتح جداً لخلفية success. أكّد من Figma إذا أمكن لاحقاً */
+
+  /* -- Raw Colors: Teal (Landing accents) -- */
+  --color-teal-500: #00c8b3; /* شارة "تمويل كامل" بكروت المنح */
+
+  /* -- Raw Colors: Navy (Brand secondary / panels) -- */
+  --color-navy-900: #022647; /* مصحّحة — بدون alpha مدمج */
+  --color-navy-800: #0a3a68; /* كانت مسمّاة "gray-900" غلط — هي فعلياً درجة كحلي أفتح، مستخدمة لنص العناوين */
+  --color-navy-950: #0a2243; /* مؤكدة من صفحة Landing — خلفية الـ footer وعنوان نموذج التواصل، درجة مختلفة عن navy-900 */
+
+  /* -- Raw Colors: Red (Error/Danger) -- */
+  --color-red-500: #dc2626; /* TODO: تخمين معقول (أحمر قياسي) — كانت القيمة الأصلية فيها alpha مدمج (#DC262699) */
+  --color-red-50: #fef2f2; /* TODO: تخمين معقول لخلفية خطأ فاتحة — أكّد لاحقاً إذا كانت فعلاً لون منفصل أو شفافية على red-500 */
+
+  /* -- Raw Colors: Gray (Neutral) -- */
+  --color-gray-500: #979797;
+  --color-gray-400: #b1b1b1; /* مؤكدة من صفحة Landing — روابط الفوتر، نصوص placeholder، عناوين فرعية بكروت الآراء */
+  --color-gray-300: #e2e8f0;
+  --color-gray-50: #f7f7f7;
+  --color-white: #ffffff;
+
+  /* -- Raw Typography -- */
+  --font-family-base: var(--font-almarai), sans-serif;
+
+  /* -- Raw Radius -- */
+  --radius-input: 12px;
+  --radius-button: 12px;
+  --radius-card: 12px;
+
+  /* ============================================
+     SEMANTIC TOKENS — هاي اللي المكونات بتستخدمها فعلياً
+     ============================================ */
+
+  /* -- Backgrounds -- */
+  --color-bg-page: var(--color-gray-50);
+  --color-bg-panel-brand: var(--color-navy-900);
+  --color-bg-surface: var(--color-white);
+  --color-bg-error-subtle: var(--color-red-50);
+  --color-bg-success-subtle: var(--color-green-50);
+
+  /* -- Text -- */
+  --color-text-primary: var(--color-navy-800);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-label: rgba(30, 27, 51, 0.7); /* Figma "Grey/label" — field labels + input text */
+  --color-text-muted: #635f80; /* عنوان فرعي بصفحة التسجيل (register subtitle) */
+  --color-text-on-brand: var(--color-white);
+  --color-text-error: var(--color-red-500);
+
+  /* -- Brand / Actions -- */
+  --color-primary: var(--color-green-500);
+  --color-primary-hover: var(--color-green-600);
+  --color-primary-foreground: var(--color-white);
+
+  /* -- Borders -- */
+  --color-border-default: var(--color-gray-300);
+  --color-border-error: var(--color-red-500);
+  --color-border-focus: var(--color-green-500);
+
+  /* -- Status -- */
+  --color-success: var(--color-green-500);
+  --color-error: var(--color-red-500);
+}
+
+/* ============================================
+   TOKENS خارج @theme — مو utility scale (gradients/shadows مركّبة)
+   ============================================ */
+
+:root {
+  /* Overlay فوق صورة اللوح الكحلي (login/register/forgot-password/OTP/success) */
+  --gradient-panel-overlay: linear-gradient(
+    180deg,
+    rgb(from var(--color-navy-900) r g b / 75%) 0%,
+    rgb(from var(--color-navy-900) r g b / 40%) 40%,
+    rgb(from var(--color-navy-900) r g b / 88%) 100%
+  );
+
+  /* ظل الكروت (اللوح الأبيض / صناديق OTP) — قيمة معقولة، مو مؤكدة 100% من Figma */
+  --shadow-card: 0px 4px 12px rgba(2, 38, 71, 0.08);
+
+  /* ظل التاب النشط (login) بالـ AuthTabs */
+  --shadow-tab: 0px 8px 16px 0px rgba(0, 0, 0, 0.01);
+
+  /* ظل زر الإرسال الرئيسي */
+  --shadow-button: 0px 10px 15px -3px rgba(226, 226, 240, 0.6);
+
+  /* ظل شارة "+100" الخضراء */
+  --shadow-badge-green: 0px 8px 24px 0px rgba(22, 193, 114, 0.24);
+}
+
+body {
+  font-family: var(--font-family-base);
+}
