@@ -1,0 +1,251 @@
+{
+  "Common": {
+    "siteName": "ScholarAI"
+  },
+  "Nav": {
+    "login": "Login",
+    "register": "Sign Up",
+    "language": "Language"
+  },
+  "Landing": {
+    "brand": {
+      "name": "PsScholar",
+      "tagline": "Palestinian Scholarship Platform"
+    },
+    "nav": {
+      "home": "Home",
+      "howItWorks": "How It Works",
+      "features": "Features",
+      "about": "About",
+      "contact": "Contact",
+      "login": "Login",
+      "start": "Get Started",
+      "menuToggle": "Open menu"
+    },
+    "hero": {
+      "badge": "AI-powered personalized recommendations",
+      "title": "Because Palestinian students deserve the best opportunities",
+      "subtitle": "Discover, match, and track global and local scholarship opportunities with smart guidance tailored for Palestinian students to ease your academic journey.",
+      "filters": {
+        "all": "All",
+        "bachelor": "Bachelor's",
+        "master": "Master's",
+        "phd": "PhD",
+        "exchange": "Exchange"
+      },
+      "searchPlaceholder": "Scholarship name, university, or major",
+      "searchCount": "+100",
+      "searchButton": "Search"
+    },
+    "stats": {
+      "scholarships": { "value": "+4200", "label": "Available scholarships" },
+      "students": { "value": "+1500", "label": "Students helped" },
+      "countries": { "value": "+50", "label": "Countries" },
+      "satisfaction": { "value": "98%", "label": "User satisfaction" }
+    },
+    "featured": {
+      "badge": "Featured scholarships",
+      "heading": "Latest opportunities",
+      "cta": "View details",
+      "browseAll": "Browse all scholarships",
+      "items": [
+        {
+          "fundingLabel": "Full funding",
+          "title": "Chevening Scholarship",
+          "institution": "UK Government · Master's",
+          "deadline": "Deadline: Nov 5, 2026"
+        },
+        {
+          "fundingLabel": "Full funding",
+          "title": "Fulbright Scholarship",
+          "institution": "U.S. Government · Master's & PhD",
+          "deadline": "Deadline: Oct 12, 2026"
+        },
+        {
+          "fundingLabel": "Partial funding",
+          "title": "DAAD Scholarships",
+          "institution": "German Academic Exchange Service · Bachelor's & Master's",
+          "deadline": "Deadline: Dec 20, 2026"
+        },
+        {
+          "fundingLabel": "Full funding",
+          "title": "Erasmus Mundus",
+          "institution": "European Union · Master's",
+          "deadline": "Deadline: Jan 15, 2027"
+        },
+        {
+          "fundingLabel": "Full funding",
+          "title": "Türkiye Scholarships",
+          "institution": "Turkish Government · Bachelor's, Master's & PhD",
+          "deadline": "Deadline: Feb 20, 2027"
+        },
+        {
+          "fundingLabel": "Full funding",
+          "title": "MBZUAI Scholarship",
+          "institution": "Mohamed bin Zayed University of AI · Master's & PhD",
+          "deadline": "Deadline: Mar 1, 2027"
+        }
+      ]
+    },
+    "howItWorks": {
+      "badge": "How it works",
+      "heading": "From discovery to application",
+      "steps": [
+        {
+          "number": "1",
+          "title": "Create your profile",
+          "description": "Sign up and complete your academic and personal details along with your study preferences."
+        },
+        {
+          "number": "2",
+          "title": "AI recommendations",
+          "description": "Our AI matches your profile with thousands of scholarships and ranks them by compatibility."
+        },
+        {
+          "number": "3",
+          "title": "Explore and save",
+          "description": "Browse results, check eligibility requirements, and save the scholarships you want to apply for."
+        },
+        {
+          "number": "4",
+          "title": "Prepare and apply",
+          "description": "Track your deadlines and apply directly through the scholarships' official links."
+        }
+      ]
+    },
+    "aiFeatures": {
+      "badge": "AI features",
+      "heading": "Powered by smart matching",
+      "cards": {
+        "matching": {
+          "title": "Smart scholarship matching",
+          "description": "Our AI analyzes your academic profile and matches you with scholarships based on eligibility, major, GPA, and preferences — ranked by compatibility."
+        },
+        "documents": {
+          "title": "AI document enhancement",
+          "description": "Upload your CV or motivation letter. Our AI suggests improvements to grammar, structure, and scholarship fit."
+        },
+        "reminders": {
+          "title": "Deadline reminders",
+          "description": "Never miss a deadline. Get notified 7 days and 48 hours before your saved scholarships' deadlines."
+        }
+      }
+    },
+    "testimonials": {
+      "badge": "Success stories",
+      "heading": "Students who found their scholarship",
+      "items": [
+        {
+          "quote": "The profile completion system guided me step by step. Once I reached 70%, the AI started showing matching scholarships and I found a great one.",
+          "name": "Omar Khalil",
+          "subtitle": "Environmental Science, Nablus",
+          "initial": "O"
+        },
+        {
+          "quote": "The document enhancement feature helped me rewrite my motivation letter. The suggestions were genuinely useful and I stayed in full control.",
+          "name": "Sara Hamdan",
+          "subtitle": "Public Health, Ramallah",
+          "initial": "S"
+        },
+        {
+          "quote": "ScholarAI matched me with the Turkish government scholarship in minutes. I applied and got accepted! The AI matching saved me weeks of searching.",
+          "name": "Ahmad Al-Najjar",
+          "subtitle": "Computer Engineering, Gaza",
+          "initial": "A"
+        }
+      ]
+    },
+    "contact": {
+      "heading": "Contact Us",
+      "subtitle": "We'd love to hear from you! Send us your message and we'll get back to you as soon as possible.",
+      "nameLabel": "Full name",
+      "namePlaceholder": "Enter your full name here",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "example@std.najah.edu",
+      "subjectLabel": "Subject",
+      "subjectPlaceholder": "What is your message about?",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Write your message details here...",
+      "submit": "Send message",
+      "sent": "Your message has been sent"
+    },
+    "cta": {
+      "heading": "Ready to find your scholarship?",
+      "subtitle": "Join thousands of Palestinian students using PsScholar to discover and apply for scholarship opportunities around the world.",
+      "register": "Create account",
+      "login": "Login"
+    },
+    "footer": {
+      "brandDescription": "A smart platform for discovering scholarships for Palestinian students, graduates, and researchers",
+      "copyright": "© 2026 PsScholar Platform · All rights reserved",
+      "columns": {
+        "platform": {
+          "title": "Platform",
+          "links": ["About & Privacy", "Admin Dashboard", "Create Account"]
+        },
+        "tools": {
+          "title": "Tools",
+          "links": ["Document Enhancement", "Profile", "Notifications"]
+        },
+        "discover": {
+          "title": "Discover",
+          "links": ["Browse Scholarships", "Smart Recommendations", "Grants & Programs"]
+        }
+      }
+    }
+  },
+  "Login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "emailInvalid": "Invalid email address",
+    "passwordMin": "Password must be at least 6 characters",
+    "subtitle": "Sign in to continue your learning journey",
+    "createAccountTab": "Create New Account",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "remember Me On this device"
+  },
+  "ForgotPassword": {
+    "email": "Email",
+    "ask": "Do you Forgot Password",
+    "submit": "Send Reset Link",
+    "emailInvalid": "Invalid email address"
+  },
+  "Register": {
+    "title": "Welcome to the first platform for Palestinian scholarships",
+    "subtitle": "Create an account to track your scholarship applications and available opportunities",
+    "name": "Full Name",
+    "email": "University or personal email",
+    "password": "Password",
+    "submit": "Create Account",
+    "nameMin": "Name must be at least 3 characters",
+    "passwordMin": "Password must be at least 6 characters",
+    "emailInvalid": "Invalid email address",
+    "agreeTerms": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
+    "agreeTermsRequired": "You must agree to the Terms and Privacy Policy to continue",
+    "panelTitleLine1": "Join today and start",
+    "panelTitleHighlight": "your academic",
+    "panelTitleLine2": "future!",
+    "panelSubtitle": "Create your free account and browse thousands of scholarships tailored for Palestinian students.",
+    "ctaFree": "Free",
+    "ctaCreateAccount": "Create account",
+    "copyright": "© 2026 PsScholar Platform · All rights reserved"
+  },
+  "AuthTabs": {
+    "createAccount": "Create New Account",
+    "login": "Login"
+  },
+  "AuthLayout": {
+    "logoSubtitle": "Palestinian Scholarship Platform",
+    "heroTitleLine1": "Discover Scattered",
+    "heroTitleHighlight": "Educational",
+    "heroTitleLine2": "Opportunities in One Place!",
+    "heroSubtitle": "Connecting Palestinian students with the best global scholarships, with confidence.",
+    "badgeText": "Scholarship Available",
+    "partnerMinistry": "Ministry of Higher Education",
+    "partnerUnrwa": "UNRWA",
+    "partnerPlo": "PLO",
+    "supportedBy": "Supported by"
+  }
+}
