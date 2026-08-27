@@ -7,10 +7,10 @@ export function AuthTabs({ active }: { active: 'login' | 'register' }) {
   const t = useTranslations('AuthTabs');
 
   return (
-    <div className="flex rounded-xl bg-[var(--color-bg-tab)] p-1">
+    <div className="flex rtl:flex-row-reverse rounded-full bg-[var(--color-bg-tab)] p-1">
       <Link
         href="/register"
-        className={`flex-1 rounded-lg py-2 text-center text-sm font-medium transition ${
+        className={`flex-1 rounded-full py-2 text-center text-sm font-medium transition ${
           active === 'register'
             ? 'bg-[var(--color-bg-page)] text-[var(--color-primary)] shadow-[var(--shadow-tab)]'
             : 'text-[var(--color-text-primary)]/60'
@@ -20,7 +20,7 @@ export function AuthTabs({ active }: { active: 'login' | 'register' }) {
       </Link>
       <Link
         href="/login"
-        className={`flex-1 rounded-lg py-2 text-center text-sm font-medium transition ${
+        className={`flex-1 rounded-full py-2 text-center text-sm font-medium transition ${
           active === 'login'
             ? 'bg-[var(--color-bg-page)] text-[var(--color-primary)] shadow-[var(--shadow-tab)]'
             : 'text-[var(--color-text-primary)]/60'

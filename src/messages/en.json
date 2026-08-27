@@ -196,7 +196,7 @@
   },
   "Login": {
     "title": "Login",
-    "email": "Email",
+    "email": "University or personal email",
     "password": "Password",
     "submit": "Sign In",
     "emailInvalid": "Invalid email address",
@@ -246,6 +246,7 @@
     "partnerMinistry": "Ministry of Higher Education",
     "partnerUnrwa": "UNRWA",
     "partnerPlo": "PLO",
-    "supportedBy": "Supported by"
+    "supportedBy": "Supported by",
+    "backToHome": "Back to home"
   }
 }

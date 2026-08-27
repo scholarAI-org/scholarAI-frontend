@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Eye, EyeOff, Mail } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { createLoginSchema, type LoginFormData } from '../schemas/login.schema';
 import { useLogin } from '../hooks/useLogin';
 import { Link } from '@/i18n/navigation';
@@ -13,7 +13,7 @@ import { AuthTabs } from '@/components/ui/AuthTabs';
 import { FormField } from '@/components/shared/FormField';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
-import { LoginPanelVisual, LoginPanelFooter } from './LoginPanel';
+import { LoginPanelVisual } from './LoginPanel';
 
 export function LoginForm() {
   const t = useTranslations('Login');
@@ -50,7 +50,6 @@ export function LoginForm() {
       }
       heroSubtitle={tPanel('heroSubtitle')}
       visual={<LoginPanelVisual />}
-      footer={<LoginPanelFooter />}
     >
       <div className="w-full max-w-sm text-start">
         <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t('title')}</h1>
@@ -63,7 +62,7 @@ export function LoginForm() {
           <FormField
             label={t('email')}
             type="email"
-            dir="ltr"
+            radius="full"
             icon={<Mail className="h-4.5 w-4.5" />}
             errorMessage={errors.email?.message}
             {...register('email')}
@@ -73,12 +72,13 @@ export function LoginForm() {
             <FormField
               label={t('password')}
               type={showPassword ? 'text' : 'password'}
-              icon={
+              radius="full"
+              icon={<Lock className="h-4.5 w-4.5" />}
+              endIcon={
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   tabIndex={-1}
-                  className="pointer-events-auto"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4.5 w-4.5" />
@@ -112,7 +112,7 @@ export function LoginForm() {
             </p>
           )}
 
-          <Button type="submit" isLoading={isPending} className="w-full">
+          <Button type="submit" isLoading={isPending} className="w-full rounded-full">
             {t('submit')}
           </Button>
         </form>

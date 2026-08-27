@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Eye, EyeOff, Mail, User } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { useRegister } from '../hooks/useRegister';
 import { createRegisterSchema, type RegisterFormData } from '../schemas/create-register.schema';
 import { ApiError } from '@/lib/api-client';
@@ -75,7 +75,6 @@ export function RegisterForm() {
           <FormField
             label={t('email')}
             type="email"
-            dir="ltr"
             icon={<Mail className="h-4.5 w-4.5" />}
             errorMessage={errors.email?.message}
             {...register('email')}
@@ -85,12 +84,12 @@ export function RegisterForm() {
             <FormField
               label={t('password')}
               type={showPassword ? 'text' : 'password'}
-              icon={
+              icon={<Lock className="h-4.5 w-4.5" />}
+              endIcon={
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
                   tabIndex={-1}
-                  className="pointer-events-auto"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4.5 w-4.5" />

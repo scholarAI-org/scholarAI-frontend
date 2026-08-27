@@ -6,7 +6,7 @@ export function RegisterPanelVisual() {
   const t = useTranslations('Register');
 
   return (
-    <div className="relative h-80">
+    <div className="relative h-80" dir="ltr">
       <div className="absolute inset-0 overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
         <Image src="/images/register-graduates.png" alt="" fill className="object-cover" />
         <div

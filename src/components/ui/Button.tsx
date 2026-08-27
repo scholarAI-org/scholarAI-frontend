@@ -3,16 +3,24 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonRadius = 'md' | 'full';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  /** 'md' = --radius-button (12px, existing screens). 'full' = pill shape used by the redesigned auth screens. */
+  radius?: ButtonRadius;
   isLoading?: boolean;
   children: ReactNode;
 }
 
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 rounded-[var(--radius-button)] transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50';
+
+const radiusStyles: Record<ButtonRadius, string> = {
+  md: 'rounded-[var(--radius-button)]',
+  full: 'rounded-full',
+};
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
@@ -34,13 +42,15 @@ const sizeStyles: Record<ButtonSize, string> = {
 export function buttonStyles({
   variant = 'primary',
   size = 'md',
+  radius = 'md',
   className,
 }: {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  radius?: ButtonRadius;
   className?: string;
 } = {}) {
-  return [baseStyles, variantStyles[variant], sizeStyles[size], className]
+  return [baseStyles, variantStyles[variant], sizeStyles[size], radiusStyles[radius], className]
     .filter(Boolean)
     .join(' ');
 }
@@ -48,13 +58,20 @@ export function buttonStyles({
 export function Button({
   variant = 'primary',
   size = 'md',
+  radius = 'md',
   isLoading = false,
   disabled,
   className,
   children,
   ...props
 }: ButtonProps) {
-  const combinedClassName = [baseStyles, variantStyles[variant], sizeStyles[size], className]
+  const combinedClassName = [
+    baseStyles,
+    variantStyles[variant],
+    sizeStyles[size],
+    radiusStyles[radius],
+    className,
+  ]
     .filter(Boolean)
     .join(' ');
 
