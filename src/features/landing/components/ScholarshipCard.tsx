@@ -19,7 +19,7 @@ export function ScholarshipCard({
   return (
     <article className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-[0_8px_24px_rgba(2,38,71,0.08)]">
       <div className="flex flex-col gap-4">
-        <span className="inline-flex w-fit items-center rounded-full bg-[var(--color-teal-500)] px-3 py-1 text-[10px] font-normal text-[#1E1B33]">
+        <span className="inline-flex w-fit items-center rounded-full bg-[var(--color-teal-500)] px-3 py-1 text-[10px] font-normal text-[var(--color-gray-900)]">
           {fundingLabel}
         </span>
         <div className="flex flex-col gap-2">

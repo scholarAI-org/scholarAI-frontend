@@ -12,7 +12,8 @@ export function LoginPanelVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgba(2, 38, 71, 0.8) 100%)',
+            background:
+              'linear-gradient(180deg, rgba(0, 0, 0, 0) 55%, rgb(from var(--color-navy-900) r g b / 80%) 100%)',
           }}
         />
       </div>
@@ -21,7 +22,8 @@ export function LoginPanelVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(2, 38, 71, 0.85) 100%)',
+            background:
+              'linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgb(from var(--color-navy-900) r g b / 85%) 100%)',
           }}
         />
       </div>
@@ -30,7 +32,8 @@ export function LoginPanelVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(90deg, rgba(2, 38, 71, 0.7) 0%, rgba(0, 0, 0, 0) 100%)',
+            background:
+              'linear-gradient(90deg, rgb(from var(--color-navy-900) r g b / 70%) 0%, rgba(0, 0, 0, 0) 100%)',
           }}
         />
       </div>

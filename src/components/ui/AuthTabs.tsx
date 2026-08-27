@@ -7,7 +7,7 @@ export function AuthTabs({ active }: { active: 'login' | 'register' }) {
   const t = useTranslations('AuthTabs');
 
   return (
-    <div className="flex rounded-xl bg-[#F1F1FB] p-1">
+    <div className="flex rounded-xl bg-[var(--color-bg-tab)] p-1">
       <Link
         href="/register"
         className={`flex-1 rounded-lg py-2 text-center text-sm font-medium transition ${

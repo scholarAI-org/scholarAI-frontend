@@ -8,10 +8,18 @@
   /* -- Raw Colors: Green (Brand/Primary) -- */
   --color-green-500: #3dc971;
   --color-green-600: #16c172; /* مؤكدة من صفحة Landing — خلفيات المربعات/الدوائر الخضراء (features icons, step numbers) */
-  --color-green-50: #16c17212; /* TODO: تخمين معقول — أخضر فاتح جداً لخلفية success. أكّد من Figma إذا أمكن لاحقاً */
+  --color-green-50: rgba(
+    22,
+    193,
+    114,
+    0.08
+  ); /* مؤكدة من Figma — صفحة "desaign system"، توكن color.greenFaint */
+
+  /* -- Raw Colors: Orange (Accent / Eyebrow labels) -- */
+  --color-orange-500: #f97316; /* مؤكدة من Figma — ستايل "Primary/Orange"، مستخدم كلون نص لعناوين الأقسام الفرعية (eyebrow) بصفحة Landing */
 
   /* -- Raw Colors: Teal (Landing accents) -- */
-  --color-teal-500: #00c8b3; /* شارة "تمويل كامل" بكروت المنح */
+  --color-teal-500: #00c8b3; /* شارة "تمويل كامل" بكروت المنح — غير موجودة بملف Figma، ما قدرنا نتأكد منها */
 
   /* -- Raw Colors: Navy (Brand secondary / panels) -- */
   --color-navy-900: #022647; /* مصحّحة — بدون alpha مدمج */
@@ -19,10 +27,11 @@
   --color-navy-950: #0a2243; /* مؤكدة من صفحة Landing — خلفية الـ footer وعنوان نموذج التواصل، درجة مختلفة عن navy-900 */
 
   /* -- Raw Colors: Red (Error/Danger) -- */
-  --color-red-500: #dc2626; /* TODO: تخمين معقول (أحمر قياسي) — كانت القيمة الأصلية فيها alpha مدمج (#DC262699) */
-  --color-red-50: #fef2f2; /* TODO: تخمين معقول لخلفية خطأ فاتحة — أكّد لاحقاً إذا كانت فعلاً لون منفصل أو شفافية على red-500 */
+  --color-red-500: #dc2626; /* مؤكدة من Figma — صفحة "desaign system"، سواتش "Error" */
+  --color-red-50: rgba(220, 38, 38, 0.08); /* مؤكدة من Figma — ستايل "Addtional/error" */
 
   /* -- Raw Colors: Gray (Neutral) -- */
+  --color-gray-900: #1e1b33; /* مؤكدة من Figma — ستايل "Grey/text" */
   --color-gray-500: #979797;
   --color-gray-400: #b1b1b1; /* مؤكدة من صفحة Landing — روابط الفوتر، نصوص placeholder، عناوين فرعية بكروت الآراء */
   --color-gray-300: #e2e8f0;
@@ -47,18 +56,30 @@
   --color-bg-surface: var(--color-white);
   --color-bg-error-subtle: var(--color-red-50);
   --color-bg-success-subtle: var(--color-green-50);
+  --color-bg-accent-subtle: rgba(
+    255,
+    141,
+    40,
+    0.1
+  ); /* مؤكدة من Figma — ستايل "Opacity/Orange"، خلفية شارة الـ eyebrow البرتقالية */
+  --color-bg-tab: #f1f1fb; /* مؤكدة من Figma — ستايل "Background/Tab" */
 
   /* -- Text -- */
   --color-text-primary: var(--color-navy-800);
   --color-text-secondary: var(--color-gray-500);
-  --color-text-label: rgba(30, 27, 51, 0.7); /* Figma "Grey/label" — field labels + input text */
+  --color-text-label: rgb(
+    from var(--color-gray-900) r g b / 70%
+  ); /* Figma "Grey/label" — field labels + input text */
   --color-text-muted: #635f80; /* عنوان فرعي بصفحة التسجيل (register subtitle) */
   --color-text-on-brand: var(--color-white);
   --color-text-error: var(--color-red-500);
+  --color-text-eyebrow: var(
+    --color-orange-500
+  ); /* مؤكدة من Figma — نص عناوين الأقسام الفرعية (eyebrow) قبل العنوان الرئيسي */
 
   /* -- Brand / Actions -- */
-  --color-primary: var(--color-green-500);
-  --color-primary-hover: var(--color-green-600);
+  --color-primary: var(--color-orange-500);
+  --color-primary-hover: var(--color-orange-600);
   --color-primary-foreground: var(--color-white);
 
   /* -- Borders -- */

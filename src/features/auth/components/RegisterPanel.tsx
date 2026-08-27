@@ -12,7 +12,8 @@ export function RegisterPanelVisual() {
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(2, 38, 71, 0.85) 100%)',
+            background:
+              'linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgb(from var(--color-navy-900) r g b / 85%) 100%)',
           }}
         />
       </div>
