@@ -16,7 +16,7 @@ export function StatsRow() {
             )}
             <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-start">
               <span className="text-3xl font-extrabold text-[var(--color-navy-800)] sm:text-4xl">
-                {t(`${key}.value`)}
+                <bdi dir="ltr">{t(`${key}.value`)}</bdi>
               </span>
               <span className="text-sm text-[var(--color-gray-500)]">{t(`${key}.label`)}</span>
             </div>

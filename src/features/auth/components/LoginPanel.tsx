@@ -38,7 +38,9 @@ export function LoginPanelVisual() {
         />
       </div>
       <div className="absolute bottom-4 end-4 flex h-[52px] items-center gap-1 rounded-2xl bg-[var(--color-primary)] px-4 text-white shadow-[var(--shadow-badge-green)]">
-        <span className="text-xl font-bold">+100</span>
+        <span className="text-xl font-bold">
+          <bdi dir="ltr">+100</bdi>
+        </span>
         <span className="text-xs font-normal">{t('badgeText')}</span>
       </div>
     </div>

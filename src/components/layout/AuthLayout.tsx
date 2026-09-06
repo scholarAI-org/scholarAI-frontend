@@ -41,13 +41,13 @@ export function AuthLayout({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="text-end">
+          <div className="text-start">
             <p className="text-lg font-bold text-white">PsScholar</p>
             <p className="text-xs text-[var(--color-primary)]">{t('logoSubtitle')}</p>
           </div>
         </div>
 
-        <div className="relative z-10 text-end">
+        <div className="relative z-10 text-start">
           <h2 className="text-[28px] font-bold leading-tight text-white">{heroTitle}</h2>
           <p className="mt-3 text-sm leading-[22px] text-white/80">{heroSubtitle}</p>
         </div>

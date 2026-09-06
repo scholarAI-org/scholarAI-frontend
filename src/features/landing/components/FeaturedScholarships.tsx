@@ -43,7 +43,7 @@ export function FeaturedScholarships() {
             className="group flex items-center gap-2 rounded-xl px-4 py-4 text-sm font-bold text-[var(--color-navy-800)] transition-colors hover:text-[var(--color-primary)]"
           >
             {t('browseAll')}
-            <LeftArrowIcon className="h-6 w-6 transition-transform group-hover:-translate-x-1 rtl:group-hover:translate-x-1" />
+            <LeftArrowIcon className="h-6 w-6 transition-transform ltr:rotate-180 ltr:group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
           </a>
         </Reveal>
       </Container>

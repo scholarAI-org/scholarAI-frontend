@@ -52,7 +52,9 @@ export default async function LocaleLayout({
     <html lang={locale} dir={dir} className={`${almarai.variable}  h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {children}
+          </NextIntlClientProvider>
         </QueryProvider>
       </body>
     </html>
