@@ -38,10 +38,22 @@
       "searchButton": "Search"
     },
     "stats": {
-      "scholarships": { "value": "+4200", "label": "Available scholarships" },
-      "students": { "value": "+1500", "label": "Students helped" },
-      "countries": { "value": "+50", "label": "Countries" },
-      "satisfaction": { "value": "98%", "label": "User satisfaction" }
+      "scholarships": {
+        "value": "+4200",
+        "label": "Available scholarships"
+      },
+      "students": {
+        "value": "+1500",
+        "label": "Students helped"
+      },
+      "countries": {
+        "value": "+50",
+        "label": "Countries"
+      },
+      "satisfaction": {
+        "value": "98%",
+        "label": "User satisfaction"
+      }
     },
     "featured": {
       "badge": "Featured scholarships",
@@ -247,5 +259,337 @@
     "partnerUnrwa": "UNRWA",
     "partnerPlo": "PLO",
     "supportedBy": "Supported by"
+  },
+  "PersonalInformation": {
+    "title": "Personal Information",
+    "completion": "Personal information completion",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "saved": "Personal information saved successfully.",
+    "loading": "Loading personal information…",
+    "loadError": "Unable to load personal information. Retry before editing your details.",
+    "refreshError": "Unable to refresh the displayed information. Your edits have been kept; you can retry.",
+    "saveError": "Unable to save personal information. Please try again.",
+    "authRequired": "Please sign in to access your personal information.",
+    "login": "Sign in",
+    "retry": "Retry",
+    "countriesError": "Unable to load countries.",
+    "loadingCountries": "Loading countries",
+    "loadingNationalities": "Loading nationalities",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone number",
+      "gender": "Gender",
+      "birthDate": "Date of birth",
+      "nationalityCode": "Nationality",
+      "residenceCountryCode": "Country of residence",
+      "nationalId": "ID number",
+      "passportNumber": "Valid passport",
+      "city": "City",
+      "financialSituation": "Financial status"
+    },
+    "placeholders": {
+      "firstName": "Enter your first name",
+      "lastName": "Enter your last name",
+      "email": "Enter your email",
+      "phone": "Enter your phone number",
+      "phoneLocal": "Example: 0594189740",
+      "gender": "Select gender",
+      "birthDate": "Choose your date of birth",
+      "nationalityCode": "Select nationality",
+      "residenceCountryCode": "Select country of residence",
+      "nationalId": "Enter your ID number",
+      "passportNumber": "Enter your passport number",
+      "city": "Enter your city",
+      "financialSituation": "Select financial status (optional)"
+    },
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female"
+    },
+    "financial": {
+      "LIMITED": "Limited",
+      "MODERATE": "Moderate",
+      "STABLE": "Stable",
+      "unset": "Not specified"
+    },
+    "validation": {
+      "firstName": "First name is required and must contain at least 2 characters",
+      "lastName": "Last name is required and must contain at least 2 characters",
+      "email": "Enter a valid email address",
+      "phone": "Enter a valid local number; it must total 8 to 15 digits after adding the country code",
+      "gender": "Select gender",
+      "birthDate": "Date of birth is required",
+      "minimumAge": "You must be at least 16 years old",
+      "nationality": "Select a nationality with a two-letter country code",
+      "residence": "Select a residence country with a two-letter country code",
+      "nationalId": "ID number must contain 9 digits",
+      "passport": "Passport number must contain 6 to 9 letters and digits"
+    },
+    "loadHttpError": "Unable to load personal information (HTTP {status}).",
+    "responseError": "The server returned data in an unexpected personal information format.",
+    "networkError": "Unable to reach the server. Check your connection and try again.",
+    "callingCodesError": "Unable to load international calling codes.",
+    "firstTime": "Complete your personal information and save it to set up your profile."
+  },
+  "AcademicInformation": {
+    "title": "Academic Information",
+    "completion": "Completion",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Saved successfully",
+    "fields": {
+      "currentLevel": "Current Academic Level",
+      "fieldOfStudy": "Field of Study",
+      "institution": "Educational Institution",
+      "graduationYear": "Expected Graduation Year",
+      "gpaValue": "GPA Value",
+      "gpaSystem": "Grading System",
+      "studyLanguage": "Current Study Language"
+    },
+    "placeholders": {
+      "currentLevel": "Select academic level",
+      "fieldOfStudy": "Select field of study",
+      "institution": "Enter educational institution",
+      "graduationYear": "Select graduation year",
+      "gpaValue": "Enter GPA",
+      "gpaSystem": "Select grading system",
+      "studyLanguage": "Select study language"
+    },
+    "levels": {
+      "highSchool": "High School",
+      "bachelor": "Bachelor's Degree",
+      "master": "Master's Degree",
+      "phd": "PhD",
+      "TAWJIHI": "High School",
+      "BACHELOR": "Bachelor's Degree",
+      "MASTER": "Master's Degree",
+      "PHD": "PhD"
+    },
+    "fieldsOfStudy": {
+      "engineering": "Engineering",
+      "medicine": "Medicine",
+      "science": "Science",
+      "arts": "Arts",
+      "business": "Business",
+      "it": "IT",
+      "SCIENTIFIC": "Science",
+      "LITERARY": "Arts",
+      "SHARIA": "شرعي",
+      "INDUSTRIAL": "صناعي",
+      "ENTREPRENEURSHIP_BUSINESS": "ريادة وأعمال",
+      "AGRICULTURAL": "زراعي",
+      "HOME_ECONOMICS": "اقتصاد منزلي",
+      "ENGINEERING": "Engineering",
+      "COMPUTER_SCIENCE": "IT",
+      "MEDICINE": "Medicine",
+      "BUSINESS": "Business",
+      "ARTS": "Arts",
+      "OTHER": "أخرى"
+    },
+    "gpaSystems": {
+      "outOf4": "Out of 4.0",
+      "outOf5": "Out of 5.0",
+      "outOf100": "Out of 100",
+      "SCALE_4": "Out of 4.0",
+      "SCALE_5": "Out of 5.0",
+      "SCALE_10": "من 10",
+      "SCALE_100": "Out of 100"
+    },
+    "languages": {
+      "arabic": "Arabic",
+      "english": "English",
+      "french": "French",
+      "ARABIC": "Arabic",
+      "ENGLISH": "English",
+      "FRENCH": "French"
+    },
+    "validation": {
+      "currentLevel": "Please select your current academic level",
+      "fieldOfStudy": "Please select your field of study",
+      "institution": "Educational institution name is required",
+      "graduationYear": "Expected graduation year is required",
+      "gpaValue": "GPA value is required",
+      "gpaSystem": "Please select the grading system",
+      "gpaInvalid": "Invalid GPA value for the selected system",
+      "studyLanguage": "Please select the study language"
+    },
+    "authRequired": "You must be logged in to save changes.",
+    "login": "Login",
+    "saveError": "An error occurred while saving. Please try again."
+  },
+  "Documents": {
+    "title": "Official Documents",
+    "completion": "Profile completed",
+    "save": "Continue",
+    "saving": "Saving...",
+    "authRequired": "You must be logged in to save changes.",
+    "login": "Login",
+    "saveError": "An error occurred while saving. Please try again.",
+    "saved": "Saved successfully!",
+    "uploadMissing": "PDF or image • Not uploaded yet",
+    "updateBtn": "Update",
+    "improveAIBtn": "Improve AI",
+    "addAnotherBtn": "Add another recommendation letter",
+    "fileTooLarge": "File is too large (max 10MB)",
+    "invalidFileType": "Unsupported file type",
+    "uploadError": "Upload failed",
+    "documentTypes": {
+      "cv": "CV / Resume",
+      "motivation_letter": "Motivation Letter",
+      "graduation_certificate": "Bachelor's Degree Certificate",
+      "transcript": "Official Transcript",
+      "english_test": "Language Certificate",
+      "recommendation_letters": "Recommendation Letters",
+      "passport": "Passport"
+    },
+    "upload": "Upload File",
+    "uploading": "Uploading...",
+    "download": "Download",
+    "delete": "Delete"
+  },
+  "SkillsLanguages": {
+    "title": "Skills & Languages",
+    "languages": "Languages",
+    "skills": "Skills",
+    "addLanguage": "+ Add Language",
+    "addSkill": "+ Add Skill",
+    "save": "Continue",
+    "languagePlaceholder": "Select language",
+    "levelPlaceholder": "Proficiency level",
+    "skillPlaceholder": "Type a skill and press Enter",
+    "addBtn": "Add",
+    "cancelBtn": "Cancel",
+    "authRequired": "You must be logged in to save changes.",
+    "login": "Login",
+    "levels": {
+      "BEGINNER": {
+        "title": "Beginner (A1/A2)",
+        "subtitle": "Beginner"
+      },
+      "INTERMEDIATE": {
+        "title": "Intermediate (B1/B2)",
+        "subtitle": "Intermediate"
+      },
+      "ADVANCED": {
+        "title": "Advanced (C1/C2)",
+        "subtitle": "Advanced"
+      },
+      "NATIVE": {
+        "title": "Native",
+        "subtitle": "Native"
+      }
+    },
+    "modalTitle": "Add a new language",
+    "modalSubtitle": "Choose the language and determine your level in it",
+    "languageName": "Language Name",
+    "languageLevel": "Language Level",
+    "searchPlaceholder": "Search for a language or write its name...",
+    "suggestedLanguages": {
+      "arabic": "Arabic",
+      "english": "English",
+      "turkish": "Turkish",
+      "french": "French",
+      "german": "German",
+      "spanish": "Spanish",
+      "italian": "Italian"
+    },
+    "addSkillModalTitle": "Add a new skill",
+    "addSkillModalSubtitle": "Choose from suggestions or add a custom skill",
+    "customSkillLabel": "Write a custom skill",
+    "customSkillPlaceholder": "Example: Flutter, Project Management, Figma...",
+    "categoryLabel": "Or choose from suggestions by category",
+    "enterToAdd": "Press Enter to add to the list",
+    "categories": {
+      "technical": "Technical",
+      "analytical": "Analytical",
+      "communication": "Communication",
+      "leadership": "Leadership",
+      "other": "Other"
+    },
+    "languageExistsError": "This language already exists",
+    "skillExistsError": "This skill already exists",
+    "loadingLanguages": "Loading languages...",
+    "noResults": "No results found",
+    "searchLanguagePlaceholder": "Search for a language or type its name..."
+  },
+  "Experiences": {
+    "title": "Experiences & Activities",
+    "subtitle": "Update your profile with previous or current experiences to increase your chances.",
+    "emptyTitle": "Add new experience",
+    "emptySubtitle": "Work • Research • Volunteer • Student Activity",
+    "addBtn": "Add Experience",
+    "cancelBtn": "Cancel",
+    "saveBtn": "Save & Continue",
+    "modalTitle": "Add New Experience",
+    "modalSubtitle": "Work • Research • Volunteer • Student Activity",
+    "editModalTitle": "Edit Experience",
+    "fields": {
+      "type": "Experience Type",
+      "title": "Job Title / Experience Title",
+      "titlePlaceholder": "Example: Web Developer, Research Assistant...",
+      "organization": "Organization / Institution",
+      "organizationPlaceholder": "Tech Company, Youth Center, University...",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "isCurrent": "Until now",
+      "description": "Short Description",
+      "descriptionPlaceholder": "Mention your key tasks and achievements in this experience...",
+      "optional": "(Optional)"
+    },
+    "types": {
+      "WORK": "Work",
+      "VOLUNTEER": "Volunteer",
+      "RESEARCH": "Research",
+      "STUDENT_ACTIVITY": "Student Activity"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "errors": {
+      "fetch": "Error fetching experiences",
+      "save": "Error saving experience",
+      "invalidDates": "End date must be after start date"
+    }
+  },
+  "Preferences": {
+    "title": "Study Preferences",
+    "studyLevelLabel": "Preferred Study Level",
+    "fundingTypeLabel": "Preferred Funding Type",
+    "studyFieldsLabel": "Preferred Study Field",
+    "studyFieldsPlaceholder": "Choose preferred study field",
+    "countriesLabel": "Preferred Countries",
+    "countriesPlaceholder": "Choose preferred countries",
+    "finish": "Finish",
+    "levels": {
+      "TAWJIHI": "Tawjihi",
+      "BACHELOR": "Bachelor's",
+      "MASTER": "Master's",
+      "PHD": "PhD"
+    },
+    "fundingTypes": {
+      "FULL": "Full Funding",
+      "PARTIAL": "Partial Funding",
+      "SELF": "Self Funding"
+    },
+    "saveSuccess": "Preferences saved successfully",
+    "authRequired": "Please log in to save",
+    "login": "Login",
+    "selectPlaceholder": "Select",
+    "addBtn": "Add",
+    "cancelBtn": "Cancel",
+    "modalTitleFields": "Add Study Field",
+    "modalSubtitleFields": "Enter your preferred study field",
+    "modalTitleCountries": "Add Country",
+    "modalSubtitleCountries": "Search for your preferred country",
+    "searchCountryPlaceholder": "Search for a country...",
+    "noResults": "No results found",
+    "loadingCountries": "Loading...",
+    "fieldExistsError": "This field is already added",
+    "countryExistsError": "This country is already added",
+    "save": "Finish"
   }
 }
