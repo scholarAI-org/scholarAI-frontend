@@ -1,14 +1,11 @@
 import { apiClient } from '@/lib/api-client';
 import { type RegisterFormData } from '../schemas/create-register.schema';
 
-type UserResponse = {
-  id: number;
-  email: string;
-  role: string;
-  is_active: boolean;
+type RegisterResponse = {
+  message: string;
 };
 
-export async function register(credentials: RegisterFormData): Promise<UserResponse> {
+export async function register(credentials: RegisterFormData): Promise<RegisterResponse> {
   const payload = {
     full_name: credentials.name,
     email: credentials.email,
@@ -16,7 +13,7 @@ export async function register(credentials: RegisterFormData): Promise<UserRespo
     role: 'student',
   };
 
-  return apiClient<UserResponse>('/auth/register', {
+  return apiClient<RegisterResponse>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
