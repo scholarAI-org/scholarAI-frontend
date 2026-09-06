@@ -1,7 +1,7 @@
 import { apiClient } from '@/lib/api-client';
 import type { LoginFormData } from '../schemas/login.schema';
 
-type Token = {
+export type Token = {
   access_token: string;
   token_type: string;
 };

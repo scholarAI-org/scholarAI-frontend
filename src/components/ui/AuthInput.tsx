@@ -11,10 +11,13 @@ export function AuthInput({ label, icon, error, className, ...props }: AuthInput
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-gray-700">{label}</label>
-      <div className="relative">
+      <div className="input-icon-shell input-icon-shell-compact relative" data-icon-position="end">
         <input
           {...props}
-          className={`w-full rounded-lg border py-2.5 pe-9 ps-3 text-sm outline-none transition
+          dir={
+            props.dir ?? (['email', 'tel', 'url'].includes(props.type ?? '') ? 'ltr' : undefined)
+          }
+          className={`w-full rounded-lg border py-2.5 px-3 text-sm outline-none transition
             ${
               error
                 ? 'border-red-400 focus:ring-2 focus:ring-red-100'

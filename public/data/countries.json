@@ -1,0 +1,1252 @@
+[
+  {
+    "value": "IS",
+    "label": "آيسلندا",
+    "nationalityLabel": "Icelander"
+  },
+  {
+    "value": "ET",
+    "label": "إثيوبيا",
+    "nationalityLabel": "Ethiopian"
+  },
+  {
+    "value": "AZ",
+    "label": "أذربيجان",
+    "nationalityLabel": "Azerbaijani"
+  },
+  {
+    "value": "TF",
+    "label": "أراض فرنسية جنوبية وأنتارتيكية",
+    "nationalityLabel": "French"
+  },
+  {
+    "value": "AM",
+    "label": "أرمينيا",
+    "nationalityLabel": "Armenian"
+  },
+  {
+    "value": "AW",
+    "label": "أروبا",
+    "nationalityLabel": "Aruban"
+  },
+  {
+    "value": "ER",
+    "label": "إريتريا",
+    "nationalityLabel": "Eritrean"
+  },
+  {
+    "value": "ES",
+    "label": "إسبانيا",
+    "nationalityLabel": "Spanish"
+  },
+  {
+    "value": "AU",
+    "label": "أستراليا",
+    "nationalityLabel": "Australian"
+  },
+  {
+    "value": "EE",
+    "label": "إستونيا",
+    "nationalityLabel": "Estonian"
+  },
+  {
+    "value": "IL",
+    "label": "إسرائيل",
+    "nationalityLabel": "Israeli"
+  },
+  {
+    "value": "SZ",
+    "label": "إسواتيني",
+    "nationalityLabel": "Swazi"
+  },
+  {
+    "value": "AF",
+    "label": "أفغانستان",
+    "nationalityLabel": "Afghan"
+  },
+  {
+    "value": "IO",
+    "label": "إقليم المحيط الهندي البريطاني",
+    "nationalityLabel": "Indian"
+  },
+  {
+    "value": "AR",
+    "label": "الأرجنتين",
+    "nationalityLabel": "Argentine"
+  },
+  {
+    "value": "JO",
+    "label": "الأردن",
+    "nationalityLabel": "Jordanian"
+  },
+  {
+    "value": "EC",
+    "label": "الإكوادور",
+    "nationalityLabel": "Ecuadorean"
+  },
+  {
+    "value": "AE",
+    "label": "الإمارات",
+    "nationalityLabel": "Emirati"
+  },
+  {
+    "value": "UY",
+    "label": "الأوروغواي",
+    "nationalityLabel": "Uruguayan"
+  },
+  {
+    "value": "AL",
+    "label": "ألبانيا",
+    "nationalityLabel": "Albanian"
+  },
+  {
+    "value": "BH",
+    "label": "البحرين",
+    "nationalityLabel": "Bahraini"
+  },
+  {
+    "value": "BR",
+    "label": "البرازيل",
+    "nationalityLabel": "Brazilian"
+  },
+  {
+    "value": "PT",
+    "label": "البرتغال",
+    "nationalityLabel": "Portuguese"
+  },
+  {
+    "value": "BS",
+    "label": "البهاما",
+    "nationalityLabel": "Bahamian"
+  },
+  {
+    "value": "BA",
+    "label": "البوسنة والهرسك",
+    "nationalityLabel": "Bosnian, Herzegovinian"
+  },
+  {
+    "value": "CZ",
+    "label": "التشيك",
+    "nationalityLabel": "Czech"
+  },
+  {
+    "value": "ME",
+    "label": "الجبل الاسود",
+    "nationalityLabel": "Montenegrin"
+  },
+  {
+    "value": "DZ",
+    "label": "الجزائر",
+    "nationalityLabel": "Algerian"
+  },
+  {
+    "value": "BQ",
+    "label": "الجزر الكاريبية الهولندية",
+    "nationalityLabel": "Dutch"
+  },
+  {
+    "value": "DK",
+    "label": "الدنمارك",
+    "nationalityLabel": "Danish"
+  },
+  {
+    "value": "SA",
+    "label": "السعودية",
+    "nationalityLabel": "Saudi Arabian"
+  },
+  {
+    "value": "SV",
+    "label": "السلفادور",
+    "nationalityLabel": "Salvadoran"
+  },
+  {
+    "value": "SN",
+    "label": "السنغال",
+    "nationalityLabel": "Senegalese"
+  },
+  {
+    "value": "SD",
+    "label": "السودان",
+    "nationalityLabel": "Sudanese"
+  },
+  {
+    "value": "SE",
+    "label": "السويد",
+    "nationalityLabel": "Swedish"
+  },
+  {
+    "value": "EH",
+    "label": "الصحراء الغربية",
+    "nationalityLabel": "Sahrawi"
+  },
+  {
+    "value": "SO",
+    "label": "الصومال",
+    "nationalityLabel": "Somali"
+  },
+  {
+    "value": "CN",
+    "label": "الصين",
+    "nationalityLabel": "Chinese"
+  },
+  {
+    "value": "IQ",
+    "label": "العراق",
+    "nationalityLabel": "Iraqi"
+  },
+  {
+    "value": "GA",
+    "label": "الغابون",
+    "nationalityLabel": "Gabonese"
+  },
+  {
+    "value": "PH",
+    "label": "الفلبين",
+    "nationalityLabel": "Filipino"
+  },
+  {
+    "value": "CM",
+    "label": "الكاميرون",
+    "nationalityLabel": "Cameroonian"
+  },
+  {
+    "value": "CD",
+    "label": "الكونغو",
+    "nationalityLabel": "Congolese"
+  },
+  {
+    "value": "KW",
+    "label": "الكويت",
+    "nationalityLabel": "Kuwaiti"
+  },
+  {
+    "value": "MV",
+    "label": "المالديف",
+    "nationalityLabel": "Maldivan"
+  },
+  {
+    "value": "DE",
+    "label": "ألمانيا",
+    "nationalityLabel": "German"
+  },
+  {
+    "value": "HU",
+    "label": "المجر",
+    "nationalityLabel": "Hungarian"
+  },
+  {
+    "value": "MX",
+    "label": "المسكيك",
+    "nationalityLabel": "Mexican"
+  },
+  {
+    "value": "MA",
+    "label": "المغرب",
+    "nationalityLabel": "Moroccan"
+  },
+  {
+    "value": "GB",
+    "label": "المملكة المتحدة",
+    "nationalityLabel": "British"
+  },
+  {
+    "value": "NO",
+    "label": "النرويج",
+    "nationalityLabel": "Norwegian"
+  },
+  {
+    "value": "AT",
+    "label": "النمسا",
+    "nationalityLabel": "Austrian"
+  },
+  {
+    "value": "NE",
+    "label": "النيجر",
+    "nationalityLabel": "Nigerien"
+  },
+  {
+    "value": "IN",
+    "label": "الهند",
+    "nationalityLabel": "Indian"
+  },
+  {
+    "value": "US",
+    "label": "الولايات المتحدة",
+    "nationalityLabel": "American"
+  },
+  {
+    "value": "JP",
+    "label": "اليابان",
+    "nationalityLabel": "Japanese"
+  },
+  {
+    "value": "YE",
+    "label": "اليمن",
+    "nationalityLabel": "Yemeni"
+  },
+  {
+    "value": "GR",
+    "label": "اليونان",
+    "nationalityLabel": "Greek"
+  },
+  {
+    "value": "AQ",
+    "label": "أنتارتيكا",
+    "nationalityLabel": "Antarctican"
+  },
+  {
+    "value": "AG",
+    "label": "أنتيغوا وباربودا",
+    "nationalityLabel": "Antiguan, Barbudan"
+  },
+  {
+    "value": "AD",
+    "label": "أندورا",
+    "nationalityLabel": "Andorran"
+  },
+  {
+    "value": "ID",
+    "label": "إندونيسيا",
+    "nationalityLabel": "Indonesian"
+  },
+  {
+    "value": "AI",
+    "label": "أنغويلا",
+    "nationalityLabel": "Anguillian"
+  },
+  {
+    "value": "UZ",
+    "label": "أوزباكستان",
+    "nationalityLabel": "Uzbekistani"
+  },
+  {
+    "value": "UG",
+    "label": "أوغندا",
+    "nationalityLabel": "Ugandan"
+  },
+  {
+    "value": "UA",
+    "label": "أوكرانيا",
+    "nationalityLabel": "Ukrainian"
+  },
+  {
+    "value": "IR",
+    "label": "إيران",
+    "nationalityLabel": "Iranian"
+  },
+  {
+    "value": "IE",
+    "label": "أيرلندا",
+    "nationalityLabel": "Irish"
+  },
+  {
+    "value": "IT",
+    "label": "إيطاليا",
+    "nationalityLabel": "Italian"
+  },
+  {
+    "value": "PG",
+    "label": "بابوا غينيا الجديدة",
+    "nationalityLabel": "Papua New Guinean"
+  },
+  {
+    "value": "PY",
+    "label": "باراغواي",
+    "nationalityLabel": "Paraguayan"
+  },
+  {
+    "value": "BB",
+    "label": "باربادوس",
+    "nationalityLabel": "Barbadian"
+  },
+  {
+    "value": "PK",
+    "label": "باكستان",
+    "nationalityLabel": "Pakistani"
+  },
+  {
+    "value": "PW",
+    "label": "بالاو",
+    "nationalityLabel": "Palauan"
+  },
+  {
+    "value": "BM",
+    "label": "برمودا",
+    "nationalityLabel": "Bermudian"
+  },
+  {
+    "value": "BN",
+    "label": "بروناي",
+    "nationalityLabel": "Bruneian"
+  },
+  {
+    "value": "BE",
+    "label": "بلجيكا",
+    "nationalityLabel": "Belgian"
+  },
+  {
+    "value": "BG",
+    "label": "بلغاريا",
+    "nationalityLabel": "Bulgarian"
+  },
+  {
+    "value": "BZ",
+    "label": "بليز",
+    "nationalityLabel": "Belizean"
+  },
+  {
+    "value": "BD",
+    "label": "بنغلاديش",
+    "nationalityLabel": "Bangladeshi"
+  },
+  {
+    "value": "PA",
+    "label": "بنما",
+    "nationalityLabel": "Panamanian"
+  },
+  {
+    "value": "BJ",
+    "label": "بنين",
+    "nationalityLabel": "Beninese"
+  },
+  {
+    "value": "BT",
+    "label": "بوتان",
+    "nationalityLabel": "Bhutanese"
+  },
+  {
+    "value": "BW",
+    "label": "بوتسوانا",
+    "nationalityLabel": "Motswana"
+  },
+  {
+    "value": "BF",
+    "label": "بوركينا فاسو",
+    "nationalityLabel": "Burkinabe"
+  },
+  {
+    "value": "BI",
+    "label": "بوروندي",
+    "nationalityLabel": "Burundian"
+  },
+  {
+    "value": "PL",
+    "label": "بولندا",
+    "nationalityLabel": "Polish"
+  },
+  {
+    "value": "BO",
+    "label": "بوليفيا",
+    "nationalityLabel": "Bolivian"
+  },
+  {
+    "value": "PF",
+    "label": "بولينزيا الفرنسية",
+    "nationalityLabel": "French Polynesian"
+  },
+  {
+    "value": "PR",
+    "label": "بويرتوريكو",
+    "nationalityLabel": "Puerto Rican"
+  },
+  {
+    "value": "PE",
+    "label": "بيرو",
+    "nationalityLabel": "Peruvian"
+  },
+  {
+    "value": "BY",
+    "label": "بيلاروسيا",
+    "nationalityLabel": "Belarusian"
+  },
+  {
+    "value": "TH",
+    "label": "تايلند",
+    "nationalityLabel": "Thai"
+  },
+  {
+    "value": "TW",
+    "label": "تايوان",
+    "nationalityLabel": "Taiwanese"
+  },
+  {
+    "value": "TM",
+    "label": "تركمانستان",
+    "nationalityLabel": "Turkmen"
+  },
+  {
+    "value": "TR",
+    "label": "تركيا",
+    "nationalityLabel": "Turkish"
+  },
+  {
+    "value": "TT",
+    "label": "ترينيداد وتوباغو",
+    "nationalityLabel": "Trinidadian"
+  },
+  {
+    "value": "TD",
+    "label": "تشاد",
+    "nationalityLabel": "Chadian"
+  },
+  {
+    "value": "CL",
+    "label": "تشيلي",
+    "nationalityLabel": "Chilean"
+  },
+  {
+    "value": "TZ",
+    "label": "تنزانيا",
+    "nationalityLabel": "Tanzanian"
+  },
+  {
+    "value": "TG",
+    "label": "توغو",
+    "nationalityLabel": "Togolese"
+  },
+  {
+    "value": "TV",
+    "label": "توفالو",
+    "nationalityLabel": "Tuvaluan"
+  },
+  {
+    "value": "TK",
+    "label": "توكيلاو",
+    "nationalityLabel": "Tokelauan"
+  },
+  {
+    "value": "TN",
+    "label": "تونس",
+    "nationalityLabel": "Tunisian"
+  },
+  {
+    "value": "TO",
+    "label": "تونغا",
+    "nationalityLabel": "Tongan"
+  },
+  {
+    "value": "TL",
+    "label": "تيمور الشرقية",
+    "nationalityLabel": "East Timorese"
+  },
+  {
+    "value": "JM",
+    "label": "جامايكا",
+    "nationalityLabel": "Jamaican"
+  },
+  {
+    "value": "GI",
+    "label": "جبل طارق",
+    "nationalityLabel": "Gibraltar"
+  },
+  {
+    "value": "GL",
+    "label": "جرينلاند",
+    "nationalityLabel": "Greenlandic"
+  },
+  {
+    "value": "VG",
+    "label": "جزر العذراء",
+    "nationalityLabel": "Virgin Islander"
+  },
+  {
+    "value": "VI",
+    "label": "جزر العذراء الامريكية",
+    "nationalityLabel": "Virgin Islander"
+  },
+  {
+    "value": "KM",
+    "label": "جزر القمر",
+    "nationalityLabel": "Comoran"
+  },
+  {
+    "value": "UM",
+    "label": "جزر الولايات المتحدة الصغيرة النائية",
+    "nationalityLabel": "American Islander"
+  },
+  {
+    "value": "AX",
+    "label": "جزر أولاند",
+    "nationalityLabel": "Ålandish"
+  },
+  {
+    "value": "BV",
+    "label": "جزر بوفيه",
+    "nationalityLabel": "Bouvet Island"
+  },
+  {
+    "value": "PN",
+    "label": "جزر بيتكيرن",
+    "nationalityLabel": "Pitcairn Islander"
+  },
+  {
+    "value": "TC",
+    "label": "جزر توركس وكايكوس",
+    "nationalityLabel": "Turks and Caicos Islander"
+  },
+  {
+    "value": "SB",
+    "label": "جزر سليمان",
+    "nationalityLabel": "Solomon Islander"
+  },
+  {
+    "value": "FO",
+    "label": "جزر فارو",
+    "nationalityLabel": "Faroese"
+  },
+  {
+    "value": "FK",
+    "label": "جزر فوكلاند",
+    "nationalityLabel": "Falkland Islander"
+  },
+  {
+    "value": "KY",
+    "label": "جزر كايمان",
+    "nationalityLabel": "Caymanian"
+  },
+  {
+    "value": "CK",
+    "label": "جزر كوك",
+    "nationalityLabel": "Cook Islander"
+  },
+  {
+    "value": "CC",
+    "label": "جزر كوكوس",
+    "nationalityLabel": "Cocos Islander"
+  },
+  {
+    "value": "MH",
+    "label": "جزر مارشال",
+    "nationalityLabel": "Marshallese"
+  },
+  {
+    "value": "MP",
+    "label": "جزر ماريانا الشمالية",
+    "nationalityLabel": "American"
+  },
+  {
+    "value": "CX",
+    "label": "جزيرة كريسماس",
+    "nationalityLabel": "Christmas Islander"
+  },
+  {
+    "value": "IM",
+    "label": "جزيرة مان",
+    "nationalityLabel": "Manx"
+  },
+  {
+    "value": "NF",
+    "label": "جزيرة نورفولك",
+    "nationalityLabel": "Norfolk Islander"
+  },
+  {
+    "value": "HM",
+    "label": "جزيرة هيرد وجزر ماكدونالد",
+    "nationalityLabel": "Heard and McDonald Islander"
+  },
+  {
+    "value": "CF",
+    "label": "جمهورية أفريقيا الوسطى",
+    "nationalityLabel": "Central African"
+  },
+  {
+    "value": "DO",
+    "label": "جمهورية الدومينيكان",
+    "nationalityLabel": "Dominican"
+  },
+  {
+    "value": "CG",
+    "label": "جمهورية الكونغو",
+    "nationalityLabel": "Congolese"
+  },
+  {
+    "value": "AO",
+    "label": "جمهورية أنغولا",
+    "nationalityLabel": "Angolan"
+  },
+  {
+    "value": "ZA",
+    "label": "جنوب أفريقيا",
+    "nationalityLabel": "South African"
+  },
+  {
+    "value": "SS",
+    "label": "جنوب السودان",
+    "nationalityLabel": "South Sudanese"
+  },
+  {
+    "value": "GE",
+    "label": "جورجيا",
+    "nationalityLabel": "Georgian"
+  },
+  {
+    "value": "GS",
+    "label": "جورجيا الجنوبية",
+    "nationalityLabel": "South Georgian South Sandwich Islander"
+  },
+  {
+    "value": "DJ",
+    "label": "جيبوتي",
+    "nationalityLabel": "Djibouti"
+  },
+  {
+    "value": "JE",
+    "label": "جيرزي",
+    "nationalityLabel": "Channel Islander"
+  },
+  {
+    "value": "DM",
+    "label": "دومينيكا",
+    "nationalityLabel": "Dominican"
+  },
+  {
+    "value": "RW",
+    "label": "رواندا",
+    "nationalityLabel": "Rwandan"
+  },
+  {
+    "value": "RU",
+    "label": "روسيا",
+    "nationalityLabel": "Russian"
+  },
+  {
+    "value": "RO",
+    "label": "رومانيا",
+    "nationalityLabel": "Romanian"
+  },
+  {
+    "value": "ZM",
+    "label": "زامبيا",
+    "nationalityLabel": "Zambian"
+  },
+  {
+    "value": "ZW",
+    "label": "زيمبابوي",
+    "nationalityLabel": "Zimbabwean"
+  },
+  {
+    "value": "CI",
+    "label": "ساحل العاج",
+    "nationalityLabel": "Ivorian"
+  },
+  {
+    "value": "WS",
+    "label": "ساموا",
+    "nationalityLabel": "Samoan"
+  },
+  {
+    "value": "AS",
+    "label": "ساموا الأمريكية",
+    "nationalityLabel": "American Samoan"
+  },
+  {
+    "value": "BL",
+    "label": "سان بارتليمي",
+    "nationalityLabel": "Saint Barthélemy Islander"
+  },
+  {
+    "value": "PM",
+    "label": "سان بيير وميكلون",
+    "nationalityLabel": "Saint-Pierrais, Miquelonnais"
+  },
+  {
+    "value": "SM",
+    "label": "سان مارينو",
+    "nationalityLabel": "Sammarinese"
+  },
+  {
+    "value": "VC",
+    "label": "سانت فينسنت والغرينادين",
+    "nationalityLabel": "Saint Vincentian"
+  },
+  {
+    "value": "KN",
+    "label": "سانت كيتس ونيفيس",
+    "nationalityLabel": "Kittitian or Nevisian"
+  },
+  {
+    "value": "LC",
+    "label": "سانت لوسيا",
+    "nationalityLabel": "Saint Lucian"
+  },
+  {
+    "value": "MF",
+    "label": "سانت مارتن",
+    "nationalityLabel": "Saint Martin Islander"
+  },
+  {
+    "value": "SH",
+    "label": "سانت هيلينا وأسينشين وتريستان دا كونا",
+    "nationalityLabel": "Saint Helenian"
+  },
+  {
+    "value": "ST",
+    "label": "ساو تومي وبرينسيب",
+    "nationalityLabel": "Sao Tomean"
+  },
+  {
+    "value": "LK",
+    "label": "سريلانكا",
+    "nationalityLabel": "Sri Lankan"
+  },
+  {
+    "value": "SJ",
+    "label": "سفالبارد ويان ماين",
+    "nationalityLabel": "Norwegian"
+  },
+  {
+    "value": "SK",
+    "label": "سلوفاكيا",
+    "nationalityLabel": "Slovak"
+  },
+  {
+    "value": "SI",
+    "label": "سلوفينيا",
+    "nationalityLabel": "Slovene"
+  },
+  {
+    "value": "SG",
+    "label": "سنغافورة",
+    "nationalityLabel": "Singaporean"
+  },
+  {
+    "value": "SY",
+    "label": "سوريا",
+    "nationalityLabel": "Syrian"
+  },
+  {
+    "value": "SR",
+    "label": "سورينام",
+    "nationalityLabel": "Surinamer"
+  },
+  {
+    "value": "CH",
+    "label": "سويسرا",
+    "nationalityLabel": "Swiss"
+  },
+  {
+    "value": "SL",
+    "label": "سيراليون",
+    "nationalityLabel": "Sierra Leonean"
+  },
+  {
+    "value": "SC",
+    "label": "سيشل",
+    "nationalityLabel": "Seychellois"
+  },
+  {
+    "value": "SX",
+    "label": "سينت مارتن",
+    "nationalityLabel": "St. Maartener"
+  },
+  {
+    "value": "MK",
+    "label": "شمال مقدونيا",
+    "nationalityLabel": "Macedonian"
+  },
+  {
+    "value": "RS",
+    "label": "صيربيا",
+    "nationalityLabel": "Serbian"
+  },
+  {
+    "value": "TJ",
+    "label": "طاجيكستان",
+    "nationalityLabel": "Tadzhik"
+  },
+  {
+    "value": "OM",
+    "label": "عمان",
+    "nationalityLabel": "Omani"
+  },
+  {
+    "value": "GM",
+    "label": "غامبيا",
+    "nationalityLabel": "Gambian"
+  },
+  {
+    "value": "GH",
+    "label": "غانا",
+    "nationalityLabel": "Ghanaian"
+  },
+  {
+    "value": "GD",
+    "label": "غرينادا",
+    "nationalityLabel": "Grenadian"
+  },
+  {
+    "value": "GT",
+    "label": "غواتيمالا",
+    "nationalityLabel": "Guatemalan"
+  },
+  {
+    "value": "GP",
+    "label": "غوادلوب",
+    "nationalityLabel": "Guadeloupian"
+  },
+  {
+    "value": "GU",
+    "label": "غوام",
+    "nationalityLabel": "Guamanian"
+  },
+  {
+    "value": "GF",
+    "label": "غويانا",
+    "nationalityLabel": "Guianan"
+  },
+  {
+    "value": "GY",
+    "label": "غيانا",
+    "nationalityLabel": "Guyanese"
+  },
+  {
+    "value": "GG",
+    "label": "غيرنزي",
+    "nationalityLabel": "Channel Islander"
+  },
+  {
+    "value": "GN",
+    "label": "غينيا",
+    "nationalityLabel": "Guinean"
+  },
+  {
+    "value": "GQ",
+    "label": "غينيا الاستوائية",
+    "nationalityLabel": "Equatorial Guinean"
+  },
+  {
+    "value": "GW",
+    "label": "غينيا بيساو",
+    "nationalityLabel": "Guinea-Bissauan"
+  },
+  {
+    "value": "VU",
+    "label": "فانواتو",
+    "nationalityLabel": "Ni-Vanuatu"
+  },
+  {
+    "value": "FR",
+    "label": "فرنسا",
+    "nationalityLabel": "French"
+  },
+  {
+    "value": "PS",
+    "label": "فلسطين",
+    "nationalityLabel": "Palestinian"
+  },
+  {
+    "value": "VE",
+    "label": "فنزويلا",
+    "nationalityLabel": "Venezuelan"
+  },
+  {
+    "value": "FI",
+    "label": "فنلندا",
+    "nationalityLabel": "Finnish"
+  },
+  {
+    "value": "VN",
+    "label": "فيتنام",
+    "nationalityLabel": "Vietnamese"
+  },
+  {
+    "value": "FJ",
+    "label": "فيجي",
+    "nationalityLabel": "Fijian"
+  },
+  {
+    "value": "CY",
+    "label": "قبرص",
+    "nationalityLabel": "Cypriot"
+  },
+  {
+    "value": "QA",
+    "label": "قطر",
+    "nationalityLabel": "Qatari"
+  },
+  {
+    "value": "KG",
+    "label": "قيرغيزستان",
+    "nationalityLabel": "Kirghiz"
+  },
+  {
+    "value": "CV",
+    "label": "كابو فيردي",
+    "nationalityLabel": "Cape Verdian"
+  },
+  {
+    "value": "KZ",
+    "label": "كازاخستان",
+    "nationalityLabel": "Kazakhstani"
+  },
+  {
+    "value": "NC",
+    "label": "كاليدونيا الجديدة",
+    "nationalityLabel": "New Caledonian"
+  },
+  {
+    "value": "HR",
+    "label": "كرواتيا",
+    "nationalityLabel": "Croatian"
+  },
+  {
+    "value": "KH",
+    "label": "كمبوديا",
+    "nationalityLabel": "Cambodian"
+  },
+  {
+    "value": "CA",
+    "label": "كندا",
+    "nationalityLabel": "Canadian"
+  },
+  {
+    "value": "CU",
+    "label": "كوبا",
+    "nationalityLabel": "Cuban"
+  },
+  {
+    "value": "CW",
+    "label": "كوراساو",
+    "nationalityLabel": "Curaçaoan"
+  },
+  {
+    "value": "KR",
+    "label": "كوريا الجنوبية",
+    "nationalityLabel": "South Korean"
+  },
+  {
+    "value": "KP",
+    "label": "كوريا الشمالية",
+    "nationalityLabel": "North Korean"
+  },
+  {
+    "value": "CR",
+    "label": "كوستاريكا",
+    "nationalityLabel": "Costa Rican"
+  },
+  {
+    "value": "XK",
+    "label": "كوسوفو",
+    "nationalityLabel": "Kosovar"
+  },
+  {
+    "value": "CO",
+    "label": "كولومبيا",
+    "nationalityLabel": "Colombian"
+  },
+  {
+    "value": "KI",
+    "label": "كيريباتي",
+    "nationalityLabel": "I-Kiribati"
+  },
+  {
+    "value": "KE",
+    "label": "كينيا",
+    "nationalityLabel": "Kenyan"
+  },
+  {
+    "value": "RE",
+    "label": "لا ريونيون",
+    "nationalityLabel": "Réunionese"
+  },
+  {
+    "value": "LV",
+    "label": "لاتفيا",
+    "nationalityLabel": "Latvian"
+  },
+  {
+    "value": "LA",
+    "label": "لاوس",
+    "nationalityLabel": "Laotian"
+  },
+  {
+    "value": "LB",
+    "label": "لبنان",
+    "nationalityLabel": "Lebanese"
+  },
+  {
+    "value": "LU",
+    "label": "لوكسمبورغ",
+    "nationalityLabel": "Luxembourger"
+  },
+  {
+    "value": "LY",
+    "label": "ليبيا",
+    "nationalityLabel": "Libyan"
+  },
+  {
+    "value": "LR",
+    "label": "ليبيريا",
+    "nationalityLabel": "Liberian"
+  },
+  {
+    "value": "LT",
+    "label": "ليتوانيا",
+    "nationalityLabel": "Lithuanian"
+  },
+  {
+    "value": "LI",
+    "label": "ليختنشتاين",
+    "nationalityLabel": "Liechtensteiner"
+  },
+  {
+    "value": "LS",
+    "label": "ليسوتو",
+    "nationalityLabel": "Mosotho"
+  },
+  {
+    "value": "MQ",
+    "label": "مارتينيك",
+    "nationalityLabel": "Martinican"
+  },
+  {
+    "value": "MO",
+    "label": "ماكاو",
+    "nationalityLabel": "Macanese"
+  },
+  {
+    "value": "MW",
+    "label": "مالاوي",
+    "nationalityLabel": "Malawian"
+  },
+  {
+    "value": "MT",
+    "label": "مالطا",
+    "nationalityLabel": "Maltese"
+  },
+  {
+    "value": "ML",
+    "label": "مالي",
+    "nationalityLabel": "Malian"
+  },
+  {
+    "value": "MY",
+    "label": "ماليزيا",
+    "nationalityLabel": "Malaysian"
+  },
+  {
+    "value": "YT",
+    "label": "مايوت",
+    "nationalityLabel": "Mahoran"
+  },
+  {
+    "value": "MG",
+    "label": "مدغشقر",
+    "nationalityLabel": "Malagasy"
+  },
+  {
+    "value": "VA",
+    "label": "مدينة الفاتيكان",
+    "nationalityLabel": "Vatican"
+  },
+  {
+    "value": "EG",
+    "label": "مصر",
+    "nationalityLabel": "Egyptian"
+  },
+  {
+    "value": "MN",
+    "label": "منغوليا",
+    "nationalityLabel": "Mongolian"
+  },
+  {
+    "value": "MR",
+    "label": "موريتانيا",
+    "nationalityLabel": "Mauritanian"
+  },
+  {
+    "value": "MU",
+    "label": "موريشيوس",
+    "nationalityLabel": "Mauritian"
+  },
+  {
+    "value": "MZ",
+    "label": "موزمبيق",
+    "nationalityLabel": "Mozambican"
+  },
+  {
+    "value": "MD",
+    "label": "مولدوڤا",
+    "nationalityLabel": "Moldovan"
+  },
+  {
+    "value": "MC",
+    "label": "موناكو",
+    "nationalityLabel": "Monegasque"
+  },
+  {
+    "value": "MS",
+    "label": "مونتسرات",
+    "nationalityLabel": "Montserratian"
+  },
+  {
+    "value": "MM",
+    "label": "ميانمار",
+    "nationalityLabel": "Burmese"
+  },
+  {
+    "value": "FM",
+    "label": "ميكرونيسيا",
+    "nationalityLabel": "Micronesian"
+  },
+  {
+    "value": "NA",
+    "label": "ناميبيا",
+    "nationalityLabel": "Namibian"
+  },
+  {
+    "value": "NR",
+    "label": "ناورو",
+    "nationalityLabel": "Nauruan"
+  },
+  {
+    "value": "NP",
+    "label": "نيبال",
+    "nationalityLabel": "Nepalese"
+  },
+  {
+    "value": "NG",
+    "label": "نيجيريا",
+    "nationalityLabel": "Nigerian"
+  },
+  {
+    "value": "NI",
+    "label": "نيكاراغوا",
+    "nationalityLabel": "Nicaraguan"
+  },
+  {
+    "value": "NZ",
+    "label": "نيوزيلندا",
+    "nationalityLabel": "New Zealander"
+  },
+  {
+    "value": "NU",
+    "label": "نييوي",
+    "nationalityLabel": "Niuean"
+  },
+  {
+    "value": "HT",
+    "label": "هايتي",
+    "nationalityLabel": "Haitian"
+  },
+  {
+    "value": "HN",
+    "label": "هندوراس",
+    "nationalityLabel": "Honduran"
+  },
+  {
+    "value": "NL",
+    "label": "هولندا",
+    "nationalityLabel": "Dutch"
+  },
+  {
+    "value": "HK",
+    "label": "هونغ كونغ",
+    "nationalityLabel": "Hong Konger"
+  },
+  {
+    "value": "WF",
+    "label": "واليس وفوتونا",
+    "nationalityLabel": "Wallis and Futuna Islander"
+  }
+]

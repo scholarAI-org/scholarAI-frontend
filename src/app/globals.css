@@ -121,3 +121,44 @@
 body {
   font-family: var(--font-family-base);
 }
+
+/* Direction weights inherit from the nearest explicit UI direction. */
+[dir='ltr'] {
+  --ui-ltr: 1;
+  --ui-rtl: 0;
+}
+
+[dir='rtl'] {
+  --ui-ltr: 0;
+  --ui-rtl: 1;
+}
+
+/* Resolve padding on the shell before the input overrides its own direction.
+   Avoid :dir(): the CSS build lowers it to language-based selectors. */
+.input-icon-shell {
+  --icon-padding: 2.5rem;
+  --plain-padding: 1rem;
+  --input-padding-start: var(--icon-padding);
+  --input-padding-end: var(--plain-padding);
+  --input-padding-left: calc(
+    var(--ui-ltr, 1) * var(--input-padding-start) + var(--ui-rtl, 0) * var(--input-padding-end)
+  );
+  --input-padding-right: calc(
+    var(--ui-rtl, 0) * var(--input-padding-start) + var(--ui-ltr, 1) * var(--input-padding-end)
+  );
+}
+
+.input-icon-shell[data-icon-position='end'] {
+  --input-padding-start: var(--plain-padding);
+  --input-padding-end: var(--icon-padding);
+}
+
+.input-icon-shell > input {
+  padding-left: var(--input-padding-left);
+  padding-right: var(--input-padding-right);
+}
+
+.input-icon-shell-compact {
+  --icon-padding: 2.25rem;
+  --plain-padding: 0.75rem;
+}

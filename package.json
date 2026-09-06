@@ -11,7 +11,8 @@
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:profile": "node tests/profile-personal-information.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

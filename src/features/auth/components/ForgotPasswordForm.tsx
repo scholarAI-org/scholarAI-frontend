@@ -28,7 +28,7 @@ export const ForgotPasswordForm = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div>
-        <input type="email" placeholder={t('email')} {...register('email')} />
+        <input type="email" dir="ltr" placeholder={t('email')} {...register('email')} />
         {errors.email && <span>{errors.email.message}</span>}
       </div>
 

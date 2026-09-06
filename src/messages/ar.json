@@ -38,10 +38,22 @@
       "searchButton": "بحث"
     },
     "stats": {
-      "scholarships": { "value": "+4200", "label": "منحة متاحة" },
-      "students": { "value": "+1500", "label": "طالب مستفيد" },
-      "countries": { "value": "+50", "label": "دولة مختلفة" },
-      "satisfaction": { "value": "98%", "label": "رضا المستخدمين" }
+      "scholarships": {
+        "value": "+4200",
+        "label": "منحة متاحة"
+      },
+      "students": {
+        "value": "+1500",
+        "label": "طالب مستفيد"
+      },
+      "countries": {
+        "value": "+50",
+        "label": "دولة مختلفة"
+      },
+      "satisfaction": {
+        "value": "98%",
+        "label": "رضا المستخدمين"
+      }
     },
     "featured": {
       "badge": "المنح المميزة",
@@ -247,5 +259,337 @@
     "partnerUnrwa": "الأونروا",
     "partnerPlo": "منظمة التحرير",
     "supportedBy": "بدعم من"
+  },
+  "PersonalInformation": {
+    "title": "المعلومات الشخصية",
+    "completion": "اكتمال المعلومات الشخصية",
+    "save": "حفظ التغييرات",
+    "saving": "جاري الحفظ…",
+    "saved": "تم حفظ المعلومات الشخصية بنجاح.",
+    "loading": "جاري تحميل المعلومات الشخصية…",
+    "loadError": "تعذر تحميل المعلومات الشخصية. أعد المحاولة قبل تعديل البيانات.",
+    "refreshError": "تعذر تحديث المعلومات المعروضة. يمكنك إعادة المحاولة؛ تم الاحتفاظ بتعديلاتك.",
+    "saveError": "تعذر حفظ المعلومات الشخصية. يرجى المحاولة مرة أخرى.",
+    "authRequired": "يرجى تسجيل الدخول للوصول إلى معلوماتك الشخصية.",
+    "login": "تسجيل الدخول",
+    "retry": "إعادة المحاولة",
+    "countriesError": "تعذر تحميل قائمة الدول.",
+    "loadingCountries": "جاري تحميل الدول",
+    "loadingNationalities": "جاري تحميل الجنسيات",
+    "fields": {
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف",
+      "gender": "الجنس",
+      "birthDate": "تاريخ الميلاد",
+      "nationalityCode": "الجنسية",
+      "residenceCountryCode": "بلد الإقامة",
+      "nationalId": "رقم الهوية",
+      "passportNumber": "جواز سفر ساري",
+      "city": "المدينة",
+      "financialSituation": "الظروف المالية"
+    },
+    "placeholders": {
+      "firstName": "أدخل الاسم الأول",
+      "lastName": "أدخل اسم العائلة",
+      "email": "أدخل البريد الإلكتروني",
+      "phone": "أدخل رقم الهاتف",
+      "phoneLocal": "مثال: 0594189740",
+      "gender": "اختر الجنس",
+      "birthDate": "اختر تاريخ الميلاد",
+      "nationalityCode": "اختر الجنسية",
+      "residenceCountryCode": "اختر بلد الإقامة",
+      "nationalId": "أدخل رقم الهوية",
+      "passportNumber": "أدخل رقم جواز السفر",
+      "city": "أدخل المدينة",
+      "financialSituation": "اختر الظروف المالية (اختياري)"
+    },
+    "gender": {
+      "MALE": "ذكر",
+      "FEMALE": "أنثى"
+    },
+    "financial": {
+      "LIMITED": "محدود",
+      "MODERATE": "متوسط",
+      "STABLE": "مستقر",
+      "unset": "غير محدد"
+    },
+    "validation": {
+      "firstName": "الاسم الأول مطلوب ويجب أن يكون حرفين على الأقل",
+      "lastName": "اسم العائلة مطلوب ويجب أن يكون حرفين على الأقل",
+      "email": "أدخل بريدًا إلكترونيًا صحيحًا",
+      "phone": "أدخل رقمًا محليًا صحيحًا؛ يجب أن يصبح 8 إلى 15 رقمًا بعد إضافة مفتاح الدولة",
+      "gender": "اختر الجنس",
+      "birthDate": "تاريخ الميلاد مطلوب",
+      "minimumAge": "يجب أن يكون العمر 16 سنة على الأقل",
+      "nationality": "اختر الجنسية برمز دولة من حرفين",
+      "residence": "اختر بلد الإقامة برمز دولة من حرفين",
+      "nationalId": "رقم الهوية يجب أن يتكون من 9 أرقام",
+      "passport": "رقم جواز السفر يجب أن يتكون من 6 إلى 9 أحرف وأرقام"
+    },
+    "loadHttpError": "تعذر تحميل المعلومات الشخصية (HTTP {status}).",
+    "responseError": "تم استلام بيانات من الخادم، لكن تنسيقها غير متوافق مع المعلومات الشخصية.",
+    "networkError": "تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.",
+    "callingCodesError": "تعذر تحميل مفاتيح الاتصال الدولية.",
+    "firstTime": "أكمل معلوماتك الشخصية، ثم احفظها لإنشاء ملفك الشخصي."
+  },
+  "AcademicInformation": {
+    "title": "المعلومات الأكاديمية",
+    "completion": "نسبة الاكتمال",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "saved": "تم الحفظ بنجاح",
+    "fields": {
+      "currentLevel": "المستوى الأكاديمي الحالي",
+      "fieldOfStudy": "مجال الدراسة",
+      "institution": "المؤسسة التعليمية",
+      "graduationYear": "سنة التخرج المتوقعة",
+      "gpaValue": "المعدل التراكمي (GPA)",
+      "gpaSystem": "نظام المعدل",
+      "studyLanguage": "لغة الدراسة الحالية"
+    },
+    "placeholders": {
+      "currentLevel": "اختر المستوى الأكاديمي",
+      "fieldOfStudy": "اختر مجال الدراسة",
+      "institution": "أدخل اسم المؤسسة التعليمية",
+      "graduationYear": "حدد سنة التخرج",
+      "gpaValue": "أدخل المعدل",
+      "gpaSystem": "اختر نظام المعدل",
+      "studyLanguage": "اختر لغة الدراسة"
+    },
+    "levels": {
+      "highSchool": "الثانوية العامة",
+      "bachelor": "البكالوريوس",
+      "master": "الماجستير",
+      "phd": "الدكتوراة",
+      "TAWJIHI": "الثانوية العامة",
+      "BACHELOR": "البكالوريوس",
+      "MASTER": "الماجستير",
+      "PHD": "الدكتوراة"
+    },
+    "fieldsOfStudy": {
+      "engineering": "هندسة",
+      "medicine": "طب",
+      "science": "علوم",
+      "arts": "آداب",
+      "business": "أعمال",
+      "it": "تكنولوجيا المعلومات",
+      "SCIENTIFIC": "علوم",
+      "LITERARY": "آداب",
+      "SHARIA": "شرعي",
+      "INDUSTRIAL": "صناعي",
+      "ENTREPRENEURSHIP_BUSINESS": "ريادة وأعمال",
+      "AGRICULTURAL": "زراعي",
+      "HOME_ECONOMICS": "اقتصاد منزلي",
+      "ENGINEERING": "هندسة",
+      "COMPUTER_SCIENCE": "تكنولوجيا المعلومات",
+      "MEDICINE": "طب",
+      "BUSINESS": "أعمال",
+      "ARTS": "آداب",
+      "OTHER": "أخرى"
+    },
+    "gpaSystems": {
+      "outOf4": "من 4.0",
+      "outOf5": "من 5.0",
+      "outOf100": "من 100",
+      "SCALE_4": "من 4.0",
+      "SCALE_5": "من 5.0",
+      "SCALE_10": "من 10",
+      "SCALE_100": "من 100"
+    },
+    "languages": {
+      "arabic": "العربية",
+      "english": "الإنجليزية",
+      "french": "الفرنسية",
+      "ARABIC": "العربية",
+      "ENGLISH": "الإنجليزية",
+      "FRENCH": "الفرنسية"
+    },
+    "validation": {
+      "currentLevel": "يرجى اختيار المستوى الأكاديمي",
+      "fieldOfStudy": "يرجى اختيار مجال الدراسة",
+      "institution": "اسم المؤسسة التعليمية مطلوب",
+      "graduationYear": "سنة التخرج مطلوبة",
+      "gpaValue": "المعدل مطلوب",
+      "gpaSystem": "يرجى اختيار نظام المعدل",
+      "gpaInvalid": "المعدل غير صالح للنظام المحدد",
+      "studyLanguage": "يرجى اختيار لغة الدراسة"
+    },
+    "authRequired": "يجب تسجيل الدخول لحفظ التغييرات.",
+    "login": "تسجيل الدخول",
+    "saveError": "حدث خطأ أثناء الحفظ. حاول مرة أخرى."
+  },
+  "Documents": {
+    "title": "الوثائق الرسمية",
+    "completion": "اكتملت من الملف الشخصي",
+    "save": "متابعة",
+    "saving": "جاري الحفظ...",
+    "authRequired": "يجب تسجيل الدخول لحفظ التغييرات.",
+    "login": "تسجيل الدخول",
+    "saveError": "حدث خطأ أثناء الحفظ. حاول مرة أخرى.",
+    "saved": "تم الحفظ بنجاح!",
+    "uploadMissing": "أو صورة • لم يرفع بعد PDF",
+    "updateBtn": "تحديث",
+    "improveAIBtn": "تحسين AI",
+    "addAnotherBtn": "إضافة رسالة توصية أخرى",
+    "fileTooLarge": "حجم الملف كبير جداً (الحد الأقصى 10MB)",
+    "invalidFileType": "نوع الملف غير مدعوم",
+    "uploadError": "حدث خطأ أثناء الرفع",
+    "documentTypes": {
+      "cv": "السيرة الذاتية (CV)",
+      "motivation_letter": "خطاب الدوافع (Motivation Letter)",
+      "graduation_certificate": "شهادة البكالوريوس",
+      "transcript": "كشف العلامات الرسمي",
+      "english_test": "شهادة اللغة (IELTS / TOEFL)",
+      "recommendation_letters": "رسائل التوصية",
+      "passport": "جواز السفر"
+    },
+    "upload": "رفع ملف",
+    "uploading": "جاري الرفع...",
+    "download": "تنزيل",
+    "delete": "حذف"
+  },
+  "SkillsLanguages": {
+    "title": "المهارات واللغات",
+    "languages": "اللغات",
+    "skills": "المهارات",
+    "addLanguage": "+ إضافة لغة",
+    "addSkill": "+ إضافة مهارة",
+    "save": "متابعة",
+    "languagePlaceholder": "اختر اللغة",
+    "levelPlaceholder": "مستوى الإتقان",
+    "skillPlaceholder": "اكتب اسم المهارة ثم اضغط Enter",
+    "addBtn": "إضافة",
+    "cancelBtn": "إلغاء",
+    "authRequired": "يجب تسجيل الدخول لحفظ التغييرات.",
+    "login": "تسجيل الدخول",
+    "levels": {
+      "BEGINNER": {
+        "title": "مبتدئ (A1/A2)",
+        "subtitle": "Beginner"
+      },
+      "INTERMEDIATE": {
+        "title": "متوسط (B1/B2)",
+        "subtitle": "Intermediate"
+      },
+      "ADVANCED": {
+        "title": "متقدم (C1/C2)",
+        "subtitle": "Advanced"
+      },
+      "NATIVE": {
+        "title": "اللغة الأم",
+        "subtitle": "Native"
+      }
+    },
+    "modalTitle": "إضافة لغة جديدة",
+    "modalSubtitle": "اختر اللغة وحدد مستواك فيها",
+    "languageName": "اسم اللغة",
+    "languageLevel": "مستوى اللغة",
+    "searchPlaceholder": "ابحث عن لغة أو اكتب اسمها...",
+    "suggestedLanguages": {
+      "arabic": "العربية",
+      "english": "الإنجليزية",
+      "turkish": "التركية",
+      "french": "الفرنسية",
+      "german": "الألمانية",
+      "spanish": "الإسبانية",
+      "italian": "الإيطالية"
+    },
+    "addSkillModalTitle": "إضافة مهارة جديدة",
+    "addSkillModalSubtitle": "اختر من الاقتراحات أو أضف مهارة مخصصة",
+    "customSkillLabel": "اكتب مهارة مخصصة",
+    "customSkillPlaceholder": "مثال: Flutter، إدارة المشاريع، Figma...",
+    "categoryLabel": "أو اختر من الاقتراحات حسب الفئة",
+    "enterToAdd": "اضغط Enter لإضافتها إلى القائمة",
+    "categories": {
+      "technical": "تقنية",
+      "analytical": "تحليلية",
+      "communication": "تواصل",
+      "leadership": "قيادية",
+      "other": "أخرى"
+    },
+    "languageExistsError": "هذه اللغة مضافة مسبقاً",
+    "skillExistsError": "هذه المهارة مضافة مسبقاً",
+    "loadingLanguages": "جاري تحميل اللغات...",
+    "noResults": "لا توجد نتائج",
+    "searchLanguagePlaceholder": "ابحث عن لغة أو اكتب اسمها..."
+  },
+  "Experiences": {
+    "title": "الخبرات والأنشطة",
+    "subtitle": "حدث ملفك بخبراتك السابقة أو الحالية لزيادة فرصك.",
+    "emptyTitle": "إضافة خبرة جديدة",
+    "emptySubtitle": "عمل • بحث • تطوع • نشاط طلابي",
+    "addBtn": "إضافة خبرة",
+    "cancelBtn": "إلغاء",
+    "saveBtn": "حفظ ومتابعة",
+    "modalTitle": "إضافة خبرة جديدة",
+    "modalSubtitle": "عمل • بحث • تطوع • نشاط طلابي",
+    "editModalTitle": "تعديل الخبرة",
+    "fields": {
+      "type": "نوع الخبرة",
+      "title": "المسمى الوظيفي / عنوان الخبرة",
+      "titlePlaceholder": "مثال: مطور ويب، باحث مساعد، متطوع في...",
+      "organization": "الجهة / المؤسسة",
+      "organizationPlaceholder": "شركة التقنية، مركز الشباب، جامعة...",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ الانتهاء",
+      "isCurrent": "حتى الآن",
+      "description": "وصف مختصر",
+      "descriptionPlaceholder": "اذكر أبرز مهامك وإنجازاتك في هذه الخبرة...",
+      "optional": "(اختياري)"
+    },
+    "types": {
+      "WORK": "عمل",
+      "VOLUNTEER": "تطوع",
+      "RESEARCH": "بحث",
+      "STUDENT_ACTIVITY": "نشاط طلابي"
+    },
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "errors": {
+      "fetch": "حدث خطأ أثناء جلب الخبرات",
+      "save": "حدث خطأ أثناء حفظ الخبرة",
+      "invalidDates": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية"
+    }
+  },
+  "Preferences": {
+    "title": "التفضيلات الدراسية",
+    "studyLevelLabel": "المستوى الدراسي المرغوب",
+    "fundingTypeLabel": "نوع التمويل المرغوب",
+    "studyFieldsLabel": "مجال الدراسة المفضل",
+    "studyFieldsPlaceholder": "اختر مجال الدراسة المفضل",
+    "countriesLabel": "الدول المفضلة",
+    "countriesPlaceholder": "اختر الدول المفضلة",
+    "finish": "إنهاء",
+    "levels": {
+      "TAWJIHI": "توجيهي",
+      "BACHELOR": "بكالوريوس",
+      "MASTER": "ماجستير",
+      "PHD": "دكتوراه"
+    },
+    "fundingTypes": {
+      "FULL": "تمويل كامل",
+      "PARTIAL": "تمويل جزئي",
+      "SELF": "تمويل ذاتي"
+    },
+    "saveSuccess": "تم حفظ التفضيلات بنجاح",
+    "authRequired": "يرجى تسجيل الدخول للحفظ",
+    "login": "تسجيل الدخول",
+    "selectPlaceholder": "اختر",
+    "addBtn": "إضافة",
+    "cancelBtn": "إلغاء",
+    "modalTitleFields": "إضافة مجال دراسة",
+    "modalSubtitleFields": "أدخل مجال الدراسة الذي تفضله",
+    "modalTitleCountries": "إضافة دولة",
+    "modalSubtitleCountries": "ابحث عن الدولة التي تفضل الدراسة فيها",
+    "searchCountryPlaceholder": "ابحث عن دولة...",
+    "noResults": "لا توجد نتائج",
+    "loadingCountries": "جاري التحميل...",
+    "fieldExistsError": "هذا المجال مضاف مسبقاً",
+    "countryExistsError": "هذه الدولة مضافة مسبقاً",
+    "save": "إنهاء"
   }
 }
