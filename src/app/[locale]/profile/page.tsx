@@ -83,7 +83,9 @@ export default function ProfilePage() {
     value: profileQuery.data.profile_completion_percentage ?? 0,
   };
   const fieldOfStudy = academic?.field_of_study
-    ? academicT(`fieldsOfStudy.${academic.field_of_study}`)
+    ? academicT.has(`fieldsOfStudy.${academic.field_of_study}`)
+      ? academicT(`fieldsOfStudy.${academic.field_of_study}`)
+      : academic.field_of_study
     : undefined;
   const location = personal?.city;
   const profileUser: ProfileUser = {

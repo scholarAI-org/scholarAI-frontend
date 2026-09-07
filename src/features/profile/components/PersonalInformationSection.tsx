@@ -83,9 +83,9 @@ export function PersonalInformationSection({ onSavedNext }: Props) {
     .map((country) => ({ value: country.value, label: country.nationalityLabel }))
     .sort((a, b) => a.label.localeCompare(b.label, locale));
   const fieldDefinitions: Omit<ProfileFieldData, 'label'>[] = [
-    { id: 'firstName' },
-    { id: 'lastName' },
-    { id: 'email', inputType: 'email', dir: 'ltr' },
+    { id: 'firstName', required: true },
+    { id: 'lastName', required: true },
+    { id: 'email', inputType: 'email', dir: 'ltr', required: true },
     {
       id: 'phone',
       kind: 'phone',
@@ -93,13 +93,15 @@ export function PersonalInformationSection({ onSavedNext }: Props) {
       callingCodeOptions,
       disabled: callingCodesQuery.isPending || callingCodesQuery.isError,
       placeholder: t('placeholders.phoneLocal'),
+      optionalLabel: t('optional'),
     },
     {
       id: 'gender',
       kind: 'select',
       options: genderValues.map((value) => ({ value, label: t(`gender.${value}`) })),
+      required: true,
     },
-    { id: 'birthDate', kind: 'date' },
+    { id: 'birthDate', kind: 'date', required: true },
     {
       id: 'nationalityCode',
       kind: 'select',
@@ -109,6 +111,7 @@ export function PersonalInformationSection({ onSavedNext }: Props) {
       placeholder: countriesQuery.isPending
         ? t('loadingNationalities')
         : t('placeholders.nationalityCode'),
+      required: true,
     },
     {
       id: 'residenceCountryCode',
@@ -119,10 +122,11 @@ export function PersonalInformationSection({ onSavedNext }: Props) {
       placeholder: countriesQuery.isPending
         ? t('loadingCountries')
         : t('placeholders.residenceCountryCode'),
+      required: true,
     },
-    { id: 'nationalId', dir: 'ltr' },
-    { id: 'passportNumber', dir: 'ltr' },
-    { id: 'city' },
+    { id: 'nationalId', dir: 'ltr', optionalLabel: t('optional') },
+    { id: 'passportNumber', dir: 'ltr', optionalLabel: t('optional') },
+    { id: 'city', optionalLabel: t('optional') },
     {
       id: 'financialSituation',
       kind: 'select',
@@ -130,6 +134,7 @@ export function PersonalInformationSection({ onSavedNext }: Props) {
         { value: '', label: t('financial.unset') },
         ...financialStatusValues.map((value) => ({ value, label: t(`financial.${value}`) })),
       ],
+      required: true,
     },
   ];
   const fields = fieldDefinitions.map((field) => ({

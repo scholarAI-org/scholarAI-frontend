@@ -2,19 +2,22 @@ import {
   academicInformationApiSchema,
   type AcademicInformationApi,
 } from '../schemas/academic-information-api.schema';
-import {
-  createAcademicInformationSchema,
-  type AcademicInformationFormData,
-} from '../schemas/academic-information.schema';
+import { type AcademicInformationFormData } from '../schemas/academic-information.schema';
 
 export const emptyAcademicInformation: AcademicInformationFormData = {
   currentLevel: '',
   fieldOfStudy: '',
+  fieldOfStudyOpenAlexId: null,
   institution: '',
   graduationYear: '',
   gpaValue: '',
   gpaSystem: '',
   studyLanguage: '',
+  studyStatus: '',
+  targetFieldOfStudy: '',
+  targetFieldOfStudyOpenAlexId: null,
+  researchSpecialization: null,
+  researchSpecializationOpenAlexId: null,
 };
 
 export const academicInformationFieldMap: Record<
@@ -23,12 +26,18 @@ export const academicInformationFieldMap: Record<
 > = {
   academic_level: 'currentLevel',
   field_of_study: 'fieldOfStudy',
+  field_of_study_openalex_id: 'fieldOfStudyOpenAlexId',
   institution: 'institution',
   expected_graduation_year: 'graduationYear',
   gpa: 'gpaValue',
   'gpa.value': 'gpaValue',
   'gpa.scale': 'gpaSystem',
   current_study_language: 'studyLanguage',
+  study_status: 'studyStatus',
+  target_field_of_study: 'targetFieldOfStudy',
+  target_field_of_study_openalex_id: 'targetFieldOfStudyOpenAlexId',
+  research_specialization: 'researchSpecialization',
+  research_specialization_openalex_id: 'researchSpecializationOpenAlexId',
 };
 
 export function toAcademicInformationForm(
@@ -47,11 +56,17 @@ export function toAcademicInformationForm(
   return {
     currentLevel: data.academic_level ?? '',
     fieldOfStudy: data.field_of_study ?? '',
+    fieldOfStudyOpenAlexId: data.field_of_study_openalex_id ?? null,
     institution: data.institution ?? '',
     graduationYear: yearStr,
     gpaValue: gpaValueStr,
     gpaSystem: gpaSystemStr,
     studyLanguage: firstLanguage,
+    studyStatus: data.study_status ?? '',
+    targetFieldOfStudy: data.target_field_of_study ?? '',
+    targetFieldOfStudyOpenAlexId: data.target_field_of_study_openalex_id ?? null,
+    researchSpecialization: data.research_specialization ?? null,
+    researchSpecializationOpenAlexId: data.research_specialization_openalex_id ?? null,
   };
 }
 
@@ -82,22 +97,27 @@ export function toAcademicInformationPayload(
   return academicInformationApiSchema.parse({
     academic_level: data.currentLevel,
     field_of_study: data.fieldOfStudy,
-    institution: data.institution.trim(),
+    field_of_study_openalex_id: data.fieldOfStudyOpenAlexId,
+    institution: data.institution ? data.institution.trim() : null,
     expected_graduation_year: parsedYear,
     gpa: gpaObject,
-    // Provide array for language
     current_study_language: data.studyLanguage ? [data.studyLanguage] : [],
+    study_status: data.studyStatus || null,
+    target_field_of_study: data.targetFieldOfStudy,
+    target_field_of_study_openalex_id: data.targetFieldOfStudyOpenAlexId,
+    research_specialization: data.researchSpecialization,
+    research_specialization_openalex_id: data.researchSpecializationOpenAlexId,
   });
 }
 
 const requiredFields = [
   'currentLevel',
   'fieldOfStudy',
-  'institution',
   'graduationYear',
   'gpaValue',
   'gpaSystem',
-  'studyLanguage',
+  'studyStatus',
+  'targetFieldOfStudy',
 ] as const;
 
 export function getAcademicInformationCompletion(

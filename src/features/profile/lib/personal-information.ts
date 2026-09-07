@@ -86,6 +86,7 @@ const requiredFields = [
   'gender',
   'nationalityCode',
   'residenceCountryCode',
+  'financialSituation',
 ] as const;
 const completionSchema = createPersonalInformationSchema((key) => key);
 

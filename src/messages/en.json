@@ -277,8 +277,8 @@
     "loadingCountries": "Loading countries",
     "loadingNationalities": "Loading nationalities",
     "fields": {
-      "firstName": "First name",
-      "lastName": "Last name",
+      "firstName": "Full Arabic name (4 parts)",
+      "lastName": "Full English name (4 parts)",
       "email": "Email",
       "phone": "Phone number",
       "gender": "Gender",
@@ -291,8 +291,8 @@
       "financialSituation": "Financial status"
     },
     "placeholders": {
-      "firstName": "Enter your first name",
-      "lastName": "Enter your last name",
+      "firstName": "Example: أحمد محمد علي العمري",
+      "lastName": "Example: Ahmed Mohammed Ali Alomari",
       "email": "Enter your email",
       "phone": "Enter your phone number",
       "phoneLocal": "Example: 0594189740",
@@ -303,7 +303,7 @@
       "nationalId": "Enter your ID number",
       "passportNumber": "Enter your passport number",
       "city": "Enter your city",
-      "financialSituation": "Select financial status (optional)"
+      "financialSituation": "Select financial status"
     },
     "gender": {
       "MALE": "Male",
@@ -316,8 +316,10 @@
       "unset": "Not specified"
     },
     "validation": {
-      "firstName": "First name is required and must contain at least 2 characters",
-      "lastName": "Last name is required and must contain at least 2 characters",
+      "firstNameArabic": "Please enter your full name in Arabic letters",
+      "firstNameFourParts": "The Arabic name must consist of at least 4 parts separated by spaces",
+      "lastNameEnglish": "Please enter your full name in English letters",
+      "lastNameFourParts": "The English name must consist of at least 4 parts separated by spaces",
       "email": "Enter a valid email address",
       "phone": "Enter a valid local number; it must total 8 to 15 digits after adding the country code",
       "gender": "Select gender",
@@ -326,8 +328,10 @@
       "nationality": "Select a nationality with a two-letter country code",
       "residence": "Select a residence country with a two-letter country code",
       "nationalId": "ID number must contain 9 digits",
-      "passport": "Passport number must contain 6 to 9 letters and digits"
+      "passport": "Passport number must contain 6 to 9 letters and digits",
+      "financialSituation": "Select financial status"
     },
+    "optional": "(Optional)",
     "loadHttpError": "Unable to load personal information (HTTP {status}).",
     "responseError": "The server returned data in an unexpected personal information format.",
     "networkError": "Unable to reach the server. Check your connection and try again.",
@@ -336,6 +340,7 @@
   },
   "AcademicInformation": {
     "title": "Academic Information",
+    "optional": "(Optional)",
     "completion": "Completion",
     "save": "Save",
     "saving": "Saving...",
@@ -347,7 +352,10 @@
       "graduationYear": "Expected Graduation Year",
       "gpaValue": "GPA Value",
       "gpaSystem": "Grading System",
-      "studyLanguage": "Current Study Language"
+      "studyLanguage": "Current Study Language",
+      "studyStatus": "Study Status",
+      "targetFieldOfStudy": "Target Field of Study",
+      "researchSpecialization": "Research Specialization"
     },
     "placeholders": {
       "currentLevel": "Select academic level",
@@ -356,7 +364,10 @@
       "graduationYear": "Select graduation year",
       "gpaValue": "Enter GPA",
       "gpaSystem": "Select grading system",
-      "studyLanguage": "Select study language"
+      "studyLanguage": "Select study language",
+      "studyStatus": "Select study status",
+      "targetFieldOfStudy": "Search target field of study",
+      "researchSpecialization": "Search research specialization"
     },
     "levels": {
       "highSchool": "High School",
@@ -367,6 +378,10 @@
       "BACHELOR": "Bachelor's Degree",
       "MASTER": "Master's Degree",
       "PHD": "PhD"
+    },
+    "studyStatuses": {
+      "CURRENTLY_STUDYING": "Currently studying",
+      "GRADUATED": "Graduated"
     },
     "fieldsOfStudy": {
       "engineering": "Engineering",
@@ -410,9 +425,11 @@
       "currentLevel": "Please select your current academic level",
       "fieldOfStudy": "Please select your field of study",
       "institution": "Educational institution name is required",
-      "graduationYear": "Expected graduation year is required",
+      "graduationYear": "Graduation year is required",
       "gpaValue": "GPA value is required",
-      "gpaSystem": "Please select the grading system",
+      "studyStatus": "Study status is required",
+      "targetFieldOfStudy": "Target field of study is required",
+      "gpaSystem": "Please select a grading system",
       "gpaInvalid": "Invalid GPA value for the selected system",
       "studyLanguage": "Please select the study language"
     },

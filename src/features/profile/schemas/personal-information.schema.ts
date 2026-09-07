@@ -42,11 +42,17 @@ export function createPersonalInformationSchema(t: (key: string) => string) {
     firstName: z
       .string()
       .trim()
-      .min(2, { message: t('validation.firstName') }),
+      .regex(/^[\u0600-\u06FF\s]+$/, { message: t('validation.firstNameArabic') })
+      .refine((val) => val.trim().split(/\s+/).length >= 4, {
+        message: t('validation.firstNameFourParts'),
+      }),
     lastName: z
       .string()
       .trim()
-      .min(2, { message: t('validation.lastName') }),
+      .regex(/^[a-zA-Z\s]+$/, { message: t('validation.lastNameEnglish') })
+      .refine((val) => val.trim().split(/\s+/).length >= 4, {
+        message: t('validation.lastNameFourParts'),
+      }),
     email: z
       .string()
       .trim()
@@ -87,7 +93,11 @@ export function createPersonalInformationSchema(t: (key: string) => string) {
         message: t('validation.passport'),
       }),
     city: z.string().trim().optional().or(z.literal('')),
-    financialSituation: z.enum(['', ...financialStatusValues]),
+    financialSituation: z
+      .enum(['', ...financialStatusValues])
+      .refine((value): boolean => value !== '', {
+        message: t('validation.financialSituation'),
+      }),
   });
 }
 

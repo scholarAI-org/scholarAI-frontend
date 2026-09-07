@@ -36,6 +36,10 @@ export default function ProfileField({ field, value, errorMessage, onChange }: P
     <div>
       <Label htmlFor={inputId} className="text-start">
         {field.label}
+        {field.required && <span className="text-[var(--color-text-error)] ms-1">*</span>}
+        {!field.required && field.optionalLabel && (
+          <span className="text-[#979797] ms-1 text-sm font-normal">{field.optionalLabel}</span>
+        )}
       </Label>
 
       {field.kind === 'phone' ? (

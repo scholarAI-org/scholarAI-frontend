@@ -277,8 +277,8 @@
     "loadingCountries": "جاري تحميل الدول",
     "loadingNationalities": "جاري تحميل الجنسيات",
     "fields": {
-      "firstName": "الاسم الأول",
-      "lastName": "الاسم الأخير",
+      "firstName": "الاسم الرباعي باللغة العربية",
+      "lastName": "الاسم الرباعي باللغة الإنجليزية",
       "email": "البريد الإلكتروني",
       "phone": "رقم الهاتف",
       "gender": "الجنس",
@@ -291,8 +291,8 @@
       "financialSituation": "الظروف المالية"
     },
     "placeholders": {
-      "firstName": "أدخل الاسم الأول",
-      "lastName": "أدخل اسم العائلة",
+      "firstName": "مثال: أحمد محمد علي العمري",
+      "lastName": "مثال: Ahmed Mohammed Ali Alomari",
       "email": "أدخل البريد الإلكتروني",
       "phone": "أدخل رقم الهاتف",
       "phoneLocal": "مثال: 0594189740",
@@ -303,7 +303,7 @@
       "nationalId": "أدخل رقم الهوية",
       "passportNumber": "أدخل رقم جواز السفر",
       "city": "أدخل المدينة",
-      "financialSituation": "اختر الظروف المالية (اختياري)"
+      "financialSituation": "اختر الظروف المالية"
     },
     "gender": {
       "MALE": "ذكر",
@@ -316,8 +316,10 @@
       "unset": "غير محدد"
     },
     "validation": {
-      "firstName": "الاسم الأول مطلوب ويجب أن يكون حرفين على الأقل",
-      "lastName": "اسم العائلة مطلوب ويجب أن يكون حرفين على الأقل",
+      "firstNameArabic": "يرجى كتابة الاسم بالأحرف العربية",
+      "firstNameFourParts": "يجب أن يتكون الاسم من 4 مقاطع على الأقل",
+      "lastNameEnglish": "يرجى كتابة الاسم بالأحرف الإنجليزية",
+      "lastNameFourParts": "يجب أن يتكون الاسم من 4 مقاطع على الأقل",
       "email": "أدخل بريدًا إلكترونيًا صحيحًا",
       "phone": "أدخل رقمًا محليًا صحيحًا؛ يجب أن يصبح 8 إلى 15 رقمًا بعد إضافة مفتاح الدولة",
       "gender": "اختر الجنس",
@@ -326,8 +328,10 @@
       "nationality": "اختر الجنسية برمز دولة من حرفين",
       "residence": "اختر بلد الإقامة برمز دولة من حرفين",
       "nationalId": "رقم الهوية يجب أن يتكون من 9 أرقام",
-      "passport": "رقم جواز السفر يجب أن يتكون من 6 إلى 9 أحرف وأرقام"
+      "passport": "رقم جواز السفر يجب أن يتكون من 6 إلى 9 أحرف وأرقام",
+      "financialSituation": "اختر الظروف المالية"
     },
+    "optional": "(اختياري)",
     "loadHttpError": "تعذر تحميل المعلومات الشخصية (HTTP {status}).",
     "responseError": "تم استلام بيانات من الخادم، لكن تنسيقها غير متوافق مع المعلومات الشخصية.",
     "networkError": "تعذر الاتصال بالخادم. تحقق من الاتصال وحاول مرة أخرى.",
@@ -336,6 +340,7 @@
   },
   "AcademicInformation": {
     "title": "المعلومات الأكاديمية",
+    "optional": "(اختياري)",
     "completion": "نسبة الاكتمال",
     "save": "حفظ",
     "saving": "جاري الحفظ...",
@@ -347,7 +352,10 @@
       "graduationYear": "سنة التخرج المتوقعة",
       "gpaValue": "المعدل التراكمي (GPA)",
       "gpaSystem": "نظام المعدل",
-      "studyLanguage": "لغة الدراسة الحالية"
+      "studyLanguage": "لغة الدراسة الأساسية",
+      "studyStatus": "حالة الدراسة",
+      "targetFieldOfStudy": "مجال الدراسة المستهدف",
+      "researchSpecialization": "التخصص الدقيق"
     },
     "placeholders": {
       "currentLevel": "اختر المستوى الأكاديمي",
@@ -356,7 +364,10 @@
       "graduationYear": "حدد سنة التخرج",
       "gpaValue": "أدخل المعدل",
       "gpaSystem": "اختر نظام المعدل",
-      "studyLanguage": "اختر لغة الدراسة"
+      "studyLanguage": "اختر لغة الدراسة",
+      "studyStatus": "اختر حالة الدراسة",
+      "targetFieldOfStudy": "ابحث عن مجال الدراسة المستهدف",
+      "researchSpecialization": "ابحث عن التخصص الدقيق"
     },
     "levels": {
       "highSchool": "الثانوية العامة",
@@ -367,6 +378,10 @@
       "BACHELOR": "البكالوريوس",
       "MASTER": "الماجستير",
       "PHD": "الدكتوراة"
+    },
+    "studyStatuses": {
+      "CURRENTLY_STUDYING": "أدرس حالياً",
+      "GRADUATED": "تخرج"
     },
     "fieldsOfStudy": {
       "engineering": "هندسة",
@@ -411,7 +426,9 @@
       "fieldOfStudy": "يرجى اختيار مجال الدراسة",
       "institution": "اسم المؤسسة التعليمية مطلوب",
       "graduationYear": "سنة التخرج مطلوبة",
-      "gpaValue": "المعدل مطلوب",
+      "studyStatus": "حالة الدراسة مطلوبة",
+      "targetFieldOfStudy": "المجال المستهدف مطلوب",
+      "gpaValue": "المعدل التراكمي مطلوب",
       "gpaSystem": "يرجى اختيار نظام المعدل",
       "gpaInvalid": "المعدل غير صالح للنظام المحدد",
       "studyLanguage": "يرجى اختيار لغة الدراسة"

@@ -56,4 +56,6 @@ export interface ProfileFieldData {
   options?: ProfileSelectOption[];
   callingCodeOptions?: ProfileCallingCodeOption[];
   searchable?: boolean;
+  required?: boolean;
+  optionalLabel?: string;
 }
