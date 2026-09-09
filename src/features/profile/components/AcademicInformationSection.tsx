@@ -136,16 +136,6 @@ export function AcademicInformationSection({ onSavedNext }: Props) {
     }
 
     fields.push(
-      {
-        id: 'targetFieldOfStudyOpenAlexId',
-        kind: 'select',
-        searchable: true,
-        options: [
-          { value: '', label: t('placeholders.targetFieldOfStudy') },
-          ...(subfields || []).map((s) => ({ value: s.id, label: s.display_name })),
-        ],
-        required: true,
-      },
       { id: 'institution', optionalLabel: t('optional') },
       {
         id: 'graduationYear',
@@ -214,8 +204,6 @@ export function AcademicInformationSection({ onSavedNext }: Props) {
   );
 
   if (errors.fieldOfStudy) fieldErrors.fieldOfStudyOpenAlexId = errors.fieldOfStudy.message;
-  if (errors.targetFieldOfStudy)
-    fieldErrors.targetFieldOfStudyOpenAlexId = errors.targetFieldOfStudy.message;
 
   useEffect(() => {
     if (query.data) {
@@ -235,13 +223,6 @@ export function AcademicInformationSection({ onSavedNext }: Props) {
       setValue('fieldOfStudyOpenAlexId', value, { shouldDirty: true, shouldValidate: true });
       const found = subfields?.find((s) => s.id === value);
       setValue('fieldOfStudy', found ? found.display_name : '', {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    } else if (name === 'targetFieldOfStudyOpenAlexId') {
-      setValue('targetFieldOfStudyOpenAlexId', value, { shouldDirty: true, shouldValidate: true });
-      const found = subfields?.find((s) => s.id === value);
-      setValue('targetFieldOfStudy', found ? found.display_name : '', {
         shouldDirty: true,
         shouldValidate: true,
       });

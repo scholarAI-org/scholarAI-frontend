@@ -11,9 +11,11 @@ import { ApiError } from '@/lib/api-client';
 import { usePreferences } from '../hooks/usePreferences';
 import { useUpdatePreferences } from '../hooks/useUpdatePreferences';
 import { useCountries } from '../hooks/useCountries';
+import { useOpenAlexSubfields, useOpenAlexTopics } from '../hooks/useOpenAlex';
+import { getFieldOfStudyOptions } from '../lib/field-of-study';
 import { ProfileFormActions } from '@/components/profile/ProfileFormActions';
 import { ProfileSaveContinueButton } from '@/components/profile/ProfileSaveContinueButton';
-import { normalizePreferences } from '../schemas/preferences-api.schema';
+import { type PreferencesApi, normalizePreferences } from '../schemas/preferences-api.schema';
 
 type Props = {
   onSavedNext?: () => void;
@@ -69,15 +71,85 @@ export function PreferencesSection({ onSavedNext }: Props) {
     { value: 'PHD', label: t('levels.PHD') },
   ];
 
+  const academicT = useTranslations('AcademicInformation');
+  const { data: subfields } = useOpenAlexSubfields();
+  const { data: topics } = useOpenAlexTopics(
+    preferences.desired_degree_level === 'PHD' &&
+      preferences.target_field_of_study_openalex_id &&
+      preferences.target_field_of_study_openalex_id !== 'legacy'
+      ? preferences.target_field_of_study_openalex_id
+      : undefined
+  );
+
+  const targetFieldOptions = useMemo(() => {
+    return getFieldOfStudyOptions(preferences.desired_degree_level, subfields, academicT);
+  }, [preferences.desired_degree_level, subfields, academicT]);
+
   const fundingOptions = [
     { value: 'FULL', label: t('fundingTypes.FULL') },
     { value: 'PARTIAL', label: t('fundingTypes.PARTIAL') },
     { value: 'SELF', label: t('fundingTypes.SELF') },
   ];
 
-  // data is always defined (initialData), safe to spread directly
-  function handleUpdateDropdown(field: 'desired_degree_level' | 'funding_type', value: string) {
-    mutation.mutate({ ...preferences, [field]: value });
+  function handleDegreeLevelChange(newLevel: string) {
+    const validOptions = getFieldOfStudyOptions(newLevel, subfields, academicT);
+    const isFieldValid = validOptions.some(
+      (opt) =>
+        opt.value === preferences.target_field_of_study_openalex_id ||
+        opt.value === preferences.target_field_of_study
+    );
+
+    const updated: PreferencesApi = {
+      ...preferences,
+      desired_degree_level: (newLevel as PreferencesApi['desired_degree_level']) || null,
+    };
+
+    if (!isFieldValid) {
+      updated.target_field_of_study = null;
+      updated.target_field_of_study_openalex_id = null;
+    }
+
+    if (newLevel !== 'PHD') {
+      updated.research_specialization = null;
+      updated.research_specialization_openalex_id = null;
+    }
+
+    mutation.mutate(updated);
+  }
+
+  function handleTargetFieldChange(val: string) {
+    const selectedOpt = targetFieldOptions.find((opt) => opt.value === val);
+    const isPhd = preferences.desired_degree_level === 'PHD';
+
+    const updated: PreferencesApi = {
+      ...preferences,
+      target_field_of_study: selectedOpt?.isOpenAlex ? selectedOpt.label : val || null,
+      target_field_of_study_openalex_id: selectedOpt?.isOpenAlex ? val : null,
+    };
+
+    // If changing target field in PhD mode, clear research specialization if no longer valid
+    if (isPhd) {
+      updated.research_specialization = null;
+      updated.research_specialization_openalex_id = null;
+    }
+
+    mutation.mutate(updated);
+  }
+
+  function handleResearchSpecializationChange(val: string) {
+    const selectedTopic = (topics || []).find((topic) => topic.id === val);
+    mutation.mutate({
+      ...preferences,
+      research_specialization: selectedTopic ? selectedTopic.display_name : val || null,
+      research_specialization_openalex_id: val || null,
+    });
+  }
+
+  function handleUpdateDropdown(field: 'funding_type', value: string) {
+    mutation.mutate({
+      ...preferences,
+      [field]: (value as PreferencesApi['funding_type']) || null,
+    });
   }
 
   function handleAddField() {
@@ -188,7 +260,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
                 value={preferences.desired_degree_level ?? ''}
                 placeholder={t('selectPlaceholder')}
                 options={levelOptions}
-                onChange={(val) => handleUpdateDropdown('desired_degree_level', val)}
+                onChange={handleDegreeLevelChange}
                 disabled={authError || mutation.isPending}
               />
             </div>
@@ -205,6 +277,59 @@ export function PreferencesSection({ onSavedNext }: Props) {
                 disabled={authError || mutation.isPending}
               />
             </div>
+          </div>
+
+          {/* Target Field of Study */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-bold text-[#334155]">
+                {t('targetFieldLabel')}
+              </label>
+              <ProfileDropdown
+                id="target-field-of-study"
+                value={
+                  preferences.target_field_of_study_openalex_id ||
+                  preferences.target_field_of_study ||
+                  ''
+                }
+                placeholder={t('targetFieldPlaceholder')}
+                options={[
+                  { value: '', label: t('targetFieldPlaceholder') },
+                  ...targetFieldOptions.map((opt) => ({ value: opt.value, label: opt.label })),
+                ]}
+                onChange={handleTargetFieldChange}
+                disabled={authError || mutation.isPending || !preferences.desired_degree_level}
+                searchable={preferences.desired_degree_level !== 'TAWJIHI'}
+              />
+            </div>
+
+            {/* PhD Detailed Specialization */}
+            {preferences.desired_degree_level === 'PHD' && (
+              <div>
+                <label className="mb-2 block text-sm font-bold text-[#334155]">
+                  {t('detailedSpecializationLabel')}
+                </label>
+                <ProfileDropdown
+                  id="detailed-specialization"
+                  value={
+                    preferences.research_specialization_openalex_id ||
+                    preferences.research_specialization ||
+                    ''
+                  }
+                  placeholder={t('detailedSpecializationPlaceholder')}
+                  options={[
+                    { value: '', label: t('detailedSpecializationPlaceholder') },
+                    ...(topics || []).map((topic) => ({
+                      value: topic.id,
+                      label: topic.display_name,
+                    })),
+                  ]}
+                  onChange={handleResearchSpecializationChange}
+                  disabled={authError || mutation.isPending}
+                  searchable
+                />
+              </div>
+            )}
           </div>
 
           {/* Study Fields */}

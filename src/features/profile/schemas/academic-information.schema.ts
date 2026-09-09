@@ -36,16 +36,6 @@ export function createAcademicInformationSchema(t: (key: string) => string) {
       studyStatus: z.enum(['', ...studyStatusValues]).refine((value): boolean => value !== '', {
         message: t('validation.studyStatus'),
       }),
-      targetFieldOfStudy: z
-        .string()
-        .trim()
-        .min(1, { message: t('validation.targetFieldOfStudy') }),
-      targetFieldOfStudyOpenAlexId: z
-        .string()
-        .nullable()
-        .refine((val) => val !== null && val !== '', {
-          message: t('validation.targetFieldOfStudy'),
-        }),
       researchSpecialization: z.string().nullable(),
       researchSpecializationOpenAlexId: z.string().nullable(),
       gpaValue: z

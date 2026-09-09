@@ -14,8 +14,6 @@ export const emptyAcademicInformation: AcademicInformationFormData = {
   gpaSystem: '',
   studyLanguage: '',
   studyStatus: '',
-  targetFieldOfStudy: '',
-  targetFieldOfStudyOpenAlexId: null,
   researchSpecialization: null,
   researchSpecializationOpenAlexId: null,
 };
@@ -34,8 +32,6 @@ export const academicInformationFieldMap: Record<
   'gpa.scale': 'gpaSystem',
   current_study_language: 'studyLanguage',
   study_status: 'studyStatus',
-  target_field_of_study: 'targetFieldOfStudy',
-  target_field_of_study_openalex_id: 'targetFieldOfStudyOpenAlexId',
   research_specialization: 'researchSpecialization',
   research_specialization_openalex_id: 'researchSpecializationOpenAlexId',
 };
@@ -63,8 +59,6 @@ export function toAcademicInformationForm(
     gpaSystem: gpaSystemStr,
     studyLanguage: firstLanguage,
     studyStatus: data.study_status ?? '',
-    targetFieldOfStudy: data.target_field_of_study ?? '',
-    targetFieldOfStudyOpenAlexId: data.target_field_of_study_openalex_id ?? null,
     researchSpecialization: data.research_specialization ?? null,
     researchSpecializationOpenAlexId: data.research_specialization_openalex_id ?? null,
   };
@@ -103,8 +97,6 @@ export function toAcademicInformationPayload(
     gpa: gpaObject,
     current_study_language: data.studyLanguage ? [data.studyLanguage] : [],
     study_status: data.studyStatus || null,
-    target_field_of_study: data.targetFieldOfStudy,
-    target_field_of_study_openalex_id: data.targetFieldOfStudyOpenAlexId,
     research_specialization: data.researchSpecialization,
     research_specialization_openalex_id: data.researchSpecializationOpenAlexId,
   });
@@ -117,7 +109,6 @@ const requiredFields = [
   'gpaValue',
   'gpaSystem',
   'studyStatus',
-  'targetFieldOfStudy',
 ] as const;
 
 export function getAcademicInformationCompletion(

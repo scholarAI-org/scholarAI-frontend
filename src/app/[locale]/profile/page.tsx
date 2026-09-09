@@ -37,10 +37,10 @@ import {
 const steps: ProfileStep[] = [
   { id: 'personal', number: '01', label: 'المعلومات الشخصية', status: 'active' },
   { id: 'academic', number: '02', label: 'المعلومات الأكاديمية', status: 'upcoming' },
-  { id: 'documents', number: '03', label: 'الوثائق', status: 'upcoming' },
+  { id: 'preferences', number: '03', label: 'التفضيلات', status: 'upcoming' },
   { id: 'skills', number: '04', label: 'المهارات واللغات', status: 'upcoming' },
   { id: 'activities', number: '05', label: 'الخبرات و الأنشطة', status: 'upcoming' },
-  { id: 'preferences', number: '06', label: 'التفضيلات', status: 'upcoming' },
+  { id: 'documents', number: '06', label: 'الوثائق', status: 'upcoming' },
 ];
 
 const sidebarItems: SidebarMenuItem[] = [
@@ -167,14 +167,14 @@ export default function ProfilePage() {
         {activeStepId === 'academic' && (
           <AcademicInformationSection
             onSavedNext={() =>
-              void progress.notifySaved('academic').then(() => setActiveStepId('documents'))
+              void progress.notifySaved('academic').then(() => setActiveStepId('preferences'))
             }
           />
         )}
-        {activeStepId === 'documents' && (
-          <DocumentsSection
+        {activeStepId === 'preferences' && (
+          <PreferencesSection
             onSavedNext={() =>
-              void progress.notifySaved('documents').then(() => setActiveStepId('skills'))
+              void progress.notifySaved('preferences').then(() => setActiveStepId('skills'))
             }
           />
         )}
@@ -188,14 +188,14 @@ export default function ProfilePage() {
         {activeStepId === 'activities' && (
           <ExperiencesAndActivitiesSection
             onSavedNext={() =>
-              void progress.notifySaved('activities').then(() => setActiveStepId('preferences'))
+              void progress.notifySaved('activities').then(() => setActiveStepId('documents'))
             }
           />
         )}
-        {activeStepId === 'preferences' && (
-          <PreferencesSection
+        {activeStepId === 'documents' && (
+          <DocumentsSection
             onSavedNext={() => {
-              // Wait for completion, preferences is the last step
+              void progress.notifySaved('documents');
             }}
           />
         )}

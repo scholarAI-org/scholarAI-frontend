@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { academicLevelValues, gpaSystemValues } from './academic-information.schema';
 
 export const studyStatusValues = ['CURRENTLY_STUDYING', 'GRADUATED'] as const;
 
 export const academicInformationApiSchema = z.object({
-  academic_level: z.enum(academicLevelValues),
+  academic_level: z.enum(['TAWJIHI', 'BACHELOR', 'MASTER', 'PHD']),
   field_of_study: z.string(),
   field_of_study_openalex_id: z.string().nullable().optional(),
   institution: z.string().nullable().optional(),
@@ -12,7 +11,7 @@ export const academicInformationApiSchema = z.object({
   gpa: z
     .object({
       value: z.number(),
-      scale: z.enum(gpaSystemValues),
+      scale: z.enum(['SCALE_4', 'SCALE_5', 'SCALE_10', 'SCALE_100']),
     })
     .nullable()
     .optional(),
