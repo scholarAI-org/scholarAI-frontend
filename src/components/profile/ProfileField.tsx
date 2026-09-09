@@ -12,19 +12,11 @@ interface ProfileFieldProps {
   onChange: (value: string) => void;
 }
 
-const minimumProfileAge = 16;
-
 function getLatestAllowedBirthDate() {
   const today = new Date();
-  const latestBirthDate = new Date(
-    today.getFullYear() - minimumProfileAge,
-    today.getMonth(),
-    today.getDate()
-  );
-
-  const year = latestBirthDate.getFullYear();
-  const month = String(latestBirthDate.getMonth() + 1).padStart(2, '0');
-  const day = String(latestBirthDate.getDate()).padStart(2, '0');
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
 
   return `${year}-${month}-${day}`;
 }

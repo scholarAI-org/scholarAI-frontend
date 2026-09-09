@@ -6,9 +6,7 @@ import { genderValues, financialStatusValues } from './personal-information-api.
 const phoneRegex = /^\+[1-9]\d{7,14}$/;
 const nationalIdRegex = /^[0-9]{9}$/;
 const passportRegex = /^[A-Z0-9]{6,9}$/i;
-const minimumAge = 16;
-
-function isAtLeastAge(value: string, age: number) {
+function isValidBirthDate(value: string) {
   const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
 
   if (!dateParts) {
@@ -28,13 +26,9 @@ function isAtLeastAge(value: string, age: number) {
   }
 
   const today = new Date();
-  const ageDate = new Date(
-    birthDate.getFullYear() + age,
-    birthDate.getMonth(),
-    birthDate.getDate()
-  );
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  return ageDate <= today;
+  return birthDate <= todayDate;
 }
 
 export function createPersonalInformationSchema(t: (key: string) => string) {
@@ -71,7 +65,7 @@ export function createPersonalInformationSchema(t: (key: string) => string) {
     birthDate: z
       .string()
       .min(1, { message: t('validation.birthDate') })
-      .refine((value) => isAtLeastAge(value, minimumAge), {
+      .refine((value) => isValidBirthDate(value), {
         message: t('validation.minimumAge'),
       }),
     nationalityCode: z.string().regex(/^[A-Z]{2}$/, { message: t('validation.nationality') }),
