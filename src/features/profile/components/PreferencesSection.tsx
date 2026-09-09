@@ -1,7 +1,9 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { useState, useMemo, useSyncExternalStore } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 import { createPortal } from 'react-dom';
 import { Link } from '@/i18n/navigation';
 import { Button } from '@/components/ui/Button';
@@ -15,7 +17,9 @@ import { useOpenAlexSubfields, useOpenAlexTopics } from '../hooks/useOpenAlex';
 import { getFieldOfStudyOptions } from '../lib/field-of-study';
 import { ProfileFormActions } from '@/components/profile/ProfileFormActions';
 import { ProfileSaveContinueButton } from '@/components/profile/ProfileSaveContinueButton';
-import { type PreferencesApi, normalizePreferences } from '../schemas/preferences-api.schema';
+import { emptyPreferences } from '../schemas/preferences-api.schema';
+import { createPreferencesSchema, type PreferencesForm } from '../schemas/preferences.schema';
+import { toPreferencesForm, toPreferencesDto } from '../lib/preferences';
 
 type Props = {
   onSavedNext?: () => void;
@@ -31,19 +35,37 @@ export function PreferencesSection({ onSavedNext }: Props) {
     () => false
   );
 
-  // data is always defined because usePreferences uses initialData
-  const { data, error: queryError, isError } = usePreferences();
+  const query = usePreferences();
   const mutation = useUpdatePreferences();
-  const preferences = normalizePreferences(data);
 
-  const authError = [queryError, mutation.error].some(
+  const schema = useMemo(() => createPreferencesSchema(t), [t]);
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<PreferencesForm>({
+    resolver: zodResolver(schema),
+    defaultValues: emptyPreferences,
+  });
+
+  useEffect(() => {
+    if (query.data) {
+      reset(toPreferencesForm(query.data), { keepDirtyValues: true });
+    }
+  }, [query.data, reset]);
+
+  const desiredDegreeLevel = useWatch({ control, name: 'desired_degree_level' });
+  const targetFieldOfStudy = useWatch({ control, name: 'target_field_of_study' });
+  const targetFieldOpenAlexId = useWatch({ control, name: 'target_field_of_study_openalex_id' });
+  const detailedSpecialization = useWatch({ control, name: 'detailed_specialization' });
+  const preferredCountries = useWatch({ control, name: 'preferred_countries' }) ?? [];
+
+  const authError = [query.error, mutation.error].some(
     (error) => error instanceof ApiError && (error.status === 401 || error.status === 403)
   );
-
-  // Local state for Add Field Modal
-  const [showAddField, setShowAddField] = useState(false);
-  const [newFieldName, setNewFieldName] = useState('');
-  const [fieldError, setFieldError] = useState<string | null>(null);
 
   // Local state for Add Country Modal
   const [showAddCountry, setShowAddCountry] = useState(false);
@@ -65,25 +87,40 @@ export function PreferencesSection({ onSavedNext }: Props) {
   const normalizeString = (val: string) => val.trim().toLowerCase().replace(/\s+/g, ' ');
 
   const levelOptions = [
-    { value: 'TAWJIHI', label: t('levels.TAWJIHI') },
     { value: 'BACHELOR', label: t('levels.BACHELOR') },
     { value: 'MASTER', label: t('levels.MASTER') },
     { value: 'PHD', label: t('levels.PHD') },
+    { value: 'DIPLOMA', label: t('levels.DIPLOMA') },
+    { value: 'OTHER', label: t('levels.OTHER') },
   ];
 
-  const academicT = useTranslations('AcademicInformation');
-  const { data: subfields } = useOpenAlexSubfields();
+  const subfieldsQuery = useOpenAlexSubfields();
+  const subfields = subfieldsQuery.data;
   const { data: topics } = useOpenAlexTopics(
-    preferences.desired_degree_level === 'PHD' &&
-      preferences.target_field_of_study_openalex_id &&
-      preferences.target_field_of_study_openalex_id !== 'legacy'
-      ? preferences.target_field_of_study_openalex_id
+    desiredDegreeLevel === 'PHD' && targetFieldOpenAlexId && targetFieldOpenAlexId !== 'legacy'
+      ? targetFieldOpenAlexId
       : undefined
   );
 
   const targetFieldOptions = useMemo(() => {
-    return getFieldOfStudyOptions(preferences.desired_degree_level, subfields, academicT);
-  }, [preferences.desired_degree_level, subfields, academicT]);
+    return getFieldOfStudyOptions(desiredDegreeLevel, subfields);
+  }, [desiredDegreeLevel, subfields]);
+
+  const detailedSpecializationOptions = useMemo(() => {
+    const baseOptions = (topics || []).map((topic) => ({
+      value: topic.display_name,
+      label: topic.display_name,
+    }));
+
+    if (
+      detailedSpecialization &&
+      !baseOptions.some((opt) => opt.value === detailedSpecialization)
+    ) {
+      return [{ value: detailedSpecialization, label: detailedSpecialization }, ...baseOptions];
+    }
+
+    return baseOptions;
+  }, [topics, detailedSpecialization]);
 
   const fundingOptions = [
     { value: 'FULL', label: t('fundingTypes.FULL') },
@@ -92,138 +129,115 @@ export function PreferencesSection({ onSavedNext }: Props) {
   ];
 
   function handleDegreeLevelChange(newLevel: string) {
-    const validOptions = getFieldOfStudyOptions(newLevel, subfields, academicT);
+    const validOptions = getFieldOfStudyOptions(newLevel, subfields);
     const isFieldValid = validOptions.some(
-      (opt) =>
-        opt.value === preferences.target_field_of_study_openalex_id ||
-        opt.value === preferences.target_field_of_study
+      (opt) => opt.value === targetFieldOpenAlexId || opt.value === targetFieldOfStudy
     );
 
-    const updated: PreferencesApi = {
-      ...preferences,
-      desired_degree_level: (newLevel as PreferencesApi['desired_degree_level']) || null,
-    };
+    const level = (newLevel as PreferencesForm['desired_degree_level']) || undefined;
+    setValue('desired_degree_level', level, { shouldValidate: true, shouldDirty: true });
 
-    if (!isFieldValid) {
-      updated.target_field_of_study = null;
-      updated.target_field_of_study_openalex_id = null;
+    // Clear target field if subfields have loaded and selection is invalid for new level
+    if (subfieldsQuery.isSuccess && !isFieldValid) {
+      setValue('target_field_of_study', undefined, { shouldValidate: true, shouldDirty: true });
+      setValue('target_field_of_study_openalex_id', undefined, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
 
+    // Switching away from PhD clears PhD-only detailed_specialization
     if (newLevel !== 'PHD') {
-      updated.research_specialization = null;
-      updated.research_specialization_openalex_id = null;
+      setValue('detailed_specialization', undefined, { shouldValidate: true, shouldDirty: true });
     }
-
-    mutation.mutate(updated);
   }
 
   function handleTargetFieldChange(val: string) {
     const selectedOpt = targetFieldOptions.find((opt) => opt.value === val);
-    const isPhd = preferences.desired_degree_level === 'PHD';
 
-    const updated: PreferencesApi = {
-      ...preferences,
-      target_field_of_study: selectedOpt?.isOpenAlex ? selectedOpt.label : val || null,
-      target_field_of_study_openalex_id: selectedOpt?.isOpenAlex ? val : null,
-    };
+    setValue(
+      'target_field_of_study',
+      selectedOpt?.isOpenAlex ? selectedOpt.label : val || undefined,
+      { shouldValidate: true, shouldDirty: true }
+    );
+    setValue('target_field_of_study_openalex_id', selectedOpt?.isOpenAlex ? val : undefined, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
 
-    // If changing target field in PhD mode, clear research specialization if no longer valid
-    if (isPhd) {
-      updated.research_specialization = null;
-      updated.research_specialization_openalex_id = null;
+    if (desiredDegreeLevel === 'PHD') {
+      setValue('detailed_specialization', undefined, { shouldValidate: true, shouldDirty: true });
     }
-
-    mutation.mutate(updated);
   }
 
-  function handleResearchSpecializationChange(val: string) {
-    const selectedTopic = (topics || []).find((topic) => topic.id === val);
-    mutation.mutate({
-      ...preferences,
-      research_specialization: selectedTopic ? selectedTopic.display_name : val || null,
-      research_specialization_openalex_id: val || null,
-    });
-  }
+  const getCountryLabel = (code: string) => {
+    const found = countriesData.find((c) => c.value.toUpperCase() === code.toUpperCase());
+    return found ? found.label : code;
+  };
 
-  function handleUpdateDropdown(field: 'funding_type', value: string) {
-    mutation.mutate({
-      ...preferences,
-      [field]: (value as PreferencesApi['funding_type']) || null,
-    });
-  }
-
-  function handleAddField() {
-    const trimmed = newFieldName.trim();
-    if (!trimmed) return;
-    const normalized = normalizeString(trimmed);
-    const isDuplicate = preferences.preferred_fields_of_study.some(
-      (f) => normalizeString(f) === normalized
+  function handleAddCountry(inputCodeOrName: string) {
+    const trimmed = inputCodeOrName.trim();
+    const matched = countriesData.find(
+      (c) =>
+        c.value.toUpperCase() === trimmed.toUpperCase() ||
+        normalizeString(c.label) === normalizeString(trimmed)
     );
 
-    if (isDuplicate) {
-      setFieldError(t('fieldExistsError'));
+    const codeToAdd = matched
+      ? matched.value.toUpperCase()
+      : /^[A-Za-z]{2}$/.test(trimmed)
+        ? trimmed.toUpperCase()
+        : null;
+
+    if (!codeToAdd) {
+      setCountryError(t('invalidCountryError') || 'يرجى اختيار دولة من القائمة');
       return;
     }
 
-    setFieldError(null);
-    mutation.mutate(
-      {
-        ...preferences,
-        preferred_fields_of_study: [...preferences.preferred_fields_of_study, trimmed],
-      },
-      {
-        onSuccess: () => {
-          setNewFieldName('');
-          setShowAddField(false);
-        },
-      }
-    );
-  }
-
-  function handleRemoveField(fieldToRemove: string) {
-    mutation.mutate({
-      ...preferences,
-      preferred_fields_of_study: preferences.preferred_fields_of_study.filter(
-        (f) => f !== fieldToRemove
-      ),
-    });
-  }
-
-  function handleAddCountry(countryName: string) {
-    const normalized = normalizeString(countryName);
-    const isDuplicate = preferences.preferred_countries.some(
-      (c) => normalizeString(c) === normalized
-    );
-
-    if (isDuplicate) {
+    if (preferredCountries.some((c) => c.toUpperCase() === codeToAdd)) {
       setCountryError(t('countryExistsError'));
       return;
     }
 
     setCountryError(null);
-    mutation.mutate(
-      {
-        ...preferences,
-        preferred_countries: [...preferences.preferred_countries, countryName],
-      },
-      {
-        onSuccess: () => {
-          setNewCountrySearch('');
-          setShowAddCountry(false);
-        },
-      }
-    );
+    setValue('preferred_countries', [...preferredCountries, codeToAdd], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setNewCountrySearch('');
+    setShowAddCountry(false);
   }
 
   function handleRemoveCountry(countryToRemove: string) {
-    mutation.mutate({
-      ...preferences,
-      preferred_countries: preferences.preferred_countries.filter((c) => c !== countryToRemove),
-    });
+    setValue(
+      'preferred_countries',
+      preferredCountries.filter((c) => c !== countryToRemove),
+      { shouldValidate: true, shouldDirty: true }
+    );
   }
 
+  const onSubmit = (formData: PreferencesForm) => {
+    const payload = toPreferencesDto(formData);
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        if (typeof onSavedNext === 'function') onSavedNext();
+      },
+    });
+  };
+
+  const getMutationErrorMessage = (error: unknown): string => {
+    if (!(error instanceof ApiError)) return 'Failed to save preferences. Please try again.';
+    const msg = error.message.toLowerCase();
+    if (msg.includes('detailed_specialization') || msg.includes('phd')) {
+      return t('detailedSpecializationRequired');
+    }
+    return error.message;
+  };
+
+  const isBusy = mutation.isPending || isSubmitting;
+
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="rounded-2xl border border-[var(--color-border)] bg-white p-6 shadow-sm relative">
         <h2 className="mb-4 text-xl font-bold text-[#1e293b]">{t('title')}</h2>
 
@@ -238,14 +252,24 @@ export function PreferencesSection({ onSavedNext }: Props) {
             </Link>
           </p>
         ) : (
-          isError && (
+          query.isError && (
             <div
               role="alert"
               className="rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 mb-4 text-sm text-[var(--color-text-error)]"
             >
-              {queryError instanceof ApiError ? queryError.message : 'Error fetching data'}
+              {query.error instanceof ApiError ? query.error.message : 'Error fetching data'}
             </div>
           )
+        )}
+
+        {/* Mutation error: mapped localized user message for backend errors */}
+        {!authError && mutation.isError && (
+          <div
+            role="alert"
+            className="rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 mb-4 text-sm text-[var(--color-text-error)]"
+          >
+            {getMutationErrorMessage(mutation.error)}
+          </div>
         )}
 
         <div className="flex flex-col gap-8">
@@ -255,26 +279,43 @@ export function PreferencesSection({ onSavedNext }: Props) {
               <label className="mb-2 block text-sm font-bold text-[#334155]">
                 {t('studyLevelLabel')}
               </label>
-              <ProfileDropdown
-                id="study-level"
-                value={preferences.desired_degree_level ?? ''}
-                placeholder={t('selectPlaceholder')}
-                options={levelOptions}
-                onChange={handleDegreeLevelChange}
-                disabled={authError || mutation.isPending}
+              <Controller
+                name="desired_degree_level"
+                control={control}
+                render={({ field }) => (
+                  <ProfileDropdown
+                    id="study-level"
+                    value={field.value ?? ''}
+                    placeholder={t('selectPlaceholder')}
+                    options={levelOptions}
+                    onChange={(val) => {
+                      field.onChange(val);
+                      handleDegreeLevelChange(val);
+                    }}
+                    errorMessage={errors.desired_degree_level?.message}
+                    disabled={authError || isBusy}
+                  />
+                )}
               />
             </div>
             <div>
               <label className="mb-2 block text-sm font-bold text-[#334155]">
                 {t('fundingTypeLabel')}
               </label>
-              <ProfileDropdown
-                id="funding-type"
-                value={preferences.funding_type ?? ''}
-                placeholder={t('selectPlaceholder')}
-                options={fundingOptions}
-                onChange={(val) => handleUpdateDropdown('funding_type', val)}
-                disabled={authError || mutation.isPending}
+              <Controller
+                name="funding_type"
+                control={control}
+                render={({ field }) => (
+                  <ProfileDropdown
+                    id="funding-type"
+                    value={field.value ?? ''}
+                    placeholder={t('selectPlaceholder')}
+                    options={fundingOptions}
+                    onChange={field.onChange}
+                    errorMessage={errors.funding_type?.message}
+                    disabled={authError || isBusy}
+                  />
+                )}
               />
             </div>
           </div>
@@ -285,98 +326,58 @@ export function PreferencesSection({ onSavedNext }: Props) {
               <label className="mb-2 block text-sm font-bold text-[#334155]">
                 {t('targetFieldLabel')}
               </label>
-              <ProfileDropdown
-                id="target-field-of-study"
-                value={
-                  preferences.target_field_of_study_openalex_id ||
-                  preferences.target_field_of_study ||
-                  ''
-                }
-                placeholder={t('targetFieldPlaceholder')}
-                options={[
-                  { value: '', label: t('targetFieldPlaceholder') },
-                  ...targetFieldOptions.map((opt) => ({ value: opt.value, label: opt.label })),
-                ]}
-                onChange={handleTargetFieldChange}
-                disabled={authError || mutation.isPending || !preferences.desired_degree_level}
-                searchable={preferences.desired_degree_level !== 'TAWJIHI'}
+              <Controller
+                name="target_field_of_study_openalex_id"
+                control={control}
+                render={({ field }) => (
+                  <ProfileDropdown
+                    id="target-field-of-study"
+                    value={field.value || targetFieldOfStudy || ''}
+                    placeholder={t('targetFieldPlaceholder')}
+                    options={[
+                      { value: '', label: t('targetFieldPlaceholder') },
+                      ...targetFieldOptions.map((opt) => ({ value: opt.value, label: opt.label })),
+                    ]}
+                    onChange={(val) => {
+                      handleTargetFieldChange(val);
+                    }}
+                    errorMessage={errors.target_field_of_study?.message}
+                    disabled={authError || isBusy || !desiredDegreeLevel}
+                    searchable
+                  />
+                )}
               />
             </div>
 
             {/* PhD Detailed Specialization */}
-            {preferences.desired_degree_level === 'PHD' && (
+            {desiredDegreeLevel === 'PHD' && (
               <div>
                 <label className="mb-2 block text-sm font-bold text-[#334155]">
                   {t('detailedSpecializationLabel')}
                 </label>
-                <ProfileDropdown
-                  id="detailed-specialization"
-                  value={
-                    preferences.research_specialization_openalex_id ||
-                    preferences.research_specialization ||
-                    ''
-                  }
-                  placeholder={t('detailedSpecializationPlaceholder')}
-                  options={[
-                    { value: '', label: t('detailedSpecializationPlaceholder') },
-                    ...(topics || []).map((topic) => ({
-                      value: topic.id,
-                      label: topic.display_name,
-                    })),
-                  ]}
-                  onChange={handleResearchSpecializationChange}
-                  disabled={authError || mutation.isPending}
-                  searchable
+                <Controller
+                  name="detailed_specialization"
+                  control={control}
+                  render={({ field }) => (
+                    <ProfileDropdown
+                      id="detailed-specialization"
+                      value={field.value ?? ''}
+                      placeholder={t('detailedSpecializationPlaceholder')}
+                      options={[
+                        { value: '', label: t('detailedSpecializationPlaceholder') },
+                        ...detailedSpecializationOptions,
+                      ]}
+                      onChange={(val) => {
+                        field.onChange(val || undefined);
+                      }}
+                      errorMessage={errors.detailed_specialization?.message}
+                      disabled={authError || isBusy}
+                      searchable
+                    />
+                  )}
                 />
               </div>
             )}
-          </div>
-
-          {/* Study Fields */}
-          <div>
-            <label className="mb-2 block text-sm font-bold text-[#334155]">
-              {t('studyFieldsLabel')}
-            </label>
-            <div
-              className="flex min-h-[52px] w-full flex-wrap items-center gap-2 rounded-[26px] border border-[#e2e8f0] bg-[#f8fafc] px-4 py-2 cursor-text"
-              onClick={() => setShowAddField(true)}
-            >
-              {preferences.preferred_fields_of_study.map((field, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-[#334155] hover:border-slate-300 transition-colors shadow-sm"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <span>{field}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveField(field)}
-                    disabled={authError || mutation.isPending}
-                    className="text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-50"
-                    title="Remove"
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-              ))}
-              {preferences.preferred_fields_of_study.length === 0 && (
-                <span className="text-sm text-[#979797] pointer-events-none">
-                  {t('studyFieldsPlaceholder')}
-                </span>
-              )}
-            </div>
           </div>
 
           {/* Preferred Countries */}
@@ -388,17 +389,17 @@ export function PreferencesSection({ onSavedNext }: Props) {
               className="flex min-h-[52px] w-full flex-wrap items-center gap-2 rounded-[26px] border border-[#e2e8f0] bg-[#f8fafc] px-4 py-2 cursor-text"
               onClick={() => setShowAddCountry(true)}
             >
-              {preferences.preferred_countries.map((country, idx) => (
+              {preferredCountries.map((country, idx) => (
                 <div
                   key={idx}
                   className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-[#334155] hover:border-slate-300 transition-colors shadow-sm"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <span>{country}</span>
+                  <span>{getCountryLabel(country)}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveCountry(country)}
-                    disabled={authError || mutation.isPending}
+                    disabled={authError || isBusy}
                     className="text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-50"
                     title="Remove"
                   >
@@ -418,7 +419,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
                   </button>
                 </div>
               ))}
-              {preferences.preferred_countries.length === 0 && (
+              {preferredCountries.length === 0 && (
                 <span className="text-sm text-[#979797] pointer-events-none">
                   {t('countriesPlaceholder')}
                 </span>
@@ -429,107 +430,13 @@ export function PreferencesSection({ onSavedNext }: Props) {
           {/* Bottom Actions */}
           <ProfileFormActions>
             <ProfileSaveContinueButton
-              onClick={() => {
-                mutation.mutate(preferences, {
-                  onSuccess: () => {
-                    if (typeof onSavedNext === 'function') onSavedNext();
-                  },
-                });
-              }}
-              disabled={authError || mutation.isPending}
-              isLoading={mutation.isPending}
+              type="submit"
+              disabled={authError || isBusy}
+              isLoading={isBusy}
             />
           </ProfileFormActions>
         </div>
       </div>
-
-      {/* Add Field Modal */}
-      {showAddField &&
-        mounted &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a2243]/30 backdrop-blur-[2px] p-4"
-            onClick={() => {
-              setShowAddField(false);
-              setFieldError(null);
-            }}
-          >
-            <div
-              className="flex w-full max-w-[500px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex shrink-0 items-start justify-between border-b border-slate-100 p-6">
-                <div>
-                  <h3 className="text-[18px] font-bold text-[#1e293b]">{t('modalTitleFields')}</h3>
-                  <p className="mt-0.5 text-[13px] text-[#64748b]">{t('modalSubtitleFields')}</p>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowAddField(false);
-                    setFieldError(null);
-                  }}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#f1f5f9] text-[#94a3b8] hover:bg-[#e2e8f0]"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-              <div className="p-6">
-                {fieldError && (
-                  <div className="mb-3 rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 text-sm text-[var(--color-text-error)]">
-                    {fieldError}
-                  </div>
-                )}
-                <Input
-                  placeholder={t('studyFieldsPlaceholder')}
-                  value={newFieldName}
-                  onChange={(e) => {
-                    setNewFieldName(e.target.value);
-                    setFieldError(null);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddField();
-                    }
-                  }}
-                  autoFocus
-                />
-              </div>
-              <div className="flex shrink-0 gap-4 border-t border-slate-100 p-6">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowAddField(false);
-                    setFieldError(null);
-                  }}
-                  className="flex-1 rounded-full"
-                >
-                  {t('cancelBtn')}
-                </Button>
-                <Button
-                  onClick={handleAddField}
-                  disabled={!newFieldName.trim() || mutation.isPending}
-                  className="flex-1 rounded-full bg-[#1e3a8a] text-white"
-                >
-                  {t('addBtn')}
-                </Button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
 
       {/* Add Country Modal */}
       {showAddCountry &&
@@ -555,6 +462,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
                   <p className="mt-0.5 text-[13px] text-[#64748b]">{t('modalSubtitleCountries')}</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowAddCountry(false);
                     setCountryError(null);
@@ -616,7 +524,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
                           <button
                             type="button"
                             className="w-full px-4 py-2 text-start text-sm text-slate-700 transition-colors hover:bg-[#1e3a8a]/5 hover:text-[#1e3a8a]"
-                            onClick={() => handleAddCountry(country.label)}
+                            onClick={() => handleAddCountry(country.value)}
                           >
                             {country.label}
                           </button>
@@ -629,6 +537,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
                       {newCountrySearch.trim() && (
                         <div className="mt-2">
                           <Button
+                            type="button"
                             size="sm"
                             onClick={() => handleAddCountry(newCountrySearch.trim())}
                             className="rounded-full bg-[#1e3a8a] text-white"
@@ -643,6 +552,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
               </div>
               <div className="flex shrink-0 border-t border-slate-100 p-6">
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={() => {
                     setShowAddCountry(false);
@@ -658,6 +568,6 @@ export function PreferencesSection({ onSavedNext }: Props) {
           </div>,
           document.body
         )}
-    </div>
+    </form>
   );
 }
