@@ -12,6 +12,7 @@ export function useUpdatePreferences() {
     mutationFn: updatePreferences,
     retry: false,
     onMutate: async (preferences) => {
+      // Cancel any in-flight GET /profile refetch so it cannot overwrite the optimistic update
       await queryClient.cancelQueries({ queryKey });
 
       const previous = queryClient.getQueryData<FullProfileApi>(queryKey);
@@ -31,14 +32,15 @@ export function useUpdatePreferences() {
       }
     },
     onSuccess: (saved) => {
+      // `updatePreferences` has already reconciled the partial endpoint response
+      // without allowing omitted/null response fields to replace submitted values.
       queryClient.setQueryData<FullProfileApi>(queryKey, (old) => {
         if (!old) return old;
         return {
           ...old,
-          preferences: normalizePreferences(saved),
+          preferences: saved,
         };
       });
-      void queryClient.invalidateQueries({ queryKey });
     },
   });
 }

@@ -1,25 +1,20 @@
-import { fieldOfStudyValues } from '../schemas/academic-information.schema';
-
 export interface FieldOfStudyOption {
   value: string;
   label: string;
   isOpenAlex?: boolean;
 }
 
+/**
+ * Returns field-of-study options for the Preferences desired degree level.
+ * Note: TAWJIHI is not a valid Preferences degree level and is not handled here.
+ * All Preferences degree levels (BACHELOR, MASTER, PHD, DIPLOMA, OTHER) use
+ * OpenAlex subfields as field-of-study options.
+ */
 export function getFieldOfStudyOptions(
   degreeLevel?: string | null,
-  subfields?: Array<{ id: string; display_name: string }> | null,
-  translator?: (key: string) => string
+  subfields?: Array<{ id: string; display_name: string }> | null
 ): FieldOfStudyOption[] {
   if (!degreeLevel) return [];
-
-  if (degreeLevel === 'TAWJIHI') {
-    return fieldOfStudyValues.map((value) => ({
-      value,
-      label: translator ? translator(`fieldsOfStudy.${value}`) : value,
-      isOpenAlex: false,
-    }));
-  }
 
   return (subfields || []).map((s) => ({
     value: s.id,
