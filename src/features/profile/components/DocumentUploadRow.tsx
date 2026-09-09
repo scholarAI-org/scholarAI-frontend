@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button';
 import { ApiError } from '@/lib/api-client';
 import { triggerDocumentDownload, useUploadDocument } from '../hooks/useDocuments';
 import {
-  ALLOWED_DOCUMENT_TYPES,
+  formatDocumentRequirementText,
+  getAcceptAttribute,
   validateDocumentFile,
   type Document,
 } from '../schemas/documents.schema';
@@ -17,7 +18,7 @@ interface DocumentUploadRowProps {
   id: string;
   documentType: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   file: Document;
   showImproveAi?: boolean;
   disabled?: boolean;
@@ -49,19 +50,21 @@ export function DocumentUploadRow({
   const isUploaded = file.status === 'UPLOADED' && !!file.id;
   const isUploading = uploadMutation.isPending;
 
-  const spec = ALLOWED_DOCUMENT_TYPES[documentType] || ALLOWED_DOCUMENT_TYPES.cv;
+  const acceptAttribute = getAcceptAttribute(documentType);
+  const requirementSubtitle = formatDocumentRequirementText(documentType, t);
+  const displaySubtitle =
+    subtitle && subtitle !== t('uploadMissing') ? subtitle : requirementSubtitle;
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFile = event.target.files?.[0];
-    if (!selectedFile) return;
-
+  function processSelectedFile(selectedFile: File) {
     setLocalError(null);
 
-    // Client-side validation
-    const validationError = validateDocumentFile(documentType, selectedFile);
-    if (validationError) {
-      setLocalError(validationError);
-      event.target.value = '';
+    // Client-side validation using shared validator
+    const validationResult = validateDocumentFile(documentType, selectedFile, t);
+    if (!validationResult.valid) {
+      setLocalError(validationResult.message);
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
       return;
     }
 
@@ -86,7 +89,31 @@ export function DocumentUploadRow({
       }
     );
 
-    event.target.value = '';
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  }
+
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) return;
+    processSelectedFile(selectedFile);
+  }
+
+  function handleDrop(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (disabled || isUploading || isDeleting) return;
+
+    const droppedFile = event.dataTransfer.files?.[0];
+    if (!droppedFile) return;
+
+    processSelectedFile(droppedFile);
+  }
+
+  function handleDragOver(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   async function handleDownload() {
@@ -114,7 +141,11 @@ export function DocumentUploadRow({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] p-4 bg-white transition-colors hover:border-[#1d4ed8]/30">
+    <div
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-[var(--color-border)] p-4 bg-white transition-colors hover:border-[#1d4ed8]/30"
+    >
       <div className="flex items-start gap-4">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-[var(--color-bg-subtle)] text-[var(--color-text-secondary)]">
           <DocumentIcon className="h-6 w-6" />
@@ -147,7 +178,7 @@ export function DocumentUploadRow({
               ) : null}
             </div>
           ) : (
-            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{subtitle}</p>
+            <p className="mt-1 text-sm text-[var(--color-text-secondary)]">{displaySubtitle}</p>
           )}
 
           {localError && (
@@ -164,7 +195,7 @@ export function DocumentUploadRow({
           className="hidden"
           onChange={handleFileChange}
           disabled={isUploading || disabled || isDeleting}
-          accept={spec.acceptString}
+          accept={acceptAttribute}
         />
 
         {isUploaded && (

@@ -37,9 +37,9 @@ export function useUploadDocument() {
       file: File;
     }): Promise<{ documentType: string; savedDocument: Document }> => {
       // 1. Client file validation
-      const validationError = validateDocumentFile(documentType, file);
-      if (validationError) {
-        throw new Error(validationError);
+      const validationResult = validateDocumentFile(documentType, file);
+      if (!validationResult.valid) {
+        throw new Error(validationResult.message);
       }
 
       // 2. Request presigned upload URL

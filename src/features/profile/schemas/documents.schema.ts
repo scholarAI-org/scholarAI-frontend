@@ -63,62 +63,204 @@ export interface DownloadUrlResponse {
   expires_in?: number;
 }
 
-export const ALLOWED_DOCUMENT_TYPES: Record<
-  string,
-  { mimeTypes: string[]; extensions: string[]; acceptString: string }
-> = {
+export interface DocumentUploadRule {
+  maxSizeMB: number;
+  extensions: string[];
+  mimeTypes: string[];
+}
+
+export const MB_TO_BYTES = (mb: number): number => mb * 1024 * 1024;
+
+export const DOCUMENT_UPLOAD_RULES: Record<string, DocumentUploadRule> = {
   cv: {
-    mimeTypes: ['application/pdf'],
-    extensions: ['.pdf'],
-    acceptString: '.pdf,application/pdf',
+    maxSizeMB: 5,
+    extensions: ['.pdf', '.docx'],
+    mimeTypes: [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+    ],
   },
   transcript: {
-    mimeTypes: ['application/pdf'],
+    maxSizeMB: 10,
     extensions: ['.pdf'],
-    acceptString: '.pdf,application/pdf',
+    mimeTypes: ['application/pdf'],
   },
   graduation_certificate: {
-    mimeTypes: ['application/pdf'],
-    extensions: ['.pdf'],
-    acceptString: '.pdf,application/pdf',
-  },
-  recommendation_letter: {
-    mimeTypes: ['application/pdf'],
-    extensions: ['.pdf'],
-    acceptString: '.pdf,application/pdf',
+    maxSizeMB: 10,
+    extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
+    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
   },
   passport: {
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+    maxSizeMB: 5,
     extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
-    acceptString: '.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png',
+    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+  },
+  recommendation_letter: {
+    maxSizeMB: 5,
+    extensions: ['.pdf', '.docx'],
+    mimeTypes: [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+    ],
+  },
+  recommendation_letters: {
+    maxSizeMB: 5,
+    extensions: ['.pdf', '.docx'],
+    mimeTypes: [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+    ],
   },
   english_test: {
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+    maxSizeMB: 5,
     extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
-    acceptString: '.pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png',
+    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
   },
 };
 
-export function validateDocumentFile(documentType: string, file: File): string | null {
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB = 10485760 bytes
-  if (file.size > MAX_SIZE) {
-    return 'حجم الملف يتجاوز الحد الأقصى المسموح به (10 ميجابايت).';
+export type FileValidationReason = 'NO_FILE' | 'FILE_TOO_LARGE' | 'INVALID_FILE_TYPE';
+
+export type FileValidationResult =
+  | {
+      valid: true;
+    }
+  | {
+      valid: false;
+      reason: FileValidationReason;
+      message: string;
+    };
+
+export function getAcceptAttribute(documentType: string): string {
+  const rule = DOCUMENT_UPLOAD_RULES[documentType] || DOCUMENT_UPLOAD_RULES.cv;
+  const combined = [...rule.extensions, ...rule.mimeTypes];
+  return combined.join(',');
+}
+
+export const ALLOWED_DOCUMENT_TYPES: Record<
+  string,
+  { mimeTypes: string[]; extensions: string[]; acceptString: string }
+> = Object.fromEntries(
+  Object.entries(DOCUMENT_UPLOAD_RULES).map(([key, rule]) => [
+    key,
+    {
+      mimeTypes: rule.mimeTypes,
+      extensions: rule.extensions,
+      acceptString: getAcceptAttribute(key),
+    },
+  ])
+);
+
+export function formatAllowedExtensionsLabel(extensions: string[], isArabic: boolean): string {
+  const formatted = extensions.map((ext) => ext.replace('.', '').toUpperCase());
+  if (formatted.length <= 1) return formatted.join('');
+  const separator = isArabic ? ' أو ' : ' or ';
+  if (formatted.length === 2) {
+    return formatted.join(separator);
+  }
+  return formatted.slice(0, -1).join(', ') + separator + formatted[formatted.length - 1];
+}
+
+export function formatDocumentRequirementText(
+  documentType: string,
+  translator?: (key: string, params?: Record<string, unknown>) => string,
+  locale?: string
+): string {
+  const rule = DOCUMENT_UPLOAD_RULES[documentType] || DOCUMENT_UPLOAD_RULES.cv;
+  const isArabic =
+    locale === 'ar' ||
+    (typeof translator === 'function' && translator('title') === 'الوثائق الرسمية');
+
+  const formatsLabel = formatAllowedExtensionsLabel(rule.extensions, isArabic);
+  const maxSizeLabel = `${rule.maxSizeMB} MB`;
+
+  if (typeof translator === 'function') {
+    return translator('fileRequirement', {
+      formats: formatsLabel,
+      maxSize: maxSizeLabel,
+    });
   }
 
-  if (!file.type || file.type.trim() === '') {
-    return 'نوع الملف غير مدعوم. يرجى اختيار ملف صالحة.';
+  return isArabic
+    ? `${formatsLabel} — الحد الأقصى ${maxSizeLabel}`
+    : `${formatsLabel} — Max ${maxSizeLabel}`;
+}
+
+export function validateDocumentFile(
+  documentType: string,
+  file?: { name: string; type: string; size: number } | File | null,
+  translator?: (key: string, params?: Record<string, unknown>) => string
+): FileValidationResult {
+  if (!file) {
+    const defaultMsg =
+      typeof translator === 'function' ? translator('noFile') : 'لم يتم اختيار أي ملف.';
+    return {
+      valid: false,
+      reason: 'NO_FILE',
+      message: defaultMsg,
+    };
   }
 
-  const spec = ALLOWED_DOCUMENT_TYPES[documentType];
-  if (spec) {
-    const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-    const isMimeAllowed = spec.mimeTypes.includes(file.type.toLowerCase());
-    const isExtAllowed = spec.extensions.includes(ext);
+  const rule = DOCUMENT_UPLOAD_RULES[documentType] || DOCUMENT_UPLOAD_RULES.cv;
+  const maxSizeBytes = MB_TO_BYTES(rule.maxSizeMB);
 
-    if (!isMimeAllowed || !isExtAllowed) {
-      return `نوع الملف غير مدعوم. الأنواع المسموحة: ${spec.extensions.join(', ')}`;
+  if (file.size > maxSizeBytes) {
+    const defaultMsg =
+      typeof translator === 'function'
+        ? translator('fileTooLarge', { maxSize: `${rule.maxSizeMB} MB` })
+        : `حجم الملف أكبر من الحد المسموح وهو ${rule.maxSizeMB} MB.`;
+    return {
+      valid: false,
+      reason: 'FILE_TOO_LARGE',
+      message: defaultMsg,
+    };
+  }
+
+  const fileName = file.name || '';
+  const ext = fileName.includes('.') ? '.' + fileName.split('.').pop()!.toLowerCase() : '';
+  const allowedExtensions = rule.extensions.map((e) => e.toLowerCase());
+  const isExtAllowed = ext !== '' && allowedExtensions.includes(ext);
+
+  if (!isExtAllowed) {
+    const formattedFormats = rule.extensions
+      .map((e) => e.replace('.', '').toUpperCase())
+      .join(', ');
+    const defaultMsg =
+      typeof translator === 'function'
+        ? translator('invalidFileType', { formats: formattedFormats })
+        : `نوع الملف غير مدعوم. الصيغ المسموحة: ${formattedFormats}.`;
+    return {
+      valid: false,
+      reason: 'INVALID_FILE_TYPE',
+      message: defaultMsg,
+    };
+  }
+
+  const mimeType = (file.type || '').trim().toLowerCase();
+  if (mimeType !== '') {
+    const allowedMimes = rule.mimeTypes.map((m) => m.toLowerCase());
+    const isMimeAllowed = allowedMimes.includes(mimeType);
+
+    const isGenericMime =
+      mimeType === 'application/octet-stream' || mimeType === 'application/x-unknown-content-type';
+
+    if (!isMimeAllowed && !isGenericMime) {
+      const formattedFormats = rule.extensions
+        .map((e) => e.replace('.', '').toUpperCase())
+        .join(', ');
+      const defaultMsg =
+        typeof translator === 'function'
+          ? translator('invalidFileType', { formats: formattedFormats })
+          : `نوع الملف غير مدعوم. الصيغ المسموحة: ${formattedFormats}.`;
+      return {
+        valid: false,
+        reason: 'INVALID_FILE_TYPE',
+        message: defaultMsg,
+      };
     }
   }
 
-  return null;
+  return { valid: true };
 }
