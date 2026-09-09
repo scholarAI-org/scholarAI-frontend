@@ -581,6 +581,7 @@
     "targetFieldPlaceholder": "اختر مجال الدراسة المستهدف",
     "detailedSpecializationLabel": "التخصص الدقيق",
     "detailedSpecializationPlaceholder": "اختر التخصص الدقيق",
+    "detailedSpecializationRequired": "التخصص الدقيق مطلوب عند اختيار الدكتوراه.",
     "fundingTypeLabel": "نوع التمويل المرغوب",
     "studyFieldsLabel": "مجال الدراسة المفضل",
     "studyFieldsPlaceholder": "اختر مجال الدراسة المفضل",
@@ -588,10 +589,11 @@
     "countriesPlaceholder": "اختر الدول المفضلة",
     "finish": "إنهاء",
     "levels": {
-      "TAWJIHI": "توجيهي",
       "BACHELOR": "بكالوريوس",
       "MASTER": "ماجستير",
-      "PHD": "دكتوراه"
+      "PHD": "دكتوراه",
+      "DIPLOMA": "دبلوم",
+      "OTHER": "أخرى"
     },
     "fundingTypes": {
       "FULL": "تمويل كامل",

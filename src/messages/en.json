@@ -581,6 +581,7 @@
     "targetFieldPlaceholder": "Select target field of study",
     "detailedSpecializationLabel": "Detailed Specialization",
     "detailedSpecializationPlaceholder": "Select detailed specialization",
+    "detailedSpecializationRequired": "Detailed specialization is required when PhD is selected.",
     "fundingTypeLabel": "Preferred Funding Type",
     "studyFieldsLabel": "Preferred Study Field",
     "studyFieldsPlaceholder": "Choose preferred study field",
@@ -588,10 +589,11 @@
     "countriesPlaceholder": "Choose preferred countries",
     "finish": "Finish",
     "levels": {
-      "TAWJIHI": "Tawjihi",
       "BACHELOR": "Bachelor's",
       "MASTER": "Master's",
-      "PHD": "PhD"
+      "PHD": "PhD",
+      "DIPLOMA": "Diploma",
+      "OTHER": "Other"
     },
     "fundingTypes": {
       "FULL": "Full Funding",
