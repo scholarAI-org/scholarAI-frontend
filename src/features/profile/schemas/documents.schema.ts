@@ -165,7 +165,7 @@ export function formatAllowedExtensionsLabel(extensions: string[], isArabic: boo
 
 export function formatDocumentRequirementText(
   documentType: string,
-  translator?: (key: string, params?: Record<string, unknown>) => string,
+  translator?: (key: string, params?: Record<string, string | number>) => string,
   locale?: string
 ): string {
   const rule = DOCUMENT_UPLOAD_RULES[documentType] || DOCUMENT_UPLOAD_RULES.cv;
@@ -191,7 +191,7 @@ export function formatDocumentRequirementText(
 export function validateDocumentFile(
   documentType: string,
   file?: { name: string; type: string; size: number } | File | null,
-  translator?: (key: string, params?: Record<string, unknown>) => string
+  translator?: (key: string, params?: Record<string, string | number>) => string
 ): FileValidationResult {
   if (!file) {
     const defaultMsg =
