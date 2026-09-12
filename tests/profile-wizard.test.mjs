@@ -25,22 +25,15 @@ const { toAcademicInformationPayload } = loadModule(
   path.join(feature, 'lib/academic-information.ts')
 );
 
-const {
-  preferencesSchema,
-} = loadModule(path.join(feature, 'schemas/preferences.schema.ts'));
+const { preferencesSchema } = loadModule(path.join(feature, 'schemas/preferences.schema.ts'));
 
-const {
-  toPreferencesDto,
-} = loadModule(path.join(feature, 'lib/preferences.ts'));
+const { toPreferencesDto } = loadModule(path.join(feature, 'lib/preferences.ts'));
 
-const {
-  desiredDegreeLevelValues,
-  normalizePreferences,
-} = loadModule(path.join(feature, 'schemas/preferences-api.schema.ts'));
+const { desiredDegreeLevelValues, normalizePreferences } = loadModule(
+  path.join(feature, 'schemas/preferences-api.schema.ts')
+);
 
-const {
-  getFieldOfStudyOptions,
-} = loadModule(path.join(feature, 'lib/field-of-study.ts'));
+const { getFieldOfStudyOptions } = loadModule(path.join(feature, 'lib/field-of-study.ts'));
 
 // ─── Academic Information ────────────────────────────────────────────────────
 
@@ -249,21 +242,36 @@ test('19. getFieldOfStudyOptions returns OpenAlex subfields for BACHELOR', () =>
     { id: 'sub-med', display_name: 'Medicine' },
   ];
   const options = getFieldOfStudyOptions('BACHELOR', mockSubfields);
-  assert.equal(options.some((o) => o.value === 'sub-cs'), true);
-  assert.equal(options.every((o) => o.isOpenAlex), true);
+  assert.equal(
+    options.some((o) => o.value === 'sub-cs'),
+    true
+  );
+  assert.equal(
+    options.every((o) => o.isOpenAlex),
+    true
+  );
 });
 
 test('20. getFieldOfStudyOptions returns OpenAlex subfields for DIPLOMA', () => {
   const mockSubfields = [{ id: 'sub-eng', display_name: 'Engineering' }];
   const options = getFieldOfStudyOptions('DIPLOMA', mockSubfields);
-  assert.equal(options.some((o) => o.value === 'sub-eng'), true);
-  assert.equal(options.every((o) => o.isOpenAlex), true);
+  assert.equal(
+    options.some((o) => o.value === 'sub-eng'),
+    true
+  );
+  assert.equal(
+    options.every((o) => o.isOpenAlex),
+    true
+  );
 });
 
 test('21. getFieldOfStudyOptions returns OpenAlex subfields for OTHER', () => {
   const mockSubfields = [{ id: 'sub-art', display_name: 'Arts' }];
   const options = getFieldOfStudyOptions('OTHER', mockSubfields);
-  assert.equal(options.some((o) => o.value === 'sub-art'), true);
+  assert.equal(
+    options.some((o) => o.value === 'sub-art'),
+    true
+  );
 });
 
 test('22. getFieldOfStudyOptions returns empty when degree level is null', () => {

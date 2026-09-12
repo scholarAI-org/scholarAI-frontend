@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { RegisterPanelVisual } from './RegisterPanel';
 
+import { GoogleAuthButton } from './GoogleAuthButton';
+
 export function RegisterForm() {
   const t = useTranslations('Register');
   const { mutate, isPending, error } = useRegister();
@@ -130,6 +132,17 @@ export function RegisterForm() {
           <Button type="submit" isLoading={isPending} className="w-full">
             {t('submit')}
           </Button>
+
+          <div className="relative my-4 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[var(--color-border-default)]" />
+            </div>
+            <div className="relative inline-block bg-[var(--color-bg-surface)] px-3 text-xs text-[var(--color-text-secondary)]">
+              {t('or')}
+            </div>
+          </div>
+
+          <GoogleAuthButton mode="signup" />
         </form>
 
         <p className="mt-4 text-center text-[11px] text-[var(--color-text-secondary)]">

@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import { LoginPanelVisual, LoginPanelFooter } from './LoginPanel';
 
+import { GoogleAuthButton } from './GoogleAuthButton';
+
 export function LoginForm() {
   const t = useTranslations('Login');
   const tPanel = useTranslations('AuthLayout');
@@ -115,6 +117,17 @@ export function LoginForm() {
           <Button type="submit" isLoading={isPending} className="w-full">
             {t('submit')}
           </Button>
+
+          <div className="relative my-4 text-center">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-[var(--color-border-default)]" />
+            </div>
+            <div className="relative inline-block bg-[var(--color-bg-surface)] px-3 text-xs text-[var(--color-text-secondary)]">
+              {t('or')}
+            </div>
+          </div>
+
+          <GoogleAuthButton mode="login" />
         </form>
       </div>
     </AuthLayout>

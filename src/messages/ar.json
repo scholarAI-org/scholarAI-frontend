@@ -216,7 +216,11 @@
     "subtitle": "سجّل دخولك لمتابعة طلباتك وتوصياتك",
     "createAccountTab": "إنشاء حساب جديد",
     "forgotPassword": "نسيت كلمة المرور؟",
-    "rememberMe": "تذكرني على هذا الجهاز"
+    "rememberMe": "تذكرني على هذا الجهاز",
+    "continueWithGoogle": "المتابعة باستخدام Google",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "googleAuthError": "تعذر تسجيل الدخول باستخدام Google. حاول مرة أخرى.",
+    "or": "أو"
   },
   "ForgotPassword": {
     "email": "البريد الإلكتروني",
@@ -242,7 +246,11 @@
     "panelSubtitle": "أنشئ حسابك مجاناً وتصفّح آلاف المنح المخصصة للطلاب الفلسطينيين.",
     "ctaFree": "مجاناً",
     "ctaCreateAccount": "انشاء حساب",
-    "copyright": "© 2026 منصة PsScholar · جميع الحقوق محفوظة"
+    "copyright": "© 2026 منصة PsScholar · جميع الحقوق محفوظة",
+    "signUpWithGoogle": "التسجيل باستخدام Google",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "googleAuthError": "تعذر تسجيل الدخول باستخدام Google. حاول مرة أخرى.",
+    "or": "أو"
   },
   "AuthTabs": {
     "createAccount": "إنشاء حساب جديد",

@@ -216,7 +216,11 @@
     "subtitle": "Sign in to continue your learning journey",
     "createAccountTab": "Create New Account",
     "forgotPassword": "Forgot Password?",
-    "rememberMe": "remember Me On this device"
+    "rememberMe": "remember Me On this device",
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Signing in...",
+    "googleAuthError": "Unable to sign in with Google. Please try again.",
+    "or": "OR"
   },
   "ForgotPassword": {
     "email": "Email",
@@ -242,7 +246,11 @@
     "panelSubtitle": "Create your free account and browse thousands of scholarships tailored for Palestinian students.",
     "ctaFree": "Free",
     "ctaCreateAccount": "Create account",
-    "copyright": "© 2026 PsScholar Platform · All rights reserved"
+    "copyright": "© 2026 PsScholar Platform · All rights reserved",
+    "signUpWithGoogle": "Sign up with Google",
+    "signingIn": "Signing in...",
+    "googleAuthError": "Unable to sign in with Google. Please try again.",
+    "or": "OR"
   },
   "AuthTabs": {
     "createAccount": "Create New Account",
