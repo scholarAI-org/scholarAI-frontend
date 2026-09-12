@@ -43,10 +43,23 @@ export function useUploadDocument() {
       }
 
       // 2. Request presigned upload URL
+      let contentType = (file.type || '').trim();
+      if (!contentType) {
+        const rawFileName = (file.name || '').trim();
+        const rawExt = rawFileName.includes('.')
+          ? rawFileName.split('.').pop()?.trim().toLowerCase()
+          : '';
+        if (rawExt === 'png') contentType = 'image/png';
+        else if (rawExt === 'jpg' || rawExt === 'jpeg') contentType = 'image/jpeg';
+        else if (rawExt === 'docx')
+          contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        else contentType = 'application/pdf';
+      }
+
       const uploadUrlRes = await requestDocumentUploadUrl({
         document_type: documentType,
         file_name: file.name,
-        content_type: file.type,
+        content_type: contentType,
         file_size: file.size,
       });
 

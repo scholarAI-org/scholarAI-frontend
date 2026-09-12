@@ -13,6 +13,7 @@ interface AuthLayoutProps {
   /** صف اختياري تحت منطقة الصورة (مثلاً شعارات الجهات الداعمة بصفحة اللوجن فقط) */
   footer?: ReactNode;
   children: ReactNode;
+  contentClassName?: string;
 }
 
 export function AuthLayout({
@@ -22,6 +23,7 @@ export function AuthLayout({
   visual,
   footer,
   children,
+  contentClassName,
 }: AuthLayoutProps) {
   const t = useTranslations('AuthLayout');
 
@@ -59,7 +61,9 @@ export function AuthLayout({
         )}
       </div>
       {/* جهة الفورم */}
-      <div className="flex w-full items-center justify-center bg-gray-50 px-6 py-12 lg:w-1/2">
+      <div
+        className={`flex w-full items-center justify-center bg-gray-50 px-6 py-12 lg:w-1/2 ${contentClassName ?? ''}`}
+      >
         {children}
       </div>
     </div>

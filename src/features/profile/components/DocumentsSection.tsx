@@ -45,6 +45,11 @@ export function DocumentsSection({ onSavedNext }: Props) {
         documentType: 'graduation_certificate',
       },
       { id: 'transcript', key: 'transcript', documentType: 'transcript' },
+      {
+        id: 'university_admission_letter',
+        key: 'university_admission_letter',
+        documentType: 'university_admission_letter',
+      },
       { id: 'english_test', key: 'english_test', documentType: 'english_test' },
       { id: 'passport', key: 'passport', documentType: 'passport' },
     ] as const;

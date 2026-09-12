@@ -17,6 +17,8 @@ import { LoginPanelVisual, LoginPanelFooter } from './LoginPanel';
 
 import { GoogleAuthButton } from './GoogleAuthButton';
 
+import { ApiError } from '@/lib/api-client';
+
 export function LoginForm() {
   const t = useTranslations('Login');
   const tPanel = useTranslations('AuthLayout');
@@ -27,6 +29,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(createLoginSchema(t)),
@@ -109,9 +112,17 @@ export function LoginForm() {
           </div>
 
           {error && (
-            <p className="rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 text-xs text-[var(--color-text-error)]">
-              {error.message}
-            </p>
+            <div className="rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 text-xs text-[var(--color-text-error)] space-y-1">
+              <p>{error.message}</p>
+              {error instanceof ApiError && error.status === 403 && (
+                <Link
+                  href={`/verify-email?email=${encodeURIComponent(getValues('email') || '')}`}
+                  className="block font-bold underline hover:no-underline"
+                >
+                  {t('verifyEmailLink')}
+                </Link>
+              )}
+            </div>
           )}
 
           <Button type="submit" isLoading={isPending} className="w-full">

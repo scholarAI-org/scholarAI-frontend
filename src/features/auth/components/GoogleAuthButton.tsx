@@ -31,8 +31,8 @@ declare global {
           ) => void;
           prompt: (
             notification?: (notification: {
-              isNotDisplayed: boolean;
-              isSkippedMoment: boolean;
+              isNotDisplayed: () => boolean;
+              isSkippedMoment: () => boolean;
               getNotDisplayedReason: () => string;
             }) => void
           ) => void;

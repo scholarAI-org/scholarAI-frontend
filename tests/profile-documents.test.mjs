@@ -170,3 +170,103 @@ test('15. Valid file continues through existing upload flow', () => {
     file_size: 2 * 1024 * 1024,
   });
 });
+
+test('16. University Admission Letter PDF under 10 MB -> valid', () => {
+  const file = { name: 'admission.pdf', type: 'application/pdf', size: 9 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('17. University Admission Letter PNG under 10 MB -> valid', () => {
+  const file = { name: 'admission.png', type: 'image/png', size: 5 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('18. University Admission Letter PDF over 10 MB -> invalid (FILE_TOO_LARGE)', () => {
+  const file = { name: 'admission.pdf', type: 'application/pdf', size: 11 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, false);
+  if (!res.valid) {
+    assert.equal(res.reason, 'FILE_TOO_LARGE');
+  }
+});
+
+test('19. University Admission Letter EXE -> invalid (INVALID_FILE_TYPE)', () => {
+  const file = { name: 'admission.exe', type: 'application/x-msdownload', size: 1 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, false);
+  if (!res.valid) {
+    assert.equal(res.reason, 'INVALID_FILE_TYPE');
+  }
+});
+
+test('20. Valid University Admission Letter payload contains exact document_type string', () => {
+  const validFile = { name: 'letter.pdf', type: 'application/pdf', size: 2 * 1024 * 1024 };
+  const valResult = validateDocumentFile('university_admission_letter', validFile);
+
+  assert.equal(valResult.valid, true);
+  const uploadPayload = {
+    document_type: 'university_admission_letter',
+    file_name: validFile.name,
+    content_type: validFile.type,
+    file_size: validFile.size,
+  };
+
+  assert.equal(uploadPayload.document_type, 'university_admission_letter');
+});
+
+test('21. Multiple-dot filename such as my.admission.letter.pdf -> valid', () => {
+  const file = { name: 'my.admission.letter.pdf', type: 'application/pdf', size: 2 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('22. Trailing spaces in filename such as admission_letter.pdf  -> valid', () => {
+  const file = { name: 'admission_letter.pdf ', type: 'application/pdf', size: 2 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('23. MIME type with parameters such as application/pdf; name="letter.pdf" -> valid', () => {
+  const file = {
+    name: 'admission_letter.pdf',
+    type: 'application/pdf; name="letter.pdf"',
+    size: 2 * 1024 * 1024,
+  };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('24. Uppercase extension and parameterized MIME -> valid', () => {
+  const file = {
+    name: 'MY_ADMISSION_LETTER.PDF',
+    type: 'application/pdf; charset=binary',
+    size: 2 * 1024 * 1024,
+  };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('25. Empty MIME type with valid .pdf extension -> valid', () => {
+  const file = { name: 'admission_letter.pdf', type: '', size: 2 * 1024 * 1024 };
+  const res = validateDocumentFile('university_admission_letter', file);
+  assert.equal(res.valid, true);
+});
+
+test('26. Motivation Letter PDF & DOCX -> valid', () => {
+  const pdfFile = { name: 'motivation.pdf', type: 'application/pdf', size: 3 * 1024 * 1024 };
+  const docxFile = {
+    name: 'motivation.docx',
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    size: 3 * 1024 * 1024,
+  };
+  assert.equal(validateDocumentFile('motivation_letter', pdfFile).valid, true);
+  assert.equal(validateDocumentFile('motivation_letter', docxFile).valid, true);
+});
+
+test('27. Image mime type variation image/jpg for JPG file -> valid', () => {
+  const file = { name: 'certificate.jpg', type: 'image/jpg', size: 2 * 1024 * 1024 };
+  const res = validateDocumentFile('graduation_certificate', file);
+  assert.equal(res.valid, true);
+});

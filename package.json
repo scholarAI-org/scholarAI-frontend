@@ -12,7 +12,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
-    "test:profile": "node tests/profile-personal-information.test.mjs"
+    "test:profile": "node --test tests/profile-documents.test.mjs",
+    "test:auth-recovery": "node --test tests/auth-password-recovery.test.mjs",
+    "test:email-verification": "node --test tests/email-verification.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

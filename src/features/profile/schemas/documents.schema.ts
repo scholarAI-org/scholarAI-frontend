@@ -19,6 +19,7 @@ export interface DocumentsApi {
   passport: Document;
   recommendation_letters: Document[];
   english_test: Document;
+  university_admission_letter: Document;
 }
 
 export const createEmptyDocument = (documentType: string | null = null): Document => ({
@@ -38,6 +39,7 @@ export const emptyDocuments: DocumentsApi = {
   passport: createEmptyDocument('passport'),
   recommendation_letters: [],
   english_test: createEmptyDocument('english_test'),
+  university_admission_letter: createEmptyDocument('university_admission_letter'),
 };
 
 export interface UploadUrlRequestPayload {
@@ -71,53 +73,68 @@ export interface DocumentUploadRule {
 
 export const MB_TO_BYTES = (mb: number): number => mb * 1024 * 1024;
 
+const PDF_MIME_TYPES = [
+  'application/pdf',
+  'application/x-pdf',
+  'application/acrobat',
+  'application/x-acrobat',
+  'applications/vnd.pdf',
+  'text/pdf',
+];
+
+const IMAGE_MIME_TYPES = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png'];
+
+const WORD_MIME_TYPES = [
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/msword',
+  'application/x-msword',
+];
+
 export const DOCUMENT_UPLOAD_RULES: Record<string, DocumentUploadRule> = {
   cv: {
     maxSizeMB: 5,
     extensions: ['.pdf', '.docx'],
-    mimeTypes: [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword',
-    ],
+    mimeTypes: [...PDF_MIME_TYPES, ...WORD_MIME_TYPES],
+  },
+  motivation_letter: {
+    maxSizeMB: 5,
+    extensions: ['.pdf', '.docx'],
+    mimeTypes: [...PDF_MIME_TYPES, ...WORD_MIME_TYPES],
   },
   transcript: {
     maxSizeMB: 10,
     extensions: ['.pdf'],
-    mimeTypes: ['application/pdf'],
+    mimeTypes: [...PDF_MIME_TYPES],
   },
   graduation_certificate: {
     maxSizeMB: 10,
     extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+    mimeTypes: [...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES],
   },
   passport: {
     maxSizeMB: 5,
     extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+    mimeTypes: [...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES],
   },
   recommendation_letter: {
     maxSizeMB: 5,
     extensions: ['.pdf', '.docx'],
-    mimeTypes: [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword',
-    ],
+    mimeTypes: [...PDF_MIME_TYPES, ...WORD_MIME_TYPES],
   },
   recommendation_letters: {
     maxSizeMB: 5,
     extensions: ['.pdf', '.docx'],
-    mimeTypes: [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword',
-    ],
+    mimeTypes: [...PDF_MIME_TYPES, ...WORD_MIME_TYPES],
   },
   english_test: {
     maxSizeMB: 5,
     extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png'],
+    mimeTypes: [...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES],
+  },
+  university_admission_letter: {
+    maxSizeMB: 10,
+    extensions: ['.pdf', '.jpg', '.jpeg', '.png'],
+    mimeTypes: [...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES],
   },
 };
 
@@ -218,9 +235,12 @@ export function validateDocumentFile(
     };
   }
 
-  const fileName = file.name || '';
-  const ext = fileName.includes('.') ? '.' + fileName.split('.').pop()!.toLowerCase() : '';
-  const allowedExtensions = rule.extensions.map((e) => e.toLowerCase());
+  const rawFileName = (file.name || '').trim();
+  const rawExt = rawFileName.includes('.')
+    ? rawFileName.split('.').pop()?.trim().toLowerCase()
+    : '';
+  const ext = rawExt ? '.' + rawExt : '';
+  const allowedExtensions = rule.extensions.map((e) => e.trim().toLowerCase());
   const isExtAllowed = ext !== '' && allowedExtensions.includes(ext);
 
   if (!isExtAllowed) {
@@ -238,9 +258,10 @@ export function validateDocumentFile(
     };
   }
 
-  const mimeType = (file.type || '').trim().toLowerCase();
+  const rawMimeType = (file.type || '').trim().toLowerCase();
+  const mimeType = rawMimeType.split(';')[0].trim();
   if (mimeType !== '') {
-    const allowedMimes = rule.mimeTypes.map((m) => m.toLowerCase());
+    const allowedMimes = rule.mimeTypes.map((m) => m.trim().toLowerCase());
     const isMimeAllowed = allowedMimes.includes(mimeType);
 
     const isGenericMime =

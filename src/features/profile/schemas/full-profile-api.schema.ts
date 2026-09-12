@@ -83,6 +83,10 @@ export function normalizeDocuments(value?: Partial<DocumentsApi> | null): Docume
         )
       : [],
     english_test: normalizeSingleDocument(value.english_test, 'english_test'),
+    university_admission_letter: normalizeSingleDocument(
+      value.university_admission_letter,
+      'university_admission_letter'
+    ),
   };
 }
 
