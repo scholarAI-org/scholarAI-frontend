@@ -770,5 +770,71 @@
       "openSource": "فتح المصدر",
       "addManualScholarship": "إضافة منحة يدوياً"
     }
+  },
+  "AdminManualScholarship": {
+    "title": "إضافة منحة جديدة",
+    "description": "أدخل بيانات المنحة بدقة — ستظهر للطلاب بعد النشر",
+    "back": "العودة للرئيسية",
+    "sectionTitle": "البيانات الأساسية",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "workflowNotice": "سيتم إنشاء المنحة بحالة قيد المراجعة، ولن تظهر للطلاب حتى يتم نشرها.",
+    "fields": {
+      "titleAr": "اسم المنحة (بالعربية)",
+      "titleEn": "اسم المنحة (بالإنجليزية)",
+      "organizationName": "الجهة المانحة",
+      "country": "دولة الدراسة",
+      "universityName": "اسم الجامعة",
+      "studyLevel": "المستوى الدراسي",
+      "fundingType": "نوع التمويل",
+      "fundingAmount": "مبلغ التمويل",
+      "deadline": "الموعد النهائي للتقديم",
+      "noDeadline": "لا يوجد موعد نهائي محدد لهذه المنحة",
+      "applyLink": "رابط التقديم الرسمي",
+      "imageUrl": "رابط صورة المنحة",
+      "sourceUrl": "رابط المصدر",
+      "applyEmail": "بريد التقديم الإلكتروني",
+      "applyPhone": "هاتف التقديم",
+      "majors": "التخصصات المؤهلة",
+      "languageRequirements": "متطلبات اللغة",
+      "eligibilityCriteria": "شروط الأهلية",
+      "requiredDocuments": "المستندات المطلوبة",
+      "descriptionHtml": "وصف المنحة"
+    },
+    "placeholders": {
+      "titleAr": "أدخل اسم المنحة بالعربية",
+      "titleEn": "أدخل اسم المنحة بالإنجليزية",
+      "organizationName": "أدخل اسم الجهة المانحة",
+      "country": "أدخل دولة الدراسة",
+      "universityName": "أدخل اسم الجامعة",
+      "studyLevel": "أدخل المستوى الدراسي",
+      "fundingType": "أدخل نوع التمويل",
+      "fundingAmount": "أدخل مبلغ التمويل",
+      "applyLink": "https://example.org/apply",
+      "imageUrl": "https://example.org/image.jpg",
+      "sourceUrl": "https://example.org/source",
+      "applyEmail": "admissions@example.org",
+      "applyPhone": "+970 ...",
+      "multiline": "أدخل كل بند في سطر منفصل",
+      "descriptionHtml": "أدخل وصف المنحة"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "submit": "إضافة المنحة",
+      "submitting": "جارٍ إضافة المنحة..."
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب.",
+      "invalidHttpUrl": "أدخل رابط HTTP أو HTTPS صالحاً.",
+      "deadlineRequired": "الموعد النهائي للتقديم مطلوب.",
+      "invalidDeadline": "أدخل تاريخاً صالحاً."
+    },
+    "feedback": {
+      "success": "تم إنشاء المنحة بنجاح. جارٍ الانتقال إلى لوحة التحكم...",
+      "genericError": "تعذر إنشاء المنحة. يرجى المحاولة مرة أخرى.",
+      "unauthorized": "ليس لديك صلاحية لإنشاء المنح في الجلسة الحالية.",
+      "conflict": "توجد منحة مسجلة بالفعل بهذه التفاصيل.",
+      "validation": "يرجى مراجعة الحقول المميزة ثم المحاولة مرة أخرى."
+    }
   }
 }

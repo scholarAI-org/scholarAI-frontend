@@ -770,5 +770,71 @@
       "openSource": "Open source",
       "addManualScholarship": "Add scholarship manually"
     }
+  },
+  "AdminManualScholarship": {
+    "title": "Add a new scholarship",
+    "description": "Enter scholarship details accurately — it will appear to students after publication.",
+    "back": "Back to dashboard",
+    "sectionTitle": "Basic information",
+    "required": "Required",
+    "optional": "Optional",
+    "workflowNotice": "The scholarship will be created as pending review and will not appear to students until it is published.",
+    "fields": {
+      "titleAr": "Scholarship title (Arabic)",
+      "titleEn": "Scholarship title (English)",
+      "organizationName": "Granting organization",
+      "country": "Study country",
+      "universityName": "University name",
+      "studyLevel": "Study level",
+      "fundingType": "Funding type",
+      "fundingAmount": "Funding amount",
+      "deadline": "Application deadline",
+      "noDeadline": "This scholarship has no fixed deadline",
+      "applyLink": "Official application URL",
+      "imageUrl": "Scholarship image URL",
+      "sourceUrl": "Source URL",
+      "applyEmail": "Application email",
+      "applyPhone": "Application phone",
+      "majors": "Eligible majors",
+      "languageRequirements": "Language requirements",
+      "eligibilityCriteria": "Eligibility criteria",
+      "requiredDocuments": "Required documents",
+      "descriptionHtml": "Scholarship description"
+    },
+    "placeholders": {
+      "titleAr": "Enter the Arabic scholarship title",
+      "titleEn": "Enter the English scholarship title",
+      "organizationName": "Enter the granting organization",
+      "country": "Enter the study country",
+      "universityName": "Enter the university name",
+      "studyLevel": "Enter the study level",
+      "fundingType": "Enter the funding type",
+      "fundingAmount": "Enter the funding amount",
+      "applyLink": "https://example.org/apply",
+      "imageUrl": "https://example.org/image.jpg",
+      "sourceUrl": "https://example.org/source",
+      "applyEmail": "admissions@example.org",
+      "applyPhone": "+970 ...",
+      "multiline": "Enter one item per line",
+      "descriptionHtml": "Enter the scholarship description"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "submit": "Create scholarship",
+      "submitting": "Creating scholarship..."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "invalidHttpUrl": "Enter a valid HTTP or HTTPS URL.",
+      "deadlineRequired": "An application deadline is required.",
+      "invalidDeadline": "Enter a valid date."
+    },
+    "feedback": {
+      "success": "Scholarship created successfully. Redirecting to the dashboard...",
+      "genericError": "Unable to create the scholarship. Please try again.",
+      "unauthorized": "Your session does not have permission to create scholarships.",
+      "conflict": "A scholarship with these details already exists.",
+      "validation": "Please review the highlighted fields and try again."
+    }
   }
 }
