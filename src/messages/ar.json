@@ -717,5 +717,58 @@
       "notifications": "إشعارات المسؤول",
       "profile": "الملف الشخصي"
     }
+  },
+  "AdminDashboard": {
+    "title": "لوحة التحكم",
+    "description": "نظرة عامة على إدارة المنصة.",
+    "overview": "نظرة عامة",
+    "empty": "لا توجد بيانات لعرضها بعد.",
+    "welcome": {
+      "title": "مرحباً بعودتك، {name}",
+      "summary": "إليك نظرة عامة على منصتك اليوم.",
+      "dateLabel": "اليوم",
+      "genericName": "المسؤول"
+    },
+    "metrics": {
+      "pendingScholarships": "المنح قيد المراجعة",
+      "publishedScholarships": "المنح المنشورة",
+      "totalUsers": "إجمالي المستخدمين"
+    },
+    "sections": {
+      "recentPendingScholarships": "أحدث المنح قيد المراجعة",
+      "recentAuditLogs": "أحدث النشاطات الإدارية"
+    },
+    "fields": {
+      "scholarship": "المنحة",
+      "organization": "الجهة",
+      "country": "الدولة",
+      "source": "المصدر",
+      "deadline": "الموعد النهائي",
+      "status": "الحالة",
+      "scrapedAt": "وقت الجمع",
+      "action": "الإجراء",
+      "administrator": "المسؤول",
+      "entity": "العنصر",
+      "occurredAt": "وقت الإجراء"
+    },
+    "states": {
+      "unavailable": "غير متاح",
+      "noDeadline": "لا يوجد موعد نهائي",
+      "unknownStatus": "حالة غير معروفة",
+      "unknownAction": "إجراء غير معروف",
+      "loading": "جارٍ تحميل بيانات لوحة التحكم…",
+      "emptyPendingScholarships": "لا توجد منح قيد المراجعة لعرضها.",
+      "emptyAuditLogs": "لا توجد نشاطات إدارية حديثة لعرضها."
+    },
+    "errors": {
+      "statistics": "تعذر تحميل إحصاءات لوحة التحكم.",
+      "pendingScholarships": "تعذر تحميل المنح قيد المراجعة.",
+      "auditLogs": "تعذر تحميل النشاطات الإدارية الحديثة."
+    },
+    "actions": {
+      "retry": "إعادة المحاولة",
+      "openSource": "فتح المصدر",
+      "addManualScholarship": "إضافة منحة يدوياً"
+    }
   }
 }

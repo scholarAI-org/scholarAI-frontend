@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "test:profile": "node --test tests/profile-documents.test.mjs",
+    "test:admin-dashboard": "node --test tests/admin-dashboard-formatters.test.mjs",
     "test:auth-recovery": "node --test tests/auth-password-recovery.test.mjs",
     "test:email-verification": "node --test tests/email-verification.test.mjs"
   },

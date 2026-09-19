@@ -717,5 +717,58 @@
       "notifications": "Admin notifications",
       "profile": "Profile"
     }
+  },
+  "AdminDashboard": {
+    "title": "Dashboard",
+    "description": "An overview of platform administration.",
+    "overview": "Overview",
+    "empty": "No data to display yet.",
+    "welcome": {
+      "title": "Welcome back, {name}",
+      "summary": "Here is an overview of your platform today.",
+      "dateLabel": "Today",
+      "genericName": "Administrator"
+    },
+    "metrics": {
+      "pendingScholarships": "Pending scholarships",
+      "publishedScholarships": "Published scholarships",
+      "totalUsers": "Total users"
+    },
+    "sections": {
+      "recentPendingScholarships": "Recent pending scholarships",
+      "recentAuditLogs": "Recent administrative activity"
+    },
+    "fields": {
+      "scholarship": "Scholarship",
+      "organization": "Organization",
+      "country": "Country",
+      "source": "Source",
+      "deadline": "Deadline",
+      "status": "Status",
+      "scrapedAt": "Collected at",
+      "action": "Action",
+      "administrator": "Administrator",
+      "entity": "Item",
+      "occurredAt": "Occurred at"
+    },
+    "states": {
+      "unavailable": "Unavailable",
+      "noDeadline": "No deadline",
+      "unknownStatus": "Unknown status",
+      "unknownAction": "Unknown action",
+      "loading": "Loading dashboard data…",
+      "emptyPendingScholarships": "There are no pending scholarships to show.",
+      "emptyAuditLogs": "There is no recent administrative activity to show."
+    },
+    "errors": {
+      "statistics": "Unable to load dashboard statistics.",
+      "pendingScholarships": "Unable to load pending scholarships.",
+      "auditLogs": "Unable to load recent administrative activity."
+    },
+    "actions": {
+      "retry": "Try again",
+      "openSource": "Open source",
+      "addManualScholarship": "Add scholarship manually"
+    }
   }
 }
