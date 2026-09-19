@@ -691,5 +691,31 @@
     "fieldExistsError": "هذا المجال مضاف مسبقاً",
     "countryExistsError": "هذه الدولة مضافة مسبقاً",
     "save": "إنهاء"
+  },
+  "AdminShell": {
+    "brand": { "name": "ScholarAI" },
+    "navigationLabel": "تنقل المسؤول",
+    "openNavigation": "فتح قائمة تنقل المسؤول",
+    "closeNavigation": "إغلاق قائمة تنقل المسؤول",
+    "switchLanguage": "التبديل إلى الإنجليزية",
+    "logout": "تسجيل الخروج",
+    "logoutPending": "جاري تسجيل الخروج...",
+    "unavailable": "هذه الصفحة غير متاحة بعد",
+    "identity": { "unknown": "المسؤول", "role": "مسؤول" },
+    "groups": {
+      "overview": "نظرة عامة",
+      "content": "المحتوى",
+      "management": "الإدارة",
+      "settings": "الإعدادات"
+    },
+    "items": {
+      "dashboard": "لوحة التحكم",
+      "review": "مراجعة المنح المجمعة",
+      "scholarships": "إدارة المنح",
+      "users": "إدارة المستخدمين",
+      "reports": "البلاغات والملاحظات",
+      "notifications": "إشعارات المسؤول",
+      "profile": "الملف الشخصي"
+    }
   }
 }

@@ -691,5 +691,31 @@
     "fieldExistsError": "This field is already added",
     "countryExistsError": "This country is already added",
     "save": "Finish"
+  },
+  "AdminShell": {
+    "brand": { "name": "ScholarAI" },
+    "navigationLabel": "Administrator navigation",
+    "openNavigation": "Open administrator navigation",
+    "closeNavigation": "Close administrator navigation",
+    "switchLanguage": "Switch language",
+    "logout": "Log out",
+    "logoutPending": "Logging out...",
+    "unavailable": "This page is not available yet",
+    "identity": { "unknown": "Administrator", "role": "Administrator" },
+    "groups": {
+      "overview": "Overview",
+      "content": "Content",
+      "management": "Management",
+      "settings": "Settings"
+    },
+    "items": {
+      "dashboard": "Dashboard",
+      "review": "Scholarship review",
+      "scholarships": "Scholarship management",
+      "users": "User management",
+      "reports": "Reports and feedback",
+      "notifications": "Admin notifications",
+      "profile": "Profile"
+    }
   }
 }
