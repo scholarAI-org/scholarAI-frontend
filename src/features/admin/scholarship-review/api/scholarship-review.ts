@@ -5,6 +5,7 @@ import type {
   ScholarshipReviewDetail,
   ScholarshipReviewListResponse,
   ScholarshipReviewStatistics,
+  AdminScholarshipUpdatePayload,
 } from '../types';
 
 export function getScholarshipReviewStatistics(signal?: AbortSignal) {
@@ -31,6 +32,13 @@ export function rejectScholarship(id: number, reason: string) {
   return apiClient<ScholarshipRejectResponse>(`/admin/scholarships/${id}/reject`, {
     method: 'POST',
     body: JSON.stringify({ reason }),
+  });
+}
+
+export function updatePendingScholarship(id: number, payload: AdminScholarshipUpdatePayload) {
+  return apiClient<ScholarshipReviewDetail>(`/admin/scholarships/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
   });
 }
 

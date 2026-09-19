@@ -18,6 +18,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const feature = path.join(root, 'src/features/admin/scholarship-review');
 const formatters = require(path.join(feature, 'lib/formatters.ts'));
 const presentation = require(path.join(feature, 'lib/presentation.ts'));
+const edit = require(path.join(feature, 'lib/edit.ts'));
 const apiSource = fs.readFileSync(path.join(feature, 'api/scholarship-review.ts'), 'utf8');
 const detailSource = fs.readFileSync(
   path.join(feature, 'components/ScholarshipReviewDetailPage.tsx'),
@@ -33,6 +34,23 @@ test('uses the real detail ID and contract paths', () => {
   assert.match(apiSource, /\/admin\/scholarships\/\$\{id\}\/approve/);
   assert.match(apiSource, /\/admin\/scholarships\/\$\{id\}\/reject/);
   assert.match(apiSource, /JSON\.stringify\(\{ reason \}\)/);
+  assert.match(apiSource, /\/admin\/scholarships\/\$\{id\}`/);
+  assert.match(apiSource, /method: 'PATCH'/);
+});
+
+test('builds a pending-only PATCH without clearing omitted or workflow fields', () => {
+  const initial = edit.toScholarshipEditValues({ id: 42, title: 'Old title', status: 'pending', apply_link: 'https://apply.example', source_url: 'https://source.example', required_documents: [' Passport '], eligibility_criteria: null });
+  const payload = edit.toChangedScholarshipUpdate({ ...initial, title: 'New title', required_documents: 'Passport\n\n Transcript ' }, initial);
+  assert.deepEqual(payload, { title: 'New title', required_documents: ['Passport', 'Transcript'] });
+  assert.equal('status' in payload, false);
+  assert.equal('source_url' in payload, false);
+});
+
+test('normalizes edit URLs and preserves no-deadline semantics', () => {
+  assert.equal(edit.isHttpUrl('https://example.com/path'), true);
+  assert.equal(edit.isHttpUrl('javascript:alert(1)'), false);
+  const initial = { title: 'A title', organization_name: '', country: '', deadline: '2027-01-01', no_deadline: false, apply_link: '', image_url: '', required_documents: '', eligibility_criteria: '', description_html: '' };
+  assert.deepEqual(edit.toChangedScholarshipUpdate({ ...initial, no_deadline: true }, initial), { no_deadline: true, deadline: null });
 });
 
 test('allows only safe HTTP(S) source and application URLs', () => {

@@ -121,6 +121,12 @@ Use this checklist to validate the review-detail workflow and its integration wi
 - [ ] Feature tests pass.
 - [ ] `pnpm build` passes, or records only the exact external Google Almarai font-fetch blocker.
 
+## Edit extension
+
+- [x] Edit is available only for authoritative `pending` detail records and uses the backend ID in a locale-aware Link.
+- [x] Save uses `PATCH /admin/scholarships/{id}` with changed, supported content fields only; workflow and provenance fields are excluded.
+- [x] Success returns to the same detail with an accessible one-time notice; cancel deterministically returns to detail.
+
 ## Recorded evidence (2026-09-19)
 
 - `pnpm test:scholarship-review`, `pnpm test:admin-dashboard`, and `pnpm test:manual-scholarship` passed.

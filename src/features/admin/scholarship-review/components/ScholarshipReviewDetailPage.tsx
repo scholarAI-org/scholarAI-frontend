@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button, buttonStyles } from '@/components/ui/Button';
 import { ApiError } from '@/lib/api-client';
 import { displayText, formatDateTime, getSafeExternalUrl } from '../lib/formatters';
@@ -139,6 +140,7 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
   const t = useTranslations('AdminScholarshipReview');
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const approve = useApproveScholarship();
   const reject = useRejectScholarship();
   const [reason, setReason] = useState('');
@@ -165,6 +167,17 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
       ? t(`ingestion.${detail.ingestion_type}`)
       : t('values.unavailable');
   const funding = getFundingValues(detail.funding_type, detail.funding_amount);
+  const updated = searchParams.get('notice') === 'updated';
+  useEffect(() => {
+    if (!updated) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('notice');
+    router.replace(
+      params.size
+        ? `/admin/scholarships/review/${detail.id}?${params}`
+        : `/admin/scholarships/review/${detail.id}`
+    );
+  }, [detail.id, router, searchParams, updated]);
   const submitApprove = () =>
     approve.mutate(detail.id, {
       onSuccess: () => router.replace('/admin/scholarships/review?notice=approved'),
@@ -201,6 +214,14 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
         <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
         {t('actions.backToList')}
       </Link>
+      {updated ? (
+        <p
+          role="status"
+          className="rounded-xl bg-[var(--color-bg-success-subtle)] p-3 text-sm text-[var(--color-success)]"
+        >
+          {t('edit.saved')}
+        </p>
+      ) : null}
       <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-[0_4px_12px_rgba(2,38,71,0.04)]">
         <div className="flex flex-col justify-between gap-5 lg:flex-row">
           <div>
@@ -278,6 +299,12 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
             ) : null}
             {detail.status === 'pending' ? (
               <div className="mt-4 space-y-3">
+                <Link
+                  href={`/admin/scholarships/review/${detail.id}/edit`}
+                  className="flex w-full items-center justify-center rounded-full border border-[#e2e8f0] px-4 py-2.5 text-sm font-medium text-[#434343]"
+                >
+                  {t('actions.edit')}
+                </Link>
                 <span ref={approveTriggerRef}>
                   <Button
                     type="button"

@@ -7,9 +7,11 @@ import {
   getScholarshipReviewList,
   getScholarshipReviewStatistics,
   rejectScholarship,
+  updatePendingScholarship,
 } from '../api/scholarship-review';
 import { scholarshipReviewKeys } from '../query-keys';
 import { shouldRetryScholarshipReviewQuery } from '../lib/retry';
+import type { AdminScholarshipUpdatePayload } from '../types';
 
 export function useScholarshipReviewStatistics() {
   return useQuery({
@@ -51,5 +53,17 @@ export function useRejectScholarship() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: number; reason: string }) => rejectScholarship(id, reason),
     onSuccess: invalidate,
+  });
+}
+
+export function useUpdatePendingScholarship() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: AdminScholarshipUpdatePayload }) =>
+      updatePendingScholarship(id, payload),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({ queryKey: scholarshipReviewKeys.detail(variables.id) });
+      void queryClient.invalidateQueries({ queryKey: [...scholarshipReviewKeys.all, 'list'] });
+    },
   });
 }

@@ -880,7 +880,9 @@
       "list": "Unable to load scholarships awaiting review.",
       "detail": "Unable to load scholarship details.",
       "notFound": "This scholarship could not be found.",
-      "action": "This action could not be completed. Please try again."
+      "action": "This action could not be completed. Please try again.",
+      "update": "Unable to save scholarship changes. Please try again.",
+      "notEditable": "This scholarship is no longer editable because it is not pending review."
     },
     "actions": {
       "retry": "Try again",
@@ -891,7 +893,10 @@
       "openApplication": "Open application",
       "approve": "Approve and publish",
       "reject": "Reject",
-      "confirmReject": "Confirm rejection"
+      "confirmReject": "Confirm rejection",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "backToDetail": "Back to scholarship details"
     },
     "pagination": {
       "previous": "Previous",
@@ -913,7 +918,10 @@
       "cancel": "Cancel"
     },
     "validation": {
-      "rejectionReason": "Rejection reason must be at least 3 characters."
+      "rejectionReason": "Rejection reason must be at least 3 characters.",
+      "title": "Scholarship title must contain at least 2 characters.",
+      "httpUrl": "Enter a valid HTTP or HTTPS URL.",
+      "deadline": "Enter a valid deadline date."
     },
     "details": {
       "information": "Scholarship information",
@@ -933,6 +941,24 @@
       "emptyDocuments": "No required documents are available.",
       "rejectionReason": "Reason for rejection",
       "noActions": "No review actions are available for this status."
+    },
+    "edit": {
+      "title": "Edit scholarship data",
+      "beforePublishing": "Edit before publishing",
+      "requiredNotice": "Fields marked with * are required.",
+      "scholarshipTitle": "Scholarship title",
+      "organization": "Granting organization",
+      "country": "Country",
+      "deadline": "Deadline",
+      "noDeadline": "No deadline",
+      "applicationUrl": "Official application URL",
+      "imageUrl": "Image URL",
+      "requiredDocuments": "Required documents (one per line)",
+      "eligibility": "Eligibility criteria (one per line)",
+      "description": "Scholarship description",
+      "save": "Save changes",
+      "saving": "Saving changes…",
+      "saved": "Saved successfully"
     }
   }
 }

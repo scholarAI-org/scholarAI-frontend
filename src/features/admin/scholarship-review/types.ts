@@ -26,6 +26,8 @@ export type ScholarshipReviewListResponse = {
 export type ScholarshipReviewDetail = {
   id: number;
   title: string;
+  title_ar?: string | null;
+  title_en?: string | null;
   organization_name?: string | null;
   university_name?: string | null;
   country?: string | null;
@@ -35,6 +37,7 @@ export type ScholarshipReviewDetail = {
   source?: string | null;
   source_url?: string | null;
   apply_link?: string | null;
+  image_url?: string | null;
   funding_type?: string | null;
   funding_amount?: string | null;
   deadline?: string | null;
@@ -43,6 +46,20 @@ export type ScholarshipReviewDetail = {
   description_html?: string | null;
   eligibility_criteria?: string[] | string | null;
   required_documents?: string[] | string | null;
+};
+
+/** The deployed PATCH contract deliberately excludes workflow and source-owned fields. */
+export type AdminScholarshipUpdatePayload = {
+  title?: string | null;
+  organization_name?: string | null;
+  country?: string | null;
+  deadline?: string | null;
+  no_deadline?: boolean | null;
+  image_url?: string | null;
+  description_html?: string | null;
+  apply_link?: string | null;
+  required_documents?: string[] | null;
+  eligibility_criteria?: string[] | null;
 };
 
 export type ScholarshipApproveResponse = {

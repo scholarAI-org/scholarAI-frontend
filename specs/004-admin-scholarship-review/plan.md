@@ -7,3 +7,4 @@
 5. Keep unsupported Figma actions absent and record the contract decision.
 6. Render `description_html` as plain text until shared trusted HTML rendering infrastructure exists.
 7. Keep backend-returned approved and rejected deep links available as read-only detail views.
+8. Add a thin pending-only edit route that reuses the detail query, maps only PATCH-writable review values, sends changed fields through `PATCH /admin/scholarships/{id}`, invalidates review queries, and returns to the same detail with a consumed update notice.
