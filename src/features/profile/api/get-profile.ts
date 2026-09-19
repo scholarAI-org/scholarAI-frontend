@@ -1,5 +1,4 @@
 import { apiClient, ApiError } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import {
   type FullProfileApi,
   emptyFullProfile,
@@ -10,7 +9,6 @@ export async function getProfile(signal?: AbortSignal): Promise<FullProfileApi> 
   try {
     const response = await apiClient<unknown>('/profile', {
       method: 'GET',
-      headers: getProfileAuthHeaders(),
       signal,
     });
     return normalizeFullProfile(response);

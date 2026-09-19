@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import type {
   AvatarConfirmResponse,
   AvatarUploadUrlRequest,
@@ -11,7 +10,6 @@ export function requestAvatarUploadUrl(
 ): Promise<AvatarUploadUrlResponse> {
   return apiClient<AvatarUploadUrlResponse>('/profile/avatar/upload-url', {
     method: 'POST',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify(payload),
   });
 }
@@ -39,7 +37,6 @@ export async function uploadAvatarToS3(
 export function confirmAvatarUpload(uploadId: string): Promise<AvatarConfirmResponse> {
   return apiClient<AvatarConfirmResponse>('/profile/avatar/confirm', {
     method: 'POST',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify({ upload_id: uploadId }),
   });
 }

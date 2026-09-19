@@ -4,7 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { QueryProvider } from '@/lib/query-provider';
-
+import { AuthProvider } from '@/features/auth/providers/AuthProvider';
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -28,9 +28,11 @@ export default async function LocaleLayout({
   return (
     <QueryProvider>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <div dir={dir} lang={locale} className="min-h-full flex flex-col flex-1">
-          {children}
-        </div>
+        <AuthProvider>
+          <div dir={dir} lang={locale} className="min-h-full flex flex-col flex-1">
+            {children}
+          </div>
+        </AuthProvider>
       </NextIntlClientProvider>
     </QueryProvider>
   );

@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import { type PreferencesApi, normalizePreferences } from '../schemas/preferences-api.schema';
 
 export async function updatePreferences(data: PreferencesApi): Promise<PreferencesApi> {
@@ -16,7 +15,6 @@ export async function updatePreferences(data: PreferencesApi): Promise<Preferenc
 
   const response = await apiClient<PreferencesApi>('/profile/preferences', {
     method: 'PUT',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify(payload),
   });
 

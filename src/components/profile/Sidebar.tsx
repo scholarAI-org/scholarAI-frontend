@@ -1,5 +1,8 @@
+'use client';
+
 import { LogOut } from 'lucide-react';
 import Image from 'next/image';
+import { useLogout } from '@/features/auth/hooks/useLogout';
 import type { ProfileUser, SidebarMenuItem } from './types';
 
 interface SidebarProps {
@@ -63,6 +66,8 @@ function SidebarItem({ item }: { item: SidebarMenuItem }) {
 }
 
 export default function Sidebar({ brand, user, items, logoutLabel }: SidebarProps) {
+  const { mutate: logout, isPending } = useLogout();
+
   return (
     <nav className="rounded-3xl border border-[#e2e8f0] bg-white px-5 py-6 lg:min-h-[733px] lg:rounded-none lg:border-y-0 lg:border-e">
       <div className="mx-auto max-w-[196px]">
@@ -97,9 +102,11 @@ export default function Sidebar({ brand, user, items, logoutLabel }: SidebarProp
       <div className="mt-10 border-t border-[#f1f5f9] pt-5">
         <button
           type="button"
-          className="mx-auto flex h-[42px] w-full max-w-[196px] items-center justify-center gap-2 rounded-full px-3 text-sm text-[#b5b5b5] transition-colors hover:bg-[#f8fafc]"
+          onClick={() => logout()}
+          disabled={isPending}
+          className="mx-auto flex h-[42px] w-full max-w-[196px] items-center justify-center gap-2 rounded-full px-3 text-sm text-[#b5b5b5] transition-colors hover:bg-[#f8fafc] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <span>{logoutLabel}</span>
+          <span>{isPending ? 'جاري تسجيل الخروج...' : logoutLabel}</span>
           <LogOut className="h-5 w-5 rtl:rotate-180" />
         </button>
       </div>

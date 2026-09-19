@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { register } from '../api/register';
 import { login } from '../api/login';
 import { useRouter } from '@/i18n/navigation';
-import { setToken } from '@/lib/auth-storage';
 import type { RegisterFormData } from '../schemas/create-register.schema';
 
 import { ApiError } from '@/lib/api-client';
@@ -34,8 +33,7 @@ export function useRegister() {
       }
 
       queryClient.clear();
-      setToken(session.access_token, false);
-      router.push('/profile');
+      router.push('/student/profile');
     },
   });
 }

@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import type {
   Document,
   DocumentsApi,
@@ -11,7 +10,6 @@ import type {
 export async function getDocuments(): Promise<DocumentsApi> {
   return apiClient<DocumentsApi>('/profile/documents', {
     method: 'GET',
-    headers: getProfileAuthHeaders(),
   });
 }
 
@@ -20,7 +18,6 @@ export async function requestDocumentUploadUrl(
 ): Promise<UploadUrlResponse> {
   return apiClient<UploadUrlResponse>('/profile/documents/upload-url', {
     method: 'POST',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify(payload),
   });
 }
@@ -50,7 +47,6 @@ export async function uploadFileToS3(
 export async function confirmDocumentUpload(uploadId: string): Promise<Document> {
   return apiClient<Document>('/profile/documents/confirm', {
     method: 'POST',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify({ upload_id: uploadId }),
   });
 }
@@ -58,13 +54,11 @@ export async function confirmDocumentUpload(uploadId: string): Promise<Document>
 export async function getDocumentDownloadUrl(documentId: string): Promise<DownloadUrlResponse> {
   return apiClient<DownloadUrlResponse>(`/profile/documents/${documentId}/download-url`, {
     method: 'GET',
-    headers: getProfileAuthHeaders(),
   });
 }
 
 export async function deleteDocument(documentId: string): Promise<void> {
   return apiClient<void>(`/profile/documents/${documentId}`, {
     method: 'DELETE',
-    headers: getProfileAuthHeaders(),
   });
 }

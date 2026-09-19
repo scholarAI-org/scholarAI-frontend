@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import {
   academicInformationApiSchema,
   type AcademicInformationApi,
@@ -11,7 +10,6 @@ export async function updateAcademicInformation(
   const payload = academicInformationApiSchema.parse(data);
   const response = await apiClient<unknown>('/profile/academic-info', {
     method: 'PUT',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify(payload),
   });
 

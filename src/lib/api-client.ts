@@ -28,6 +28,7 @@ export async function apiClient<T>(endpoint: string, options?: RequestInit): Pro
   const response = await fetch(`${baseUrl}/${path}`, {
     ...options,
     headers,
+    credentials: 'include',
   });
 
   if (!response.ok) {

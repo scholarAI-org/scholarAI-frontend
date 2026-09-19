@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from '@/features/auth/providers/AuthProvider';
 
 import { useState } from 'react';
 import {
@@ -118,7 +119,9 @@ export default function ProfilePage() {
     }
     return { ...step, status };
   });
+  const auth = useAuth();
 
+  console.log('AUTH:', auth);
   return (
     <ProfileLayout
       header={

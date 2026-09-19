@@ -1,5 +1,4 @@
 import { apiClient } from '@/lib/api-client';
-import { getProfileAuthHeaders } from './profile-auth';
 import {
   personalInformationApiSchema,
   type PersonalInformation,
@@ -11,7 +10,6 @@ export async function updatePersonalInformation(
   const payload = personalInformationApiSchema.parse(data);
   const response = await apiClient<unknown>('/profile/personal-info', {
     method: 'PUT',
-    headers: getProfileAuthHeaders(),
     body: JSON.stringify(payload),
   });
   // PUT may return the saved resource or an acknowledgement/no content.

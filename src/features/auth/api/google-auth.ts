@@ -1,8 +1,7 @@
 import { apiClient } from '@/lib/api-client';
-import type { Token } from './login';
 
-export async function googleAuth(credential: string): Promise<Token> {
-  return apiClient<Token>('/auth/google', {
+export async function googleAuth(credential: string): Promise<unknown> {
+  return apiClient<unknown>('/auth/google', {
     method: 'POST',
     body: JSON.stringify({ credential }),
   });
