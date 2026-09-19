@@ -836,5 +836,103 @@
       "conflict": "توجد منحة مسجلة بالفعل بهذه التفاصيل.",
       "validation": "يرجى مراجعة الحقول المميزة ثم المحاولة مرة أخرى."
     }
+  },
+  "AdminScholarshipReview": {
+    "title": "مراجعة المنح",
+    "description": "راجع قوائم المنح المعلّقة. لا تظهر المنح للطلاب إلا بعد اعتمادها ونشرها.",
+    "statisticsLabel": "إحصاءات مراجعة المنح",
+    "noticeLabel": "معلومات النشر",
+    "notice": "تظهر المنح للطلاب فقط بعد اعتمادها ونشرها.",
+    "listTitle": "المنح بانتظار المراجعة",
+    "metrics": {
+      "pending": "المنح قيد المراجعة",
+      "approvedThisWeek": "المنح المعتمدة هذا الأسبوع",
+      "missingSourceUrl": "منح بلا رابط مصدر"
+    },
+    "fields": {
+      "index": "#",
+      "title": "المنحة",
+      "organization": "الجهة المانحة",
+      "source": "المصدر",
+      "scrapedAt": "وقت الجمع",
+      "status": "حالة المراجعة",
+      "action": "الإجراء"
+    },
+    "status": {
+      "pending": "قيد المراجعة",
+      "approved": "معتمدة",
+      "rejected": "مرفوضة",
+      "unknown": "حالة غير معروفة"
+    },
+    "values": {
+      "unavailable": "غير متاح",
+      "missingOrganization": "الجهة غير متاحة",
+      "missingSource": "المصدر غير متاح"
+    },
+    "states": {
+      "loadingStatistics": "جارٍ تحميل إحصاءات المراجعة…",
+      "loadingList": "جارٍ تحميل المنح بانتظار المراجعة…",
+      "empty": "لا توجد منح تحتاج إلى مراجعة حالياً.",
+      "loadingDetail": "جارٍ تحميل تفاصيل المنحة…"
+    },
+    "errors": {
+      "statistics": "تعذر تحميل إحصاءات مراجعة المنح.",
+      "list": "تعذر تحميل المنح بانتظار المراجعة.",
+      "detail": "تعذر تحميل تفاصيل المنحة.",
+      "notFound": "تعذر العثور على هذه المنحة.",
+      "action": "تعذر إتمام هذا الإجراء. يرجى المحاولة مرة أخرى."
+    },
+    "actions": {
+      "retry": "إعادة المحاولة",
+      "openSource": "فتح المصدر",
+      "review": "مراجعة",
+      "backToList": "العودة للقائمة",
+      "originalSource": "المصدر الأصلي",
+      "openApplication": "فتح رابط التقديم",
+      "approve": "اعتماد ونشر",
+      "reject": "رفض",
+      "confirmReject": "تأكيد الرفض"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "summary": "الصفحة {page} · {total} نتيجة"
+    },
+    "ingestion": {
+      "manual": "أُنشئت يدوياً",
+      "scraped": "مُجمّعة آلياً"
+    },
+    "feedback": {
+      "approved": "تم اعتماد المنحة ونشرها.",
+      "rejected": "تم رفض المنحة."
+    },
+    "confirmation": {
+      "title": "تأكيد الاعتماد والنشر",
+      "description": "هل تريد اعتماد ونشر «{title}»؟ سيجعلها ذلك مؤهلة للظهور للطلاب.",
+      "confirm": "اعتماد ونشر",
+      "cancel": "إلغاء"
+    },
+    "validation": {
+      "rejectionReason": "سبب الرفض يجب أن يتكون من 3 أحرف على الأقل."
+    },
+    "details": {
+      "information": "معلومات المنحة",
+      "actions": "إجراءات المراجعة",
+      "ingestion": "نوع الإدخال",
+      "funding": "التمويل",
+      "deadline": "الموعد النهائي",
+      "noDeadline": "لا يوجد موعد نهائي",
+      "majors": "التخصصات والمجالات",
+      "source": "مصدر البيانات",
+      "application": "رابط التقديم الرسمي",
+      "overview": "نظرة عامة",
+      "emptyOverview": "لا تتوفر نظرة عامة.",
+      "eligibility": "متطلبات الأهلية",
+      "emptyEligibility": "لا تتوفر متطلبات أهلية.",
+      "requiredDocuments": "المستندات المطلوبة",
+      "emptyDocuments": "لا تتوفر مستندات مطلوبة.",
+      "rejectionReason": "سبب الرفض",
+      "noActions": "لا تتوفر إجراءات مراجعة لهذه الحالة."
+    }
   }
 }

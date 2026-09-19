@@ -1,5 +1,5 @@
 export type AdminPageMetadata = {
-  namespace: 'AdminDashboard' | 'AdminManualScholarship';
+  namespace: 'AdminDashboard' | 'AdminManualScholarship' | 'AdminScholarshipReview';
   titleKey: 'title';
   descriptionKey: 'description';
 };
@@ -15,8 +15,18 @@ const adminPageMetadata: Record<string, AdminPageMetadata> = {
     titleKey: 'title',
     descriptionKey: 'description',
   },
+  '/admin/scholarships/review': {
+    namespace: 'AdminScholarshipReview',
+    titleKey: 'title',
+    descriptionKey: 'description',
+  },
 };
 
 export function getAdminPageMetadata(pathname: string) {
-  return adminPageMetadata[pathname];
+  return (
+    adminPageMetadata[pathname] ??
+    (pathname.startsWith('/admin/scholarships/review/')
+      ? adminPageMetadata['/admin/scholarships/review']
+      : undefined)
+  );
 }

@@ -16,7 +16,8 @@
     "test:admin-dashboard": "node --test tests/admin-dashboard-formatters.test.mjs",
     "test:auth-recovery": "node --test tests/auth-password-recovery.test.mjs",
     "test:email-verification": "node --test tests/email-verification.test.mjs",
-    "test:manual-scholarship": "node --test tests/manual-scholarship.test.mjs"
+    "test:manual-scholarship": "node --test tests/manual-scholarship.test.mjs",
+    "test:scholarship-review": "node --test tests/scholarship-review.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

@@ -836,5 +836,103 @@
       "conflict": "A scholarship with these details already exists.",
       "validation": "Please review the highlighted fields and try again."
     }
+  },
+  "AdminScholarshipReview": {
+    "title": "Scholarship review",
+    "description": "Review pending scholarship listings. Students can only see listings after they have been approved and published.",
+    "statisticsLabel": "Scholarship review statistics",
+    "noticeLabel": "Publication information",
+    "notice": "Scholarships appear to students only after they are approved and published.",
+    "listTitle": "Scholarships awaiting review",
+    "metrics": {
+      "pending": "Pending scholarships",
+      "approvedThisWeek": "Approved this week",
+      "missingSourceUrl": "Missing source URL"
+    },
+    "fields": {
+      "index": "#",
+      "title": "Scholarship",
+      "organization": "Granting organization",
+      "source": "Source",
+      "scrapedAt": "Collected at",
+      "status": "Review status",
+      "action": "Action"
+    },
+    "status": {
+      "pending": "Pending review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "unknown": "Unknown status"
+    },
+    "values": {
+      "unavailable": "Unavailable",
+      "missingOrganization": "Organization unavailable",
+      "missingSource": "Source unavailable"
+    },
+    "states": {
+      "loadingStatistics": "Loading review statistics…",
+      "loadingList": "Loading scholarships awaiting review…",
+      "empty": "There are currently no scholarships requiring review.",
+      "loadingDetail": "Loading scholarship details…"
+    },
+    "errors": {
+      "statistics": "Unable to load scholarship review statistics.",
+      "list": "Unable to load scholarships awaiting review.",
+      "detail": "Unable to load scholarship details.",
+      "notFound": "This scholarship could not be found.",
+      "action": "This action could not be completed. Please try again."
+    },
+    "actions": {
+      "retry": "Try again",
+      "openSource": "Open source",
+      "review": "Review",
+      "backToList": "Back to list",
+      "originalSource": "Original source",
+      "openApplication": "Open application",
+      "approve": "Approve and publish",
+      "reject": "Reject",
+      "confirmReject": "Confirm rejection"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "summary": "Page {page} · {total} results"
+    },
+    "ingestion": {
+      "manual": "Manually created",
+      "scraped": "Collected automatically"
+    },
+    "feedback": {
+      "approved": "Scholarship approved and published.",
+      "rejected": "Scholarship rejected."
+    },
+    "confirmation": {
+      "title": "Confirm approval and publication",
+      "description": "Approve and publish “{title}”? This makes it eligible to appear to students.",
+      "confirm": "Approve and publish",
+      "cancel": "Cancel"
+    },
+    "validation": {
+      "rejectionReason": "Rejection reason must be at least 3 characters."
+    },
+    "details": {
+      "information": "Scholarship information",
+      "actions": "Review actions",
+      "ingestion": "Entry type",
+      "funding": "Funding",
+      "deadline": "Deadline",
+      "noDeadline": "No deadline",
+      "majors": "Majors and fields",
+      "source": "Data source",
+      "application": "Official application link",
+      "overview": "Overview",
+      "emptyOverview": "No overview is available.",
+      "eligibility": "Eligibility requirements",
+      "emptyEligibility": "No eligibility requirements are available.",
+      "requiredDocuments": "Required documents",
+      "emptyDocuments": "No required documents are available.",
+      "rejectionReason": "Reason for rejection",
+      "noActions": "No review actions are available for this status."
+    }
   }
 }

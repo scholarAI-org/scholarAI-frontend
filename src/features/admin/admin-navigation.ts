@@ -30,7 +30,13 @@ export const adminNavigation: AdminNavigationGroup[] = [
     id: 'content',
     labelKey: 'groups.content',
     items: [
-      { id: 'review', labelKey: 'items.review', icon: '/images/admin/scholarship-review.svg' },
+      {
+        id: 'review',
+        labelKey: 'items.review',
+        icon: '/images/admin/scholarship-review.svg',
+        href: '/admin/scholarships/review',
+        match: 'section',
+      },
       {
         id: 'scholarships',
         labelKey: 'items.scholarships',
