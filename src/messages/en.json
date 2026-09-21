@@ -882,7 +882,9 @@
       "notFound": "This scholarship could not be found.",
       "action": "This action could not be completed. Please try again.",
       "update": "Unable to save scholarship changes. Please try again.",
-      "notEditable": "This scholarship is no longer editable because it is not pending review."
+      "notEditable": "This scholarship is no longer editable because it is not pending review.",
+      "approvalFailure": "Unable to approve this scholarship. Please try again.",
+      "rejectionFailure": "Unable to reject this scholarship. Please try again."
     },
     "actions": {
       "retry": "Try again",
@@ -916,6 +918,17 @@
       "description": "Approve and publish “{title}”? This makes it eligible to appear to students.",
       "confirm": "Approve and publish",
       "cancel": "Cancel"
+    },
+    "dialog": {
+      "close": "Close",
+      "approveTitle": "Approve and publish",
+      "approveDescription": "Approve this scholarship? Its status will be updated to approved.",
+      "rejectTitle": "Reject",
+      "rejectDescription": "Reject this scholarship? Please provide a reason for rejection.",
+      "rejectionPlaceholder": "Example: Missing information or a broken link...",
+      "confirm": "Confirm",
+      "approving": "Approving...",
+      "rejecting": "Rejecting..."
     },
     "validation": {
       "rejectionReason": "Rejection reason must be at least 3 characters.",

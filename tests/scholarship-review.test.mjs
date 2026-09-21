@@ -28,6 +28,8 @@ const listingSource = fs.readFileSync(
   path.join(feature, 'components/ScholarshipReviewPage.tsx'),
   'utf8'
 );
+const enMessages = fs.readFileSync(path.join(root, 'src/messages/en.json'), 'utf8');
+const arMessages = fs.readFileSync(path.join(root, 'src/messages/ar.json'), 'utf8');
 
 test('uses the real detail ID and contract paths', () => {
   assert.match(apiSource, /\/admin\/scholarships\/\$\{id\}\/review-details/);
@@ -95,6 +97,21 @@ test('detail remains plain text and status-gates review actions', () => {
   assert.match(detailSource, /detail\.status === 'pending'/);
   assert.match(detailSource, /aria-invalid=/);
   assert.match(detailSource, /rejection-reason-error/);
+  assert.match(detailSource, /role="dialog"/);
+  assert.match(detailSource, /aria-modal="true"/);
+  assert.match(detailSource, /initialFocusRef=\{approveCancelRef\}/);
+  assert.match(detailSource, /reason: reason\.trim\(\)/);
+});
+
+test('dialog copy is localized and makes no unsupported re-review promise', () => {
+  for (const messages of [enMessages, arMessages]) {
+    assert.match(messages, /"approveTitle"/);
+    assert.match(messages, /"rejectDescription"/);
+    assert.match(messages, /"rejectionPlaceholder"/);
+    assert.match(messages, /"rejectionReason"/);
+  }
+  assert.doesNotMatch(detailSource, /إعادة مراجعتها لاحقاً/);
+  assert.doesNotMatch(enMessages, /re-review/i);
 });
 
 test('desktop and mobile review links use the backend item ID and notices are cleaned', () => {

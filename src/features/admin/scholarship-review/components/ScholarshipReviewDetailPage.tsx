@@ -1,7 +1,8 @@
 'use client';
 
-import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Loader2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, useRouter } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
@@ -62,74 +63,94 @@ function TextList({
   );
 }
 
-function ApproveConfirmation({
+function ReviewDialog({
   open,
-  scholarshipTitle,
+  title,
+  description,
   isPending,
-  onConfirm,
-  onCancel,
+  onClose,
+  initialFocusRef,
+  children,
 }: {
   open: boolean;
-  scholarshipTitle: string;
+  title: string;
+  description: string;
   isPending: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
+  onClose: () => void;
+  initialFocusRef: RefObject<HTMLElement | null>;
+  children: ReactNode;
 }) {
   const t = useTranslations('AdminScholarshipReview');
-  const cancelContainerRef = useRef<HTMLSpanElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const titleId = `review-dialog-title-${title.toLowerCase().replaceAll(' ', '-')}`;
+  const descriptionId = `${titleId}-description`;
   useEffect(() => {
-    if (open) cancelContainerRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
-  }, [open]);
+    if (open) {
+      const target = initialFocusRef.current;
+      (target?.matches('button, textarea, input')
+        ? target
+        : target?.querySelector<HTMLElement>('button, textarea, input')
+      )?.focus();
+    }
+  }, [initialFocusRef, open]);
   useEffect(() => {
     if (!open || isPending) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onCancel();
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = panelRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), textarea:not([disabled]), [href], input:not([disabled]), select:not([disabled])'
+      );
+      if (!focusable?.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isPending, onCancel, open]);
+  }, [isPending, onClose, open]);
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a2243]/30 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a2243]/35 p-4"
       role="presentation"
     >
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="approve-dialog-title"
-        aria-describedby="approve-dialog-description"
-        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        className="max-h-[calc(100vh-2rem)] w-full max-w-[512px] overflow-y-auto rounded-2xl border border-[#e2e8f0] bg-white shadow-2xl"
       >
-        <h2 id="approve-dialog-title" className="text-lg font-bold text-[#1e1b33]">
-          {t('confirmation.title')}
-        </h2>
-        <p id="approve-dialog-description" className="mt-3 text-sm leading-6 text-[#434343]">
-          {t('confirmation.description', { title: scholarshipTitle })}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Button
+        <div className="flex min-h-[63px] items-center justify-between gap-4 border-b border-[#e2e8f0] px-5">
+          <h2 id={titleId} className="text-lg font-bold text-[#1e1b33]">
+            {title}
+          </h2>
+          <button
             type="button"
-            size="sm"
-            className="rounded-full"
-            isLoading={isPending}
+            aria-label={t('dialog.close')}
             disabled={isPending}
-            onClick={onConfirm}
+            onClick={onClose}
+            className="inline-flex size-9 items-center justify-center rounded-lg text-[#635f80] hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
           >
-            {t('confirmation.confirm')}
-          </Button>
-          <span ref={cancelContainerRef}>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="rounded-full"
-              disabled={isPending}
-              onClick={onCancel}
-            >
-              {t('confirmation.cancel')}
-            </Button>
-          </span>
+            <X className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="px-5 pb-5 pt-4">
+          <p id={descriptionId} className="text-sm leading-6 text-[#434343]">
+            {description}
+          </p>
+          {children}
         </div>
       </div>
     </div>
@@ -148,6 +169,9 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [approveOpen, setApproveOpen] = useState(false);
   const approveTriggerRef = useRef<HTMLSpanElement>(null);
+  const rejectTriggerRef = useRef<HTMLSpanElement>(null);
+  const approveCancelRef = useRef<HTMLSpanElement>(null);
+  const rejectReasonRef = useRef<HTMLTextAreaElement>(null);
   const busy = approve.isPending || reject.isPending;
   const actionError = approve.error || reject.error;
   const context = [
@@ -193,20 +217,128 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
       { onSuccess: () => router.replace('/admin/scholarships/review?notice=rejected') }
     );
   };
+  const closeApprove = () => {
+    if (approve.isPending) return;
+    setApproveOpen(false);
+    window.setTimeout(() =>
+      approveTriggerRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    );
+  };
+  const closeReject = () => {
+    if (reject.isPending) return;
+    setRejectOpen(false);
+    window.setTimeout(() =>
+      rejectTriggerRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    );
+  };
   return (
     <div className="space-y-4">
-      <ApproveConfirmation
+      <ReviewDialog
         open={approveOpen}
-        scholarshipTitle={detail.title}
+        title={t('dialog.approveTitle')}
+        description={t('dialog.approveDescription')}
         isPending={approve.isPending}
-        onConfirm={submitApprove}
-        onCancel={() => {
-          setApproveOpen(false);
-          window.setTimeout(() =>
-            approveTriggerRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
-          );
-        }}
-      />
+        onClose={closeApprove}
+        initialFocusRef={approveCancelRef}
+      >
+        {approve.error ? (
+          <p role="alert" className="mt-3 text-sm text-[var(--color-text-error)]">
+            {approve.error instanceof ApiError && approve.error.message
+              ? approve.error.message
+              : t('errors.approvalFailure')}
+          </p>
+        ) : null}
+        <div className="mt-5 flex flex-wrap gap-3">
+          <span ref={approveCancelRef}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="h-11 rounded-full px-5"
+              disabled={approve.isPending}
+              onClick={closeApprove}
+            >
+              {t('actions.cancel')}
+            </Button>
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            className="h-11 rounded-full px-5"
+            isLoading={approve.isPending}
+            disabled={approve.isPending}
+            onClick={submitApprove}
+          >
+            {approve.isPending ? t('dialog.approving') : t('dialog.confirm')}
+          </Button>
+        </div>
+      </ReviewDialog>
+      <ReviewDialog
+        open={rejectOpen}
+        title={t('dialog.rejectTitle')}
+        description={t('dialog.rejectDescription')}
+        isPending={reject.isPending}
+        onClose={closeReject}
+        initialFocusRef={rejectReasonRef}
+      >
+        <div className="mt-4 space-y-2">
+          <label htmlFor="rejection-reason" className="text-sm font-medium text-[#434343]">
+            {t('details.rejectionReason')}
+          </label>
+          <textarea
+            id="rejection-reason"
+            ref={rejectReasonRef}
+            value={reason}
+            minLength={3}
+            placeholder={t('dialog.rejectionPlaceholder')}
+            aria-invalid={reasonError ? 'true' : undefined}
+            aria-describedby={reasonError ? 'rejection-reason-error' : undefined}
+            onChange={(event) => {
+              setReason(event.target.value);
+              if (reasonError) setReasonError(null);
+            }}
+            className="min-h-24 w-full resize-y rounded-lg border border-[#e2e8f0] bg-white p-3 text-sm text-[#434343] placeholder:text-[#979797] focus-visible:outline-2 focus-visible:outline-[#f97316]"
+          />
+          {reasonError ? (
+            <p
+              id="rejection-reason-error"
+              role="alert"
+              className="text-sm text-[var(--color-text-error)]"
+            >
+              {reasonError}
+            </p>
+          ) : null}
+          {reject.error ? (
+            <p role="alert" className="text-sm text-[var(--color-text-error)]">
+              {reject.error instanceof ApiError && reject.error.message
+                ? reject.error.message
+                : t('errors.rejectionFailure')}
+            </p>
+          ) : null}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="h-11 rounded-full px-5"
+            disabled={reject.isPending}
+            onClick={closeReject}
+          >
+            {t('actions.cancel')}
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            className="h-11 rounded-full bg-[var(--color-text-error)] px-5 hover:bg-[var(--color-text-error)]"
+            isLoading={reject.isPending}
+            disabled={reject.isPending}
+            onClick={submitReject}
+          >
+            {reject.isPending ? t('dialog.rejecting') : t('dialog.confirm')}
+          </Button>
+        </div>
+      </ReviewDialog>
       <Link
         href="/admin/scholarships/review"
         className="inline-flex items-center gap-1 text-sm text-[#635f80] hover:text-[#f97316] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
@@ -290,7 +422,7 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
           </section>
           <section className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
             <h2 className="text-lg font-bold text-[#434343]">{t('details.actions')}</h2>
-            {actionError ? (
+            {actionError && !approveOpen && !rejectOpen ? (
               <p role="alert" className="mt-3 text-sm text-[var(--color-text-error)]">
                 {actionError instanceof ApiError && actionError.message
                   ? actionError.message
@@ -316,57 +448,18 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
                     {t('actions.approve')}
                   </Button>
                 </span>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="md"
-                  className="w-full rounded-full text-[var(--color-text-error)]"
-                  disabled={busy}
-                  onClick={() => setRejectOpen((open) => !open)}
-                >
-                  {t('actions.reject')}
-                </Button>
-                {rejectOpen ? (
-                  <div className="space-y-2 rounded-xl bg-[#f8fafc] p-3">
-                    <label
-                      htmlFor="rejection-reason"
-                      className="text-sm font-medium text-[#434343]"
-                    >
-                      {t('details.rejectionReason')}
-                    </label>
-                    <textarea
-                      id="rejection-reason"
-                      value={reason}
-                      minLength={3}
-                      aria-invalid={reasonError ? 'true' : undefined}
-                      aria-describedby={reasonError ? 'rejection-reason-error' : undefined}
-                      onChange={(event) => {
-                        setReason(event.target.value);
-                        if (reasonError) setReasonError(null);
-                      }}
-                      className="w-full rounded-lg border border-[#e2e8f0] bg-white p-2 text-sm focus-visible:outline-2 focus-visible:outline-[#f97316]"
-                    />
-                    {reasonError ? (
-                      <p
-                        id="rejection-reason-error"
-                        role="alert"
-                        className="text-sm text-[var(--color-text-error)]"
-                      >
-                        {reasonError}
-                      </p>
-                    ) : null}
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      disabled={busy}
-                      isLoading={reject.isPending}
-                      onClick={submitReject}
-                    >
-                      {t('actions.confirmReject')}
-                    </Button>
-                  </div>
-                ) : null}
+                <span ref={rejectTriggerRef}>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="md"
+                    className="w-full rounded-full text-[var(--color-text-error)]"
+                    disabled={busy}
+                    onClick={() => setRejectOpen(true)}
+                  >
+                    {t('actions.reject')}
+                  </Button>
+                </span>
               </div>
             ) : (
               <p className="mt-3 text-sm text-[#979797]">{t('details.noActions')}</p>

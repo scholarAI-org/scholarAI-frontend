@@ -67,4 +67,5 @@
 - [x] T044 Add the pending-only `/[locale]/admin/scholarships/review/[id]/edit` route, PATCH mutation, localized edit form, and detail Edit entry point.
 - [x] T045 Document PATCH-only writable-field mapping, omitted workflow fields, no-deadline behavior, and update navigation/invalidation.
 - [x] T046 Converge the edit summary/form hierarchy and accessibility associations; record the visual/manual verification boundary and stale build-lock investigation.
+- [x] T047 Converge Approve and Reject dialogs to Figma nodes `2869:6866` and `2869:7665` as feature-owned modal states, retaining backend-authoritative mutations and neutral rejection copy.
 - [x] T043 Run `pnpm build`; if blocked only by the existing Google Almarai fetch issue, record that exact external blocker.
