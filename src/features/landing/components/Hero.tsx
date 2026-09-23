@@ -1,18 +1,21 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/shared/Container';
 import { AiIcon, SearchIcon } from '@/components/icons';
+import { Link } from '@/i18n/navigation';
+import { buttonStyles } from '@/components/ui/Button';
 
-const FILTER_KEYS = ['all', 'bachelor', 'master', 'phd', 'exchange'] as const;
+const FILTER_KEYS = ['bachelor', 'master', 'phd', 'exchange'] as const;
 
 export function Hero() {
   const t = useTranslations('Landing.hero');
-  const [activeFilter, setActiveFilter] = useState<(typeof FILTER_KEYS)[number]>('all');
 
   return (
-    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#0A2243_0%,rgba(10,58,104,0.92)_100%)] pt-16 pb-20 sm:pt-20 sm:pb-24">
+    <section
+      id="home"
+      className="relative overflow-hidden bg-[linear-gradient(135deg,#274383_0%,#0A2243_100%)] pt-16 pb-20 sm:pt-20 sm:pb-24"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-10 h-[295px] w-[522px] -translate-x-1/2 rounded-full bg-[#10B981] opacity-90 blur-[100px]"
@@ -33,26 +36,34 @@ export function Hero() {
               {t('subtitle')}
             </p>
           </div>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/register"
+              className={buttonStyles({ variant: 'primary', className: 'px-6' })}
+            >
+              {t('start')}
+            </Link>
+            <a
+              href="#how-it-works"
+              className={buttonStyles({ variant: 'outline', className: 'px-6 text-white' })}
+            >
+              {t('howItWorks')}
+            </a>
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-6">
-          <div className="flex flex-wrap items-center justify-center gap-2">
+          <p className="text-xs text-[var(--color-gray-300)]">{t('searchUnavailable')}</p>
+          <div aria-hidden className="flex flex-wrap items-center justify-center gap-2">
             {FILTER_KEYS.map((key) => {
-              const isActive = key === activeFilter;
               return (
-                <button
+                <span
                   key={key}
-                  type="button"
-                  onClick={() => setActiveFilter(key)}
-                  className={[
-                    'rounded-full px-5 py-2.5 text-sm transition-colors',
-                    isActive
-                      ? 'bg-[var(--color-primary)] text-white'
-                      : 'bg-white/10 text-[var(--color-gray-300)] hover:bg-white/15',
-                  ].join(' ')}
+                  className="rounded-full bg-white/10 px-5 py-2.5 text-sm text-[var(--color-gray-300)]"
                 >
                   {t(`filters.${key}`)}
-                </button>
+                </span>
               );
             })}
           </div>
@@ -62,15 +73,16 @@ export function Hero() {
               <SearchIcon className="h-5 w-5 shrink-0 text-[var(--color-gray-400)]" />
               <input
                 type="text"
+                disabled
                 placeholder={t('searchPlaceholder')}
                 className="w-full bg-transparent text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-gray-400)]"
               />
             </div>
             <button
               type="button"
-              className="flex shrink-0 flex-col items-center justify-center gap-0 rounded-lg bg-[var(--color-primary)] px-4 py-2 text-white transition-colors hover:bg-[var(--color-primary-hover)]"
+              disabled
+              className="flex shrink-0 items-center justify-center rounded-lg bg-[var(--color-primary)] px-4 py-3 text-white opacity-60"
             >
-              <span className="text-xl font-bold leading-tight">{t('searchCount')}</span>
               <span className="text-sm leading-tight">{t('searchButton')}</span>
             </button>
           </div>
