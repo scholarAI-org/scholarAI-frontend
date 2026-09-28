@@ -6,7 +6,15 @@ import type {
   ScholarshipReviewListResponse,
   ScholarshipReviewStatistics,
   AdminScholarshipUpdatePayload,
+  ScholarshipReviewStatus,
 } from '../types';
+
+function normalizeScholarshipReviewStatus(value: unknown): ScholarshipReviewStatus {
+  const normalized = typeof value === 'string' ? value.trim().toLowerCase() : '';
+  return normalized === 'pending' || normalized === 'approved' || normalized === 'rejected'
+    ? normalized
+    : 'unknown';
+}
 
 export function getScholarshipReviewStatistics(signal?: AbortSignal) {
   return apiClient<ScholarshipReviewStatistics>('/admin/scholarships/review/statistics', {
@@ -15,11 +23,12 @@ export function getScholarshipReviewStatistics(signal?: AbortSignal) {
   });
 }
 
-export function getScholarshipReviewDetail(id: number, signal?: AbortSignal) {
-  return apiClient<ScholarshipReviewDetail>(`/admin/scholarships/${id}/review-details`, {
-    method: 'GET',
-    signal,
-  });
+export async function getScholarshipReviewDetail(id: number, signal?: AbortSignal) {
+  const detail = await apiClient<Omit<ScholarshipReviewDetail, 'status'> & { status?: unknown }>(
+    `/admin/scholarships/${id}/review-details`,
+    { method: 'GET', signal }
+  );
+  return { ...detail, status: normalizeScholarshipReviewStatus(detail.status) };
 }
 
 export function approveScholarship(id: number) {
@@ -35,11 +44,12 @@ export function rejectScholarship(id: number, reason: string) {
   });
 }
 
-export function updatePendingScholarship(id: number, payload: AdminScholarshipUpdatePayload) {
-  return apiClient<ScholarshipReviewDetail>(`/admin/scholarships/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(payload),
-  });
+export async function updatePendingScholarship(id: number, payload: AdminScholarshipUpdatePayload) {
+  const detail = await apiClient<Omit<ScholarshipReviewDetail, 'status'> & { status?: unknown }>(
+    `/admin/scholarships/${id}`,
+    { method: 'PATCH', body: JSON.stringify(payload) }
+  );
+  return { ...detail, status: normalizeScholarshipReviewStatus(detail.status) };
 }
 
 export function getScholarshipReviewList(page: number, pageSize: number, signal?: AbortSignal) {
