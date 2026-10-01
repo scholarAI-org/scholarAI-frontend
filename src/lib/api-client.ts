@@ -1,4 +1,22 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { BACKEND_PREFIX } from './backend-proxy';
+
+/**
+ * Browser calls go through the same-origin proxy in src/middleware.ts, so the
+ * auth cookie is first-party. Server-side callers need the absolute backend
+ * URL and must forward the user's cookie themselves.
+ */
+export function resolveBackendBaseUrl(
+  isBrowser = typeof window !== 'undefined',
+  backendUrl = process.env.BACKEND_URL
+): string {
+  if (isBrowser) {
+    return BACKEND_PREFIX;
+  }
+  if (!backendUrl) {
+    throw new Error('BACKEND_URL is not configured');
+  }
+  return backendUrl.replace(/\/+$/, '');
+}
 
 export class ApiError extends Error {
   details: Array<{ loc: (string | number)[]; msg: string }>;
@@ -15,7 +33,7 @@ export class ApiError extends Error {
 }
 
 export async function apiClient<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const baseUrl = API_URL?.replace(/\/+$/, '') ?? '';
+  const baseUrl = resolveBackendBaseUrl();
   const path = endpoint.replace(/^\/+/, '');
 
   const isFormData = options?.body instanceof FormData;
