@@ -48,3 +48,5 @@ next-env.d.ts
 
 # local MCP config (may contain secrets)
 /.mcp.json
+# Spec Kit: machine-local pointer to the active feature directory
+/.specify/feature.json
