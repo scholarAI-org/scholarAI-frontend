@@ -1,7 +1,31 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 import { IntlMessageFormat } from 'intl-messageformat';
+import ts from 'typescript';
+
+const loadModule = createRequire(import.meta.url);
+
+loadModule.extensions['.ts'] = (module, filename) => {
+  const { outputText } = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  });
+  module._compile(outputText, filename);
+};
+
+const layoutPath = fileURLToPath(new URL('../src/features/student/layout', import.meta.url));
+const load = (file) => loadModule(path.join(layoutPath, file));
+const {
+  getActiveStudentNavigationItem,
+  getStudentPageKey,
+  getVisibleStudentNavigation,
+  studentNavigation,
+} = load('student-navigation.ts');
+const { getStudentDisplayName, getStudentInitial } = load('student-identity.ts');
+const { getFocusTrapTarget } = load('focus-trap.ts');
 
 const readMessages = (locale) =>
   JSON.parse(fs.readFileSync(new URL(`../src/messages/${locale}.json`, import.meta.url), 'utf8'));
@@ -95,4 +119,78 @@ test('Arabic plurals render the expected forms', () => {
   assert.equal(format('count', 2), 'منحتان');
   assert.match(format('count', 5), /منح$/);
   assert.match(format('count', 11), /منحة$/);
+});
+
+// --- Navigation --------------------------------------------------------------
+
+test('navigation config has only Profile and Search Scholarships', () => {
+  assert.deepEqual(
+    studentNavigation.map(({ id, href }) => [id, href]),
+    [
+      ['profile', '/student/profile'],
+      ['scholarships', '/student/scholarships'],
+    ]
+  );
+  for (const item of studentNavigation) {
+    assert.ok(messages.en.StudentLayout.nav[item.id], `missing label for ${item.id}`);
+  }
+});
+
+test('Search Scholarships stays hidden until its route exists (T023)', () => {
+  const visible = getVisibleStudentNavigation(studentNavigation).map((item) => item.id);
+  const routeExists = fs.existsSync(
+    new URL('../src/app/[locale]/student/scholarships/page.tsx', import.meta.url)
+  );
+  assert.deepEqual(visible, routeExists ? ['profile', 'scholarships'] : ['profile']);
+});
+
+test('active navigation item resolves by section', () => {
+  assert.equal(getActiveStudentNavigationItem('/student/profile'), 'profile');
+  assert.equal(getActiveStudentNavigationItem('/student/scholarships'), 'scholarships');
+  assert.equal(getActiveStudentNavigationItem('/student/scholarships/12'), 'scholarships');
+  assert.equal(getActiveStudentNavigationItem('/student/profiles'), null);
+  assert.equal(getActiveStudentNavigationItem('/student'), null);
+  assert.equal(getActiveStudentNavigationItem('/admin/dashboard'), null);
+});
+
+test('page titles resolve per route and exist in both locales', () => {
+  assert.equal(getStudentPageKey('/student/profile'), 'profile');
+  assert.equal(getStudentPageKey('/student/scholarships'), 'scholarships');
+  assert.equal(getStudentPageKey('/student/scholarships/12'), 'scholarshipDetails');
+  assert.equal(getStudentPageKey('/student/scholarships/12/extra'), null);
+  assert.equal(getStudentPageKey('/student'), null);
+  for (const key of ['profile', 'scholarships', 'scholarshipDetails']) {
+    for (const locale of ['ar', 'en']) {
+      const page = messages[locale].StudentLayout.pages[key];
+      assert.ok(page?.title && page?.description, `${locale} pages.${key}`);
+    }
+  }
+});
+
+// --- Identity ----------------------------------------------------------------
+
+test('display name prefers the account name, then email, then the fallback', () => {
+  assert.equal(
+    getStudentDisplayName({ name: ' Lina Haddad ', email: 'l@x.test' }, 'Student'),
+    'Lina Haddad'
+  );
+  assert.equal(getStudentDisplayName({ name: '  ', email: 'l@x.test' }, 'Student'), 'l@x.test');
+  assert.equal(getStudentDisplayName({ name: '', email: '' }, 'Student'), 'Student');
+  assert.equal(getStudentDisplayName(null, 'طالب'), 'طالب');
+  assert.equal(getStudentInitial('لينا'), 'ل');
+  assert.equal(getStudentInitial('lina'), 'L');
+  assert.equal(getStudentInitial(''), '?');
+});
+
+// --- Mobile navigation focus trap ---------------------------------------------
+
+test('focus trap wraps at both ends and leaves the middle to the browser', () => {
+  assert.equal(getFocusTrapTarget(2, 3, false), 0);
+  assert.equal(getFocusTrapTarget(0, 3, true), 2);
+  assert.equal(getFocusTrapTarget(1, 3, false), null);
+  assert.equal(getFocusTrapTarget(1, 3, true), null);
+  assert.equal(getFocusTrapTarget(-1, 3, false), 0);
+  assert.equal(getFocusTrapTarget(-1, 3, true), 2);
+  assert.equal(getFocusTrapTarget(0, 1, false), 0);
+  assert.equal(getFocusTrapTarget(0, 0, false), null);
 });
