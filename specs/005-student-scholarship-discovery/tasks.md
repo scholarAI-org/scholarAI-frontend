@@ -22,7 +22,8 @@
 
 ## Phase 2 — Early i18n scaffolding + Student Shell integration
 
-- [ ] T008 Create Arabic and English `StudentLayout`, `StudentScholarshipDiscovery`, and `StudentScholarshipDetails` scaffolding before UI work, covering visible and ARIA strings for navigation, shell, search, filters, country states, sort, Grid/List, cards, bookmarks, details, counts, pagination, all data states, and dialogs.
+- [x] T008 Create Arabic and English `StudentLayout`, `StudentScholarshipDiscovery`, and `StudentScholarshipDetails` scaffolding before UI work, covering visible and ARIA strings for navigation, shell, search, filters, country states, sort, Grid/List, cards, bookmarks, details, counts, pagination, all data states, and dialogs.
+  - Evidence: `StudentLayout` (19), `StudentScholarshipDiscovery` (71) and `StudentScholarshipDetails` (30) keys in src/messages/ar.json and en.json; `pnpm test:student-layout` checks key parity, ICU validity via `intl-messageformat`, and Arabic plural categories (`zero` or `=0`, plus one/two/few/many/other).
 - [ ] T009 Add typed student navigation configuration with only Profile and Search Scholarships enabled; omit unavailable Figma destinations.
 - [ ] T010 Build the StudentShell frame with desktop header/sidebar and active-route behavior; reuse existing auth/profile/locale primitives and add no auth store, notifications, or theme control.
 - [ ] T011 Integrate real identity and locale behavior into the shell while preserving profile feature/forms ownership.
@@ -30,6 +31,8 @@
 - [ ] T013 Update only `src/app/[locale]/student/layout.tsx` as the thin Server Component integration point, retaining `RoleGuard` and rendering `StudentShell` around `{children}`.
 - [ ] T014 Adapt Profile outer presentation to inherit the route shell; ensure pages never mount a second shell and remain Server Components by default.
 - [ ] T015 Test the Profile shell regression, active routes, identity/locale integration, and mobile-navigation keyboard behavior.
+- [ ] T015a Follow-up: move the hard-coded Arabic in the Profile content (step labels, completion label, profile-name fallback, "under development" box) into Arabic/English messages.
+- [ ] T015b Follow-up: localize the hard-coded Arabic loading and error text in `src/features/auth/components/RoleGuard.tsx`.
 
 ## Phase 3 — Discovery API, filter-options, hooks, and adapter
 

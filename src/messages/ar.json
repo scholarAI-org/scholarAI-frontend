@@ -973,5 +973,189 @@
       "saving": "جارٍ حفظ التغييرات…",
       "saved": "تم الحفظ بنجاح"
     }
+  },
+  "StudentLayout": {
+    "brand": {
+      "name": "PsScholar",
+      "tagline": "منصة المنح الفلسطينية"
+    },
+    "navigationLabel": "تنقل الطالب",
+    "openNavigation": "فتح قائمة التنقل",
+    "closeNavigation": "إغلاق قائمة التنقل",
+    "languageSwitch": {
+      "label": "Switch to English",
+      "short": "En"
+    },
+    "logout": "تسجيل الخروج",
+    "logoutPending": "جارٍ تسجيل الخروج...",
+    "identity": {
+      "fallbackName": "طالب",
+      "role": "طالب"
+    },
+    "nav": {
+      "profile": "الملف الشخصي",
+      "scholarships": "البحث عن منح"
+    },
+    "pages": {
+      "profile": {
+        "title": "الملف الشخصي",
+        "description": "كلما اكتمل ملفك، كانت التوصيات ونسب التوافق أدق."
+      },
+      "scholarships": {
+        "title": "البحث عن منح",
+        "description": "تصفّح المنح المتاحة وصفِّها بما يناسبك."
+      },
+      "scholarshipDetails": {
+        "title": "تفاصيل المنحة",
+        "description": "المعلومات الأساسية عن هذه المنحة."
+      }
+    }
+  },
+  "StudentScholarshipDiscovery": {
+    "search": {
+      "label": "البحث في المنح",
+      "placeholder": "ابحث بالعنوان أو الجامعة أو الدولة",
+      "clear": "مسح البحث"
+    },
+    "sort": {
+      "label": "ترتيب حسب",
+      "newest": "الأحدث",
+      "deadlineSoon": "الأقرب موعدًا"
+    },
+    "view": {
+      "label": "طريقة العرض",
+      "grid": "عرض شبكي",
+      "list": "عرض قائمة"
+    },
+    "filters": {
+      "title": "التصفية",
+      "clearAll": "مسح الكل",
+      "academicLevel": {
+        "legend": "المرحلة الدراسية",
+        "bachelor": "بكالوريوس",
+        "master": "ماجستير",
+        "phd": "دكتوراه",
+        "exchange": "تبادل"
+      },
+      "funding": {
+        "legend": "التمويل",
+        "full": "تمويل كامل",
+        "partial": "تمويل جزئي"
+      },
+      "opportunity": {
+        "legend": "نوع الفرصة",
+        "scholarship": "منحة دراسية",
+        "academic_exchange": "تبادل أكاديمي",
+        "research_fellowship": "زمالة بحثية",
+        "training": "تدريب"
+      },
+      "country": {
+        "legend": "الدولة",
+        "placeholder": "اختر الدول",
+        "loading": "جارٍ تحميل الدول…",
+        "empty": "لا توجد دول متاحة",
+        "unavailable": "تعذّر تحميل قائمة الدول.",
+        "retry": "إعادة المحاولة",
+        "selected": "{count, plural, zero {لم يتم اختيار أي دولة} one {تم اختيار دولة واحدة} two {تم اختيار دولتين} few {تم اختيار # دول} many {تم اختيار # دولة} other {تم اختيار # دولة}}"
+      }
+    },
+    "filtersDialog": {
+      "label": "تصفية المنح",
+      "open": "فتح التصفية",
+      "close": "إغلاق التصفية",
+      "apply": "عرض النتائج",
+      "clear": "مسح الكل"
+    },
+    "results": {
+      "count": "{count, plural, =0 {لا توجد منح} one {منحة واحدة} two {منحتان} few {# منح} many {# منحة} other {# منحة}}",
+      "updating": "جارٍ تحديث النتائج…"
+    },
+    "card": {
+      "untitled": "منحة بدون عنوان",
+      "details": "عرض التفاصيل",
+      "detailsFor": "عرض تفاصيل {title}",
+      "imageAlt": "صورة {title}",
+      "imageFallbackAlt": "لا تتوفر صورة",
+      "noDeadline": "بدون موعد نهائي",
+      "deadlineNotSpecified": "الموعد النهائي غير محدد",
+      "deadline": "آخر موعد: {date}",
+      "deadlineToday": "يُغلق اليوم",
+      "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}"
+    },
+    "bookmark": {
+      "save": "حفظ المنحة",
+      "remove": "إزالة المنحة من المحفوظات",
+      "saveFor": "حفظ {title}",
+      "removeFor": "إزالة {title} من المحفوظات",
+      "pending": "جارٍ الحفظ…",
+      "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
+    },
+    "pagination": {
+      "label": "التنقل بين الصفحات",
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية",
+      "page": "الصفحة {page}",
+      "currentPage": "الصفحة {page}، الصفحة الحالية"
+    },
+    "empty": {
+      "noScholarships": {
+        "title": "لا توجد منح متاحة حاليًا",
+        "description": "عُد لاحقًا للاطلاع على فرص جديدة."
+      },
+      "noMatches": {
+        "title": "لا توجد منح تطابق بحثك",
+        "description": "جرّب كلمات أخرى أو امسح بعض عوامل التصفية.",
+        "editSearch": "تعديل البحث",
+        "clearFilters": "مسح التصفية"
+      }
+    },
+    "errors": {
+      "unauthorized": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "forbidden": "ليس لديك صلاحية للوصول إلى البحث عن المنح.",
+      "validation": "بعض خيارات البحث غير صالحة. عدّلها وحاول مرة أخرى.",
+      "generic": "تعذّر تحميل المنح.",
+      "malformedCard": "تعذّر عرض هذه المنحة.",
+      "retry": "إعادة المحاولة"
+    }
+  },
+  "StudentScholarshipDetails": {
+    "backToDiscovery": "العودة إلى البحث عن المنح",
+    "loading": "جارٍ تحميل المنحة…",
+    "invalidId": "رابط المنحة غير صالح.",
+    "notFound": {
+      "title": "المنحة غير موجودة",
+      "description": "ربما حُذفت أو لم تعد متاحة."
+    },
+    "errors": {
+      "forbidden": "ليس لديك صلاحية لعرض هذه المنحة.",
+      "generic": "تعذّر تحميل المنحة.",
+      "retry": "إعادة المحاولة"
+    },
+    "fields": {
+      "provider": "الجهة المانحة",
+      "university": "الجامعة",
+      "country": "الدولة",
+      "studyLevel": "المرحلة الدراسية",
+      "fundingType": "التمويل",
+      "opportunityType": "نوع الفرصة",
+      "deadline": "الموعد النهائي",
+      "fundingAmount": "قيمة التمويل",
+      "languageRequirements": "متطلبات اللغة",
+      "majors": "التخصصات",
+      "eligibilityCriteria": "شروط الأهلية",
+      "requiredDocuments": "الوثائق المطلوبة",
+      "apply": "طريقة التقديم",
+      "applyEmail": "البريد الإلكتروني للتقديم",
+      "applyPhone": "هاتف التقديم",
+      "source": "المصدر",
+      "publishedAt": "تاريخ النشر"
+    },
+    "notSpecified": "غير محدد",
+    "bookmark": {
+      "save": "حفظ المنحة",
+      "remove": "إزالة المنحة من المحفوظات",
+      "pending": "جارٍ الحفظ…",
+      "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
+    }
   }
 }
