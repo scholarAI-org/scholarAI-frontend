@@ -5,12 +5,18 @@
 ## Phase 1 — Contract, types, and URL query-state foundation
 
 - [ ] T001 Confirm `docs/api/openapi.json`: discovery, detail, save, and filter-options routes; auth/error responses; repeated-filter OR semantics; nullable cards; and sort aliases.
-- [ ] T002 Add discovery raw/detail contracts, `ScholarshipDiscoveryFilterOptionsResponse`, normalized `DiscoveryQuery`, `ScholarshipCardModel`, and optional `ScholarshipMatchInfo` to `types.ts`; do not provide match data.
-- [ ] T003 Add typed discovery filter/sort constants: only `newest` and `deadline_soon`, URL-input alias `deadline_soonest`, and fixed `pageSize: 20`.
-- [ ] T004 Add one URL parser/serializer for search, repeated academic/funding/opportunity/country values, sort, and page; normalize whitespace, blanks, duplicates, unknown enums, aliases, and invalid pages.
+  - Partial: routes, OR/AND semantics, sort alias, and nullable cards confirmed. Missing: recorded review notes for the detail schema, save/unsave response shapes, and the unpaged `/saved` array.
+- [ ] T002 Add discovery raw/detail contracts, `ScholarshipDiscoveryFilterOptionsResponse`, normalized `DiscoveryQuery`, `ScholarshipCardModel`, and optional `ScholarshipMatchInfo` (`score`, `level`, `reasons`, `coverage`; no eligibility) to `types.ts`; do not provide match data. `ScholarshipDetailsResponse` is a separate type matching `docs/api/openapi.json:9204`, including required `ingestion_type` and `source` and every nullable field. Add a details adapter that normalizes the list-or-string fields `majors`, `eligibility_criteria`, and `required_documents` into `string[]`.
+  - Partial: query, filter-options, card, and response types exist. Missing: separate detail type and adapter; match fields still use `matchScore`/`matchLevel`/`matchReasons`/`matchCoverage`/`eligibilityStatus`.
+- [x] T003 Add typed discovery filter/sort constants: only `newest` and `deadline_soon`, URL-input alias `deadline_soonest`, and fixed `pageSize: 20`.
+- [ ] T003a Add a typed sort-option config (value plus i18n key) that can accept a future `match` sort without exposing it now; only `newest` and `deadline_soon` are visible. Test that adding a hidden `match` entry changes neither the visible options nor Grid/List components.
+- [ ] T004 Add one URL parser/serializer for search, repeated academic/funding/opportunity/country values, sort, and page; normalize whitespace, blanks, duplicates, unknown enums, aliases, and invalid pages. Cap values to the OpenAPI limits: `search` ≤300 characters, each `country` ≤100 characters and ≤50 values, and other filter groups ≤20 values.
+  - Partial: parser and serializer implemented. Missing: OpenAPI limit caps.
 - [ ] T005 Ensure URL updates reset page only for search/filter/sort changes; pagination updates only page; serialize API-only `page_size=20` separately.
+  - Partial: `page_size` is API-only. Missing: page-reset update helpers for search/filter/sort changes.
 - [ ] T006 Add foundation tests for canonical parsing/serialization, repeated country parameters, normalization, page reset, and Back/Forward-compatible state.
-- [ ] T007 Define `studentScholarshipKeys` with `all`, `discoveries()`, `discovery(query)`, `details()`, `detail(id)`, `savedLists()`, `saved(page,pageSize)`, and `filterOptions()`; prove Grid/List is excluded.
+- [ ] T007 Define `studentScholarshipKeys` with `all`, `discoveries()`, `discovery(query)`, `details()`, `detail(id)`, `savedLists()`, `saved()` (no paging params; `GET /api/scholarships/saved` returns an unpaged array), and `filterOptions()`; prove Grid/List is excluded.
+  - Partial: keys exist. Missing: change `saved(page, pageSize)` to `saved()`; test proving Grid/List is excluded.
 
 ## Phase 2 — Early i18n scaffolding + Student Shell integration
 
@@ -25,11 +31,15 @@
 
 ## Phase 3 — Discovery API, filter-options, hooks, and adapter
 
-- [ ] T016 Add `api/scholarships.ts` typed `apiClient` functions with AbortSignal support for discovery, filter options, details, save, and unsave; no admin/recommendations APIs.
-- [ ] T017 Implement `getScholarshipDiscoveryFilterOptions(): Promise<ScholarshipDiscoveryFilterOptionsResponse>` for `GET /api/scholarships/filter-options` and defensively parse `countries: string[]`.
-- [ ] T018 Implement `useScholarshipFilterOptions` using `studentScholarshipKeys.filterOptions()` and a longer sensible stale time than discovery; it must not depend on search, page, filters, sort, or Grid/List state.
-- [ ] T019 Add the normalized card adapter for localized titles, nullable metadata/image/deadline fields, `is_saved`, and an absent-by-default match seam.
+- [ ] T016 Add `api/scholarships.ts` typed `apiClient` functions for discovery, filter options, details, save, and unsave; no admin/recommendations APIs. Only GET functions take an `AbortSignal`. Save returns `SavedScholarshipResponse` and unsave returns `UnsaveScholarshipResponse`.
+  - Partial: all five functions exist. Missing: typed save/unsave responses.
+- [ ] T017 Implement `getScholarshipFilterOptions(signal?): Promise<ScholarshipDiscoveryFilterOptionsResponse>` for `GET /api/scholarships/filter-options` and defensively parse `countries: string[]`.
+  - Partial: function exists. Missing: defensive parsing of `countries`.
+- [x] T018 Implement `useScholarshipFilterOptions` using `studentScholarshipKeys.filterOptions()` and a longer sensible stale time than discovery; it must not depend on search, page, filters, sort, or Grid/List state.
+- [x] T019 Add the normalized card adapter for localized titles, nullable metadata/image/deadline fields, `is_saved`, and an absent-by-default match seam. A missing title becomes `undefined`; the UI shows a translated fallback.
+  - Follow-up: the adapter still returns a hard-coded `'—'` title fallback; switch to `undefined` with the type change in T002.
 - [ ] T020 Add `useScholarshipDiscovery` with normalized query key, positive-page guard, `placeholderData: keepPreviousData`, and no retry for 401/403/422.
+  - Partial: key, `keepPreviousData`, and retry policy done. Missing: positive-page guard; split hooks into one file each per plan.
 - [ ] T021 Add `useDiscoveryQueryState` with URL synchronization and locale-aware routing.
 - [ ] T022 Test endpoint/method/query mapping, typed filter-options parsing, unchanged country serialization, no ISO/source dependency, query-key stability, stale-time independence, and adapter behavior.
 
@@ -55,8 +65,8 @@
 ## Phase 6 — Bookmark mutations
 
 - [ ] T036 Implement `useScholarshipBookmark` with a per-scholarship pending guard and real POST/DELETE selected by `isSaved`.
-- [ ] T037 Optimistically snapshot/update only discovery caches containing the ID, `detail(id)`, and saved-list caches; roll back exact snapshots on failure.
-- [ ] T038 On settlement invalidate only relevant `discoveries()`, `detail(id)`, and `savedLists()` families; never invalidate `studentScholarshipKeys.all`.
+- [ ] T037 Optimistically snapshot/update only discovery caches containing the ID, `detail(id)`, and the `saved()` cache; roll back exact snapshots on failure.
+- [ ] T038 On settlement invalidate only relevant `discoveries()`, `detail(id)`, and `saved()` queries; never invalidate `studentScholarshipKeys.all`.
 - [ ] T039 Add localized accessible Save/Remove labels, pending state, and failure feedback to Grid and List controls.
 - [ ] T040 Test save/unsave method/ID, duplicate prevention, optimistic update/rollback, and targeted cache coherence.
 
@@ -81,7 +91,7 @@
 
 - [ ] T052 Add thin Server Component `[id]/page.tsx` delegating to `ScholarshipDetailsBoundary`; do not mount StudentShell or implement the future full Details Figma page.
 - [ ] T053 Implement detail query positive numeric-ID guard and real `GET /api/scholarships/{id}` request using `detail(id)`.
-- [ ] T054 Implement factual details states: loading, 401/403 convention, 404, retryable error, real nullable fields/bookmark, and localized Back to discovery.
+- [ ] T054 Implement factual details states: loading, 401/403 convention, 404, retryable error, real nullable fields/bookmark, and localized Back to discovery. Show plain-text fields only; never render `description_html` in this feature.
 - [ ] T055 Preserve detail `is_saved` coherence through bookmark cache updates; fabricate no eligibility, match, application, or tracking information.
 - [ ] T056 Test ID validation/enable guard, endpoint/states/null fields, Back link, and bookmark coherence.
 

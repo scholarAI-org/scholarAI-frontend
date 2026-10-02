@@ -26,13 +26,13 @@ src/features/student/
     api/scholarships.ts
     adapters/scholarship.ts
     components/{ScholarshipDiscoveryPage,DiscoveryToolbar,DiscoveryFilters,MobileDiscoveryFilters,ScholarshipResults,ScholarshipGridCard,ScholarshipListRow,ScholarshipMatchBadge,ScholarshipSkeletons,DiscoveryEmptyState,DiscoveryErrorState,DiscoveryPagination,ScholarshipDetailsBoundary}.tsx
-    hooks/{useDiscoveryQueryState,useScholarshipDiscovery,useScholarshipBookmark,useScholarshipFilterOptions}.ts
+    hooks/{useDiscoveryQueryState,useScholarshipDiscovery,useScholarshipBookmark,useScholarshipFilterOptions,useScholarshipDetail}.ts
     lib/{discovery-query-state,deadlines,pagination}.ts
     {constants,query-keys,types}.ts
 src/app/[locale]/student/scholarships/{page.tsx,[id]/page.tsx}
 ```
 
-Routes are thin. Profile retains its forms/domain logic; only its outer frame
+One hook per file. Routes are thin. Profile retains its forms/domain logic; only its outer frame
 is inherited from the shared route layout.
 
 ## 4. Server and Client Boundaries
@@ -78,7 +78,7 @@ changes reset page 1; pagination changes page only. No second canonical state.
 
 ## 9. API Layer
 
-`api/scholarships.ts` exclusively uses `apiClient`, typed response parsing, a request serializer, and AbortSignal for `GET /api/scholarships/`, `GET /api/scholarships/filter-options`, `GET /api/scholarships/{id}`, POST save, and DELETE save. It defines `ScholarshipDiscoveryFilterOptionsResponse` with `countries: string[]`. UI components never build backend URLs or call admin APIs.
+`api/scholarships.ts` exclusively uses `apiClient`, typed response parsing, and a request serializer for `GET /api/scholarships/`, `GET /api/scholarships/filter-options` (`getScholarshipFilterOptions`), `GET /api/scholarships/{id}`, POST save, and DELETE save. Only the GET functions accept a React Query `AbortSignal`; save and unsave type their responses as `SavedScholarshipResponse` and `UnsaveScholarshipResponse`. It defines `ScholarshipDiscoveryFilterOptionsResponse` with `countries: string[]` and a separate `ScholarshipDetailsResponse` matching the OpenAPI detail schema. UI components never build backend URLs or call admin APIs.
 
 ## 10. Query-Key Hierarchy
 
@@ -89,7 +89,7 @@ studentScholarshipKeys.discovery(query)
 studentScholarshipKeys.details()
 studentScholarshipKeys.detail(id)
 studentScholarshipKeys.savedLists()
-studentScholarshipKeys.saved(page, pageSize)
+studentScholarshipKeys.saved()
 studentScholarshipKeys.filterOptions()
 ```
 
@@ -98,19 +98,25 @@ use v5 `placeholderData: keepPreviousData` and no retry for 401/403/422.
 `filterOptions()` is independent of discovery filters, search, page, sort, and
 view mode. Grid/List is presentation-only state and is never included in any
 React Query key; a presentation change alone never refetches discovery or
-filter options.
+filter options. `saved()` takes no paging parameters because
+`GET /api/scholarships/saved` returns one unpaged array.
 
 ## 11. API Adapter / Normalized Card Model
 
 Adapt raw nullable API cards once to `ScholarshipCardModel`: localized title
 (`title_ar` Arabic, `title_en` English, then title), trimmed metadata, usable
 image, country, level/funding/type, deadline/no-deadline, and saved state. UI
-uses only this model and never invents missing data.
+uses only this model and never invents missing data. A blank title becomes
+`undefined`; the UI shows a translated fallback.
+
+Details use their own adapter over `ScholarshipDetailsResponse`. It normalizes
+the list-or-string fields `majors`, `eligibility_criteria`, and
+`required_documents` into `string[]`.
 
 ## 12. Recommendation Seam
 
-Optional `match?: ScholarshipMatchInfo | null` supports score, level, reasons,
-coverage, and eligibility later. Feature 005 supplies none; MatchBadge returns
+Optional `match?: ScholarshipMatchInfo | null` supports `score`, `level`, `reasons`,
+and `coverage` later. Eligibility is not part of the match type in this feature. Feature 005 supplies none; MatchBadge returns
 null. No mock endpoint, percentage, explanation, highest-match sort, or
 browser-side compatibility calculation exists.
 
@@ -160,7 +166,9 @@ Opening or closing alone does not fetch.
 
 Typed localized options are only Newest → `newest` and Deadline soon →
 `deadline_soon`. Read-only compatibility alias `deadline_soonest` normalizes;
-it is never emitted/displayed. Highest match is unavailable.
+it is never emitted/displayed. Highest match is unavailable. Sort
+options come from a typed config that can later accept a `match` option without
+exposing it now.
 
 ## 21. Bookmark Mutation / Cache Strategy
 
@@ -213,9 +221,11 @@ malformed cards safely, and bookmark failures locally. Never use fake records.
 `[id]/page.tsx` renders client `ScholarshipDetailsBoundary`, validates a positive
 numeric ID, and enables real detail query only then. It renders loading, existing
 auth behavior for 401/403, truthful 404, generic retryable error, factual
-title/provider/university/country/level/funding/deadline/bookmark state, and
+plain-text title/provider/university/country/level/funding/deadline/bookmark
+state, and
 locale-aware Back to discovery. It shares `detail(id)` bookmark coherence and
 fabricates no match, eligibility, application, or tracking information.
+`description_html` is never rendered in this feature.
 
 ## 28. Responsive Behavior
 

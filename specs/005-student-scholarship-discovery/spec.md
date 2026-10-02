@@ -2,7 +2,7 @@
 
 **Feature Branch**: `005-student-scholarship-discovery`  
 **Created**: 2026-09-28  
-**Status**: Draft / specification only  
+**Status**: In progress — foundation implemented  
 **Input**: Authenticated student scholarship search and discovery at Figma node
 `2262:3331` (Search — 2 col), with its empty state at `2264:3472`.
 
@@ -24,7 +24,7 @@ application data.
 | Student route and protection | `src/app/[locale]/student/layout.tsx` provides the student `RoleGuard`; the discovery page belongs beneath it.                                                                                                                                                                                                    |
 | Student shell                | There is no shared Student Shell today. The profile route composes `ProfileLayout`, `Navbar`, and `Sidebar` locally. Feature 005 owns introducing the first reusable Student Shell—not a page-specific copy—while reusing existing auth/session/i18n primitives.                                                  |
 | Scholarship details          | No student scholarship-detail route exists, but OpenAPI confirms `GET /api/scholarships/{scholarship_id}` for a student-visible numeric ID. The canonical route is `/[locale]/student/scholarships/[id]`.                                                                                                         |
-| API and auth                 | Use `apiClient`, which uses the configured API base URL and cookie credentials. No per-feature auth client or token storage.                                                                                                                                                                                      |
+| API and auth                 | Use `apiClient`. Browser calls go through the same-origin `/backend` proxy, so the auth cookie stays first-party; server calls use `BACKEND_URL`. No per-feature auth client or token storage.                                                                                                                    |
 | Server state                 | The project uses TanStack React Query with typed feature API functions and query-key factories. Discovery must follow that pattern.                                                                                                                                                                               |
 | Routing/locales              | Use `Link` and router utilities from `@/i18n/navigation`, with internal unprefixed paths. Messages use `next-intl` JSON catalogues.                                                                                                                                                                               |
 | Countries                    | `GET /api/scholarships/filter-options` is the sole authoritative country-options source for discovery. It returns the stored display/query strings from the currently student-visible discovery population. Display and submit each returned string unchanged; repeated `country` parameters retain OR semantics. |
@@ -274,7 +274,8 @@ Discovery links Details with the numeric `id` to
 route boundary necessary to keep that link truthful: validate the positive
 integer ID; call `GET /api/scholarships/{scholarship_id}`; render authentic
 loading, 401/403/404/error states and a compact, accessible factual summary
-from the response with a back-to-discovery action. It must not create sample
+from the response with a back-to-discovery action. Details show plain-text
+fields only; `description_html` is never rendered in this feature. It must not create sample
 content, a separate detail API, or the full scholarship-details Figma screen.
 A following student-details feature owns the complete visual and interaction
 experience, reusing this route and query.
@@ -313,3 +314,15 @@ accepted only when reading legacy/backend-compatible URLs and normalizes to
 contract exists.
 
 ### 6. Recommendation seam
+
+Cards carry an optional `match` field shaped as in FR-009:
+`{ score?, level?, reasons?, coverage? } | null`. Eligibility is not part of
+this type in Feature 005.
+
+- Match data is provided by the backend only. Feature 005 has no backend
+  source, so the adapter sets `match` to `null`.
+- Browser code never calculates, estimates, or defaults any match value.
+- `ScholarshipMatchBadge` renders nothing when `match` is absent or `null`.
+- No match sort is exposed. The typed sort-option config can accept a future
+  `match` option without changing Grid/List components, but it stays hidden
+  until a backend contract exists.
