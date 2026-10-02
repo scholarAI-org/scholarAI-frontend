@@ -43,7 +43,7 @@
 - [x] T020 Add `useScholarshipDiscovery` with normalized query key, positive-page guard, `placeholderData: keepPreviousData`, and no retry for 401/403/422.
   - Evidence: `hooks/useScholarshipDiscovery.ts` normalizes the query (positive-page guard) before keying and fetching; hooks split one per file; guard tests pass.
 - [ ] T021 Add `useDiscoveryQueryState` with URL synchronization and locale-aware routing.
-  - Partial: hook in `hooks/useDiscoveryQueryState.ts` uses `@/i18n/navigation` `router.replace` with the tested pure helpers and `buildDiscoveryHref`. Missing: a test of the router wiring itself (no React test harness yet); verify with T029 once the route exists.
+  - Partial: hook in `hooks/useDiscoveryQueryState.ts` uses `@/i18n/navigation`: `router.push` for filter, sort and page changes and `router.replace` for search, chosen inside the hook from `discoveryUpdates`; unchanged URLs are skipped. The pure mode mapping and `planDiscoveryNavigation` are tested. Stays unticked until the router wiring is tested in the UI phase (T029).
 - [x] T022 Test endpoint/method/query mapping, typed filter-options parsing, unchanged country serialization, no ISO/source dependency, query-key stability, stale-time independence, and adapter behavior.
   - Evidence: endpoint/method/query mapping, unchanged country strings, filter-options validation, key stability, stale-time independence, and adapter tests pass.
 

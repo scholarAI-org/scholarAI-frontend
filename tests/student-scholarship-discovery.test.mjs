@@ -30,8 +30,10 @@ const load = (file) => loadModule(path.join(featurePath, file));
 
 const {
   buildDiscoveryHref,
+  discoveryUpdates,
   normalizeDiscoveryQuery,
   parseDiscoveryQuery,
+  planDiscoveryNavigation,
   serializeDiscoveryQuery,
   toDiscoveryRequestParams,
   withFilterChange,
@@ -152,6 +154,51 @@ test('update helpers reset page for search/filter/sort and only change page for 
   assert.deepEqual(paged, { ...base, page: 7 });
   assert.equal(withPage(base, 0).page, 1);
   assert.equal(withPage(base, -3).page, 1);
+});
+
+test('each update helper maps to its navigation mode', () => {
+  const modes = Object.fromEntries(
+    Object.values(discoveryUpdates).map(({ update, mode }) => [update.name, mode])
+  );
+  assert.deepEqual(modes, {
+    withSearch: 'replace',
+    withFilterChange: 'push',
+    withSort: 'push',
+    withPage: 'push',
+  });
+  assert.equal(discoveryUpdates.setSearch.update, withSearch);
+  assert.equal(discoveryUpdates.setFilters.update, withFilterChange);
+  assert.equal(discoveryUpdates.setSort.update, withSort);
+  assert.equal(discoveryUpdates.setPage.update, withPage);
+});
+
+test('navigation plan carries the mode and skips unchanged URLs', () => {
+  const path = '/student/scholarships';
+  const base = parse('country=Germany&page=3');
+  assert.deepEqual(planDiscoveryNavigation(path, base, withPage(base, 4), 'push'), {
+    href: '/student/scholarships?country=Germany&page=4',
+    mode: 'push',
+  });
+  assert.deepEqual(planDiscoveryNavigation(path, base, withSearch(base, 'ai'), 'replace'), {
+    href: '/student/scholarships?search=ai&country=Germany',
+    mode: 'replace',
+  });
+  assert.equal(planDiscoveryNavigation(path, base, withPage(base, 3), 'push'), null);
+  // Blank search on page 3 still navigates because it resets the page; on page 1 it is a no-op.
+  assert.equal(
+    planDiscoveryNavigation(path, base, withSearch(base, '   '), 'replace')?.href,
+    '/student/scholarships?country=Germany'
+  );
+  const firstPage = parse('country=Germany');
+  assert.equal(
+    planDiscoveryNavigation(path, firstPage, withSearch(firstPage, '   '), 'replace'),
+    null
+  );
+  assert.equal(
+    planDiscoveryNavigation(path, base, withFilterChange(base, { countries: ['Germany'] }), 'push')
+      ?.href,
+    '/student/scholarships?country=Germany'
+  );
 });
 
 test('normalizeDiscoveryQuery guards the page for the discovery hook', () => {

@@ -95,3 +95,21 @@ export function buildDiscoveryHref(pathname: string, q: DiscoveryQuery) {
   const search = serializeDiscoveryQuery(q).toString();
   return search ? `${pathname}?${search}` : pathname;
 }
+export type DiscoveryNavigationMode = 'push' | 'replace';
+// Spec §4: filter, sort and page changes add history entries so Back/Forward
+// restores them; search replaces because it is typed and debounced.
+export const discoveryUpdates = {
+  setSearch: { update: withSearch, mode: 'replace' },
+  setFilters: { update: withFilterChange, mode: 'push' },
+  setSort: { update: withSort, mode: 'push' },
+  setPage: { update: withPage, mode: 'push' },
+} as const satisfies Record<string, { update: unknown; mode: DiscoveryNavigationMode }>;
+export function planDiscoveryNavigation(
+  pathname: string,
+  current: DiscoveryQuery,
+  next: DiscoveryQuery,
+  mode: DiscoveryNavigationMode
+) {
+  const href = buildDiscoveryHref(pathname, next);
+  return href === buildDiscoveryHref(pathname, current) ? null : { href, mode };
+}
