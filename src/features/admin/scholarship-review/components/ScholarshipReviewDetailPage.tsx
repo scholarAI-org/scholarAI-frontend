@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeft, ExternalLink, Loader2, X } from 'lucide-react';
+import { toFormattingLocale } from '@/i18n/formatting';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -183,7 +184,9 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
   const deadline = detail.no_deadline
     ? t('details.noDeadline')
     : detail.deadline
-      ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(detail.deadline))
+      ? new Intl.DateTimeFormat(toFormattingLocale(locale), { dateStyle: 'medium' }).format(
+          new Date(detail.deadline)
+        )
       : t('values.unavailable');
   const ingest =
     detail.ingestion_type === 'manual' || detail.ingestion_type === 'scraped'

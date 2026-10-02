@@ -1056,7 +1056,7 @@
         "empty": "No countries available",
         "unavailable": "Countries couldn't be loaded.",
         "retry": "Try again",
-        "selected": "{count, plural, =0 {No countries selected} one {# country selected} other {# countries selected}}"
+        "selected": "{count, plural, =0 {No countries selected} one {{count, number, integer} country selected} other {{count, number, integer} countries selected}}"
       }
     },
     "filtersDialog": {
@@ -1067,7 +1067,7 @@
       "clear": "Clear all"
     },
     "results": {
-      "count": "{count, plural, =0 {No scholarships} one {# scholarship} other {# scholarships}}",
+      "count": "{count, plural, =0 {No scholarships} one {{count, number, integer} scholarship} other {{count, number, integer} scholarships}}",
       "updating": "Updating results…"
     },
     "card": {
@@ -1079,7 +1079,7 @@
       "deadlineNotSpecified": "Deadline not specified",
       "deadline": "Deadline: {date}",
       "deadlineToday": "Closes today",
-      "daysLeft": "{count, plural, =0 {Closes today} one {# day left} other {# days left}}"
+      "daysLeft": "{count, plural, =0 {Closes today} one {{count, number, integer} day left} other {{count, number, integer} days left}}"
     },
     "bookmark": {
       "save": "Save scholarship",

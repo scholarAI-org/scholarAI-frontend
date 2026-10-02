@@ -26,6 +26,11 @@ const {
 } = load('student-navigation.ts');
 const { getStudentDisplayName, getStudentInitial } = load('student-identity.ts');
 const { getFocusTrapTarget } = load('focus-trap.ts');
+const { intlFormats, toFormattingLocale } = loadModule(
+  fileURLToPath(new URL('../src/i18n/formatting.ts', import.meta.url))
+);
+const messageFormat = (message, locale) =>
+  new IntlMessageFormat(message, toFormattingLocale(locale), { number: intlFormats.number });
 
 const readMessages = (locale) =>
   JSON.parse(fs.readFileSync(new URL(`../src/messages/${locale}.json`, import.meta.url), 'utf8'));
@@ -73,7 +78,7 @@ test('every student message is non-empty, valid ICU and formats in its locale', 
       for (const [key, message] of flatten(messages[locale][namespace])) {
         const id = `${locale}.${namespace}.${key}`;
         assert.ok(message.trim(), `${id} is empty`);
-        const formatter = new IntlMessageFormat(message, locale);
+        const formatter = messageFormat(message, locale);
         assert.equal(typeof formatter.format(values), 'string', id);
       }
     }
@@ -89,7 +94,7 @@ test('plural messages define every category their locale needs', () => {
   for (const locale of ['ar', 'en']) {
     for (const namespace of namespaces) {
       for (const [key, message] of flatten(messages[locale][namespace])) {
-        for (const node of pluralNodes(new IntlMessageFormat(message, locale).getAst())) {
+        for (const node of pluralNodes(messageFormat(message, locale).getAst())) {
           const id = `${locale}.${namespace}.${key}`;
           const options = Object.keys(node.options);
           for (const category of required[locale]) {
@@ -111,7 +116,7 @@ test('plural messages define every category their locale needs', () => {
 
 test('Arabic plurals render the expected forms', () => {
   const format = (key, count) =>
-    new IntlMessageFormat(messages.ar.StudentScholarshipDiscovery.results[key], 'ar').format({
+    messageFormat(messages.ar.StudentScholarshipDiscovery.results[key], 'ar').format({
       count,
     });
   assert.equal(format('count', 0), 'لا توجد منح');

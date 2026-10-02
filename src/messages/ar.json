@@ -1056,7 +1056,7 @@
         "empty": "لا توجد دول متاحة",
         "unavailable": "تعذّر تحميل قائمة الدول.",
         "retry": "إعادة المحاولة",
-        "selected": "{count, plural, zero {لم يتم اختيار أي دولة} one {تم اختيار دولة واحدة} two {تم اختيار دولتين} few {تم اختيار # دول} many {تم اختيار # دولة} other {تم اختيار # دولة}}"
+        "selected": "{count, plural, zero {لم يتم اختيار أي دولة} one {تم اختيار دولة واحدة} two {تم اختيار دولتين} few {تم اختيار {count, number, integer} دول} many {تم اختيار {count, number, integer} دولة} other {تم اختيار {count, number, integer} دولة}}"
       }
     },
     "filtersDialog": {
@@ -1067,7 +1067,7 @@
       "clear": "مسح الكل"
     },
     "results": {
-      "count": "{count, plural, =0 {لا توجد منح} one {منحة واحدة} two {منحتان} few {# منح} many {# منحة} other {# منحة}}",
+      "count": "{count, plural, =0 {لا توجد منح} one {منحة واحدة} two {منحتان} few {{count, number, integer} منح} many {{count, number, integer} منحة} other {{count, number, integer} منحة}}",
       "updating": "جارٍ تحديث النتائج…"
     },
     "card": {
@@ -1079,7 +1079,7 @@
       "deadlineNotSpecified": "الموعد النهائي غير محدد",
       "deadline": "آخر موعد: {date}",
       "deadlineToday": "يُغلق اليوم",
-      "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {يتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}"
+      "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {يتبقى {count, number, integer} أيام} many {يتبقى {count, number, integer} يومًا} other {يتبقى {count, number, integer} يوم}}"
     },
     "bookmark": {
       "save": "حفظ المنحة",
