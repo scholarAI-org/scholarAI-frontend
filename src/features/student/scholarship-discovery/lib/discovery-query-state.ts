@@ -19,7 +19,7 @@ const countryList = (values: readonly string[]) =>
   [
     ...new Set(values.filter((v) => v.trim() && v.length <= DISCOVERY_LIMITS.countryMaxLength)),
   ].slice(0, DISCOVERY_LIMITS.countryMaxItems);
-const searchText = (value?: string | null) =>
+export const normalizeSearchText = (value?: string | null) =>
   value?.replace(/\s+/g, ' ').trim().slice(0, DISCOVERY_LIMITS.searchMaxLength).trim() || undefined;
 const sortValue = (value?: string | null): DiscoverySort =>
   value === 'deadline_soonest'
@@ -49,7 +49,7 @@ export function normalizeDiscoveryQuery(raw: RawDiscoveryQuery): DiscoveryQuery 
     sort: sortValue(raw.sort),
     page: pageNumber(raw.page),
   };
-  const search = searchText(raw.search);
+  const search = normalizeSearchText(raw.search);
   return search ? { search, ...query } : query;
 }
 export const parseDiscoveryQuery = (p: URLSearchParams): DiscoveryQuery =>
@@ -90,6 +90,16 @@ export const withSort = (q: DiscoveryQuery, sort: DiscoverySort) =>
   normalizeDiscoveryQuery({ ...q, sort, page: 1 });
 export const withPage = (q: DiscoveryQuery, page: number) =>
   normalizeDiscoveryQuery({ ...q, page });
+// Clear all: filters and page only; search and sort are kept.
+export const withClearedFilters = (q: DiscoveryQuery) =>
+  normalizeDiscoveryQuery({
+    ...q,
+    academicLevels: [],
+    fundingTypes: [],
+    opportunityTypes: [],
+    countries: [],
+    page: 1,
+  });
 export function buildDiscoveryHref(pathname: string, q: DiscoveryQuery) {
   const search = serializeDiscoveryQuery(q).toString();
   return search ? `${pathname}?${search}` : pathname;
@@ -102,6 +112,7 @@ export const discoveryUpdates = {
   setFilters: { update: withFilterChange, mode: 'push' },
   setSort: { update: withSort, mode: 'push' },
   setPage: { update: withPage, mode: 'push' },
+  clearFilters: { update: withClearedFilters, mode: 'push' },
 } as const satisfies Record<string, { update: unknown; mode: DiscoveryNavigationMode }>;
 export function planDiscoveryNavigation(
   pathname: string,

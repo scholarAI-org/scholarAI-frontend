@@ -52,8 +52,8 @@
   - Evidence: adapter returns `undefined` for a missing title; title-selection tests pass.
 - [x] T020 Add `useScholarshipDiscovery` with normalized query key, positive-page guard, `placeholderData: keepPreviousData`, and no retry for 401/403/422.
   - Evidence: `hooks/useScholarshipDiscovery.ts` normalizes the query (positive-page guard) before keying and fetching; hooks split one per file; guard tests pass.
-- [ ] T021 Add `useDiscoveryQueryState` with URL synchronization and locale-aware routing.
-  - Partial: hook in `hooks/useDiscoveryQueryState.ts` uses `@/i18n/navigation`: `router.push` for filter, sort and page changes and `router.replace` for search, chosen inside the hook from `discoveryUpdates`; unchanged URLs are skipped. The pure mode mapping and `planDiscoveryNavigation` are tested. Stays unticked until the router wiring is tested in the UI phase (T029).
+- [x] T021 Add `useDiscoveryQueryState` with URL synchronization and locale-aware routing.
+  - Evidence: `useDiscoveryQueryState` delegates to `createDiscoveryNavigator` (`lib/discovery-navigator.ts`) with the `@/i18n/navigation` router; tests/student-scholarship-discovery.test.mjs drives it with a fake router: replace for search, push (`scroll: false`) for filters/sort/page/clear, page reset, no-op skipping, and URL-only Back/Forward state.
 - [x] T022 Test endpoint/method/query mapping, typed filter-options parsing, unchanged country serialization, no ISO/source dependency, query-key stability, stale-time independence, and adapter behavior.
   - Evidence: endpoint/method/query mapping, unchanged country strings, filter-options validation, key stability, stale-time independence, and adapter tests pass.
 
@@ -62,7 +62,9 @@
 - [x] T023 Add the thin Server Component discovery route delegating to `ScholarshipDiscoveryPage`; it renders page content only and never mounts StudentShell.
   - Evidence: `src/app/[locale]/student/scholarships/page.tsx` renders `ScholarshipDiscoveryPage` in `<Suspense>`; no shell or `use client`; Search Scholarships enabled in navigation; tests/student-layout.test.mjs route guards and navigation tests pass.
 - [ ] T024 Compose `DiscoveryToolbar` UI: localized search field/placeholder, sort control, result heading, and Grid/List controls using early i18n keys.
+  - Partial: `DiscoveryToolbar` with labelled search (placeholder, clear) and sort select, all from `StudentScholarshipDiscovery`; the result heading is in `DiscoveryResultsSummary`. Missing: Grid/List controls (with T034).
 - [ ] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
+  - Built: local draft, 300ms `createDebouncer`, Enter flush, Clear, replace-mode commit, draft re-sync via `resolveDraftFromUrl`, stale commits skipped after a URL re-sync; debounce and re-sync logic tested with mock timers in tests/student-scholarship-discovery.test.mjs. Awaiting manual check (one request per debounced search, Back/Forward).
 - [ ] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
 - [ ] T027 Build the Country selector from filter-options strings only: display and URL/API value are identical, selections serialize as repeated `country` parameters, and a change resets page to 1.
 - [ ] T028 Implement independent Country control loading, successful non-empty, successful empty, and localized unavailable/retry states; failed options must not disable discovery results.

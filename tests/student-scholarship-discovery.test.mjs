@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import Module, { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, test } from 'node:test';
+import { afterEach, mock, test } from 'node:test';
 import ts from 'typescript';
 
 const loadModule = createRequire(import.meta.url);
@@ -41,6 +41,11 @@ const {
   withSearch,
   withSort,
 } = load('lib/discovery-query-state.ts');
+const { withClearedFilters } = load('lib/discovery-query-state.ts');
+const { SEARCH_DEBOUNCE_MS, createDebouncer } = load('lib/debounce.ts');
+const { resolveDraftFromUrl } = load('lib/search-draft.ts');
+const { createDiscoveryNavigator } = load('lib/discovery-navigator.ts');
+const { useScholarshipFilterOptions } = load('hooks/useScholarshipFilterOptions.ts');
 const { toScholarshipCard, toScholarshipDetails, toStringList } = load('adapters/scholarship.ts');
 const {
   getScholarship,
@@ -180,6 +185,7 @@ test('each update helper maps to its navigation mode', () => {
     withFilterChange: 'push',
     withSort: 'push',
     withPage: 'push',
+    withClearedFilters: 'push',
   });
   assert.equal(discoveryUpdates.setSearch.update, withSearch);
   assert.equal(discoveryUpdates.setFilters.update, withFilterChange);
@@ -485,4 +491,154 @@ test('a hidden future match sort does not change visible options or URL parsing'
   ];
   assert.deepEqual(getVisibleSortOptions(withMatch), getVisibleSortOptions(discoverySortOptions));
   assert.equal(parse('sort=match').sort, 'newest');
+});
+
+// --- Search debounce (T025) ----------------------------------------------------
+
+test('debounced search commits once, about 300ms after the last keystroke', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const commits = [];
+  const debouncer = createDebouncer(SEARCH_DEBOUNCE_MS, (value) => commits.push(value));
+  assert.equal(SEARCH_DEBOUNCE_MS, 300);
+
+  for (const draft of ['m', 'me', 'med', 'medi']) {
+    debouncer.schedule(draft);
+    t.mock.timers.tick(100);
+  }
+  assert.deepEqual(commits, [], 'no commit while typing');
+  t.mock.timers.tick(199);
+  assert.deepEqual(commits, [], 'not before 300ms of idle time');
+  t.mock.timers.tick(1);
+  assert.deepEqual(commits, ['medi'], 'one commit with the last draft');
+  assert.equal(debouncer.isPending(), false);
+});
+
+test('Enter flushes immediately and drops the pending commit', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const commits = [];
+  const debouncer = createDebouncer(SEARCH_DEBOUNCE_MS, (value) => commits.push(value));
+  debouncer.schedule('law');
+  debouncer.flush('law');
+  t.mock.timers.tick(1000);
+  assert.deepEqual(commits, ['law']);
+});
+
+test('cancel (unmount or URL change) prevents a pending commit', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const commits = [];
+  const debouncer = createDebouncer(SEARCH_DEBOUNCE_MS, (value) => commits.push(value));
+  debouncer.schedule('physics');
+  assert.equal(debouncer.isPending(), true);
+  debouncer.cancel();
+  t.mock.timers.tick(1000);
+  assert.deepEqual(commits, []);
+  assert.equal(debouncer.isPending(), false);
+});
+
+// --- Draft re-sync (T025) --------------------------------------------------------
+
+test('the search draft re-syncs from the URL only when the URL means something else', () => {
+  // Our own debounced commit: keep the student's typing, including a trailing space.
+  assert.equal(resolveDraftFromUrl('data ', 'data'), 'data ');
+  assert.equal(resolveDraftFromUrl('  data   science', 'data science'), '  data   science');
+  // Back/Forward or an external change: take the URL value.
+  assert.equal(resolveDraftFromUrl('data science', 'medicine'), 'medicine');
+  assert.equal(resolveDraftFromUrl('data', undefined), '');
+  assert.equal(resolveDraftFromUrl('   ', undefined), '   ');
+  assert.equal(resolveDraftFromUrl('', 'law'), 'law');
+});
+
+// --- Router wiring (T021) --------------------------------------------------------
+
+const fakeRouter = () => {
+  const calls = [];
+  return {
+    calls,
+    push: (href, options) => calls.push(['push', href, options]),
+    replace: (href, options) => calls.push(['replace', href, options]),
+  };
+};
+
+test('navigator uses replace for search and push for filters, sort, page and clear', () => {
+  const path = '/student/scholarships';
+  const query = parse('country=Germany&page=3');
+  const router = fakeRouter();
+  const nav = createDiscoveryNavigator(router, path, query);
+
+  nav.setSearch('ai');
+  nav.setFilters({ fundingTypes: ['full'] });
+  nav.setSort('deadline_soon');
+  nav.setPage(4);
+  nav.clearFilters();
+
+  assert.deepEqual(router.calls, [
+    ['replace', `${path}?search=ai&country=Germany`, { scroll: false }],
+    ['push', `${path}?funding_type=full&country=Germany`, { scroll: false }],
+    ['push', `${path}?country=Germany&sort=deadline_soon`, { scroll: false }],
+    ['push', `${path}?country=Germany&page=4`, { scroll: false }],
+    ['push', path, { scroll: false }],
+  ]);
+});
+
+test('navigator resets page to 1 for filter and sort changes and skips no-op changes', () => {
+  const path = '/student/scholarships';
+  const query = parse('search=ai&sort=deadline_soon&page=5');
+  const router = fakeRouter();
+  const nav = createDiscoveryNavigator(router, path, query);
+
+  nav.setFilters({ academicLevels: ['master'] });
+  nav.setSort('newest');
+  assert.deepEqual(
+    router.calls.map(([, href]) => new URL(href, 'https://x.test').searchParams.get('page')),
+    [null, null]
+  );
+
+  const before = router.calls.length;
+  assert.equal(nav.setPage(5), null);
+  // On page 1 the same sort and an equivalent search do not change the URL.
+  const firstPage = createDiscoveryNavigator(router, path, parse('search=ai&sort=deadline_soon'));
+  assert.equal(firstPage.setSort('deadline_soon'), null);
+  assert.equal(firstPage.setSearch(' ai '), null);
+  assert.equal(router.calls.length, before, 'no navigation when the URL would not change');
+});
+
+test('clear all resets filters and page but keeps search and sort', () => {
+  const query = parse(
+    'search=ai&academic_level=phd&funding_type=full&opportunity_type=training&country=%20X%20&sort=deadline_soon&page=4'
+  );
+  const cleared = withClearedFilters(query);
+  assert.deepEqual(cleared, { ...defaultDiscoveryQuery, search: 'ai', sort: 'deadline_soon' });
+});
+
+test('Back/Forward: the query is derived from the URL alone', () => {
+  const history = [
+    '',
+    'country=Germany',
+    'funding_type=full&country=Germany',
+    'country=Germany&page=2',
+  ];
+  const queries = history.map(parse);
+  // Going back to an entry yields exactly the state that entry was pushed with.
+  for (const [index, search] of history.entries()) {
+    assert.deepEqual(parse(search), queries[index]);
+    assert.equal(serializeDiscoveryQuery(queries[index]).toString(), search);
+  }
+});
+
+// --- Country options independence (T018/T028) -------------------------------------
+
+test('country options are keyed and fetched independently of discovery params', () => {
+  assert.equal(useScholarshipFilterOptions.length, 0, 'the hook takes no discovery input');
+  const keys = [
+    parse(''),
+    parse('country=Germany'),
+    withFilterChange(parse('page=3'), { academicLevels: ['phd'] }),
+    withSort(parse(''), 'deadline_soon'),
+    withSearch(parse(''), 'law'),
+  ].map(() => JSON.stringify(studentScholarshipKeys.filterOptions()));
+  assert.equal(new Set(keys).size, 1);
+  assert.notDeepEqual(
+    studentScholarshipKeys.filterOptions(),
+    studentScholarshipKeys.discovery(parse('')).slice(0, 2)
+  );
 });
