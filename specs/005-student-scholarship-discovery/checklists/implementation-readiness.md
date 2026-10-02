@@ -5,113 +5,180 @@ Use this checklist to verify the delivered implementation and evidence against t
 ## 1. Scope protection
 
 - [ ] The delivered feature contains a reusable Student Shell, discovery/search, URL-owned filtering/sorting/pagination, backend country options, Grid/List, bookmarks, responsive behavior, a minimal factual details boundary, Arabic RTL/English LTR, data states, and accessibility-critical interactions.
-- [ ] No dark mode, full future Details design, Saved Scholarships page, recommendation backend, highest-match sorting, frontend match calculation, fake match data, notifications backend, Application Tracking, Document Enhancement, fake future student routes, or admin scholarship workflow is included.
+  - Missing: only the foundation exists (types, API, URL state, keys, hooks); shell, UI, bookmarks, details, i18n and responsive work are T008–T066.
+- [x] No dark mode, full future Details design, Saved Scholarships page, recommendation backend, highest-match sorting, frontend match calculation, fake match data, notifications backend, Application Tracking, Document Enhancement, fake future student routes, or admin scholarship workflow is included.
+  - Evidence: feature API calls only the five discovery routes (src/features/student/scholarship-discovery/api/scholarships.ts:11-38); adapter sets `match: null` (src/features/student/scholarship-discovery/adapters/scholarship.ts:30); no other routes or dark styles added. Re-verify at T066.
 
 ## 2. Backend contract
 
-- [ ] Discovery uses only `GET /api/scholarships/`; it authenticates through the existing active-user API behavior and sends fixed `page_size=20` only in the backend request.
-- [ ] Country options use only authenticated `GET /api/scholarships/filter-options`; 401/403 behavior follows existing API/auth handling.
-- [ ] Details use `GET /api/scholarships/{scholarship_id}` and bookmark actions use POST/DELETE `/api/scholarships/{scholarship_id}/save`.
-- [ ] Discovery exposes only `newest` and `deadline_soon`; `deadline_soonest` is accepted on input and normalized, never emitted or displayed.
-- [ ] Repeated academic-level, funding-type, opportunity-type, and country parameters preserve documented OR semantics; filter groups combine with AND.
+- [x] Discovery uses only `GET /api/scholarships/`; it authenticates through the existing active-user API behavior and sends fixed `page_size=20` only in the backend request.
+  - Evidence: src/features/student/scholarship-discovery/api/scholarships.ts:11 via `apiClient` (cookie credentials); `page_size` added only in `toDiscoveryRequestParams` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:79-83); tests/student-scholarship-discovery.test.mjs:320.
+- [x] Country options use only authenticated `GET /api/scholarships/filter-options`; 401/403 behavior follows existing API/auth handling.
+  - Evidence: src/features/student/scholarship-discovery/api/scholarships.ts:29 via `apiClient`, which throws `ApiError` with status; 401/403 not retried (src/features/student/scholarship-discovery/lib/query-retry.ts:2); session 401 handled by src/features/auth/providers/AuthProvider.tsx:31; tests/student-scholarship-discovery.test.mjs:367, tests/student-scholarship-discovery.test.mjs:384.
+- [x] Details use `GET /api/scholarships/{scholarship_id}` and bookmark actions use POST/DELETE `/api/scholarships/{scholarship_id}/save`.
+  - Evidence: src/features/student/scholarship-discovery/api/scholarships.ts:33-38; tests/student-scholarship-discovery.test.mjs:351.
+- [x] Discovery exposes only `newest` and `deadline_soon`; `deadline_soonest` is accepted on input and normalized, never emitted or displayed.
+  - Evidence: only two visible sort options (src/features/student/scholarship-discovery/constants.ts:26-35); alias normalized in parsing and never serialized (src/features/student/scholarship-discovery/lib/discovery-query-state.ts); tests/student-scholarship-discovery.test.mjs:64, tests/student-scholarship-discovery.test.mjs:457.
+- [x] Repeated academic-level, funding-type, opportunity-type, and country parameters preserve documented OR semantics; filter groups combine with AND.
+  - Evidence: repeated params sent per group (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:67-77); OR/AND semantics recorded in specs/005-student-scholarship-discovery/contract-notes.md:20-21; tests/student-scholarship-discovery.test.mjs:72, tests/student-scholarship-discovery.test.mjs:320.
 - [ ] Country values are taken only from filter-options and forwarded unchanged as repeated `country` values.
-- [ ] Contract fixtures cover nullable discovery/detail fields, and discovery never calls the recommendations endpoint.
+  - Missing: Country selector (T027). Also a round-trip gap: filter-options keeps surrounding whitespace (src/features/student/scholarship-discovery/api/scholarships.ts:16-27) while URL parsing trims countries (src/features/student/scholarship-discovery/lib/discovery-query-state.ts), so " X " would be sent as "X".
+- [x] Contract fixtures cover nullable discovery/detail fields, and discovery never calls the recommendations endpoint.
+  - Evidence: nullable card and detail fixtures in tests/student-scholarship-discovery.test.mjs:213-318; no recommendations endpoint referenced in src/features/student/scholarship-discovery.
 
 ## 3. URL state
 
-- [ ] Browser URL state contains only `search`, repeated `academic_level`, `funding_type`, `opportunity_type`, `country`, `sort`, and `page`.
-- [ ] `page_size` is fixed at 20, API-only, absent from browser URLs and Back/Forward restoration, and not user-editable.
+- [x] Browser URL state contains only `search`, repeated `academic_level`, `funding_type`, `opportunity_type`, `country`, `sort`, and `page`.
+  - Evidence: serializer emits only these keys (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:67-77); unknown params such as `view` are dropped (tests/student-scholarship-discovery.test.mjs:427).
+- [x] `page_size` is fixed at 20, API-only, absent from browser URLs and Back/Forward restoration, and not user-editable.
+  - Evidence: `DISCOVERY_PAGE_SIZE` (src/features/student/scholarship-discovery/constants.ts:9) used only in request params; URL `page_size` ignored and never serialized (tests/student-scholarship-discovery.test.mjs:114).
 - [ ] Grid/List is in-memory presentation state and absent from URLs.
-- [ ] Search, filter, and sort changes reset only `page` to 1; pagination changes only `page`.
+  - Missing: Grid/List state does not exist yet (T034). URL exclusion is already tested (tests/student-scholarship-discovery.test.mjs:427).
+- [x] Search, filter, and sort changes reset only `page` to 1; pagination changes only `page`.
+  - Evidence: `withSearch`/`withFilterChange`/`withSort`/`withPage` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:86-93); tests/student-scholarship-discovery.test.mjs:132.
 - [ ] Back/Forward restores the effective search/filter/sort/page state.
-- [ ] URL parsing removes blanks, collapses search whitespace, deduplicates values, rejects unsupported enums, normalizes the legacy sort alias, and converts invalid pages to 1.
+  - Missing: router wiring untested. Filter/sort/page use `push` and search `replace` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:101-106, src/features/student/scholarship-discovery/hooks/useDiscoveryQueryState.ts:19-27); verify Back/Forward in T029 (T021 stays open).
+- [x] URL parsing removes blanks, collapses search whitespace, deduplicates values, rejects unsupported enums, normalizes the legacy sort alias, and converts invalid pages to 1.
+  - Evidence: `normalizeDiscoveryQuery` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:44-55); tests/student-scholarship-discovery.test.mjs:72, tests/student-scholarship-discovery.test.mjs:89, tests/student-scholarship-discovery.test.mjs:107.
 
 ## 4. React Query architecture
 
 - [ ] The key factory contains `all`, `discoveries()`, `discovery(query)`, `details()`, `detail(id)`, `savedLists()`, `saved(page,pageSize)`, and `filterOptions()`.
-- [ ] `discovery(query)` contains normalized backend-affecting state only; Grid/List is in no React Query key.
-- [ ] `filterOptions()` is independent of search, filters, page, sort, and view mode, with a longer stale time than discovery.
+  - Item text is outdated: the reconciled plan uses `saved()` with no paging params (specs/005-student-scholarship-discovery/plan.md:92). The factory matches the plan (src/features/student/scholarship-discovery/query-keys.ts:3-13); reword this item, then check it.
+- [x] `discovery(query)` contains normalized backend-affecting state only; Grid/List is in no React Query key.
+  - Evidence: the hook keys a normalized query (src/features/student/scholarship-discovery/hooks/useScholarshipDiscovery.ts:10); tests/student-scholarship-discovery.test.mjs:400, tests/student-scholarship-discovery.test.mjs:427.
+- [x] `filterOptions()` is independent of search, filters, page, sort, and view mode, with a longer stale time than discovery.
+  - Evidence: 30-minute stale time (src/features/student/scholarship-discovery/hooks/useScholarshipFilterOptions.ts:6-11); independent key; tests/student-scholarship-discovery.test.mjs:449.
 - [ ] Switching Grid/List alone causes neither discovery nor filter-options refetch.
+  - Missing: needs the Grid/List toggle (T034) and a no-refetch test (T029/T035). Keys already exclude view state.
 - [ ] Bookmark updates and settlement are targeted; settlement never invalidates `studentScholarshipKeys.all`.
+  - Missing: bookmark mutation hook not implemented (T036–T038).
 
 ## 5. Student Shell
 
 - [ ] `StudentShell` is mounted only by `src/app/[locale]/student/layout.tsx`, which retains `RoleGuard`.
+  - Missing: no StudentShell yet; layout currently renders only `RoleGuard` (T010, T013).
 - [ ] Student route pages remain Server Components by default and page content never mounts a second shell.
+  - Missing: shell and discovery routes not created (T013, T014, T023).
 - [ ] Profile retains its domain and form ownership while inheriting the shared outer frame.
+  - Missing: Profile not yet adapted to an inherited shell (T014).
 - [ ] Only implemented Profile and Search Scholarships destinations are interactive.
+  - Missing: student navigation config not created (T009).
 - [ ] Mobile navigation has an accessible label, keyboard operation, Escape dismissal, appropriate focus management, and focus return.
+  - Missing: mobile navigation not built (T012, T015).
 
 ## 6. i18n
 
 - [ ] Arabic and English `StudentLayout`, `StudentScholarshipDiscovery`, and `StudentScholarshipDetails` messages exist before user-facing UI implementation.
+  - Missing: no `StudentLayout`, `StudentScholarshipDiscovery` or `StudentScholarshipDetails` namespaces in src/messages/ar.json or en.json (T008).
 - [ ] Messages cover navigation, search, filters, Country loading/empty/unavailable states, sorting, Grid/List, cards, bookmarks, pagination, data states, dialogs, details, and accessibility labels.
-- [ ] No visible or ARIA string introduced by Feature 005 is temporarily hard-coded.
+  - Missing: messages not created (T008).
+- [x] No visible or ARIA string introduced by Feature 005 is temporarily hard-coded.
+  - Evidence: foundation code has no user-facing strings; the title fallback is `undefined` (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31). Re-verify at T057.
 
 ## 7. Scholarship rendering
 
 - [ ] Grid and List consume the same normalized `ScholarshipCardModel` and use the same bookmark/details actions.
+  - Missing: Grid and List components not built (T031, T032).
 - [ ] Both views safely omit or represent nullable backend metadata without inventing facts.
-- [ ] No compatibility score, eligibility result, match reason, or match badge is fabricated.
+  - Missing: views not built. The adapter already omits empty fields (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31; tests/student-scholarship-discovery.test.mjs:240).
+- [x] No compatibility score, eligibility result, match reason, or match badge is fabricated.
+  - Evidence: adapter always sets `match: null` (src/features/student/scholarship-discovery/adapters/scholarship.ts:30); no match calculation exists; tests/student-scholarship-discovery.test.mjs:240. Re-verify when views are built.
 - [ ] `ScholarshipMatchBadge` renders nothing when authoritative match data is absent.
+  - Missing: `ScholarshipMatchBadge` not built (T033).
 
 ## 8. Images
 
 - [ ] Runtime scholarship images use native `<img>` for arbitrary backend hosts with meaningful alt text, lazy loading, and stable aspect ratio.
+  - Missing: image component not built (T031).
 - [ ] Malformed URLs and image load failures use a local neutral placeholder.
+  - Missing: image fallback not built (T031).
 - [ ] Figma sample images are not runtime fallbacks.
-- [ ] No global ESLint disable, global ESLint policy modification, or broad arbitrary-host `next.config` allowlist is introduced.
+  - Missing: no runtime image code yet (T031, T035).
+- [x] No global ESLint disable, global ESLint policy modification, or broad arbitrary-host `next.config` allowlist is introduced.
+  - Evidence: eslint.config.mjs and next.config.ts unchanged from `main`. Re-verify at T035.
 - [ ] Any `@next/next/no-img-element` suppression is narrowly documented and component-local to the scholarship backend-image component.
+  - Missing: image component not built; check any suppression at T031.
 
 ## 9. Bookmark behavior
 
 - [ ] Unsaved cards issue one POST save request and saved cards issue one DELETE unsave request, with a per-scholarship pending guard.
+  - Missing: `useScholarshipBookmark` not built (T036). API methods exist (src/features/student/scholarship-discovery/api/scholarships.ts:35-38).
 - [ ] Optimistic changes update only affected discovery, detail, and saved-list caches; a failed mutation restores exact snapshots.
+  - Missing: optimistic updates and rollback (T037).
 - [ ] Discovery, detail, and saved-list `is_saved` state remain coherent after success or failure.
+  - Missing: cache coherence (T038, T040, T055).
 - [ ] Save, Remove saved, pending, and failure feedback have accessible localized labels.
+  - Missing: bookmark labels and feedback (T039).
 
 ## 10. Pagination and states
 
 - [ ] Pagination uses server `page`, `page_size`, and `total_pages`, with Previous/Next, a bounded page window, ellipses, disabled states, and `aria-current`.
+  - Missing: pagination component and helper (T042, T043).
 - [ ] An out-of-range returned page is reconciled once using URL replacement.
+  - Missing: out-of-range reconciliation (T043).
 - [ ] Initial loading uses view-appropriate skeletons and background refresh retains usable results with a busy indication.
+  - Missing: skeletons and busy state (T044). `keepPreviousData` is set (src/features/student/scholarship-discovery/hooks/useScholarshipDiscovery.ts).
 - [ ] No-scholarships and no-matches empty states are distinct and offer truthful edit-search/clear actions.
+  - Missing: empty states (T045).
 - [ ] Authentication, 422, generic retryable, and malformed-data states are distinguishable and accessible.
+  - Missing: error states (T046).
 
 ## 11. Responsive behavior
 
 - [ ] At desktop `lg`, the Student Shell/sidebar/header, discovery filters, two-column Grid, and full List are present.
+  - Missing: layout not built (T049).
 - [ ] Below `lg`, results adapt and filters are reachable through a mobile trigger/panel.
+  - Missing: mobile filter trigger and panel (T048).
 - [ ] On mobile, navigation, one-column Grid, compact/wrapping List, stacked toolbar, compact pagination, and no fixed-width overflow are verified.
+  - Missing: mobile layout (T049–T051).
 - [ ] RTL and LTR use logical placement and preserve readable keyboard/focus order.
+  - Missing: RTL/LTR verification (T050).
 
 ## 12. Minimal details
 
 - [ ] The canonical route is `/[locale]/student/scholarships/[id]` and rejects invalid/non-positive IDs before requesting data.
+  - Missing: details route (T052, T053). The detail hook already refuses invalid IDs (src/features/student/scholarship-discovery/hooks/useScholarshipDetail.ts).
 - [ ] The real detail endpoint renders loading, existing 401/403 behavior, 404, and retryable-error states.
+  - Missing: detail states (T054).
 - [ ] The details view is a factual nullable-safe summary with bookmark coherence and localized Back to discovery navigation.
+  - Missing: details view (T054, T055). The details adapter is ready (src/features/student/scholarship-discovery/adapters/scholarship.ts:33).
 - [ ] No full Details Figma experience, application flow, tracking, eligibility, or fabricated match content has entered the route.
+  - Missing: route not built (T052–T056).
 
 ## 13. Accessibility
 
 - [ ] Search has a label; filter groups use fieldsets/legends and native checkboxes; Country and sort controls are labelled.
+  - Missing: controls not built (T024, T026, T027).
 - [ ] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
+  - Missing: toggle, bookmark and pagination controls (T034, T039, T043).
 - [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
+  - Missing: pagination and live regions (T043, T046).
 - [ ] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
+  - Missing: both dialogs (T012, T048, T059).
 
 ## 14. Figma convergence
 
 - [ ] Functional implementation is compared with primary node `2262:3331` and empty node `2264:3472` for spacing, typography, borders, radii, icons, RTL alignment, toolbar, filters, cards, pagination, and empty state.
+  - Missing: Figma comparison (T030, T061).
 - [ ] List View is intentionally inferred from the shared visual system and is included in the comparison.
-- [ ] Dark-mode Figma nodes remain out of scope.
+  - Missing: List View comparison (T061, T062).
+- [x] Dark-mode Figma nodes remain out of scope.
+  - Evidence: dark nodes excluded in specs/005-student-scholarship-discovery/plan.md:254 and tasks.md:112.
 
 ## 15. Verification
 
-- [ ] `git diff --check` completes successfully.
-- [ ] `pnpm lint` completes successfully.
-- [ ] `pnpm exec tsc --noEmit` completes successfully.
-- [ ] `node --test tests/student-scholarship-discovery.test.mjs` completes successfully.
-- [ ] `pnpm build` completes successfully.
+- [x] `git diff --check` completes successfully.
+  - Evidence: passed at 066ccbf (exit 0).
+- [x] `pnpm lint` completes successfully.
+  - Evidence: passed at 066ccbf (0 errors; 3 existing warnings in unrelated files).
+- [x] `pnpm exec tsc --noEmit` completes successfully.
+  - Evidence: passed at 066ccbf (exit 0).
+- [x] `node --test tests/student-scholarship-discovery.test.mjs` completes successfully.
+  - Evidence: 26/26 passed at 066ccbf (`pnpm test:scholarship-discovery`).
+- [x] `pnpm build` completes successfully.
+  - Evidence: passed at 066ccbf (exit 0). The new routes do not exist yet, so re-run at T065.
 - [ ] Actual test results plus RTL/LTR, responsive, and Figma-convergence evidence are recorded in Feature 005 verification documentation.
+  - Missing: no Feature 005 verification document yet (T066).
 
 CHECKLIST READY FOR /speckit.implement
