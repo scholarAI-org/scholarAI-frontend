@@ -56,23 +56,23 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 5. Student Shell
 
-- [ ] `StudentShell` is mounted only by `src/app/[locale]/student/layout.tsx`, which retains `RoleGuard`.
-  - Missing: no StudentShell yet; layout currently renders only `RoleGuard` (T010, T013).
-- [ ] Student route pages remain Server Components by default and page content never mounts a second shell.
-  - Missing: shell and discovery routes not created (T013, T014, T023).
+- [x] `StudentShell` is mounted only by `src/app/[locale]/student/layout.tsx`, which retains `RoleGuard`.
+  - Evidence: src/app/[locale]/student/layout.tsx; tests/student-layout.test.mjs (layout mounts StudentShell once, inside RoleGuard).
+- [x] Student route pages remain Server Components by default and page content never mounts a second shell.
+  - Evidence: src/app/[locale]/student/profile/page.tsx renders `ProfilePageContent`; tests/student-layout.test.mjs (pages are Server Components that never mount a second frame).
 - [ ] Profile retains its domain and form ownership while inheriting the shared outer frame.
-  - Missing: Profile not yet adapted to an inherited shell (T014).
-- [ ] Only implemented Profile and Search Scholarships destinations are interactive.
-  - Missing: student navigation config not created (T009).
+  - Code moved unchanged to src/features/profile/components/ProfilePageContent.tsx. Awaiting manual check of forms, avatar upload and logout in ar/en.
+- [x] Only implemented Profile and Search Scholarships destinations are interactive.
+  - Evidence: src/features/student/layout/student-navigation.ts; only Profile is visible until T023 enables Search; tests/student-layout.test.mjs navigation tests.
 - [ ] Mobile navigation has an accessible label, keyboard operation, Escape dismissal, appropriate focus management, and focus return.
-  - Missing: mobile navigation not built (T012, T015).
+  - Built in src/features/student/layout/StudentMobileNavigation.tsx (focus-trap logic tested). Awaiting manual keyboard check at mobile width.
 
 ## 6. i18n
 
-- [ ] Arabic and English `StudentLayout`, `StudentScholarshipDiscovery`, and `StudentScholarshipDetails` messages exist before user-facing UI implementation.
-  - Missing: no `StudentLayout`, `StudentScholarshipDiscovery` or `StudentScholarshipDetails` namespaces in src/messages/ar.json or en.json (T008).
-- [ ] Messages cover navigation, search, filters, Country loading/empty/unavailable states, sorting, Grid/List, cards, bookmarks, pagination, data states, dialogs, details, and accessibility labels.
-  - Missing: messages not created (T008).
+- [x] Arabic and English `StudentLayout`, `StudentScholarshipDiscovery`, and `StudentScholarshipDetails` messages exist before user-facing UI implementation.
+  - Evidence: src/messages/ar.json and en.json (19 + 71 + 30 keys), added in commit 4cb2f2f before any UI; tests/student-layout.test.mjs key parity test.
+- [x] Messages cover navigation, search, filters, Country loading/empty/unavailable states, sorting, Grid/List, cards, bookmarks, pagination, data states, dialogs, details, and accessibility labels.
+  - Evidence: keys for navigation, search, filters, country states, sort, views, cards, bookmarks, pagination, data states, dialogs, details and ARIA labels; ICU and plural tests in tests/student-layout.test.mjs. Re-audit at T057.
 - [x] No visible or ARIA string introduced by Feature 005 is temporarily hard-coded.
   - Evidence: foundation code has no user-facing strings; the title fallback is `undefined` (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31). Re-verify at T057.
 

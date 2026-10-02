@@ -194,3 +194,46 @@ test('focus trap wraps at both ends and leaves the middle to the browser', () =>
   assert.equal(getFocusTrapTarget(0, 1, false), 0);
   assert.equal(getFocusTrapTarget(0, 0, false), null);
 });
+
+// --- Single shell / route boundaries ------------------------------------------
+
+const studentRoutePath = fileURLToPath(new URL('../src/app/[locale]/student', import.meta.url));
+const listFiles = (dir) =>
+  fs
+    .readdirSync(dir, { withFileTypes: true })
+    .flatMap((entry) =>
+      entry.isDirectory() ? listFiles(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
+    );
+const frameImport =
+  /(StudentShell|StudentHeader|StudentSidebar|StudentMobileNavigation|components\/profile\/(Navbar|Sidebar|ProfileLayout))/;
+
+test('the student layout mounts StudentShell once, inside RoleGuard', () => {
+  const layout = fs.readFileSync(path.join(studentRoutePath, 'layout.tsx'), 'utf8');
+  assert.equal(layout.includes("'use client'"), false);
+  assert.match(
+    layout,
+    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*<StudentShell>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
+  );
+  assert.equal(layout.match(/<StudentShell>/g)?.length, 1);
+});
+
+test('student pages are Server Components that never mount a second frame', () => {
+  const pages = listFiles(studentRoutePath).filter((file) => file.endsWith('page.tsx'));
+  assert.ok(pages.length >= 1);
+  for (const page of pages) {
+    const source = fs.readFileSync(page, 'utf8');
+    const name = path.relative(studentRoutePath, page);
+    assert.equal(/^\s*['"]use client['"]/.test(source), false, `${name} is a Client Component`);
+    assert.equal(frameImport.test(source), false, `${name} imports frame components`);
+  }
+});
+
+test('the old Profile frame components are gone', () => {
+  for (const file of ['Navbar.tsx', 'Sidebar.tsx', 'ProfileLayout.tsx']) {
+    assert.equal(
+      fs.existsSync(new URL(`../src/components/profile/${file}`, import.meta.url)),
+      false,
+      file
+    );
+  }
+});
