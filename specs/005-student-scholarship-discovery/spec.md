@@ -95,8 +95,10 @@ result state.
 4. Given I choose newest or deadline-soon, then only the corresponding
    supported backend `sort` value is requested. No highest-match option or
    local ranking is shown.
-5. Given I activate Clear all, then search, filters, sort-as-defined-by-product
-   default, and page reset while Grid/List preference remains unchanged.
+5. Given I activate Clear all, then all filters (including countries) and
+   `page` reset while search, sort, and the Grid/List preference remain
+   unchanged. Rationale: the button lives in the filter panel, and the empty
+   state offers "edit search" and "clear filters" as separate actions.
 
 ### User Story 3 — Change presentation and navigate results (P1)
 

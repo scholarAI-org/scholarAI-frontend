@@ -148,8 +148,8 @@ preserves query/filter/sort/page/data and triggers no URL or discovery refetch.
 
 Desktop sidebar uses labelled checkbox groups for academic level, funding, and
 opportunity type. Typed config maps labels to backend enums; no Figma samples
-are selected. Clear all resets search, filters, sort default, and page while
-retaining view mode.
+are selected. Clear all resets filters (including countries) and page; search,
+sort, and view mode are kept (spec US2.5).
 
 ## 18. Country Data Source
 

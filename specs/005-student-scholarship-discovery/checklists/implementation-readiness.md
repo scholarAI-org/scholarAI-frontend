@@ -36,8 +36,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Missing: Grid/List state does not exist yet (T034). URL exclusion is already tested (tests/student-scholarship-discovery.test.mjs:427).
 - [x] Search, filter, and sort changes reset only `page` to 1; pagination changes only `page`.
   - Evidence: `withSearch`/`withFilterChange`/`withSort`/`withPage` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:86-93); tests/student-scholarship-discovery.test.mjs:132.
-- [ ] Back/Forward restores the effective search/filter/sort/page state.
-  - Missing: router wiring untested. Filter/sort/page use `push` and search `replace` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:101-106, src/features/student/scholarship-discovery/hooks/useDiscoveryQueryState.ts:19-27); verify Back/Forward in T029 (T021 stays open).
+- [x] Back/Forward restores the effective search/filter/sort/page state.
+  - Evidence: filter/sort/page use push and search uses replace (`lib/discovery-navigator.ts`, tested with a fake router in tests/student-scholarship-discovery.test.mjs); the query is parsed from the URL only; round-1 manual Back/Forward check passed in ar/en.
 - [x] URL parsing removes blanks, collapses search whitespace, deduplicates values, rejects unsupported enums, normalizes the legacy sort alias, and converts invalid pages to 1.
   - Evidence: `normalizeDiscoveryQuery` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:44-55); tests/student-scholarship-discovery.test.mjs:72, tests/student-scholarship-discovery.test.mjs:89, tests/student-scholarship-discovery.test.mjs:107.
 
@@ -148,8 +148,8 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 13. Accessibility
 
-- [ ] Search has a label; filter groups use fieldsets/legends and native checkboxes; Country and sort controls are labelled.
-  - Missing: controls not built (T024, T026, T027).
+- [x] Search has a label; filter groups use fieldsets/legends and native checkboxes; Country and sort controls are labelled.
+  - Evidence: `DiscoverySearchField` (sr-only label), `DiscoveryFilters` and `CountryFilter` (fieldset/legend, native checkboxes), `DiscoverySortSelect` (label); round-1 manual keyboard check passed in ar/en.
 - [ ] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
   - Missing: toggle, bookmark and pagination controls (T034, T039, T043).
 - [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.

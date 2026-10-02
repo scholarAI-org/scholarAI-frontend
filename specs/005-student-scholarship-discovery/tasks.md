@@ -63,16 +63,16 @@
   - Evidence: `src/app/[locale]/student/scholarships/page.tsx` renders `ScholarshipDiscoveryPage` in `<Suspense>`; no shell or `use client`; Search Scholarships enabled in navigation; tests/student-layout.test.mjs route guards and navigation tests pass.
 - [ ] T024 Compose `DiscoveryToolbar` UI: localized search field/placeholder, sort control, result heading, and Grid/List controls using early i18n keys.
   - Partial: `DiscoveryToolbar` with labelled search (placeholder, clear) and sort select, all from `StudentScholarshipDiscovery`; the result heading is in `DiscoveryResultsSummary`. Missing: Grid/List controls (with T034).
-- [ ] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
-  - Built: local draft, 300ms `createDebouncer`, Enter flush, Clear, replace-mode commit, draft re-sync via `resolveDraftFromUrl`, stale commits skipped after a URL re-sync; debounce and re-sync logic tested with mock timers in tests/student-scholarship-discovery.test.mjs. Awaiting manual check (one request per debounced search, Back/Forward).
-- [ ] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
-  - Built: `DiscoveryFilters` with fieldset/legend checkbox groups for academic level, funding and opportunity type (no default selections), push-mode URL updates and Clear all (filters and page; search and sort kept); `toggleValue` and label coverage tested. Awaiting manual check.
-- [ ] T027 Build the Country selector from filter-options strings only: display and URL/API value are identical, selections serialize as repeated `country` parameters, and a change resets page to 1.
-  - Built: `CountryFilter` lists only `useScholarshipFilterOptions` strings (plus URL-selected values not among them, so they stay removable), label and value identical, repeated `country` params, push mode with page reset; merge and serialization tested in tests/student-scholarship-discovery.test.mjs. Awaiting manual check.
-- [ ] T028 Implement independent Country control loading, successful non-empty, successful empty, and localized unavailable/retry states; failed options must not disable discovery results.
-  - Built: independent loading (`role="status"`), empty, and unavailable (`role="alert"`) with Retry (`refetch`) states inside the Country fieldset; discovery results render from their own query. Awaiting manual check with the filter-options request blocked.
+- [x] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
+  - Evidence: `DiscoverySearchField` (local draft, 300ms debounce, Enter flush, Clear, replace mode, URL re-sync); debounce/re-sync tests with mock timers in tests/student-scholarship-discovery.test.mjs; round-1 manual check passed in ar/en (one request per debounced search, Back/Forward).
+- [x] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
+  - Evidence: `DiscoveryFilters` (fieldsets/legends, native checkboxes, push mode, Clear all for filters and page); tests/student-scholarship-discovery.test.mjs filter tests; round-1 manual check passed in ar/en.
+- [x] T027 Build the Country selector from filter-options strings only: display and URL/API value are identical, selections serialize as repeated `country` parameters, and a change resets page to 1.
+  - Evidence: `CountryFilter` (options only from filter-options, exact strings, repeated params, page reset); merge/serialization tests in tests/student-scholarship-discovery.test.mjs; round-1 manual check passed in ar/en.
+- [x] T028 Implement independent Country control loading, successful non-empty, successful empty, and localized unavailable/retry states; failed options must not disable discovery results.
+  - Evidence: independent loading/empty/unavailable+Retry states in `CountryFilter`; round-1 manual check passed with filter-options blocked (results stayed usable, Retry recovered).
 - [ ] T029 Test toolbar debounce and URL behavior; all filter groups; one/multiple countries; clear all; Country state variants/retry; discovery usability on options error; and no filter-options refetch from Grid/List switching.
-  - Partial: pure-logic tests in tests/student-scholarship-discovery.test.mjs (debounce with mock timers, draft re-sync, navigation modes, page reset, clear all, country merge/serialization, filter-options key independence). Missing: component-level tests (no React test harness in the repo) and Grid/List refetch checks (with T034); covered by the manual checklist for now.
+  - Partial: pure-logic tests in tests/student-scholarship-discovery.test.mjs and round-1 manual check passed for toolbar, filters, countries, clear all and options failure. Missing: the Grid/List no-refetch part, which needs the view toggle (T034).
 
 ## Phase 5 — Grid and List results
 
