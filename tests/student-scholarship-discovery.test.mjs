@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import Module, { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterEach, mock, test } from 'node:test';
+import { afterEach, test } from 'node:test';
 import ts from 'typescript';
 
 const loadModule = createRequire(import.meta.url);
@@ -669,4 +669,30 @@ test('every filter value has a label in both locales', () => {
       for (const value of values) assert.ok(filters[group][value], `${locale} ${group}.${value}`);
     }
   }
+});
+
+// --- Countries (T027/T028) ------------------------------------------------------
+
+test('country options keep backend strings unchanged and add selected values from the URL', () => {
+  const { mergeCountryOptions } = load('lib/filter-values.ts');
+  assert.deepEqual(mergeCountryOptions(['Germany', ' Côte d’Ivoire '], []), [
+    'Germany',
+    ' Côte d’Ivoire ',
+  ]);
+  assert.deepEqual(mergeCountryOptions(['Germany'], ['Germany', 'Atlantis']), [
+    'Germany',
+    'Atlantis',
+  ]);
+  assert.deepEqual(mergeCountryOptions([], [' X ']), [' X '], 'still removable when options fail');
+  assert.deepEqual(mergeCountryOptions(['X', 'X'], ['x']), ['X', 'x'], 'exact, case-sensitive');
+});
+
+test('selecting countries serializes repeated country params unchanged and resets the page', () => {
+  const router = fakeRouter();
+  const nav = createDiscoveryNavigator(router, '/student/scholarships', parse('page=4'));
+  nav.setFilters({ countries: [' Côte d’Ivoire ', 'Germany'] });
+  const url = new URL(router.calls[0][1], 'https://x.test');
+  assert.equal(router.calls[0][0], 'push');
+  assert.deepEqual(url.searchParams.getAll('country'), [' Côte d’Ivoire ', 'Germany']);
+  assert.equal(url.searchParams.get('page'), null);
 });

@@ -1,6 +1,7 @@
 'use client';
 
 import { useDiscoveryQueryState } from '../hooks/useDiscoveryQueryState';
+import { CountryFilter } from './CountryFilter';
 import { DiscoveryFilters } from './DiscoveryFilters';
 import { DiscoveryResultsSummary } from './DiscoveryResultsSummary';
 import { DiscoveryToolbar } from './DiscoveryToolbar';
@@ -14,7 +15,17 @@ export function ScholarshipDiscoveryPage() {
     <div className="mx-auto max-w-[1156px] space-y-6">
       <DiscoveryToolbar query={query} onSearch={setSearch} onSort={setSort} />
       <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <DiscoveryFilters query={query} onChange={setFilters} onClear={clearFilters} />
+        <DiscoveryFilters
+          query={query}
+          onChange={setFilters}
+          onClear={clearFilters}
+          countryFilter={
+            <CountryFilter
+              selected={query.countries}
+              onChange={(countries) => setFilters({ countries })}
+            />
+          }
+        />
         <DiscoveryResultsSummary query={query} />
       </div>
     </div>

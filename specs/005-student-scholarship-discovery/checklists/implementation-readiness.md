@@ -21,8 +21,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: only two visible sort options (src/features/student/scholarship-discovery/constants.ts:26-35); alias normalized in parsing and never serialized (src/features/student/scholarship-discovery/lib/discovery-query-state.ts); tests/student-scholarship-discovery.test.mjs:64, tests/student-scholarship-discovery.test.mjs:457.
 - [x] Repeated academic-level, funding-type, opportunity-type, and country parameters preserve documented OR semantics; filter groups combine with AND.
   - Evidence: repeated params sent per group (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:67-77); OR/AND semantics recorded in specs/005-student-scholarship-discovery/contract-notes.md:20-21; tests/student-scholarship-discovery.test.mjs:72, tests/student-scholarship-discovery.test.mjs:320.
-- [ ] Country values are taken only from filter-options and forwarded unchanged as repeated `country` values.
-  - Missing: Country selector (T027). The round-trip gap is fixed: URL parsing keeps country strings exactly as filter-options returns them (tests/student-scholarship-discovery.test.mjs, country values round-trip test).
+- [x] Country values are taken only from filter-options and forwarded unchanged as repeated `country` values.
+  - Evidence: src/features/student/scholarship-discovery/components/CountryFilter.tsx uses only `useScholarshipFilterOptions`; `mergeCountryOptions`, URL parsing and API params keep strings unchanged (tests/student-scholarship-discovery.test.mjs: country round-trip, merge and serialization tests).
 - [x] Contract fixtures cover nullable discovery/detail fields, and discovery never calls the recommendations endpoint.
   - Evidence: nullable card and detail fixtures in tests/student-scholarship-discovery.test.mjs:213-318; no recommendations endpoint referenced in src/features/student/scholarship-discovery.
 
