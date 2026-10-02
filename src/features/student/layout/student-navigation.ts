@@ -1,14 +1,13 @@
 import type { StudentNavigationItem, StudentPageKey } from './types';
 
-// Only implemented destinations appear. Search Scholarships stays disabled
-// until its route exists (T023), so it never links to a 404.
+// Only implemented destinations appear; never link to a missing route.
 export const studentNavigation: StudentNavigationItem[] = [
   { id: 'profile', labelKey: 'nav.profile', href: '/student/profile', enabled: true },
   {
     id: 'scholarships',
     labelKey: 'nav.scholarships',
     href: '/student/scholarships',
-    enabled: false,
+    enabled: true,
   },
 ];
 

@@ -59,7 +59,8 @@
 
 ## Phase 4 — Toolbar and filters
 
-- [ ] T023 Add the thin Server Component discovery route delegating to `ScholarshipDiscoveryPage`; it renders page content only and never mounts StudentShell.
+- [x] T023 Add the thin Server Component discovery route delegating to `ScholarshipDiscoveryPage`; it renders page content only and never mounts StudentShell.
+  - Evidence: `src/app/[locale]/student/scholarships/page.tsx` renders `ScholarshipDiscoveryPage` in `<Suspense>`; no shell or `use client`; Search Scholarships enabled in navigation; tests/student-layout.test.mjs route guards and navigation tests pass.
 - [ ] T024 Compose `DiscoveryToolbar` UI: localized search field/placeholder, sort control, result heading, and Grid/List controls using early i18n keys.
 - [ ] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
 - [ ] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
