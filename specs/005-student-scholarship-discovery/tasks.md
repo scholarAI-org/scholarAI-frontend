@@ -26,18 +26,18 @@
   - Evidence: `StudentLayout` (19), `StudentScholarshipDiscovery` (71) and `StudentScholarshipDetails` (30) keys in src/messages/ar.json and en.json; `pnpm test:student-layout` checks key parity, ICU validity via `intl-messageformat`, and Arabic plural categories (`zero` or `=0`, plus one/two/few/many/other).
 - [x] T009 Add typed student navigation configuration with only Profile and Search Scholarships enabled; omit unavailable Figma destinations.
   - Evidence: `src/features/student/layout/student-navigation.ts` (Profile enabled; Search Scholarships disabled until T023); tests/student-layout.test.mjs navigation tests pass.
-- [ ] T010 Build the StudentShell frame with desktop header/sidebar and active-route behavior; reuse existing auth/profile/locale primitives and add no auth store, notifications, or theme control.
-  - Built: `StudentShell`, `StudentHeader`, `StudentSidebar` (visuals extracted from the Profile frame; no auth store, notification bell, badge or theme control); active-route logic tested. Awaiting manual desktop check (ar/en).
-- [ ] T011 Integrate real identity and locale behavior into the shell while preserving profile feature/forms ownership.
-  - Built: identity from `useAuth().user` (`name`, then email, then translated fallback); one language button with a single accessible name and `lang`. Awaiting manual check of identity and locale switching.
-- [ ] T012 Build the mobile student navigation drawer: labelled trigger/dialog, keyboard navigation, Escape, appropriate focus management, and focus return.
-  - Built: `StudentMobileNavigation` (labelled dialog, Escape/backdrop/close/link close, Tab trap via tested `getFocusTrapTarget`, focus return to the menu button). Awaiting manual keyboard check at mobile width.
+- [x] T010 Build the StudentShell frame with desktop header/sidebar and active-route behavior; reuse existing auth/profile/locale primitives and add no auth store, notifications, or theme control.
+  - Evidence: manual check passed (ar/en, desktop): single header and sidebar, RTL/LTR, active item.
+- [x] T011 Integrate real identity and locale behavior into the shell while preserving profile feature/forms ownership.
+  - Evidence: manual check passed (ar/en): account name in header and sidebar; language switch keeps the route.
+- [x] T012 Build the mobile student navigation drawer: labelled trigger/dialog, keyboard navigation, Escape, appropriate focus management, and focus return.
+  - Evidence: manual check passed (mobile width, keyboard): label, Escape/backdrop/close/link close, Tab trap, focus return to the menu button.
 - [x] T013 Update only `src/app/[locale]/student/layout.tsx` as the thin Server Component integration point, retaining `RoleGuard` and rendering `StudentShell` around `{children}`.
   - Evidence: `src/app/[locale]/student/layout.tsx` is a Server Component rendering `RoleGuard` > `StudentShell` once; tests/student-layout.test.mjs layout test passes.
 - [x] T014 Adapt Profile outer presentation to inherit the route shell; ensure pages never mount a second shell and remain Server Components by default.
   - Evidence: Profile body moved to `src/features/profile/components/ProfilePageContent.tsx` with logic unchanged; `profile/page.tsx` is a thin Server Component; old `Navbar`/`Sidebar`/`ProfileLayout` deleted; tests/student-layout.test.mjs single-shell tests pass.
-- [ ] T015 Test the Profile shell regression, active routes, identity/locale integration, and mobile-navigation keyboard behavior.
-  - Partial: automated tests cover active routes, page titles, identity fallback, focus-trap logic and the single-shell guard (tests/student-layout.test.mjs). Missing: manual Profile regression (forms, avatar, logout) and mobile keyboard check.
+- [x] T015 Test the Profile shell regression, active routes, identity/locale integration, and mobile-navigation keyboard behavior.
+  - Evidence: automated tests in tests/student-layout.test.mjs plus manual check passed: Profile save, avatar upload, logout, active routes and mobile keyboard behaviour in ar/en.
 - [ ] T015a Follow-up: move the hard-coded Arabic in the Profile content (step labels, completion label, profile-name fallback, "under development" box) into Arabic/English messages.
 - [ ] T015b Follow-up: localize the hard-coded Arabic loading and error text in `src/features/auth/components/RoleGuard.tsx`.
 

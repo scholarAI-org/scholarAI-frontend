@@ -60,12 +60,12 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: src/app/[locale]/student/layout.tsx; tests/student-layout.test.mjs (layout mounts StudentShell once, inside RoleGuard).
 - [x] Student route pages remain Server Components by default and page content never mounts a second shell.
   - Evidence: src/app/[locale]/student/profile/page.tsx renders `ProfilePageContent`; tests/student-layout.test.mjs (pages are Server Components that never mount a second frame).
-- [ ] Profile retains its domain and form ownership while inheriting the shared outer frame.
-  - Code moved unchanged to src/features/profile/components/ProfilePageContent.tsx. Awaiting manual check of forms, avatar upload and logout in ar/en.
+- [x] Profile retains its domain and form ownership while inheriting the shared outer frame.
+  - Evidence: src/features/profile/components/ProfilePageContent.tsx (logic unchanged); manual check passed for forms, avatar upload and logout in ar/en.
 - [x] Only implemented Profile and Search Scholarships destinations are interactive.
   - Evidence: src/features/student/layout/student-navigation.ts; only Profile is visible until T023 enables Search; tests/student-layout.test.mjs navigation tests.
-- [ ] Mobile navigation has an accessible label, keyboard operation, Escape dismissal, appropriate focus management, and focus return.
-  - Built in src/features/student/layout/StudentMobileNavigation.tsx (focus-trap logic tested). Awaiting manual keyboard check at mobile width.
+- [x] Mobile navigation has an accessible label, keyboard operation, Escape dismissal, appropriate focus management, and focus return.
+  - Evidence: src/features/student/layout/StudentMobileNavigation.tsx; focus-trap logic tested in tests/student-layout.test.mjs; manual keyboard check passed at mobile width.
 
 ## 6. i18n
 
