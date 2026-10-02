@@ -987,7 +987,7 @@
       "short": "En"
     },
     "logout": "تسجيل الخروج",
-    "logoutPending": "جارٍ تسجيل الخروج...",
+    "logoutPending": "جارٍ تسجيل الخروج…",
     "identity": {
       "fallbackName": "طالب",
       "role": "طالب"
@@ -1020,7 +1020,7 @@
     "sort": {
       "label": "ترتيب حسب",
       "newest": "الأحدث",
-      "deadlineSoon": "الأقرب موعدًا"
+      "deadlineSoon": "الموعد النهائي الأقرب"
     },
     "view": {
       "label": "طريقة العرض",
@@ -1035,7 +1035,7 @@
         "bachelor": "بكالوريوس",
         "master": "ماجستير",
         "phd": "دكتوراه",
-        "exchange": "تبادل"
+        "exchange": "تبادل طلابي"
       },
       "funding": {
         "legend": "التمويل",
@@ -1075,19 +1075,18 @@
       "details": "عرض التفاصيل",
       "detailsFor": "عرض تفاصيل {title}",
       "imageAlt": "صورة {title}",
-      "imageFallbackAlt": "لا تتوفر صورة",
       "noDeadline": "بدون موعد نهائي",
       "deadlineNotSpecified": "الموعد النهائي غير محدد",
       "deadline": "آخر موعد: {date}",
       "deadlineToday": "يُغلق اليوم",
-      "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {تتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}"
+      "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {يتبقى # أيام} many {يتبقى # يومًا} other {يتبقى # يوم}}"
     },
     "bookmark": {
       "save": "حفظ المنحة",
       "remove": "إزالة المنحة من المحفوظات",
       "saveFor": "حفظ {title}",
       "removeFor": "إزالة {title} من المحفوظات",
-      "pending": "جارٍ الحفظ…",
+      "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
     },
     "pagination": {
@@ -1154,7 +1153,7 @@
     "bookmark": {
       "save": "حفظ المنحة",
       "remove": "إزالة المنحة من المحفوظات",
-      "pending": "جارٍ الحفظ…",
+      "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
     }
   }

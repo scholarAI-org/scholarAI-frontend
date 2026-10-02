@@ -987,7 +987,7 @@
       "short": "ع"
     },
     "logout": "Log out",
-    "logoutPending": "Logging out...",
+    "logoutPending": "Logging out…",
     "identity": {
       "fallbackName": "Student",
       "role": "Student"
@@ -1020,7 +1020,7 @@
     "sort": {
       "label": "Sort by",
       "newest": "Newest",
-      "deadlineSoon": "Deadline soon"
+      "deadlineSoon": "Deadline soonest"
     },
     "view": {
       "label": "Results view",
@@ -1035,7 +1035,7 @@
         "bachelor": "Bachelor's",
         "master": "Master's",
         "phd": "PhD",
-        "exchange": "Exchange"
+        "exchange": "Student exchange"
       },
       "funding": {
         "legend": "Funding",
@@ -1075,7 +1075,6 @@
       "details": "View details",
       "detailsFor": "View details for {title}",
       "imageAlt": "Image for {title}",
-      "imageFallbackAlt": "No image available",
       "noDeadline": "No deadline",
       "deadlineNotSpecified": "Deadline not specified",
       "deadline": "Deadline: {date}",
@@ -1087,7 +1086,7 @@
       "remove": "Remove saved scholarship",
       "saveFor": "Save {title}",
       "removeFor": "Remove {title} from saved",
-      "pending": "Saving…",
+      "pending": "Updating…",
       "error": "Couldn't update saved scholarships. Try again."
     },
     "pagination": {
@@ -1154,7 +1153,7 @@
     "bookmark": {
       "save": "Save scholarship",
       "remove": "Remove saved scholarship",
-      "pending": "Saving…",
+      "pending": "Updating…",
       "error": "Couldn't update saved scholarships. Try again."
     }
   }

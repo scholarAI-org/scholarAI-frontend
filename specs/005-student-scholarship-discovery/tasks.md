@@ -71,7 +71,9 @@
 
 - [ ] T030 Inspect Figma nodes `2262:3331` and `2264:3472` before visual implementation; record stable asset requirements without shipping MCP URLs.
 - [ ] T031 Implement `ScholarshipGridCard` from the normalized model with native backend `<img>`, meaningful alt text, lazy loading, stable aspect ratio, malformed/load-error handling, and local neutral fallback; never use Figma runtime fallbacks, Next Image solely for lint, a global lint disable, or a broad `next.config` host allowlist. If needed, keep `@next/next/no-img-element` suppression narrowly documented and component-local around the scholarship backend-image component.
+  - Note: the local neutral fallback image is decorative (`alt=""`); there is no `card.imageFallbackAlt` message. Real backend images use `card.imageAlt`.
 - [ ] T032 Implement compact `ScholarshipListRow` from the exact same model and actions; retain the same factual hierarchy.
+  - Note: the local neutral fallback image is decorative (`alt=""`); there is no `card.imageFallbackAlt` message. Real backend images use `card.imageAlt`.
 - [ ] T033 Implement `ScholarshipMatchBadge` as a future seam that returns nothing without authoritative match data and never calculates data locally.
 - [ ] T034 Implement results composition and semantic `aria-pressed` Grid/List toggle; changing view must not change URL, page, filters, sort, discovery query, or filter-options query.
 - [ ] T035 Test shared-model rendering, nullable data, no fake match badge, future authoritative match fixture, presentation-only switching, and scholarship image policy: native `<img>`, lazy loading, alt behavior, malformed/load-error/local-neutral fallback, no Figma runtime fallback, no global lint disable or broad `next.config` host allowlist, and any required lint suppression component-local only.
