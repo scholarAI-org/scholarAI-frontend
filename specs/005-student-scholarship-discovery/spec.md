@@ -297,8 +297,9 @@ and likewise for `funding_type`, `opportunity_type`, and `country`. Use scalar
 `search`, `sort`, and `page`; the feature uses a fixed configured page size of
 20, so `page_size` is not user URL state.
 
-Parsing trims values, collapses internal search whitespace, deduplicates known
-enum values, discards invalid/unknown values, discards blank search, and maps
+Parsing trims enum values and search, collapses internal search whitespace,
+keeps country values exactly as returned by filter-options (dropping only
+blank ones), deduplicates values, discards invalid/unknown values, discards blank search, and maps
 an invalid/nonpositive page to 1. Repeated values mean OR within that filter;
 different filter groups mean AND, per OpenAPI. URL changes drive the query, so
 browser Back/Forward restores effective search/filter/sort/page state. The

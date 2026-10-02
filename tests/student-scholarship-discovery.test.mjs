@@ -73,7 +73,7 @@ test('parse keeps repeated params, normalizes enums and drops unsupported values
   const query = parse(
     'academic_level=Bachelor&academic_level=master&academic_level=bachelor&academic_level=postdoc' +
       '&funding_type=FULL&funding_type=none&opportunity_type=training&opportunity_type=internship' +
-      '&country=Germany&country=%20Germany%20&country=&country=United%20Kingdom'
+      '&country=Germany&country=Germany&country=&country=%20%20&country=United%20Kingdom'
   );
   assert.deepEqual(query.academicLevels, ['bachelor', 'master']);
   assert.deepEqual(query.fundingTypes, ['full']);
@@ -84,6 +84,21 @@ test('parse keeps repeated params, normalizes enums and drops unsupported values
     'academic_level=bachelor&academic_level=master&funding_type=full&opportunity_type=training' +
       '&country=Germany&country=United+Kingdom'
   );
+});
+
+test('country values round-trip exactly as filter-options returns them', async () => {
+  const query = parse('country=%20X%20&country=X&country=%20%20%20&country=%20X%20');
+  assert.deepEqual(query.countries, [' X ', 'X']);
+  assert.deepEqual(serializeDiscoveryQuery(query).getAll('country'), [' X ', 'X']);
+  assert.deepEqual(parse(serializeDiscoveryQuery(query).toString()).countries, [' X ', 'X']);
+  assert.deepEqual(
+    withFilterChange(defaultDiscoveryQuery, { countries: [' X ', '   ', ''] }).countries,
+    [' X ']
+  );
+
+  mockFetch({ items: [], total: 0, page: 1, page_size: 20, total_pages: 0 });
+  await getScholarships(query);
+  assert.deepEqual(calls[0].url.searchParams.getAll('country'), [' X ', 'X']);
 });
 
 test('parse collapses search whitespace and omits blank search', () => {

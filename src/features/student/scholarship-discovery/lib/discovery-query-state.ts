@@ -13,12 +13,11 @@ const many = <T extends string>(values: readonly string[], allowed: readonly T[]
       values.map((v) => v.trim().toLowerCase()).filter((v): v is T => allowed.includes(v as T))
     ),
   ].slice(0, DISCOVERY_LIMITS.filterMaxItems);
-// Over-long countries are dropped, not truncated: the backend matches exact names.
+// Countries round-trip exactly as filter-options returns them: never trimmed or
+// truncated. Only blank or over-long values are dropped.
 const countryList = (values: readonly string[]) =>
   [
-    ...new Set(
-      values.map((v) => v.trim()).filter((v) => v && v.length <= DISCOVERY_LIMITS.countryMaxLength)
-    ),
+    ...new Set(values.filter((v) => v.trim() && v.length <= DISCOVERY_LIMITS.countryMaxLength)),
   ].slice(0, DISCOVERY_LIMITS.countryMaxItems);
 const searchText = (value?: string | null) =>
   value?.replace(/\s+/g, ' ').trim().slice(0, DISCOVERY_LIMITS.searchMaxLength).trim() || undefined;

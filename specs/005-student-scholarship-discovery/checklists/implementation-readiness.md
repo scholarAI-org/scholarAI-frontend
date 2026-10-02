@@ -22,7 +22,7 @@ Use this checklist to verify the delivered implementation and evidence against t
 - [x] Repeated academic-level, funding-type, opportunity-type, and country parameters preserve documented OR semantics; filter groups combine with AND.
   - Evidence: repeated params sent per group (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:67-77); OR/AND semantics recorded in specs/005-student-scholarship-discovery/contract-notes.md:20-21; tests/student-scholarship-discovery.test.mjs:72, tests/student-scholarship-discovery.test.mjs:320.
 - [ ] Country values are taken only from filter-options and forwarded unchanged as repeated `country` values.
-  - Missing: Country selector (T027). Also a round-trip gap: filter-options keeps surrounding whitespace (src/features/student/scholarship-discovery/api/scholarships.ts:16-27) while URL parsing trims countries (src/features/student/scholarship-discovery/lib/discovery-query-state.ts), so " X " would be sent as "X".
+  - Missing: Country selector (T027). The round-trip gap is fixed: URL parsing keeps country strings exactly as filter-options returns them (tests/student-scholarship-discovery.test.mjs, country values round-trip test).
 - [x] Contract fixtures cover nullable discovery/detail fields, and discovery never calls the recommendations endpoint.
   - Evidence: nullable card and detail fixtures in tests/student-scholarship-discovery.test.mjs:213-318; no recommendations endpoint referenced in src/features/student/scholarship-discovery.
 
@@ -43,8 +43,8 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 4. React Query architecture
 
-- [ ] The key factory contains `all`, `discoveries()`, `discovery(query)`, `details()`, `detail(id)`, `savedLists()`, `saved(page,pageSize)`, and `filterOptions()`.
-  - Item text is outdated: the reconciled plan uses `saved()` with no paging params (specs/005-student-scholarship-discovery/plan.md:92). The factory matches the plan (src/features/student/scholarship-discovery/query-keys.ts:3-13); reword this item, then check it.
+- [x] The key factory contains `all`, `discoveries()`, `discovery(query)`, `details()`, `detail(id)`, `savedLists()`, `saved()`, and `filterOptions()`.
+  - Evidence: src/features/student/scholarship-discovery/query-keys.ts:3-13 matches specs/005-student-scholarship-discovery/plan.md:92; `saved()` takes no params; tests/student-scholarship-discovery.test.mjs (query keys are stable and hierarchical).
 - [x] `discovery(query)` contains normalized backend-affecting state only; Grid/List is in no React Query key.
   - Evidence: the hook keys a normalized query (src/features/student/scholarship-discovery/hooks/useScholarshipDiscovery.ts:10); tests/student-scholarship-discovery.test.mjs:400, tests/student-scholarship-discovery.test.mjs:427.
 - [x] `filterOptions()` is independent of search, filters, page, sort, and view mode, with a longer stale time than discovery.

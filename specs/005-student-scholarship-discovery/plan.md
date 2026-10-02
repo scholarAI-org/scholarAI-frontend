@@ -65,7 +65,8 @@ Discovery and detail descendants activate Search.
 URL is canonical for `search`, repeated `academic_level`, `funding_type`,
 `opportunity_type`, `country`, `sort`, and `page`; fixed `page_size=20` is sent
 but not URL-owned. Use repeated URLSearchParams values (OR within a group; AND
-between groups). Trim/dedupe arrays, collapse whitespace, omit blank search,
+between groups). Trim/dedupe enum arrays, keep country values untrimmed (drop
+only blank ones; dedupe by exact string), collapse search whitespace, omit blank search,
 discard unknown enums, normalize `deadline_soonest` to `deadline_soon`, and
 normalize invalid/nonpositive page to 1. URL parsing/serialization is one
 feature utility; Back/Forward restores state.
