@@ -66,6 +66,7 @@
 - [ ] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
   - Built: local draft, 300ms `createDebouncer`, Enter flush, Clear, replace-mode commit, draft re-sync via `resolveDraftFromUrl`, stale commits skipped after a URL re-sync; debounce and re-sync logic tested with mock timers in tests/student-scholarship-discovery.test.mjs. Awaiting manual check (one request per debounced search, Back/Forward).
 - [ ] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
+  - Built: `DiscoveryFilters` with fieldset/legend checkbox groups for academic level, funding and opportunity type (no default selections), push-mode URL updates and Clear all (filters and page; search and sort kept); `toggleValue` and label coverage tested. Awaiting manual check.
 - [ ] T027 Build the Country selector from filter-options strings only: display and URL/API value are identical, selections serialize as repeated `country` parameters, and a change resets page to 1.
 - [ ] T028 Implement independent Country control loading, successful non-empty, successful empty, and localized unavailable/retry states; failed options must not disable discovery results.
 - [ ] T029 Test toolbar debounce and URL behavior; all filter groups; one/multiple countries; clear all; Country state variants/retry; discovery usability on options error; and no filter-options refetch from Grid/List switching.

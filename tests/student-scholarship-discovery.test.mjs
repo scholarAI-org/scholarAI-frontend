@@ -642,3 +642,31 @@ test('country options are keyed and fetched independently of discovery params', 
     studentScholarshipKeys.discovery(parse('')).slice(0, 2)
   );
 });
+
+// --- Filters (T026) ---------------------------------------------------------------
+
+test('toggling a checkbox adds or removes one value and keeps order', () => {
+  const { toggleValue } = load('lib/filter-values.ts');
+  assert.deepEqual(toggleValue([], 'master'), ['master']);
+  assert.deepEqual(toggleValue(['bachelor', 'master'], 'phd'), ['bachelor', 'master', 'phd']);
+  assert.deepEqual(toggleValue(['bachelor', 'master', 'phd'], 'master'), ['bachelor', 'phd']);
+  assert.deepEqual(toggleValue([' X '], 'X'), [' X ', 'X'], 'exact string match');
+});
+
+test('every filter value has a label in both locales', () => {
+  const read = (locale) =>
+    JSON.parse(fs.readFileSync(path.join(srcPath, `messages/${locale}.json`), 'utf8'))
+      .StudentScholarshipDiscovery.filters;
+  const { academicLevels, fundingTypes, opportunityTypes } = load('constants.ts');
+  for (const locale of ['ar', 'en']) {
+    const filters = read(locale);
+    for (const [group, values] of [
+      ['academicLevel', academicLevels],
+      ['funding', fundingTypes],
+      ['opportunity', opportunityTypes],
+    ]) {
+      assert.ok(filters[group].legend, `${locale} ${group}.legend`);
+      for (const value of values) assert.ok(filters[group][value], `${locale} ${group}.${value}`);
+    }
+  }
+});
