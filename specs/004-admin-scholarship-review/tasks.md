@@ -1,6 +1,6 @@
 # Tasks — 004 Admin scholarship review
 
-**Purpose:** Complete and verify the shared scholarship review queue and detail workflow without expanding scope into archive, editing, duplicate detection, scraper operations, or global Admin infrastructure.
+**Purpose:** Complete and verify the shared scholarship review queue, detail workflow, and pending-only correction workflow without expanding scope into archive, duplicate detection, scraper operations, general scholarship management, or global Admin infrastructure.
 
 ## Slice 1 — Contract and feature foundation
 
@@ -8,7 +8,7 @@
 - [x] T002 Record shared manual/scraped queue behavior and list-contract gaps in `contract-notes.md`.
 - [x] T003 Add feature-owned review types, API functions, retry behavior, and stable query keys under `src/features/admin/scholarship-review/`.
 - [x] T004 Add detail key `scholarshipReviewKeys.detail(id)` and ensure feature invalidation targets only the review key family.
-- [x] T005 Keep archive, edit, and duplicate UI absent; do not map deletion to archive.
+- [x] T005 Keep archive and duplicate UI absent; do not map deletion to archive. Editing is limited to the documented pending-only PATCH workflow.
 
 ## Slice 2 — Detail route and read-only data presentation
 

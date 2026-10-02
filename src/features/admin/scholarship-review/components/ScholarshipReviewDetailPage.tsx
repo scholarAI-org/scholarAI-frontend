@@ -17,13 +17,12 @@ import {
 } from '../hooks/useScholarshipReview';
 import type { ScholarshipReviewDetail } from '../types';
 
-function Status({ value }: { value: string | null | undefined }) {
+function Status({ value }: { value: ScholarshipReviewDetail['status'] }) {
   const t = useTranslations('AdminScholarshipReview');
-  const known = value && ['pending', 'approved', 'rejected'].includes(value);
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 px-3 py-1 text-sm font-medium text-[#7c3f00]">
       <span className="size-2 rounded-full bg-[#f59e0b]" aria-hidden="true" />
-      {known ? t(`status.${value}`) : t('status.unknown')}
+      {t(`status.${value}`)}
     </span>
   );
 }
@@ -371,7 +370,17 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
               ) : null}
             </div>
           </div>
-          <ExternalAction href={detail.source_url} label={t('actions.originalSource')} />
+          <div className="flex flex-wrap items-center gap-3">
+            <ExternalAction href={detail.source_url} label={t('actions.originalSource')} />
+            {detail.status === 'pending' ? (
+              <Link
+                href={`/admin/scholarships/review/${detail.id}/edit`}
+                className="inline-flex min-h-9 items-center justify-center rounded-full border border-[#e2e8f0] px-4 py-2 text-sm font-medium text-[#434343] hover:border-[#f97316] hover:text-[#f97316] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
+              >
+                {t('actions.edit')}
+              </Link>
+            ) : null}
+          </div>
         </div>
       </section>
       <div className="grid gap-6 lg:grid-cols-[minmax(18rem,330px)_minmax(0,1fr)]">
@@ -431,12 +440,6 @@ function DetailContent({ detail }: { detail: ScholarshipReviewDetail }) {
             ) : null}
             {detail.status === 'pending' ? (
               <div className="mt-4 space-y-3">
-                <Link
-                  href={`/admin/scholarships/review/${detail.id}/edit`}
-                  className="flex w-full items-center justify-center rounded-full border border-[#e2e8f0] px-4 py-2.5 text-sm font-medium text-[#434343]"
-                >
-                  {t('actions.edit')}
-                </Link>
                 <span ref={approveTriggerRef}>
                   <Button
                     type="button"

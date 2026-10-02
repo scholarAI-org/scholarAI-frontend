@@ -23,6 +23,8 @@ export type ScholarshipReviewListResponse = {
   total_pages: number;
 };
 
+export type ScholarshipReviewStatus = 'pending' | 'approved' | 'rejected' | 'unknown';
+
 export type ScholarshipReviewDetail = {
   id: number;
   title: string;
@@ -32,7 +34,7 @@ export type ScholarshipReviewDetail = {
   university_name?: string | null;
   country?: string | null;
   ingestion_type?: 'manual' | 'scraped' | null;
-  status?: string | null;
+  status: ScholarshipReviewStatus;
   scraped_at?: string | null;
   source?: string | null;
   source_url?: string | null;

@@ -9,7 +9,7 @@ Use this checklist to validate the review-detail workflow and its integration wi
 - [ ] Rejection uses only `POST /admin/scholarships/{id}/reject` with `{ reason: string }`.
 - [ ] Rejection prevents whitespace-only and fewer-than-three-character reasons.
 - [ ] Archive is absent; DELETE is never presented as archive.
-- [ ] Edit UI is absent until an approved edit workflow exists.
+- [ ] Edit is available only through the documented pending-only PATCH workflow; non-pending records cannot edit.
 - [ ] Duplicate-check UI is absent from this feature slice.
 - [ ] The queue is described as shared manual/scraped review work, not as scraper-only.
 - [ ] Detail renders `ingestion_type` only when supplied by the backend and never infers it.
@@ -88,7 +88,7 @@ Use this checklist to validate the review-detail workflow and its integration wi
 - [ ] Mobile stacks content into one reachable column with no clipped cards or controls.
 - [ ] Buttons are touch-friendly and confirmation remains usable at narrow widths.
 - [ ] White surfaces, borders, rounded corners, orange primary action, typography, and spacing follow the supported Figma intent.
-- [ ] Unsupported Figma archive/edit controls and scraper-only wording are not restored for visual similarity.
+- [ ] Unsupported Figma archive controls and scraper-only wording are not restored for visual similarity; the supported pending-only Edit action remains distinct from approval and rejection.
 - [ ] New icons reuse a matching existing project asset/component or exact exported Figma bytes; no temporary Figma asset URLs or hand-authored SVG substitutes ship.
 
 ## Accessibility
