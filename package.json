@@ -17,7 +17,8 @@
     "test:auth-recovery": "node --test tests/auth-password-recovery.test.mjs",
     "test:email-verification": "node --test tests/email-verification.test.mjs",
     "test:manual-scholarship": "node --test tests/manual-scholarship.test.mjs",
-    "test:scholarship-review": "node --test tests/scholarship-review.test.mjs"
+    "test:scholarship-review": "node --test tests/scholarship-review.test.mjs",
+    "test:scholarship-discovery": "node --test tests/student-scholarship-discovery.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

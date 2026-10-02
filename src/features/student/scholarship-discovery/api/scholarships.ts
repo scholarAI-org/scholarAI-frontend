@@ -1,30 +1,38 @@
 import { apiClient } from '@/lib/api-client';
-import { DISCOVERY_PAGE_SIZE } from '../constants';
+import { toDiscoveryRequestParams } from '../lib/discovery-query-state';
 import type {
   DiscoveryQuery,
+  SavedScholarshipResponse,
   ScholarshipDetailsResponse,
   ScholarshipDiscoveryFilterOptionsResponse,
   ScholarshipDiscoveryResponse,
+  UnsaveScholarshipResponse,
 } from '../types';
-export async function getScholarships(query: DiscoveryQuery, signal?: AbortSignal) {
-  const p = new URLSearchParams();
-  if (query.search) p.set('search', query.search);
-  query.academicLevels.forEach((v) => p.append('academic_level', v));
-  query.fundingTypes.forEach((v) => p.append('funding_type', v));
-  query.opportunityTypes.forEach((v) => p.append('opportunity_type', v));
-  query.countries.forEach((v) => p.append('country', v));
-  p.set('sort', query.sort);
-  p.set('page', String(query.page));
-  p.set('page_size', String(DISCOVERY_PAGE_SIZE));
-  return apiClient<ScholarshipDiscoveryResponse>(`/api/scholarships/?${p}`, { signal });
-}
-export const getScholarshipFilterOptions = (signal?: AbortSignal) =>
-  apiClient<ScholarshipDiscoveryFilterOptionsResponse>('/api/scholarships/filter-options', {
+export const getScholarships = (query: DiscoveryQuery, signal?: AbortSignal) =>
+  apiClient<ScholarshipDiscoveryResponse>(`/api/scholarships/?${toDiscoveryRequestParams(query)}`, {
     signal,
   });
+// Country strings are kept exactly as returned; they are sent back unchanged.
+export function parseFilterOptionsResponse(
+  payload: unknown
+): ScholarshipDiscoveryFilterOptionsResponse {
+  const countries = (payload as { countries?: unknown } | null)?.countries;
+  if (!Array.isArray(countries)) {
+    throw new Error('Malformed filter-options response: expected { countries: string[] }');
+  }
+  return {
+    countries: countries.filter(
+      (country): country is string => typeof country === 'string' && country.trim() !== ''
+    ),
+  };
+}
+export const getScholarshipFilterOptions = async (signal?: AbortSignal) =>
+  parseFilterOptionsResponse(
+    await apiClient<unknown>('/api/scholarships/filter-options', { signal })
+  );
 export const getScholarship = (id: number, signal?: AbortSignal) =>
   apiClient<ScholarshipDetailsResponse>(`/api/scholarships/${id}`, { signal });
 export const saveScholarship = (id: number) =>
-  apiClient(`/api/scholarships/${id}/save`, { method: 'POST' });
+  apiClient<SavedScholarshipResponse>(`/api/scholarships/${id}/save`, { method: 'POST' });
 export const unsaveScholarship = (id: number) =>
-  apiClient(`/api/scholarships/${id}/save`, { method: 'DELETE' });
+  apiClient<UnsaveScholarshipResponse>(`/api/scholarships/${id}/save`, { method: 'DELETE' });
