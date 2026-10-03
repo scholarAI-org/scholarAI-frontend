@@ -146,6 +146,7 @@
 
 - [ ] T061 Compare real-data implementation to primary/empty Figma nodes for spacing, sizing, typography, borders, radii, icons, toolbar, filters, cards, pagination, empty state, and Arabic RTL alignment.
 - [ ] T062 Converge tablet/mobile adaptations with repository tokens and stable local assets; retain inferred List View and exclude dark nodes.
+- [ ] T062a Follow-up (out of scope for Feature 005): Figma uses Rubik while the app uses Almarai everywhere; decide app-wide whether to switch fonts. No font change in this feature.
 
 ## Phase 12 — Tests and final verification
 

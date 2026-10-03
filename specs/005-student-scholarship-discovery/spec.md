@@ -189,9 +189,12 @@ number | null } | null`. No browser code calculates or defaults those values.
 - **FR-011**: List cards use the same model and actions in a compact horizontal
   hierarchy, preserving image, title, key metadata, funding, deadline, save,
   details, and optional empty-safe MatchBadge slot.
-- **FR-012**: `no_deadline` displays localized “No deadline”; a valid present or
-  future deadline uses locale formatting and nonnegative remaining text;
-  otherwise show localized “Deadline not specified.”
+- **FR-012**: `no_deadline` displays localized “No deadline”. A valid deadline
+  (a `YYYY-MM-DD` calendar date compared with the student's local day) shows
+  the locale-formatted date plus: nonnegative days left when it is in the
+  future, “Closes today” when it is today, or “Deadline passed”
+  (“انتهى موعد التقديم”) when it is in the past; a countdown is never negative.
+  A missing or malformed deadline shows localized “Deadline not specified.”
 
 ### Saving, pagination, and states
 

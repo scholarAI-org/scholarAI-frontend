@@ -1038,7 +1038,7 @@
         "exchange": "Student exchange"
       },
       "funding": {
-        "legend": "Funding",
+        "legend": "Funding type",
         "full": "Fully funded",
         "partial": "Partially funded"
       },
@@ -1097,6 +1097,8 @@
       "label": "Pagination",
       "previous": "Previous page",
       "next": "Next page",
+      "previousShort": "Previous",
+      "nextShort": "Next",
       "page": "Page {page}",
       "currentPage": "Page {page}, current page",
       "outOfRange": "Page {requested} doesn't exist, so page {page} is shown."
@@ -1107,7 +1109,7 @@
         "description": "Check back later for new opportunities."
       },
       "noMatches": {
-        "title": "No scholarships match your search",
+        "title": "No results match your search",
         "description": "Try different keywords or clear some filters.",
         "editSearch": "Edit search",
         "clearFilters": "Clear filters"

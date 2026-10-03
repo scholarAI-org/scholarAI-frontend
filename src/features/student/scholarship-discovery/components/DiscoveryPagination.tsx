@@ -26,9 +26,10 @@ export function DiscoveryPagination({ page, totalPages, onChange }: DiscoveryPag
             type="button"
             disabled={page <= 1}
             onClick={() => onChange(page - 1)}
+            aria-label={t('pagination.previous')}
             className={`${pill} min-w-[70px] px-4`}
           >
-            {t('pagination.previous')}
+            {t('pagination.previousShort')}
           </button>
         </li>
         {getPageWindow(page, totalPages).map((item) =>
@@ -69,9 +70,10 @@ export function DiscoveryPagination({ page, totalPages, onChange }: DiscoveryPag
             type="button"
             disabled={page >= totalPages}
             onClick={() => onChange(page + 1)}
+            aria-label={t('pagination.next')}
             className={`${pill} min-w-[70px] px-4`}
           >
-            {t('pagination.next')}
+            {t('pagination.nextShort')}
           </button>
         </li>
       </ul>
