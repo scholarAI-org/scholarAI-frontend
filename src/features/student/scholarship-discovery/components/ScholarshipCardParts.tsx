@@ -1,9 +1,14 @@
 'use client';
 
 import { BookOpen, Building2, MapPin, type LucideIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { getFundingLabel, getStudyLevelLabel, type CardFieldLabel } from '../lib/card-labels';
+import {
+  formatCardFieldLabel,
+  getFundingLabel,
+  getStudyLevelLabel,
+  type CardFieldLabel,
+} from '../lib/card-labels';
 import { getScholarshipDetailsHref } from '../lib/details-link';
 import type { ScholarshipCardModel } from '../types';
 import { ScholarshipMatchBadge } from './ScholarshipMatchBadge';
@@ -12,8 +17,8 @@ import { ScholarshipMatchBadge } from './ScholarshipMatchBadge';
 
 function useCardFieldText() {
   const t = useTranslations('StudentScholarshipDiscovery');
-  return (label: CardFieldLabel) =>
-    label === null ? undefined : label.kind === 'translated' ? t(label.key) : label.text;
+  const locale = useLocale();
+  return (label: CardFieldLabel) => formatCardFieldLabel(label, (key) => t(key), locale);
 }
 
 export function useCardTitle(card: ScholarshipCardModel) {

@@ -880,7 +880,8 @@ test('rule A1: known values are translated in any case, others shown raw, blanks
   for (const raw of ['ممولة بالكامل', 'Self-funded', 'Fully Funded']) {
     assert.deepEqual(getFundingLabel(raw), { kind: 'raw', text: raw });
   }
-  for (const raw of ['ماجستير ودكتوراه', 'Master, PhD', 'Diploma']) {
+  // Multi-level values like 'Master, PhD' are covered by the multi-level test below.
+  for (const raw of ['ماجستير ودكتوراه', 'Master and PhD', 'Diploma']) {
     assert.deepEqual(getStudyLevelLabel(raw), { kind: 'raw', text: raw });
   }
   // Hidden only for null, empty or blank (or a non-string from a malformed card).
@@ -1500,4 +1501,48 @@ test('the rendered fallback is decorative and keeps the same fixed box as a real
   }
   assert.match(real, /alt="صورة منحة"/);
   assert.match(real, /aspect-\[448\/184\] w-full/);
+});
+
+// --- Multi-level study values on cards (round 3, item 4) -----------------------------------
+
+test('multi-level study values translate each known part and keep unknown parts', () => {
+  const { getStudyLevelLabel, formatCardFieldLabel } = load('lib/card-labels.ts');
+  const labels = {
+    ar: {
+      'filters.academicLevel.master': 'ماجستير',
+      'filters.academicLevel.phd': 'دكتوراه',
+      'filters.academicLevel.bachelor': 'بكالوريوس',
+    },
+    en: {
+      'filters.academicLevel.master': "Master's",
+      'filters.academicLevel.phd': 'PhD',
+      'filters.academicLevel.bachelor': "Bachelor's",
+    },
+  };
+  const show = (value, locale) =>
+    formatCardFieldLabel(getStudyLevelLabel(value), (key) => labels[locale][key], locale);
+
+  assert.equal(show('master, phd', 'ar'), 'ماجستير، دكتوراه');
+  assert.equal(show('master, phd', 'en'), "Master's, PhD");
+  assert.equal(show('MASTER;PhD', 'en'), "Master's, PhD");
+  assert.equal(show('bachelor / master', 'ar'), 'بكالوريوس، ماجستير');
+  assert.equal(show('master، phd', 'en'), "Master's, PhD", 'Arabic comma separates too');
+  // Unknown parts are shown as received (trimmed); known ones still translate.
+  assert.equal(show('master, Diploma', 'en'), "Master's, Diploma");
+  assert.equal(show('ماجستير، دكتوراه', 'en'), 'ماجستير, دكتوراه');
+  // Single values and null keep their behaviour.
+  assert.equal(show('Master', 'ar'), 'ماجستير');
+  assert.equal(show('ماجستير ودكتوراه', 'ar'), 'ماجستير ودكتوراه');
+  assert.equal(show('master,', 'en'), "Master's", 'one real part is a single value');
+  assert.equal(show(null, 'en'), undefined);
+  assert.equal(show('  ', 'en'), undefined);
+  assert.equal(show(' , ; ', 'en'), undefined, 'separators only: hidden');
+  // Structure: a list of translated/raw parts.
+  assert.deepEqual(getStudyLevelLabel('master, Diploma'), {
+    kind: 'list',
+    parts: [
+      { kind: 'translated', key: 'filters.academicLevel.master' },
+      { kind: 'raw', text: 'Diploma' },
+    ],
+  });
 });
