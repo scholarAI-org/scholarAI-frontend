@@ -22,7 +22,7 @@ export function StudentShell({ children }: { children: ReactNode }) {
           />
           <main className="pt-4 lg:px-6 lg:pt-6">{children}</main>
         </div>
-        <aside className="hidden lg:order-1 lg:row-span-2 lg:block">
+        <aside className="hidden lg:sticky lg:top-0 lg:order-1 lg:row-span-2 lg:block lg:h-screen lg:self-start">
           <StudentSidebar />
         </aside>
       </div>

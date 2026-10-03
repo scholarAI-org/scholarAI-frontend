@@ -1,15 +1,41 @@
-import type { StudentNavigationItem, StudentPageKey } from './types';
+import type {
+  StudentNavigationGroupId,
+  StudentNavigationItem,
+  StudentNavigationSection,
+  StudentPageKey,
+} from './types';
 
 // Only implemented destinations appear; never link to a missing route.
 export const studentNavigation: StudentNavigationItem[] = [
-  { id: 'profile', labelKey: 'nav.profile', href: '/student/profile', enabled: true },
   {
     id: 'scholarships',
     labelKey: 'nav.scholarships',
     href: '/student/scholarships',
     enabled: true,
+    group: 'discover',
+  },
+  {
+    id: 'profile',
+    labelKey: 'nav.profile',
+    href: '/student/profile',
+    enabled: true,
+    group: 'personal',
   },
 ];
+
+// Figma sidebar (2979:9150) section order. A label shows only above real items.
+export const studentNavigationGroups: StudentNavigationGroupId[] = ['discover', 'personal'];
+
+export const getStudentNavigationSections = (
+  items: readonly StudentNavigationItem[]
+): StudentNavigationSection[] =>
+  studentNavigationGroups
+    .map((id) => ({
+      id,
+      labelKey: `navGroups.${id}` as const,
+      items: items.filter((item) => item.enabled && item.group === id),
+    }))
+    .filter((section) => section.items.length > 0);
 
 export const getVisibleStudentNavigation = (items: readonly StudentNavigationItem[]) =>
   items.filter((item) => item.enabled);

@@ -20,6 +20,7 @@ const layoutPath = fileURLToPath(new URL('../src/features/student/layout', impor
 const load = (file) => loadModule(path.join(layoutPath, file));
 const {
   getActiveStudentNavigationItem,
+  getStudentNavigationSections,
   getStudentPageKey,
   getVisibleStudentNavigation,
   studentNavigation,
@@ -130,10 +131,10 @@ test('Arabic plurals render the expected forms', () => {
 
 test('navigation config has only Profile and Search Scholarships', () => {
   assert.deepEqual(
-    studentNavigation.map(({ id, href }) => [id, href]),
+    studentNavigation.map(({ id, href, group }) => [id, href, group]),
     [
-      ['profile', '/student/profile'],
-      ['scholarships', '/student/scholarships'],
+      ['scholarships', '/student/scholarships', 'discover'],
+      ['profile', '/student/profile', 'personal'],
     ]
   );
   for (const item of studentNavigation) {
@@ -146,7 +147,48 @@ test('Search Scholarships stays hidden until its route exists (T023)', () => {
   const routeExists = fs.existsSync(
     new URL('../src/app/[locale]/student/scholarships/page.tsx', import.meta.url)
   );
-  assert.deepEqual(visible, routeExists ? ['profile', 'scholarships'] : ['profile']);
+  assert.deepEqual(visible.sort(), routeExists ? ['profile', 'scholarships'] : ['profile']);
+});
+
+test('navigation sections follow Figma and label only real items', () => {
+  const sections = getStudentNavigationSections(studentNavigation);
+  assert.deepEqual(
+    sections.map((section) => [section.id, section.labelKey, section.items.map((item) => item.id)]),
+    [
+      ['discover', 'navGroups.discover', ['scholarships']],
+      ['personal', 'navGroups.personal', ['profile']],
+    ]
+  );
+  for (const locale of ['ar', 'en']) {
+    for (const section of sections) {
+      assert.ok(
+        messages[locale].StudentLayout.navGroups[section.id],
+        `${locale} ${section.labelKey}`
+      );
+    }
+  }
+  assert.equal(messages.ar.StudentLayout.navGroups.discover, 'اكتشاف');
+  assert.equal(messages.ar.StudentLayout.navGroups.personal, 'شخصي');
+  // A section without enabled items gets no label.
+  const onlyProfile = studentNavigation.map((item) =>
+    item.id === 'scholarships' ? { ...item, enabled: false } : item
+  );
+  assert.deepEqual(
+    getStudentNavigationSections(onlyProfile).map((section) => section.id),
+    ['personal']
+  );
+});
+
+test('the scholarships page title matches Figma and carries no live count', () => {
+  assert.equal(messages.ar.StudentLayout.pages.scholarships.title, 'استكشاف المنح والفرص');
+  assert.equal(
+    messages.en.StudentLayout.pages.scholarships.title,
+    'Explore scholarships and opportunities'
+  );
+  for (const locale of ['ar', 'en']) {
+    const { title, description } = messages[locale].StudentLayout.pages.scholarships;
+    assert.equal(/\{/.test(title + description), false, 'no count placeholder in the header');
+  }
 });
 
 test('active navigation item resolves by section', () => {

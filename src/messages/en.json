@@ -992,6 +992,7 @@
       "fallbackName": "Student",
       "role": "Student"
     },
+    "navGroups": { "discover": "Discover", "personal": "Personal" },
     "nav": {
       "profile": "Profile",
       "scholarships": "Search scholarships"
@@ -1002,7 +1003,7 @@
         "description": "The more complete your profile, the more accurate your recommendations and match rates."
       },
       "scholarships": {
-        "title": "Search scholarships",
+        "title": "Explore scholarships and opportunities",
         "description": "Browse available scholarships and filter them to suit you."
       },
       "scholarshipDetails": {

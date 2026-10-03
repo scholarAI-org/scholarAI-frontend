@@ -992,6 +992,7 @@
       "fallbackName": "طالب",
       "role": "طالب"
     },
+    "navGroups": { "discover": "اكتشاف", "personal": "شخصي" },
     "nav": {
       "profile": "الملف الشخصي",
       "scholarships": "البحث عن منح"
@@ -1002,7 +1003,7 @@
         "description": "كلما اكتمل ملفك، كانت التوصيات ونسب التوافق أدق."
       },
       "scholarships": {
-        "title": "البحث عن منح",
+        "title": "استكشاف المنح والفرص",
         "description": "تصفّح المنح المتاحة وصفِّها بما يناسبك."
       },
       "scholarshipDetails": {

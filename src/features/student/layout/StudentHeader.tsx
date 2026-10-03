@@ -1,7 +1,7 @@
 'use client';
 
 import type { RefObject } from 'react';
-import { Globe2, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/features/auth/providers/AuthProvider';
@@ -66,10 +66,21 @@ export function StudentHeader({
             <Menu aria-hidden className="h-5 w-5" />
           </button>
 
-          <div className="flex h-10 min-w-0 items-center gap-2 rounded-full border border-[#e2e8f0] px-2">
+          {/* Figma 2262:3341: one 32px white circle; Figma order puts it beside the title. */}
+          <button
+            type="button"
+            onClick={switchLanguage}
+            aria-label={t('languageSwitch.label')}
+            lang={nextLocale}
+            className="flex size-8 shrink-0 items-center justify-center rounded-full border-[0.8px] border-gray-300 bg-white text-xs text-black transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+          >
+            <span aria-hidden>{t('languageSwitch.short')}</span>
+          </button>
+
+          <div className="flex min-w-0 items-center gap-2 rounded-full border border-gray-300 p-2">
             <span
               aria-hidden
-              className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-[#f97316] text-[10px] leading-none text-white"
+              className="flex size-[18px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-[10px] leading-none text-white"
             >
               {getStudentInitial(name)}
             </span>
@@ -77,22 +88,6 @@ export function StudentHeader({
               <bdi>{name}</bdi>
             </span>
           </div>
-
-          <button
-            type="button"
-            onClick={switchLanguage}
-            aria-label={t('languageSwitch.label')}
-            lang={nextLocale}
-            className="flex h-8 shrink-0 items-center gap-2 rounded-full bg-[#f8fafc] pe-3 text-xs text-black"
-          >
-            <span
-              aria-hidden
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-[#274383] text-white"
-            >
-              <Globe2 className="h-4 w-4" />
-            </span>
-            <span aria-hidden>{t('languageSwitch.short')}</span>
-          </button>
         </div>
       </div>
     </header>
