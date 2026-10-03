@@ -843,15 +843,52 @@ test('the match badge shows only authoritative data and nothing by default', () 
   assert.equal(toScholarshipCard({ id: 1, title: 'T', is_saved: false }, 'en').match, null);
 });
 
-test('card labels translate known backend values and keep unknown ones as written', () => {
-  const { getFundingLabelKey, getStudyLevelLabelKey } = load('lib/card-labels.ts');
-  assert.equal(getFundingLabelKey('FULL'), 'filters.funding.full');
-  assert.equal(getFundingLabelKey(' Partial '), 'filters.funding.partial');
-  assert.equal(getFundingLabelKey('Self-funded'), null);
-  assert.equal(getFundingLabelKey(undefined), null);
-  assert.equal(getStudyLevelLabelKey('Master'), 'filters.academicLevel.master');
-  assert.equal(getStudyLevelLabelKey('PHD'), 'filters.academicLevel.phd');
-  assert.equal(getStudyLevelLabelKey('Diploma'), null);
+test('rule A1: known values are translated in any case, others shown raw, blanks hidden', () => {
+  const { getFundingLabel, getStudyLevelLabel } = load('lib/card-labels.ts');
+  // Known enum values, any letter case or surrounding space.
+  assert.deepEqual(getFundingLabel('FULL'), { kind: 'translated', key: 'filters.funding.full' });
+  assert.deepEqual(getFundingLabel('Full'), { kind: 'translated', key: 'filters.funding.full' });
+  assert.deepEqual(getFundingLabel(' partial '), {
+    kind: 'translated',
+    key: 'filters.funding.partial',
+  });
+  assert.deepEqual(getStudyLevelLabel('Master'), {
+    kind: 'translated',
+    key: 'filters.academicLevel.master',
+  });
+  assert.deepEqual(getStudyLevelLabel('PHD'), {
+    kind: 'translated',
+    key: 'filters.academicLevel.phd',
+  });
+  assert.deepEqual(getStudyLevelLabel('exchange'), {
+    kind: 'translated',
+    key: 'filters.academicLevel.exchange',
+  });
+  // Unknown values: shown exactly as received.
+  for (const raw of ['ممولة بالكامل', 'Self-funded', 'Fully Funded']) {
+    assert.deepEqual(getFundingLabel(raw), { kind: 'raw', text: raw });
+  }
+  for (const raw of ['ماجستير ودكتوراه', 'Master, PhD', 'Diploma']) {
+    assert.deepEqual(getStudyLevelLabel(raw), { kind: 'raw', text: raw });
+  }
+  // Hidden only for null, empty or blank (or a non-string from a malformed card).
+  for (const empty of [null, undefined, '', '   ', 42]) {
+    assert.equal(getFundingLabel(empty), null, String(empty));
+    assert.equal(getStudyLevelLabel(empty), null, String(empty));
+  }
+  // The adapter keeps both fields for the card; blanks become absent.
+  const card = toScholarshipCard(
+    { id: 9, title: 'T', is_saved: false, funding_type: 'FULL', study_level: 'ماجستير ودكتوراه' },
+    'ar'
+  );
+  assert.equal(card.fundingType, 'FULL');
+  assert.equal(card.studyLevel, 'ماجستير ودكتوراه');
+  const blank = toScholarshipCard(
+    { id: 9, title: 'T', is_saved: false, funding_type: '  ', study_level: null },
+    'ar'
+  );
+  assert.equal(blank.fundingType, undefined);
+  assert.equal(blank.studyLevel, undefined);
 });
 
 test('the card adapter tolerates wrongly typed optional fields', () => {

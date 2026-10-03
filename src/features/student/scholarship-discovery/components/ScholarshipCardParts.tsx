@@ -3,12 +3,18 @@
 import { BookOpen, Building2, MapPin, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
-import { getFundingLabelKey, getStudyLevelLabelKey } from '../lib/card-labels';
+import { getFundingLabel, getStudyLevelLabel, type CardFieldLabel } from '../lib/card-labels';
 import { getScholarshipDetailsHref } from '../lib/details-link';
 import type { ScholarshipCardModel } from '../types';
 import { ScholarshipMatchBadge } from './ScholarshipMatchBadge';
 
 // Shared pieces so Grid and List render the same model with the same actions.
+
+function useCardFieldText() {
+  const t = useTranslations('StudentScholarshipDiscovery');
+  return (label: CardFieldLabel) =>
+    label === null ? undefined : label.kind === 'translated' ? t(label.key) : label.text;
+}
 
 export function useCardTitle(card: ScholarshipCardModel) {
   const t = useTranslations('StudentScholarshipDiscovery');
@@ -16,9 +22,8 @@ export function useCardTitle(card: ScholarshipCardModel) {
 }
 
 export function ScholarshipBadges({ card }: { card: ScholarshipCardModel }) {
-  const t = useTranslations('StudentScholarshipDiscovery');
-  const fundingKey = getFundingLabelKey(card.fundingType);
-  const funding = fundingKey ? t(fundingKey) : card.fundingType;
+  const fieldText = useCardFieldText();
+  const funding = fieldText(getFundingLabel(card.fundingType));
   if (!funding && !card.match) return null;
   return (
     <div className="flex flex-wrap items-center gap-2.5">
@@ -68,9 +73,8 @@ export function ScholarshipMeta({
   card: ScholarshipCardModel;
   withProvider?: boolean;
 }) {
-  const t = useTranslations('StudentScholarshipDiscovery');
-  const levelKey = getStudyLevelLabelKey(card.studyLevel);
-  const level = levelKey ? t(levelKey) : card.studyLevel;
+  const fieldText = useCardFieldText();
+  const level = fieldText(getStudyLevelLabel(card.studyLevel));
   const provider = withProvider ? (card.universityName ?? card.organizationName) : undefined;
   if (!card.country && !level && !provider) return null;
   return (
