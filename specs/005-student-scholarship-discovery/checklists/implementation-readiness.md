@@ -159,10 +159,10 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 14. Figma convergence
 
-- [ ] Functional implementation is compared with primary node `2262:3331` and empty node `2264:3472` for spacing, typography, borders, radii, icons, RTL alignment, toolbar, filters, cards, pagination, and empty state.
-  - Missing: Figma comparison (T030, T061).
-- [ ] List View is intentionally inferred from the shared visual system and is included in the comparison.
-  - Missing: List View comparison (T061, T062).
+- [x] Functional implementation is compared with primary node `2262:3331` and empty node `2264:3472` for spacing, typography, borders, radii, icons, RTL alignment, toolbar, filters, cards, pagination, and empty state.
+  - Evidence: T061/T062 design-context and screenshot review of desktop/empty/mobile/tablet references against bilingual API-backed contract fixtures; existing font and documented scope exclusions retained. See verification.md for live-data limits.
+- [x] List View is intentionally inferred from the shared visual system and is included in the comparison.
+  - Evidence: inferred List uses the shared card model/actions and visual system; ar/en screenshots at 375/768/1440px checked for hierarchy, wrapping and overflow.
 - [x] Dark-mode Figma nodes remain out of scope.
   - Evidence: dark nodes excluded in specs/005-student-scholarship-discovery/plan.md:254 and tasks.md:112.
 

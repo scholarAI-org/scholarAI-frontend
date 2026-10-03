@@ -27,7 +27,7 @@ export function ScholarshipImage({ src, alt, className = '' }: ScholarshipImageP
         onError={() => {
           if (!image.isFallback) setFailedSrc(image.safeSrc);
         }}
-        className="col-start-1 row-start-1 size-full object-cover"
+        className="col-start-1 row-start-1 size-full min-h-0 min-w-0 object-cover"
       />
       {image.isFallback ? null : (
         <div

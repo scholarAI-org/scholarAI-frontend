@@ -162,8 +162,10 @@
 
 ## Phase 11 — Figma visual convergence
 
-- [ ] T061 Compare real-data implementation to primary/empty Figma nodes for spacing, sizing, typography, borders, radii, icons, toolbar, filters, cards, pagination, empty state, and Arabic RTL alignment.
-- [ ] T062 Converge tablet/mobile adaptations with repository tokens and stable local assets; retain inferred List View and exclude dark nodes.
+- [x] T061 Compare real-data implementation to primary/empty Figma nodes for spacing, sizing, typography, borders, radii, icons, toolbar, filters, cards, pagination, empty state, and Arabic RTL alignment.
+  - Evidence: Inspected design context/screenshots for 2262:3331 and 2264:3472; compared API-backed Grid/List, toolbar, filters, pagination, empty and minimal factual details in ar/en. Contract-fixture browser screenshots at 375/768/1440px verify hierarchy and logical placement. Local exported empty illustration renders loaded at 200×200; existing tokens and Almarai retained. Live backend acceptance limitations remain in backend-issues.md/T043.
+- [x] T062 Converge tablet/mobile adaptations with repository tokens and stable local assets; retain inferred List View and exclude dark nodes.
+  - Evidence: Compared mobile/tablet discovery 3606:11255/3610:8118 and factual details 3606:11330/3610:8390, plus desktop 2481:4537. Fixed grid-image intrinsic sizing so the hero and its image heights agree (190/260/234px); no horizontal overflow against clientWidth in both locales. List remains inferred, stable local assets retained, dark/future sections omitted.
 - [ ] T062a Follow-up (out of scope for Feature 005): Figma uses Rubik while the app uses Almarai everywhere; decide app-wide whether to switch fonts. No font change in this feature.
 
 ## Phase 12 — Tests and final verification

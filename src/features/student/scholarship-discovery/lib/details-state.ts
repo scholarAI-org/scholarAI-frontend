@@ -7,7 +7,7 @@ import type { ScholarshipDetailsResponse } from '../types';
 export function parseScholarshipId(raw: unknown): number | null {
   if (typeof raw !== 'string' || !/^[1-9]\d*$/.test(raw)) return null;
   const id = Number(raw);
-  return Number.isSafeInteger(id) ? id : null;
+  return Number.isSafeInteger(id) && String(id) === raw ? id : null;
 }
 
 export type DetailsErrorReason = 'unauthorized' | 'forbidden' | 'notFound' | 'generic';
