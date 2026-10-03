@@ -271,6 +271,21 @@ are out of scope.
 | Empty state                  | `2264:4108` (illustration `2264:4109`, texts `2264:4119`, actions `2264:4136`)                 |
 | Tablet / mobile discovery    | `3610:8118` "Tablet / Search"; `3606:11255` "Mobile / Search"                                  |
 
+### Responsive and details nodes (inspected 2026-10-03, round 4)
+
+| Region                        | Node(s)                                                                                                                                             | Used for                                                                                                                                                                                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Mobile / Search (390px)       | `3606:11255`; header `3606:11257`; chips `3606:11301`; results `3606:11312`                                                                         | Mobile header (menu 40px `#F1F5F9` r12 + brand 33x40 at the start, 34px orange avatar at the end), chip row (8px gap; chip 8x14 padding, 13px medium navy, active orange/white, "الكل" first), one card column (16px gap) |
+| Tablet / Search (834px)       | `3610:8118`; chips `3610:8220`; result rows `3610:8235`                                                                                             | Two cards per row (16px gap), chips aligned to the start, content padding 20/24/32                                                                                                                                        |
+| Scholarship Details (desktop) | `2481:4537`; hero `2481:4551`; columns `2481:4554` (main `2481:4651` 683px, side `2481:4555` 449px); about card `2481:4652`; facts grid `2481:4657` | Hero image 234px r16 with gradient; two columns (main at the start, actions at the end); 2-column facts grid; numbered required documents                                                                                 |
+| Mobile / Scholarship Details  | `3606:11330`; hero `3606:11339` (190px); summary `3606:11341`; actions `3606:11361`                                                                 | Stacked: hero, title + meta, apply/save card, then sections                                                                                                                                                               |
+| Tablet / Scholarship Details  | `3610:8390`; hero `3610:8471` (260px); apply row `3610:8493`                                                                                        | Stacked like mobile with a taller hero                                                                                                                                                                                    |
+
+Excluded by the spec in these frames: notification bell, theme toggle, highest-match sort, match/eligibility
+assessment, application status, "improve documents", support/report card, similar scholarships, coverage
+items without a backend field, the description (`description_html` is never rendered), the tablet nav rail
+(the shell keeps the mobile header below lg), and Apply flows beyond external links.
+
 Exported asset: `2264:4109` → `public/images/student/scholarship-empty-state.svg`.
 Spec conflicts follow the spec: highest-match sort and match badges on sample
 cards, notification bell/count, theme toggle, unimplemented navigation items,
