@@ -15,6 +15,17 @@ loadModule.extensions['.ts'] = (module, filename) => {
   module._compile(outputText, filename);
 };
 
+loadModule.extensions['.tsx'] = (module, filename) => {
+  const { outputText } = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2020,
+      jsx: ts.JsxEmit.ReactJSX,
+    },
+  });
+  module._compile(outputText, filename);
+};
+
 // Resolve the `@/` path alias used by feature code to `src/`.
 const srcPath = fileURLToPath(new URL('../src', import.meta.url));
 const resolveFilename = Module._resolveFilename;
@@ -777,12 +788,13 @@ test('the image fallback is a local asset and the img exception exists exactly o
     path.join(featurePath, 'components/ScholarshipImage.tsx'),
     'utf8'
   );
-  assert.match(imageSource, /FALLBACK_SRC = '\/images\/student\/scholarship-image-fallback\.svg'/);
+  const { SCHOLARSHIP_IMAGE_FALLBACK_SRC } = load('lib/image-url.ts');
+  assert.equal(SCHOLARSHIP_IMAGE_FALLBACK_SRC, '/images/student/scholarship-image-fallback.svg');
   assert.ok(
     fs.existsSync(path.join(srcPath, '../public/images/student/scholarship-image-fallback.svg'))
   );
   assert.match(imageSource, /loading="lazy"/);
-  assert.match(imageSource, /alt=\{showFallback \? '' : alt\}/);
+  assert.match(imageSource, /alt=\{image\.alt\}/);
 
   const walk = (dir) =>
     fs
@@ -1422,4 +1434,70 @@ test('the country dropdown is an accessible overlay that keeps selected values',
   for (const state of ['loading', 'unavailable', 'retry', 'empty']) {
     assert.match(source, new RegExp(`filters\\.country\\.${state}`), state);
   }
+});
+
+// --- Broken image fallback (item 5) ------------------------------------------------------
+
+test('invalid, non-http and failed image URLs resolve to the decorative fallback', () => {
+  const { getScholarshipImageSource, SCHOLARSHIP_IMAGE_FALLBACK_SRC } = load('lib/image-url.ts');
+  const fallback = { src: SCHOLARSHIP_IMAGE_FALLBACK_SRC, alt: '', isFallback: true };
+  for (const bad of [
+    undefined,
+    '',
+    'not a url',
+    '/relative.png',
+    'javascript:alert(1)',
+    'data:image/png;base64,AA',
+    'ftp://h/x.png',
+  ]) {
+    assert.deepEqual(
+      { ...getScholarshipImageSource(bad, 'صورة منحة', null), safeSrc: undefined },
+      {
+        ...fallback,
+        safeSrc: undefined,
+      },
+      String(bad)
+    );
+  }
+  const url = 'https://cdn.example.org/a.png';
+  // Before an error: the real image with its alt text.
+  assert.deepEqual(getScholarshipImageSource(url, 'صورة منحة', null), {
+    src: url,
+    alt: 'صورة منحة',
+    isFallback: false,
+    safeSrc: url,
+  });
+  // The onError path stores the failed URL: that URL now renders the fallback, alt="".
+  assert.deepEqual(getScholarshipImageSource(url, 'صورة منحة', url), { ...fallback, safeSrc: url });
+  // A different URL after a failure is tried again.
+  assert.equal(
+    getScholarshipImageSource('https://cdn.example.org/b.png', 'x', url).isFallback,
+    false
+  );
+});
+
+test('the rendered fallback is decorative and keeps the same fixed box as a real image', () => {
+  const React = loadModule('react');
+  const { renderToStaticMarkup } = loadModule('react-dom/server');
+  const { ScholarshipImage } = load('components/ScholarshipImage.tsx');
+  const render = (src) =>
+    renderToStaticMarkup(
+      React.createElement(ScholarshipImage, {
+        src,
+        alt: 'صورة منحة',
+        className: 'aspect-[448/184] w-full',
+      })
+    );
+  const real = render('https://cdn.example.org/a.png');
+  for (const bad of ['javascript:alert(1)', 'ftp://h/x.png', 'nonsense', undefined]) {
+    const html = render(bad);
+    assert.match(html, /src="\/images\/student\/scholarship-image-fallback\.svg"/, String(bad));
+    assert.match(html, /alt=""/);
+    assert.match(html, /loading="lazy"/);
+    assert.equal(/aria-hidden/.test(html), false, 'no gradient overlay on the fallback');
+    // Same wrapper box (fixed aspect ratio) as a real image.
+    assert.equal(html.match(/^<div class="([^"]+)"/)[1], real.match(/^<div class="([^"]+)"/)[1]);
+  }
+  assert.match(real, /alt="صورة منحة"/);
+  assert.match(real, /aspect-\[448\/184\] w-full/);
 });
