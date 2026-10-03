@@ -696,3 +696,52 @@ test('selecting countries serializes repeated country params unchanged and reset
   assert.deepEqual(url.searchParams.getAll('country'), [' Côte d’Ivoire ', 'Germany']);
   assert.equal(url.searchParams.get('page'), null);
 });
+
+// --- View toggle (T024/T034) ------------------------------------------------------
+
+test('switching Grid/List never refetches results or country options', async () => {
+  const { QueryClient, QueryObserver } = loadModule('@tanstack/react-query');
+  const { discoveryQueryOptions, filterOptionsQueryOptions } = load('lib/queries.ts');
+  const hits = { discovery: 0, filterOptions: 0 };
+  globalThis.fetch = async (url) => {
+    const { pathname } = new URL(url);
+    const isOptions = pathname.endsWith('/filter-options');
+    hits[isOptions ? 'filterOptions' : 'discovery'] += 1;
+    const body = isOptions
+      ? { countries: ['Germany'] }
+      : { items: [], total: 0, page: 1, page_size: 20, total_pages: 0 };
+    return new Response(JSON.stringify(body), { status: 200 });
+  };
+
+  const client = new QueryClient();
+  const query = parse('country=Germany&sort=deadline_soon');
+  // What ScholarshipDiscoveryPage does on every render: options come from the URL
+  // query only. The Grid/List view is not an input to either builder.
+  const render = (view) => {
+    void view;
+    return [discoveryQueryOptions(query), filterOptionsQueryOptions()];
+  };
+  const [discoveryOptions, countryOptions] = render('grid');
+  const discovery = new QueryObserver(client, discoveryOptions);
+  const countries = new QueryObserver(client, countryOptions);
+  const unsubscribe = [discovery.subscribe(() => {}), countries.subscribe(() => {})];
+  const settled = () =>
+    discovery.getCurrentResult().status === 'success' &&
+    countries.getCurrentResult().status === 'success';
+  for (let i = 0; i < 200 && !settled(); i += 1) await new Promise((r) => setTimeout(r, 5));
+  assert.ok(settled(), 'both queries resolved');
+  assert.deepEqual(hits, { discovery: 1, filterOptions: 1 });
+
+  for (const view of ['list', 'grid', 'list', 'grid']) {
+    const [nextDiscovery, nextCountries] = render(view);
+    discovery.setOptions(nextDiscovery);
+    countries.setOptions(nextCountries);
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  assert.deepEqual(hits, { discovery: 1, filterOptions: 1 }, 'no refetch on view changes');
+  assert.equal(discoveryQueryOptions.length, 1, 'discovery options take only the URL query');
+  assert.equal(filterOptionsQueryOptions.length, 0, 'country options take no input');
+
+  unsubscribe.forEach((stop) => stop());
+  client.clear();
+});

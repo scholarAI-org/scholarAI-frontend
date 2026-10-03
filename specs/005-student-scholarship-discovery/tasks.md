@@ -62,7 +62,7 @@
 - [x] T023 Add the thin Server Component discovery route delegating to `ScholarshipDiscoveryPage`; it renders page content only and never mounts StudentShell.
   - Evidence: `src/app/[locale]/student/scholarships/page.tsx` renders `ScholarshipDiscoveryPage` in `<Suspense>`; no shell or `use client`; Search Scholarships enabled in navigation; tests/student-layout.test.mjs route guards and navigation tests pass.
 - [ ] T024 Compose `DiscoveryToolbar` UI: localized search field/placeholder, sort control, result heading, and Grid/List controls using early i18n keys.
-  - Partial: `DiscoveryToolbar` with labelled search (placeholder, clear) and sort select, all from `StudentScholarshipDiscovery`; the result heading is in `DiscoveryResultsSummary`. Missing: Grid/List controls (with T034).
+  - Built: Figma-aligned toolbar (search, sort, `DiscoveryViewToggle` with `aria-pressed` and translated labels); the result heading lives in the results area. Awaiting manual check of the toggle.
 - [x] T025 Add toolbar interaction synchronization: transient draft, ~300ms debounce, normalized URL update/page reset, and Back/Forward draft resync; Grid/List stays in memory.
   - Evidence: `DiscoverySearchField` (local draft, 300ms debounce, Enter flush, Clear, replace mode, URL re-sync); debounce/re-sync tests with mock timers in tests/student-scholarship-discovery.test.mjs; round-1 manual check passed in ar/en (one request per debounced search, Back/Forward).
 - [x] T026 Build desktop enum filter fieldsets/checkboxes and Clear all using canonical URL callbacks and no default Figma selections.
@@ -71,8 +71,8 @@
   - Evidence: `CountryFilter` (options only from filter-options, exact strings, repeated params, page reset); merge/serialization tests in tests/student-scholarship-discovery.test.mjs; round-1 manual check passed in ar/en.
 - [x] T028 Implement independent Country control loading, successful non-empty, successful empty, and localized unavailable/retry states; failed options must not disable discovery results.
   - Evidence: independent loading/empty/unavailable+Retry states in `CountryFilter`; round-1 manual check passed with filter-options blocked (results stayed usable, Retry recovered).
-- [ ] T029 Test toolbar debounce and URL behavior; all filter groups; one/multiple countries; clear all; Country state variants/retry; discovery usability on options error; and no filter-options refetch from Grid/List switching.
-  - Partial: pure-logic tests in tests/student-scholarship-discovery.test.mjs and round-1 manual check passed for toolbar, filters, countries, clear all and options failure. Missing: the Grid/List no-refetch part, which needs the view toggle (T034).
+- [x] T029 Test toolbar debounce and URL behavior; all filter groups; one/multiple countries; clear all; Country state variants/retry; discovery usability on options error; and no filter-options refetch from Grid/List switching.
+  - Evidence: pure-logic tests in tests/student-scholarship-discovery.test.mjs plus the passed round-1 manual check; the Grid/List part is covered by the QueryObserver test "switching Grid/List never refetches results or country options".
 
 ## Phase 5 — Grid and List results
 

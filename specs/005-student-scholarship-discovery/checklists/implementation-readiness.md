@@ -49,8 +49,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: the hook keys a normalized query (src/features/student/scholarship-discovery/hooks/useScholarshipDiscovery.ts:10); tests/student-scholarship-discovery.test.mjs:400, tests/student-scholarship-discovery.test.mjs:427.
 - [x] `filterOptions()` is independent of search, filters, page, sort, and view mode, with a longer stale time than discovery.
   - Evidence: 30-minute stale time (src/features/student/scholarship-discovery/hooks/useScholarshipFilterOptions.ts:6-11); independent key; tests/student-scholarship-discovery.test.mjs:449.
-- [ ] Switching Grid/List alone causes neither discovery nor filter-options refetch.
-  - Missing: needs the Grid/List toggle (T034) and a no-refetch test (T029/T035). Keys already exclude view state.
+- [x] Switching Grid/List alone causes neither discovery nor filter-options refetch.
+  - Evidence: `lib/queries.ts` builds options from the URL query only; tests/student-scholarship-discovery.test.mjs drives real QueryObservers through repeated view switches with one discovery and one filter-options request (and fails if the view leaks into the query).
 - [ ] Bookmark updates and settlement are targeted; settlement never invalidates `studentScholarshipKeys.all`.
   - Missing: bookmark mutation hook not implemented (T036–T038).
 

@@ -4,6 +4,8 @@ export type FundingType = 'full' | 'partial';
 export type OpportunityType =
   'scholarship' | 'academic_exchange' | 'research_fellowship' | 'training';
 export type ScholarshipIngestionType = 'scraped' | 'manual';
+// Presentation only: never part of the URL, query keys or storage.
+export type DiscoveryView = 'grid' | 'list';
 export interface DiscoveryQuery {
   search?: string;
   academicLevels: AcademicLevel[];
