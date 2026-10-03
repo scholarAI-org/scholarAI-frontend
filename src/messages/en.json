@@ -1068,7 +1068,8 @@
     },
     "results": {
       "count": "{count, plural, =0 {No scholarships} one {{count, number, integer} scholarship} other {{count, number, integer} scholarships}}",
-      "updating": "Updating results…"
+      "updating": "Updating results…",
+      "loading": "Loading scholarships…"
     },
     "card": {
       "untitled": "Untitled scholarship",

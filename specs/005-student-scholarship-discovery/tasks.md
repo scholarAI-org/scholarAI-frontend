@@ -87,6 +87,7 @@
 - [x] T033 Implement `ScholarshipMatchBadge` as a future seam that returns nothing without authoritative match data and never calculates data locally.
   - Evidence: `ScholarshipMatchBadge` renders `getMatchBadgeDisplay(match)` only; it returns null for absent/empty/invalid data and the adapter always sets `match: null`; authoritative fixture renders as given (tests/student-scholarship-discovery.test.mjs).
 - [ ] T034 Implement results composition and semantic `aria-pressed` Grid/List toggle; changing view must not change URL, page, filters, sort, discovery query, or filter-options query.
+  - Built: `ScholarshipResults` renders the same `ScholarshipCardModel` as Grid or List from in-memory view state; the toggle uses `aria-pressed`; the QueryObserver test in tests/student-scholarship-discovery.test.mjs proves view switches change no URL, key or query. Awaiting manual check.
 - [ ] T035 Test shared-model rendering, nullable data, no fake match badge, future authoritative match fixture, presentation-only switching, and scholarship image policy: native `<img>`, lazy loading, alt behavior, malformed/load-error/local-neutral fallback, no Figma runtime fallback, no global lint disable or broad `next.config` host allowlist, and any required lint suppression component-local only.
   - Partial: tests/student-scholarship-discovery.test.mjs covers nullable/wrongly typed fields, no default match, a future authoritative match fixture, presentation-only switching (QueryObserver) and the image policy (http(s) only, local fallback, lazy, alt, single component-local suppression, no global ESLint change). Missing: rendered-card checks (no React test harness); covered by the manual checklist.
 
@@ -107,9 +108,13 @@
 - [ ] T043 Implement accessible pagination from server `page`, `page_size`, and `total_pages`, including Previous/Next, disabled states, `aria-current`, URL update, and replace-based out-of-range reconciliation.
   - Built: `DiscoveryPagination` (Figma 2264:3420) from server page/total_pages with Previous/Next, disabled bounds, `aria-current`, push-mode changes, focus and scroll to the results heading; an out-of-range URL page is reconciled once with replace mode and a visible `pagination.outOfRange` notice (target, notice reducer and replace mode tested in tests/student-scholarship-discovery.test.mjs). Awaiting manual check.
 - [ ] T044 Implement Grid/List skeletons and background-refresh busy behavior without removing usable results.
+  - Built: `ScholarshipSkeletons` (grid/list shapes) on first load with a `results.loading` status; refetches keep previous results with the updating status (`getDiscoveryResultsState`, tested in tests/student-scholarship-discovery.test.mjs). Awaiting manual check.
 - [ ] T045 Implement distinct no-scholarships/no-matches empty states with real edit-search/clear actions.
+  - Built: `DiscoveryEmptyState` (Figma 2264:4108 with the exported illustration): noScholarships without search/filters, noMatches otherwise with "edit search" (focuses the search input) and "clear filters" (when filters are active); selection tested in tests/student-scholarship-discovery.test.mjs. Awaiting manual check.
 - [ ] T046 Implement truthful auth, 422, generic retryable, malformed-card, loading/error/empty live states.
+  - Built: `DiscoveryErrorState` for 403 (message), 422 (message + clear filters) and others (message + retry); 401 invalidates `currentUserQueryKey` so AuthProvider/RoleGuard handle it; malformed responses are errors, malformed cards render `errors.malformedCard` in place; inline refresh errors keep results. Selection and card filtering tested in tests/student-scholarship-discovery.test.mjs. Awaiting manual check.
 - [ ] T047 Test deadline cases, counts/plurals, pagination/reconciliation, skeleton/refresh, empty variants, and errors.
+  - Partial: tests/student-scholarship-discovery.test.mjs covers deadlines, pagination window and reconciliation, loading/updating, every error type, noScholarships vs noMatches and malformed cards; tests/student-layout.test.mjs and tests/i18n-numerals.test.mjs cover counts and plurals. Missing: rendered-state checks (no React test harness); covered by the manual checklist.
 
 ## Phase 8 — Responsive and mobile behavior
 

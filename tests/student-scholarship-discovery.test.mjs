@@ -1048,3 +1048,159 @@ test('reconciling an out-of-range page uses replace, so Back skips the invalid p
   toFirst.reconcilePage(1);
   assert.deepEqual(router.calls.at(-1), ['replace', '/student/scholarships', { scroll: false }]);
 });
+
+// --- Data states (T044-T047) ---------------------------------------------------------
+
+const responseOf = (items, overrides = {}) => ({
+  items,
+  total: items.length,
+  page: 1,
+  page_size: 20,
+  total_pages: items.length ? 1 : 0,
+  ...overrides,
+});
+const validItem = { id: 1, title: 'Scholarship', is_saved: false };
+
+test('results state: loading, updating with previous results, and settled results', () => {
+  const { getDiscoveryResultsState } = load('lib/results-state.ts');
+  const base = { query: parse(''), error: null, isFetching: false, isPlaceholderData: false };
+  assert.deepEqual(getDiscoveryResultsState({ ...base, data: undefined, isFetching: true }), {
+    kind: 'loading',
+  });
+  // keepPreviousData: the old page stays visible while the new one loads.
+  assert.deepEqual(
+    getDiscoveryResultsState({
+      ...base,
+      data: responseOf([validItem]),
+      isFetching: true,
+      isPlaceholderData: true,
+    }),
+    { kind: 'results', updating: true, refreshError: null }
+  );
+  // A previous empty page is not shown as "no matches" for the next query.
+  assert.deepEqual(
+    getDiscoveryResultsState({
+      ...base,
+      data: responseOf([]),
+      isFetching: true,
+      isPlaceholderData: true,
+    }),
+    { kind: 'loading' }
+  );
+  assert.deepEqual(getDiscoveryResultsState({ ...base, data: responseOf([validItem]) }), {
+    kind: 'results',
+    updating: false,
+    refreshError: null,
+  });
+  assert.deepEqual(
+    getDiscoveryResultsState({ ...base, data: responseOf([validItem]), isFetching: true }),
+    { kind: 'results', updating: true, refreshError: null }
+  );
+});
+
+test('results state: each error type, and errors never look like empty results', () => {
+  const { getDiscoveryResultsState, getDiscoveryErrorReason } = load('lib/results-state.ts');
+  const base = { query: parse('country=Germany'), isFetching: false, isPlaceholderData: false };
+  const errorFor = (status) => new ApiError('x', [], status);
+  assert.equal(getDiscoveryErrorReason(errorFor(401)), 'unauthorized');
+  assert.equal(getDiscoveryErrorReason(errorFor(403)), 'forbidden');
+  assert.equal(getDiscoveryErrorReason(errorFor(422)), 'validation');
+  assert.equal(getDiscoveryErrorReason(errorFor(500)), 'generic');
+  assert.equal(getDiscoveryErrorReason(new TypeError('Failed to fetch')), 'generic');
+  for (const [status, reason] of [
+    [401, 'unauthorized'],
+    [403, 'forbidden'],
+    [422, 'validation'],
+    [503, 'generic'],
+  ]) {
+    assert.deepEqual(
+      getDiscoveryResultsState({ ...base, data: undefined, error: errorFor(status) }),
+      {
+        kind: 'error',
+        reason,
+      }
+    );
+  }
+  // A malformed response is an error, not an empty list.
+  for (const data of [
+    {},
+    { items: 'x', total: 0, page: 1, total_pages: 0 },
+    { items: [], total: '3' },
+  ]) {
+    assert.deepEqual(getDiscoveryResultsState({ ...base, data, error: null }), {
+      kind: 'error',
+      reason: 'generic',
+    });
+  }
+  // A failed background refresh keeps the results and reports the error inline.
+  assert.deepEqual(
+    getDiscoveryResultsState({ ...base, data: responseOf([validItem]), error: errorFor(500) }),
+    { kind: 'results', updating: false, refreshError: 'generic' }
+  );
+});
+
+test('results state: noScholarships vs noMatches, and out-of-range before empty', () => {
+  const { getDiscoveryResultsState } = load('lib/results-state.ts');
+  const settled = (search, data) =>
+    getDiscoveryResultsState({
+      query: parse(search),
+      data,
+      error: null,
+      isFetching: false,
+      isPlaceholderData: false,
+    });
+  assert.deepEqual(settled('', responseOf([])), { kind: 'empty', variant: 'noScholarships' });
+  assert.deepEqual(settled('sort=deadline_soon', responseOf([])), {
+    kind: 'empty',
+    variant: 'noScholarships',
+  });
+  assert.deepEqual(settled('search=zzz', responseOf([])), { kind: 'empty', variant: 'noMatches' });
+  assert.deepEqual(settled('funding_type=partial', responseOf([])), {
+    kind: 'empty',
+    variant: 'noMatches',
+  });
+  assert.deepEqual(settled('country=%20X%20', responseOf([])), {
+    kind: 'empty',
+    variant: 'noMatches',
+  });
+  // Page 9 of 3: reconcile, do not claim "no matches".
+  assert.deepEqual(settled('page=9', responseOf([], { total: 45, total_pages: 3, page: 9 })), {
+    kind: 'outOfRange',
+    lastPage: 3,
+  });
+  assert.deepEqual(settled('page=2', responseOf([], { total: 0, total_pages: 0, page: 2 })), {
+    kind: 'outOfRange',
+    lastPage: 1,
+  });
+});
+
+test('malformed cards are skipped and reported without breaking the list', () => {
+  const { toScholarshipCardEntries, isDiscoveryCardShape } = load('adapters/scholarship.ts');
+  const entries = toScholarshipCardEntries(
+    [
+      validItem,
+      null,
+      'card',
+      { id: 0, title: 'x', is_saved: false },
+      { id: 2.5, title: 'x', is_saved: false },
+      { id: 3, title: 42, is_saved: false },
+      { id: 4, title: 'x' },
+      { id: 5, title: '   ', is_saved: true },
+    ],
+    'en'
+  );
+  assert.deepEqual(
+    entries.map((entry) => (entry.kind === 'card' ? entry.card.id : entry.key)),
+    [1, 'malformed-1', 'malformed-2', 'malformed-3', 'malformed-4', 'malformed-5', 'malformed-6', 5]
+  );
+  assert.equal(entries.at(-1).card.title, undefined, 'blank title falls back to card.untitled');
+  assert.equal(isDiscoveryCardShape(validItem), true);
+});
+
+test('hasActiveFilters ignores search and sort; hasActiveSearchOrFilters includes search', () => {
+  const { hasActiveFilters, hasActiveSearchOrFilters } = load('lib/results-state.ts');
+  assert.equal(hasActiveFilters(parse('search=ai&sort=deadline_soon')), false);
+  assert.equal(hasActiveSearchOrFilters(parse('search=ai')), true);
+  assert.equal(hasActiveFilters(parse('academic_level=phd')), true);
+  assert.equal(hasActiveSearchOrFilters(parse('sort=deadline_soon&page=2')), false);
+});

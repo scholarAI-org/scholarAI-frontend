@@ -48,6 +48,7 @@ export function ScholarshipDiscoveryPage() {
           view={view}
           onPageChange={setPage}
           onReconcilePage={reconcilePage}
+          onClearFilters={clearFilters}
         />
       </div>
     </div>

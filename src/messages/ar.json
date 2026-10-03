@@ -1068,7 +1068,8 @@
     },
     "results": {
       "count": "{count, plural, =0 {لا توجد منح} one {منحة واحدة} two {منحتان} few {{count, number, integer} منح} many {{count, number, integer} منحة} other {{count, number, integer} منحة}}",
-      "updating": "جارٍ تحديث النتائج…"
+      "updating": "جارٍ تحديث النتائج…",
+      "loading": "جارٍ تحميل المنح…"
     },
     "card": {
       "untitled": "منحة بدون عنوان",

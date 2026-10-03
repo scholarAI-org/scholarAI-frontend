@@ -1,11 +1,14 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { DISCOVERY_LIMITS } from '../constants';
 import { SEARCH_DEBOUNCE_MS, createDebouncer, type Debouncer } from '../lib/debounce';
 import { resolveDraftFromUrl } from '../lib/search-draft';
+
+// One search field per page; the empty state's "edit search" focuses it.
+export const DISCOVERY_SEARCH_INPUT_ID = 'scholarship-discovery-search';
 
 interface DiscoverySearchFieldProps {
   value?: string;
@@ -16,7 +19,7 @@ interface DiscoverySearchFieldProps {
 // ~300ms of idle time, on Enter, or on Clear.
 export function DiscoverySearchField({ value, onCommit }: DiscoverySearchFieldProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
-  const inputId = useId();
+  const inputId = DISCOVERY_SEARCH_INPUT_ID;
   const inputRef = useRef<HTMLInputElement>(null);
   const [draft, setDraft] = useState(value ?? '');
   const [syncedValue, setSyncedValue] = useState(value);

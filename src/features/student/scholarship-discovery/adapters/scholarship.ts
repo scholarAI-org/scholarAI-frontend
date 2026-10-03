@@ -35,6 +35,29 @@ export function toScholarshipCard(
     match: null,
   };
 }
+export type ScholarshipCardEntry =
+  { kind: 'card'; card: ScholarshipCardModel } | { kind: 'malformed'; key: string };
+// A card needs a positive integer id, a string title and a boolean is_saved
+// (required by OpenAPI). Anything else is skipped and reported, not rendered.
+export function isDiscoveryCardShape(item: unknown): item is ScholarshipDiscoveryCard {
+  if (!item || typeof item !== 'object') return false;
+  const card = item as Record<string, unknown>;
+  return (
+    Number.isInteger(card.id) &&
+    (card.id as number) > 0 &&
+    typeof card.title === 'string' &&
+    typeof card.is_saved === 'boolean'
+  );
+}
+export const toScholarshipCardEntries = (
+  items: readonly unknown[],
+  locale: string
+): ScholarshipCardEntry[] =>
+  items.map((item, index) =>
+    isDiscoveryCardShape(item)
+      ? { kind: 'card', card: toScholarshipCard(item, locale) }
+      : { kind: 'malformed', key: `malformed-${index}` }
+  );
 export function toScholarshipDetails(
   item: ScholarshipDetailsResponse,
   locale: string
