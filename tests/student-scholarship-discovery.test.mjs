@@ -1204,3 +1204,90 @@ test('hasActiveFilters ignores search and sort; hasActiveSearchOrFilters include
   assert.equal(hasActiveFilters(parse('academic_level=phd')), true);
   assert.equal(hasActiveSearchOrFilters(parse('sort=deadline_soon&page=2')), false);
 });
+
+// --- History-based navigation (no RSC round-trip) -------------------------------------
+
+const fakeWindow = (initial) => {
+  const url = new URL(initial, 'https://app.test');
+  const entries = [];
+  const apply = (kind) => (state, unused, href) => {
+    entries.push([kind, href]);
+    const next = new URL(href, url);
+    url.pathname = next.pathname;
+    url.search = next.search;
+  };
+  return {
+    entries,
+    location: url,
+    history: { pushState: apply('push'), replaceState: apply('replace') },
+  };
+};
+
+test('the history router writes the locale-prefixed URL and skips the current URL', () => {
+  const { createHistoryRouter } = load('lib/history-router.ts');
+  const win = fakeWindow('/ar/student/scholarships');
+  const router = createHistoryRouter(() => win);
+  router.push('/ar/student/scholarships?academic_level=master');
+  router.push('/ar/student/scholarships?academic_level=master'); // already there
+  router.replace('/ar/student/scholarships?academic_level=master'); // already there
+  router.replace('/ar/student/scholarships?academic_level=master&page=2');
+  assert.deepEqual(win.entries, [
+    ['push', '/ar/student/scholarships?academic_level=master'],
+    ['replace', '/ar/student/scholarships?academic_level=master&page=2'],
+  ]);
+});
+
+test('one user action creates exactly one history entry, even from a stale render', () => {
+  const { createHistoryRouter } = load('lib/history-router.ts');
+  const win = fakeWindow('/ar/student/scholarships');
+  const router = createHistoryRouter(() => win);
+  const path = '/ar/student/scholarships';
+  const staleQuery = parse('');
+
+  // First click: one push.
+  createDiscoveryNavigator(router, path, staleQuery).setFilters({ academicLevels: ['master'] });
+  // A second click lands before React re-renders with the new URL: same target, no entry.
+  createDiscoveryNavigator(router, path, staleQuery).setFilters({ academicLevels: ['master'] });
+  assert.deepEqual(win.entries, [['push', '/ar/student/scholarships?academic_level=master']]);
+
+  // From the updated URL, unticking is one more entry; nothing else navigates.
+  const current = parse(win.location.search);
+  createDiscoveryNavigator(router, path, current).setFilters({ academicLevels: [] });
+  assert.deepEqual(win.entries.at(-1), ['push', '/ar/student/scholarships']);
+  assert.equal(win.entries.length, 2);
+
+  // Each navigator action makes at most one router call.
+  const counting = {
+    calls: 0,
+    push() {
+      this.calls += 1;
+    },
+    replace() {
+      this.calls += 1;
+    },
+  };
+  const nav = createDiscoveryNavigator(counting, path, parse('page=3&country=Germany'));
+  for (const run of [
+    () => nav.setSearch('ai'),
+    () => nav.setFilters({ fundingTypes: ['full'] }),
+    () => nav.setSort('deadline_soon'),
+    () => nav.setPage(2),
+    () => nav.clearFilters(),
+    () => nav.reconcilePage(1),
+  ]) {
+    const before = counting.calls;
+    run();
+    assert.equal(counting.calls - before, 1);
+  }
+});
+
+test('the URL-state hook uses the history router and the locale-prefixed pathname', () => {
+  const source = fs.readFileSync(path.join(featurePath, 'hooks/useDiscoveryQueryState.ts'), 'utf8');
+  assert.match(source, /createHistoryRouter\(\)/);
+  assert.match(source, /from 'next\/navigation'/);
+  assert.equal(
+    /useRouter|router\.push|router\.replace/.test(source),
+    false,
+    'no Next router round-trip'
+  );
+});
