@@ -4,8 +4,8 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 1. Scope protection
 
-- [ ] The delivered feature contains a reusable Student Shell, discovery/search, URL-owned filtering/sorting/pagination, backend country options, Grid/List, bookmarks, responsive behavior, a minimal factual details boundary, Arabic RTL/English LTR, data states, and accessibility-critical interactions.
-  - Missing: only the foundation exists (types, API, URL state, keys, hooks); shell, UI, bookmarks, details, i18n and responsive work are T008–T066.
+- [x] The delivered feature contains a reusable Student Shell, discovery/search, URL-owned filtering/sorting/pagination, backend country options, Grid/List, bookmarks, responsive behavior, a minimal factual details boundary, Arabic RTL/English LTR, data states, and accessibility-critical interactions.
+  - Evidence: frontend implementation through T066 is verified with 111 relevant tests, bilingual responsive/state/keyboard fixtures, lint/typecheck/build and Figma comparison; live multi-page acceptance remains open under T043 (verification.md).
 - [x] No dark mode, full future Details design, Saved Scholarships page, recommendation backend, highest-match sorting, frontend match calculation, fake match data, notifications backend, Application Tracking, Document Enhancement, fake future student routes, or admin scholarship workflow is included.
   - Evidence: feature API calls only the five discovery routes (src/features/student/scholarship-discovery/api/scholarships.ts:11-38); adapter sets `match: null` (src/features/student/scholarship-discovery/adapters/scholarship.ts:30); no other routes or dark styles added. Re-verify at T066.
 
@@ -63,7 +63,7 @@ Use this checklist to verify the delivered implementation and evidence against t
 - [x] Profile retains its domain and form ownership while inheriting the shared outer frame.
   - Evidence: src/features/profile/components/ProfilePageContent.tsx (logic unchanged); manual check passed for forms, avatar upload and logout in ar/en.
 - [x] Only implemented Profile and Search Scholarships destinations are interactive.
-  - Evidence: src/features/student/layout/student-navigation.ts; only Profile is visible until T023 enables Search; tests/student-layout.test.mjs navigation tests.
+  - Evidence: src/features/student/layout/student-navigation.ts; Profile and Search Scholarships are enabled; tests/student-layout.test.mjs navigation tests.
 - [x] Mobile navigation has an accessible label, keyboard operation, Escape dismissal, appropriate focus management, and focus return.
   - Evidence: src/features/student/layout/StudentMobileNavigation.tsx; focus-trap logic tested in tests/student-layout.test.mjs; manual keyboard check passed at mobile width.
 
@@ -114,7 +114,7 @@ Use this checklist to verify the delivered implementation and evidence against t
 ## 10. Pagination and states
 
 - [ ] Pagination uses server `page`, `page_size`, and `total_pages`, with Previous/Next, a bounded page window, ellipses, disabled states, and `aria-current`.
-  - Built and unit-tested (tests/student-scholarship-discovery.test.mjs); not verifiable with real data yet (7 published scholarships = one page).
+  - Built, unit-tested and verified with ar/en three-page browser fixtures (Next/Previous/page buttons, disabled bounds, aria-current and reconciliation). Original live >20-record acceptance remains pending under T043; the prior deployed baseline has 7 records.
 - [x] An out-of-range returned page is reconciled once using URL replacement.
   - Evidence: replace-mode `reconcilePage` once per URL with a visible notice (approved as built); target, notice and replace mode tested in tests/student-scholarship-discovery.test.mjs.
 - [x] Initial loading uses view-appropriate skeletons and background refresh retains usable results with a busy indication.
@@ -129,9 +129,9 @@ Use this checklist to verify the delivered implementation and evidence against t
 - [x] At desktop `lg`, the Student Shell/sidebar/header, discovery filters, two-column Grid, and full List are present.
   - Evidence: shell, filter panel, two-column grid and full-width list rows; round-2 manual re-test passed (ar/en) at desktop width.
 - [x] Below `lg`, results adapt and filters are reachable through a mobile trigger/panel.
-  - Missing: mobile filter trigger and panel (T048).
+  - Evidence: shared URL-owned filter dialog/trigger verified below lg in ar/en at 375/768px; draft apply/discard and keyboard behavior tested (T048/T059).
 - [x] On mobile, navigation, one-column Grid, compact/wrapping List, stacked toolbar, compact pagination, and no fixed-width overflow are verified.
-  - Missing: mobile layout (T049–T051).
+  - Evidence: ar/en mobile Grid/List/details screenshots at 375px and tablet/desktop at 768/1440px; final hero and empty geometry checks pass without horizontal overflow.
 - [x] RTL and LTR use logical placement and preserve readable keyboard/focus order.
   - Evidence: logical classes throughout; headless-Chrome geometry mirrored between /ar and /en; round-2 manual re-test passed (ar/en).
 
@@ -152,8 +152,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: `DiscoverySearchField` (sr-only label), `DiscoveryFilters` and `CountryFilter` (fieldset/legend, native checkboxes), `DiscoverySortSelect` (label); round-1 manual keyboard check passed in ar/en.
 - [x] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
   - Evidence: translated aria-pressed view/bookmark controls and labelled Details links; server pagination aria-current and navigation verified with a three-page browser fixture. Live multi-page data remains pending under T043.
-- [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
-  - Live announcements in place (role=status/alert); pagination `aria-current` is built but not yet seen with real data (one page).
+- [x] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
+  - Evidence: fixture browser interactions verify aria-current on pages 1/2/3 in ar/en; loading/error/empty and bookmark feedback use status/alert live regions. Live backend multi-page acceptance remains T043.
 - [x] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
   - Evidence: ar/en keyboard checks at 375/768px verify focus, Tab containment, Escape and focus return; navigation scroll lock/restoration and desktop-resize dismissal verified (T059).
 
@@ -169,16 +169,16 @@ Use this checklist to verify the delivered implementation and evidence against t
 ## 15. Verification
 
 - [x] `git diff --check` completes successfully.
-  - Evidence: passed at 066ccbf (exit 0).
+  - Evidence: final continuation check exits 0; see verification.md.
 - [x] `pnpm lint` completes successfully.
-  - Evidence: passed at 066ccbf (0 errors; 3 existing warnings in unrelated files).
+  - Evidence: final pnpm lint exits 0 with 0 errors and the same 3 pre-existing unrelated warnings; student-scoped ESLint clean.
 - [x] `pnpm exec tsc --noEmit` completes successfully.
-  - Evidence: passed at 066ccbf (exit 0).
+  - Evidence: final continuation check exits 0; see verification.md.
 - [x] `node --test tests/student-scholarship-discovery.test.mjs` completes successfully.
-  - Evidence: 26/26 passed at 066ccbf (`pnpm test:scholarship-discovery`).
+  - Evidence: required command exits 0; --test-isolation=none reports 90/90 individual tests. Relevant shell/numeral tests add 21 passing tests (111 total).
 - [x] `pnpm build` completes successfully.
-  - Evidence: passed at 066ccbf (exit 0). The new routes do not exist yet, so re-run at T065.
-- [ ] Actual test results plus RTL/LTR, responsive, and Figma-convergence evidence are recorded in Feature 005 verification documentation.
-  - Missing: no Feature 005 verification document yet (T066).
+  - Evidence: final production build exits 0, including /[locale]/student/scholarships/[id]; 26 static pages generated. Existing Google Font required approved network access; middleware deprecation remains.
+- [x] Actual test results plus RTL/LTR, responsive, and Figma-convergence evidence are recorded in Feature 005 verification documentation.
+  - Evidence: verification.md records final automated counts, ar/en RTL/LTR responsive/state/keyboard/pagination fixture results, Figma comparison, corrections/commits and live-backend limitations.
 
-CHECKLIST READY FOR /speckit.implement
+Frontend continuation verified; live multi-page acceptance remains open under T043.

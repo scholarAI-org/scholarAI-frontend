@@ -115,7 +115,7 @@
 - [x] T042 Add bounded pagination-window/ellipsis helper and tests for first/middle/last/small/large windows.
   - Evidence: `lib/pagination.ts` `getPageWindow` (first/last, current ±1, ellipses, at most 7 slots); tests/student-scholarship-discovery.test.mjs covers empty, small, first, middle, last, large and clamped windows plus unique keys for every page up to 40.
 - [ ] T043 Implement accessible pagination from server `page`, `page_size`, and `total_pages`, including Previous/Next, disabled states, `aria-current`, URL update, and replace-based out-of-range reconciliation.
-  - Built: `DiscoveryPagination` (window, Previous/Next, `aria-current`, push mode, focus/scroll) and out-of-range reconcile (replace + notice), approved as built; window and reconcile logic tested in tests/student-scholarship-discovery.test.mjs. Open: the multi-page UI cannot be exercised with real data (7 published scholarships = one page); verify once there are more than 20 published scholarships (see backend-issues.md).
+  - Built: `DiscoveryPagination` (window, Previous/Next, `aria-current`, push mode, focus/scroll) and out-of-range reconcile (replace + notice), approved as built; window and reconcile logic tested in tests/student-scholarship-discovery.test.mjs. Open: the multi-page UI cannot be exercised with real data (7 published scholarships = one page); verify once there are more than 20 published scholarships (see backend-issues.md). Continuation: ar/en three-page fixture browser tests now verify Next/Previous/page-button URL updates, first/last disabled states, aria-current and page 999 replacement to page 3; the original live-data acceptance remains open.
 - [x] T044 Implement Grid/List skeletons and background-refresh busy behavior without removing usable results.
   - Evidence: grid/list `ScholarshipSkeletons` on first load, previous results kept with the updating status (`getDiscoveryResultsState`, tested in tests/student-scholarship-discovery.test.mjs); round-2 manual re-test passed (ar/en).
 - [x] T045 Implement distinct no-scholarships/no-matches empty states with real edit-search/clear actions.
@@ -170,7 +170,11 @@
 
 ## Phase 12 — Tests and final verification
 
-- [ ] T063 Run `node --test tests/student-scholarship-discovery.test.mjs`.
-- [ ] T064 Run `git diff --check`, `pnpm lint`, and `pnpm exec tsc --noEmit`.
-- [ ] T065 Run `pnpm build`; record only concrete external/environment blockers.
-- [ ] T066 Update Feature 005 verification/checklist documentation with actual test results and RTL/LTR, responsive, and Figma evidence.
+- [x] T063 Run `node --test tests/student-scholarship-discovery.test.mjs`.
+  - Evidence: Required node --test command exits 0; individual discovery/details count exposed with --test-isolation=none is 90/90. Student-layout 15/15 and numeral 6/6 tests also pass (111 total).
+- [x] T064 Run `git diff --check`, `pnpm lint`, and `pnpm exec tsc --noEmit`.
+  - Evidence: Final git diff --check and tsc --noEmit exit 0. pnpm lint exits 0 with 0 errors and the same 3 unrelated warnings; student-scoped ESLint clean. Stale generated route types were regenerated before final verification.
+- [x] T065 Run `pnpm build`; record only concrete external/environment blockers.
+  - Evidence: Final network-enabled pnpm build exits 0: successful production compilation/typecheck and 26 generated static pages, including the dynamic details route. Initial sandbox font-fetch failure resolved by approved build access; existing middleware deprecation remains.
+- [x] T066 Update Feature 005 verification/checklist documentation with actual test results and RTL/LTR, responsive, and Figma evidence.
+  - Evidence: verification.md records initial worktree/preservation, corrections, commits, exact automated counts, bilingual responsive/state/keyboard/pagination fixture results, Figma scope comparison, and explicit live-backend limitations. T043 and the three existing follow-ups remain unchecked.
