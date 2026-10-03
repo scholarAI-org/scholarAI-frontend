@@ -108,8 +108,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: multi-page optimistic and precise-rollback tests in tests/student-scholarship-discovery.test.mjs.
 - [x] Discovery, detail, and saved-list `is_saved` state remain coherent after success or failure.
   - Evidence: optimistic update covers discoveries() and detail(id); rollback per card; settlement invalidates discoveries, detail and saved lists (tests in tests/student-scholarship-discovery.test.mjs).
-- [ ] Save, Remove saved, pending, and failure feedback have accessible localized labels.
-  - Missing: bookmark labels and feedback (T039).
+- [x] Save, Remove saved, pending, and failure feedback have accessible localized labels.
+  - Evidence: components/ScholarshipBookmark.tsx (bookmark.saveFor/removeFor, aria-busy spinner, polite bookmark.error); round-3 manual check passed (ar/en).
 
 ## 10. Pagination and states
 

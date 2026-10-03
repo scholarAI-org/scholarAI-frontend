@@ -92,8 +92,8 @@
   - Evidence: `ScholarshipMatchBadge` renders `getMatchBadgeDisplay(match)` only; it returns null for absent/empty/invalid data and the adapter always sets `match: null`; authoritative fixture renders as given (tests/student-scholarship-discovery.test.mjs).
 - [x] T034 Implement results composition and semantic `aria-pressed` Grid/List toggle; changing view must not change URL, page, filters, sort, discovery query, or filter-options query.
   - Evidence: `ScholarshipResults` renders the same model as Grid or List from in-memory view state; QueryObserver test proves no URL/key/query change; round-2 manual re-test passed (ar/en).
-- [ ] T035 Test shared-model rendering, nullable data, no fake match badge, future authoritative match fixture, presentation-only switching, and scholarship image policy: native `<img>`, lazy loading, alt behavior, malformed/load-error/local-neutral fallback, no Figma runtime fallback, no global lint disable or broad `next.config` host allowlist, and any required lint suppression component-local only.
-  - Partial: tests/student-scholarship-discovery.test.mjs covers nullable/wrongly typed fields, no default match, a future authoritative match fixture, presentation-only switching (QueryObserver) and the image policy (http(s) only, local fallback, lazy, alt, single component-local suppression, no global ESLint change). Missing: rendered-card checks (no React test harness); covered by the manual checklist.
+- [x] T035 Test shared-model rendering, nullable data, no fake match badge, future authoritative match fixture, presentation-only switching, and scholarship image policy: native `<img>`, lazy loading, alt behavior, malformed/load-error/local-neutral fallback, no Figma runtime fallback, no global lint disable or broad `next.config` host allowlist, and any required lint suppression component-local only.
+  - Evidence: tests/student-scholarship-discovery.test.mjs covers nullable and wrongly typed fields, rule A1 and multi-level labels, no default match plus a future authoritative fixture, view switching without refetch (QueryObserver), and the image policy (URL filter, onError fallback, server render with a fixed box, single component-local suppression); rendered cards checked in the round-2 and round-3 manual checks.
 
 ## Phase 6 — Bookmark mutations
 
@@ -103,8 +103,8 @@
   - Evidence: optimistic `is_saved` in every cached discoveries() page holding the card and in detail(id); rollback restores only that card per entry; tests in tests/student-scholarship-discovery.test.mjs (multi-page update, rollback that keeps other cards' changes); headless Chrome: a failing save rolled back.
 - [x] T038 On settlement invalidate only relevant `discoveries()`, `detail(id)`, and `saved()` queries; never invalidate `studentScholarshipKeys.all`.
   - Evidence: onSettled invalidates only discoveries(), detail(id) and saved lists; a test in tests/student-scholarship-discovery.test.mjs asserts filter-options, profile, auth and other details stay valid (fails if `all` is invalidated).
-- [ ] T039 Add localized accessible Save/Remove labels, pending state, and failure feedback to Grid and List controls.
-  - Built: `ScholarshipBookmark` (aria-pressed, saveFor/removeFor names, aria-busy spinner, polite error next to the button, focus ring) on grid and list; headless Chrome confirmed labels, rollback announcement and Space/Enter. Awaiting manual check (screen reader and visual).
+- [x] T039 Add localized accessible Save/Remove labels, pending state, and failure feedback to Grid and List controls.
+  - Evidence: `ScholarshipBookmark` (aria-pressed, saveFor/removeFor names, aria-busy spinner, polite error beside the button, focus ring) on grid and list; headless Chrome checks; round-3 manual check passed (ar/en): save/unsave, fast double-click, rollback with announcement, keyboard, grid and list.
 - [x] T040 Test save/unsave method/ID, duplicate prevention, optimistic update/rollback, and targeted cache coherence.
   - Evidence: five bookmark tests in tests/student-scholarship-discovery.test.mjs with a real QueryClient: save/unsave endpoint and method, optimistic update across pages, precise rollback, duplicate blocking, targeted invalidation (mutation checks: removing the guard or invalidating `all` fails them).
 
@@ -122,8 +122,8 @@
   - Evidence: `DiscoveryEmptyState` (Figma 2264:4108) noScholarships vs noMatches with edit search/clear filters; selection tested in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en). Filter-driven no-matches results are currently caused by backend data: see backend-issues.md.
 - [x] T046 Implement truthful auth, 422, generic retryable, malformed-card, loading/error/empty live states.
   - Evidence: `DiscoveryErrorState` (403, 422 + clear filters, generic + retry), 401 via AuthProvider, malformed cards in place, canceled requests never error (tests in tests/student-scholarship-discovery.test.mjs); round-2 manual re-test passed (ar/en).
-- [ ] T047 Test deadline cases, counts/plurals, pagination/reconciliation, skeleton/refresh, empty variants, and errors.
-  - Partial: tests/student-scholarship-discovery.test.mjs covers deadlines, pagination window and reconciliation, loading/updating, every error type, noScholarships vs noMatches and malformed cards; tests/student-layout.test.mjs and tests/i18n-numerals.test.mjs cover counts and plurals. Missing: rendered-state checks (no React test harness); covered by the manual checklist.
+- [x] T047 Test deadline cases, counts/plurals, pagination/reconciliation, skeleton/refresh, empty variants, and errors.
+  - Evidence: tests/student-scholarship-discovery.test.mjs covers deadlines (time zones, midnight, DST), pagination window and out-of-range reconciliation, loading/updating, every error type, empty variants and malformed cards; tests/student-layout.test.mjs and tests/i18n-numerals.test.mjs cover counts and plurals; rendered states checked manually in rounds 2-3. The multi-page pagination UI itself remains open under T043.
 
 ## Phase 8 — Responsive and mobile behavior
 
