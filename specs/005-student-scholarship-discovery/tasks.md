@@ -97,11 +97,16 @@
 
 ## Phase 6 — Bookmark mutations
 
-- [ ] T036 Implement `useScholarshipBookmark` with a per-scholarship pending guard and real POST/DELETE selected by `isSaved`.
-- [ ] T037 Optimistically snapshot/update only discovery caches containing the ID, `detail(id)`, and the `saved()` cache; roll back exact snapshots on failure.
-- [ ] T038 On settlement invalidate only relevant `discoveries()`, `detail(id)`, and `saved()` queries; never invalidate `studentScholarshipKeys.all`.
+- [x] T036 Implement `useScholarshipBookmark` with a per-scholarship pending guard and real POST/DELETE selected by `isSaved`.
+  - Evidence: `lib/bookmark-cache.ts` + `useScholarshipBookmark`: per-ID pending guard via the mutation cache, POST/DELETE chosen by `isSaved`; endpoint/method and duplicate-blocking tests in tests/student-scholarship-discovery.test.mjs; headless Chrome: a fast double-click sent one POST.
+- [x] T037 Optimistically snapshot/update only discovery caches containing the ID, `detail(id)`, and the `saved()` cache; roll back exact snapshots on failure.
+  - Evidence: optimistic `is_saved` in every cached discoveries() page holding the card and in detail(id); rollback restores only that card per entry; tests in tests/student-scholarship-discovery.test.mjs (multi-page update, rollback that keeps other cards' changes); headless Chrome: a failing save rolled back.
+- [x] T038 On settlement invalidate only relevant `discoveries()`, `detail(id)`, and `saved()` queries; never invalidate `studentScholarshipKeys.all`.
+  - Evidence: onSettled invalidates only discoveries(), detail(id) and saved lists; a test in tests/student-scholarship-discovery.test.mjs asserts filter-options, profile, auth and other details stay valid (fails if `all` is invalidated).
 - [ ] T039 Add localized accessible Save/Remove labels, pending state, and failure feedback to Grid and List controls.
-- [ ] T040 Test save/unsave method/ID, duplicate prevention, optimistic update/rollback, and targeted cache coherence.
+  - Built: `ScholarshipBookmark` (aria-pressed, saveFor/removeFor names, aria-busy spinner, polite error next to the button, focus ring) on grid and list; headless Chrome confirmed labels, rollback announcement and Space/Enter. Awaiting manual check (screen reader and visual).
+- [x] T040 Test save/unsave method/ID, duplicate prevention, optimistic update/rollback, and targeted cache coherence.
+  - Evidence: five bookmark tests in tests/student-scholarship-discovery.test.mjs with a real QueryClient: save/unsave endpoint and method, optimistic update across pages, precise rollback, duplicate blocking, targeted invalidation (mutation checks: removing the guard or invalidating `all` fails them).
 
 ## Phase 7 — Pagination, loading, empty, and error states
 

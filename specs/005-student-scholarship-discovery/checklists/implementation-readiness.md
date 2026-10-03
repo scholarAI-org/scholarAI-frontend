@@ -51,8 +51,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: 30-minute stale time (src/features/student/scholarship-discovery/hooks/useScholarshipFilterOptions.ts:6-11); independent key; tests/student-scholarship-discovery.test.mjs:449.
 - [x] Switching Grid/List alone causes neither discovery nor filter-options refetch.
   - Evidence: `lib/queries.ts` builds options from the URL query only; tests/student-scholarship-discovery.test.mjs drives real QueryObservers through repeated view switches with one discovery and one filter-options request (and fails if the view leaks into the query).
-- [ ] Bookmark updates and settlement are targeted; settlement never invalidates `studentScholarshipKeys.all`.
-  - Missing: bookmark mutation hook not implemented (T036–T038).
+- [x] Bookmark updates and settlement are targeted; settlement never invalidates `studentScholarshipKeys.all`.
+  - Evidence: `bookmarkMutationOptions` onMutate/onSettled; targeted-invalidation test in tests/student-scholarship-discovery.test.mjs.
 
 ## 5. Student Shell
 
@@ -78,8 +78,8 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 7. Scholarship rendering
 
-- [ ] Grid and List consume the same normalized `ScholarshipCardModel` and use the same bookmark/details actions.
-  - Missing: Grid and List components not built (T031, T032).
+- [x] Grid and List consume the same normalized `ScholarshipCardModel` and use the same bookmark/details actions.
+  - Evidence: both render `ScholarshipCardParts` and the same `ScholarshipBookmark` from one `ScholarshipCardModel`.
 - [x] Both views safely omit or represent nullable backend metadata without inventing facts.
   - Evidence: adapter + rule A1 (`lib/card-labels.ts`) hide only null/blank values; real data with null fields renders cleanly; tests in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en).
 - [x] No compatibility score, eligibility result, match reason, or match badge is fabricated.
@@ -102,12 +102,12 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 9. Bookmark behavior
 
-- [ ] Unsaved cards issue one POST save request and saved cards issue one DELETE unsave request, with a per-scholarship pending guard.
-  - Missing: `useScholarshipBookmark` not built (T036). API methods exist (src/features/student/scholarship-discovery/api/scholarships.ts:35-38).
-- [ ] Optimistic changes update only affected discovery, detail, and saved-list caches; a failed mutation restores exact snapshots.
-  - Missing: optimistic updates and rollback (T037).
-- [ ] Discovery, detail, and saved-list `is_saved` state remain coherent after success or failure.
-  - Missing: cache coherence (T038, T040, T055).
+- [x] Unsaved cards issue one POST save request and saved cards issue one DELETE unsave request, with a per-scholarship pending guard.
+  - Evidence: endpoint/method and duplicate-blocking tests in tests/student-scholarship-discovery.test.mjs; headless Chrome double-click sent one POST.
+- [x] Optimistic changes update only affected discovery, detail, and saved-list caches; a failed mutation restores exact snapshots.
+  - Evidence: multi-page optimistic and precise-rollback tests in tests/student-scholarship-discovery.test.mjs.
+- [x] Discovery, detail, and saved-list `is_saved` state remain coherent after success or failure.
+  - Evidence: optimistic update covers discoveries() and detail(id); rollback per card; settlement invalidates discoveries, detail and saved lists (tests in tests/student-scholarship-discovery.test.mjs).
 - [ ] Save, Remove saved, pending, and failure feedback have accessible localized labels.
   - Missing: bookmark labels and feedback (T039).
 

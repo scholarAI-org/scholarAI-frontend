@@ -1546,3 +1546,173 @@ test('multi-level study values translate each known part and keep unknown parts'
     ],
   });
 });
+
+// --- Bookmarks (T036-T040) ------------------------------------------------------------------
+
+const bookmarkSetup = () => {
+  const { QueryClient } = loadModule('@tanstack/react-query');
+  const client = new QueryClient();
+  const card = (id, isSaved = false) => ({ id, title: `S${id}`, is_saved: isSaved });
+  const page = (items, pageNo = 1) => ({
+    items,
+    total: 40,
+    page: pageNo,
+    page_size: 20,
+    total_pages: 2,
+  });
+  const page1Key = studentScholarshipKeys.discovery(parse(''));
+  const page2Key = studentScholarshipKeys.discovery(parse('page=2'));
+  const filteredKey = studentScholarshipKeys.discovery(parse('country=Germany'));
+  client.setQueryData(page1Key, page([card(7), card(8)]));
+  client.setQueryData(page2Key, page([card(9), card(10)], 2));
+  client.setQueryData(filteredKey, page([card(7), card(11, true)]));
+  client.setQueryData(studentScholarshipKeys.detail(7), { ...card(7), source: 'manual' });
+  return { client, page1Key, page2Key, filteredKey };
+};
+const savedOf = (client, key, id) =>
+  (client.getQueryData(key).items ?? [client.getQueryData(key)]).find((item) => item.id === id)
+    ?.is_saved;
+// Each request waits until the test answers it (in order); requests are logged.
+const controlledFetch = () => {
+  const calls = [];
+  const waiting = [];
+  globalThis.fetch = (url, init) => {
+    calls.push([init?.method ?? 'GET', new URL(url).pathname]);
+    return new Promise((resolve) => waiting.push(resolve));
+  };
+  const release = async (status = 200) => {
+    for (let i = 0; i < 50 && waiting.length === 0; i += 1) await flush();
+    const resolve = waiting.shift();
+    assert.ok(resolve, 'a request is waiting');
+    resolve(
+      new Response(
+        JSON.stringify(status === 200 ? { scholarship_id: 1, is_saved: true } : { detail: 'x' }),
+        {
+          status,
+        }
+      )
+    );
+  };
+  return { calls, release };
+};
+const flush = () => new Promise((r) => setTimeout(r, 0));
+
+test('bookmark: save/unsave map to POST/DELETE on /api/scholarships/{id}/save', async () => {
+  const { toggleScholarshipBookmark } = load('lib/bookmark-cache.ts');
+  const { client } = bookmarkSetup();
+  const net = controlledFetch();
+  const saving = toggleScholarshipBookmark(client, 7, false);
+  await flush();
+  await net.release();
+  await saving;
+  const unsaving = toggleScholarshipBookmark(client, 11, true);
+  await flush();
+  await net.release();
+  await unsaving;
+  assert.deepEqual(net.calls, [
+    ['POST', '/api/scholarships/7/save'],
+    ['DELETE', '/api/scholarships/11/save'],
+  ]);
+  client.clear();
+});
+
+test('bookmark: optimistic update reaches every cached page holding the card and its detail', async () => {
+  const { toggleScholarshipBookmark } = load('lib/bookmark-cache.ts');
+  const { client, page1Key, page2Key, filteredKey } = bookmarkSetup();
+  const page2Before = client.getQueryData(page2Key);
+  const net = controlledFetch();
+  const saving = toggleScholarshipBookmark(client, 7, false);
+  await flush();
+  // Before the server answers:
+  assert.equal(savedOf(client, page1Key, 7), true);
+  assert.equal(savedOf(client, filteredKey, 7), true);
+  assert.equal(client.getQueryData(studentScholarshipKeys.detail(7)).is_saved, true);
+  assert.equal(savedOf(client, page1Key, 8), false, 'other cards untouched');
+  assert.equal(savedOf(client, filteredKey, 11), true, 'other cards untouched');
+  assert.equal(client.getQueryData(page2Key), page2Before, 'pages without the card keep identity');
+  await net.release();
+  await saving;
+  client.clear();
+});
+
+test('bookmark: a failure restores only that card, keeping changes made meanwhile', async () => {
+  const { toggleScholarshipBookmark } = load('lib/bookmark-cache.ts');
+  const { client, page1Key, filteredKey } = bookmarkSetup();
+  const net = controlledFetch();
+  const errors = [];
+  const saving = toggleScholarshipBookmark(client, 7, false, {
+    onError: (e) => errors.push(e.status),
+  });
+  await flush();
+  // Meanwhile another card on the same cached pages changes (e.g. its own bookmark).
+  client.setQueryData(page1Key, (data) => ({
+    ...data,
+    items: data.items.map((item) => (item.id === 8 ? { ...item, is_saved: true } : item)),
+  }));
+  client.setQueryData(filteredKey, (data) => ({
+    ...data,
+    items: data.items.map((item) => (item.id === 11 ? { ...item, is_saved: false } : item)),
+  }));
+  await net.release(500);
+  await saving;
+  assert.deepEqual(errors, [500]);
+  assert.equal(savedOf(client, page1Key, 7), false, 'card 7 rolled back');
+  assert.equal(savedOf(client, filteredKey, 7), false, 'card 7 rolled back');
+  assert.equal(client.getQueryData(studentScholarshipKeys.detail(7)).is_saved, false);
+  assert.equal(savedOf(client, page1Key, 8), true, 'card 8 change kept');
+  assert.equal(savedOf(client, filteredKey, 11), false, 'card 11 change kept');
+  client.clear();
+});
+
+test('bookmark: a second click while the request is in flight is ignored', async () => {
+  const { toggleScholarshipBookmark, isBookmarkPending } = load('lib/bookmark-cache.ts');
+  const { client, page1Key } = bookmarkSetup();
+  const net = controlledFetch();
+  const first = toggleScholarshipBookmark(client, 7, false);
+  const second = toggleScholarshipBookmark(client, 7, false);
+  const third = toggleScholarshipBookmark(client, 7, true); // stale state, same card
+  assert.ok(first);
+  assert.equal(second, null);
+  assert.equal(third, null);
+  assert.equal(isBookmarkPending(client, 7), true);
+  await flush();
+  assert.equal(net.calls.length, 1, 'one request');
+  // A different card is not blocked.
+  const other = toggleScholarshipBookmark(client, 8, false);
+  assert.ok(other);
+  await flush();
+  assert.equal(net.calls.length, 2);
+  await net.release();
+  await net.release();
+  await Promise.all([first, other]);
+  assert.equal(isBookmarkPending(client, 7), false);
+  assert.equal(savedOf(client, page1Key, 7), true);
+  client.clear();
+});
+
+test('bookmark: settling invalidates only discoveries, the detail and saved lists', async () => {
+  const { toggleScholarshipBookmark } = load('lib/bookmark-cache.ts');
+  const { client, page1Key, page2Key } = bookmarkSetup();
+  const savedKey = studentScholarshipKeys.saved();
+  const otherDetail = studentScholarshipKeys.detail(99);
+  const untouched = [
+    studentScholarshipKeys.filterOptions(),
+    ['profile', 'personal-information'],
+    ['auth', 'current-user'],
+    otherDetail,
+  ];
+  client.setQueryData(savedKey, []);
+  for (const key of untouched) client.setQueryData(key, { id: 99 });
+  const net = controlledFetch();
+  const saving = toggleScholarshipBookmark(client, 7, false);
+  await flush();
+  await net.release();
+  await saving;
+  for (const key of [page1Key, page2Key, studentScholarshipKeys.detail(7), savedKey]) {
+    assert.equal(client.getQueryState(key).isInvalidated, true, JSON.stringify(key));
+  }
+  for (const key of untouched) {
+    assert.equal(client.getQueryState(key).isInvalidated, false, JSON.stringify(key));
+  }
+  client.clear();
+});
