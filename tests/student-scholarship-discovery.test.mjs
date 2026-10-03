@@ -1391,3 +1391,35 @@ test('a request canceled by an unmount never leaves the results in an error stat
   stopSecond();
   client.clear();
 });
+
+// --- Country dropdown keyboard movement (item 4) ---------------------------------------
+
+test('dropdown arrow keys move between options and wrap; other keys do not move', () => {
+  const { getRovingFocusIndex } = load('lib/roving-focus.ts');
+  assert.equal(getRovingFocusIndex(-1, 4, 'ArrowDown'), 0);
+  assert.equal(getRovingFocusIndex(0, 4, 'ArrowDown'), 1);
+  assert.equal(getRovingFocusIndex(3, 4, 'ArrowDown'), 0);
+  assert.equal(getRovingFocusIndex(0, 4, 'ArrowUp'), 3);
+  assert.equal(getRovingFocusIndex(-1, 4, 'ArrowUp'), 3);
+  assert.equal(getRovingFocusIndex(2, 4, 'ArrowUp'), 1);
+  assert.equal(getRovingFocusIndex(2, 4, 'Home'), 0);
+  assert.equal(getRovingFocusIndex(1, 4, 'End'), 3);
+  assert.equal(getRovingFocusIndex(1, 4, ' '), null, 'Space toggles natively, no move');
+  assert.equal(getRovingFocusIndex(1, 4, 'Tab'), null);
+  assert.equal(getRovingFocusIndex(0, 0, 'ArrowDown'), null);
+});
+
+test('the country dropdown is an accessible overlay that keeps selected values', () => {
+  const source = fs.readFileSync(path.join(featurePath, 'components/CountryFilter.tsx'), 'utf8');
+  assert.match(source, /aria-expanded=\{isOpen\}/);
+  assert.match(source, /aria-controls=\{panelId\}/);
+  assert.match(source, /hidden=\{!isOpen\}/);
+  assert.match(source, /absolute inset-x-0 top-full/, 'panel overlays instead of pushing content');
+  assert.match(source, /event\.key === 'ArrowDown' && !isOpen/, 'ArrowDown opens');
+  assert.match(source, /event\.key === 'Escape'/);
+  assert.match(source, /addEventListener\('pointerdown'/, 'outside click closes');
+  assert.match(source, /mergeCountryOptions\(options\.data\?\.countries \?\? \[\], selected\)/);
+  for (const state of ['loading', 'unavailable', 'retry', 'empty']) {
+    assert.match(source, new RegExp(`filters\\.country\\.${state}`), state);
+  }
+});
