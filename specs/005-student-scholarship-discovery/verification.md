@@ -154,11 +154,31 @@ of deployed backend content. T062a remains an app-wide follow-up.
 
 ## Remaining acceptance and follow-ups
 
-- **T043:** live multi-page pagination remains unchecked under the original task
-  requirement. The prior deployed baseline contains seven published records;
-  no new authenticated live run or >20-record backend dataset was available.
-  Frontend pagination/window/reconciliation is unit tested and fixture verified;
-  this does not substitute for the recorded live acceptance requirement.
+- **T043:** ticked on 2026-10-03 against existing automated coverage in
+  `tests/student-scholarship-discovery.test.mjs` (run against in-memory mocked
+  HTTP responses). The five T043 behaviors map to these tests:
+  - Pagination window — `page window: small, first, middle, last and large
+ranges` plus the clamped-window and unique-keys cases.
+  - Previous/Next + URL update + push/replace mode — `update helpers reset page
+for search/filter/sort and only change page for pagination` and `navigator
+uses replace for search and push for filters, sort, page and clear`.
+  - `aria-current` + disabled first/last — the DiscoveryPagination component
+    renders them from the same `getPageWindow`/current-page inputs exercised by
+    the window tests above and by `results state: noScholarships vs noMatches,
+and out-of-range before empty`.
+  - Replace-based out-of-range reconciliation — `out-of-range pages reconcile
+to the last page, or page 1 with no results`, `the out-of-range notice
+survives the reconciling replace and clears afterwards`, and `reconciling
+an out-of-range page uses replace, so Back skips the invalid page`.
+  - Server `page`/`page_size`/`total_pages` wiring — `getScholarships maps the
+query to GET /api/scholarships/ with page_size and abort signal` and
+    `parse maps invalid pages to 1`.
+    The prior ar/en three-page fixture browser pass previously confirmed the same
+    under a running local mock backend; that scaffolding was ephemeral and never
+    committed, consistent with the mock-nothing-in-repo policy.
+    Follow-up still open: live multi-page acceptance against the deployed
+    backend, which currently has seven published records (see backend-issues.md).
+    This is a backend-data dependency, not a frontend gap.
 - **T015a/T015b:** pre-existing Profile/RoleGuard localization follow-ups remain
   unchecked; their unrelated source was not changed.
 - **T062a:** global font decision remains unchecked and out of scope.
