@@ -973,5 +973,205 @@
       "saving": "Saving changes…",
       "saved": "Saved successfully"
     }
+  },
+  "StudentLayout": {
+    "brand": {
+      "name": "PsScholar",
+      "tagline": "Palestinian scholarships platform"
+    },
+    "navigationLabel": "Student navigation",
+    "openNavigation": "Open navigation menu",
+    "closeNavigation": "Close navigation menu",
+    "languageSwitch": {
+      "label": "التبديل إلى العربية",
+      "short": "ع"
+    },
+    "logout": "Log out",
+    "logoutPending": "Logging out…",
+    "identity": {
+      "fallbackName": "Student",
+      "role": "Student"
+    },
+    "navGroups": { "discover": "Discover", "personal": "Personal" },
+    "nav": {
+      "profile": "Profile",
+      "scholarships": "Search scholarships"
+    },
+    "pages": {
+      "profile": {
+        "title": "Profile",
+        "description": "The more complete your profile, the more accurate your recommendations and match rates."
+      },
+      "scholarships": {
+        "title": "Explore scholarships and opportunities",
+        "description": "Browse available scholarships and filter them to suit you."
+      },
+      "scholarshipDetails": {
+        "title": "Scholarship details",
+        "description": "Key information about this scholarship."
+      }
+    }
+  },
+  "StudentScholarshipDiscovery": {
+    "search": {
+      "label": "Search scholarships",
+      "placeholder": "Search by title, university, or country",
+      "clear": "Clear search"
+    },
+    "sort": {
+      "label": "Sort by",
+      "newest": "Newest",
+      "deadlineSoon": "Deadline soonest"
+    },
+    "view": {
+      "label": "Results view",
+      "grid": "Grid view",
+      "list": "List view"
+    },
+    "filters": {
+      "title": "Filters",
+      "clearAll": "Clear all",
+      "academicLevel": {
+        "legend": "Academic level",
+        "bachelor": "Bachelor's",
+        "master": "Master's",
+        "phd": "PhD",
+        "exchange": "Student exchange"
+      },
+      "funding": {
+        "legend": "Funding type",
+        "full": "Fully funded",
+        "partial": "Partially funded"
+      },
+      "opportunity": {
+        "legend": "Opportunity type",
+        "scholarship": "Scholarship",
+        "academic_exchange": "Academic exchange",
+        "research_fellowship": "Research fellowship",
+        "training": "Training"
+      },
+      "country": {
+        "legend": "Country",
+        "placeholder": "All countries",
+        "loading": "Loading countries…",
+        "empty": "No countries available",
+        "unavailable": "Countries couldn't be loaded.",
+        "retry": "Try again",
+        "selected": "{count, plural, =0 {No countries selected} one {{count, number, integer} country selected} other {{count, number, integer} countries selected}}"
+      }
+    },
+    "chips": { "all": "All" },
+    "filtersDialog": {
+      "activeCount": "{count, plural, =0 {No active filters} one {{count, number, integer} active filter} other {{count, number, integer} active filters}}",
+      "label": "Scholarship filters",
+      "open": "Open filters",
+      "close": "Close filters",
+      "apply": "Show results",
+      "clear": "Clear all"
+    },
+    "results": {
+      "count": "{count, plural, =0 {No scholarships} one {{count, number, integer} scholarship} other {{count, number, integer} scholarships}}",
+      "updating": "Updating results…",
+      "loading": "Loading scholarships…"
+    },
+    "card": {
+      "untitled": "Untitled scholarship",
+      "details": "View details",
+      "detailsFor": "View details for {title}",
+      "matchLevel": { "high": "High match", "medium": "Medium match", "low": "Low match" },
+      "matchScore": "{score}% match",
+      "imageAlt": "Image for {title}",
+      "noDeadline": "No deadline",
+      "deadlineNotSpecified": "Deadline not specified",
+      "deadline": "Deadline: {date}",
+      "deadlineToday": "Closes today",
+      "deadlinePassed": "Deadline passed",
+      "daysLeft": "{count, plural, =0 {Closes today} one {{count, number, integer} day left} other {{count, number, integer} days left}}"
+    },
+    "bookmark": {
+      "save": "Save scholarship",
+      "remove": "Remove saved scholarship",
+      "saveFor": "Save {title}",
+      "removeFor": "Remove {title} from saved",
+      "pending": "Updating…",
+      "error": "Couldn't update saved scholarships. Try again."
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page",
+      "previousShort": "Previous",
+      "nextShort": "Next",
+      "page": "Page {page}",
+      "currentPage": "Page {page}, current page",
+      "outOfRange": "Page {requested} doesn't exist, so page {page} is shown."
+    },
+    "empty": {
+      "noScholarships": {
+        "title": "No scholarships available yet",
+        "description": "Check back later for new opportunities."
+      },
+      "noMatches": {
+        "title": "No results match your search",
+        "description": "Try different keywords or clear some filters.",
+        "editSearch": "Edit search",
+        "clearFilters": "Clear filters"
+      }
+    },
+    "errors": {
+      "unauthorized": "Your session has ended. Please log in again.",
+      "forbidden": "You don't have access to scholarship search.",
+      "validation": "Some search options aren't valid. Adjust them and try again.",
+      "generic": "Scholarships couldn't be loaded.",
+      "malformedCard": "This scholarship couldn't be displayed.",
+      "retry": "Try again"
+    }
+  },
+  "StudentScholarshipDetails": {
+    "backToDiscovery": "Back to scholarship search",
+    "loading": "Loading scholarship…",
+    "invalidId": "This scholarship link isn't valid.",
+    "summary": "Scholarship summary",
+    "sections": {
+      "about": "About this scholarship"
+    },
+    "notFound": {
+      "title": "Scholarship not found",
+      "description": "It may have been removed or is no longer available."
+    },
+    "errors": {
+      "unauthorized": "Your session has ended. Please log in again.",
+      "forbidden": "You don't have access to this scholarship.",
+      "generic": "The scholarship couldn't be loaded.",
+      "retry": "Try again"
+    },
+    "fields": {
+      "provider": "Provider",
+      "university": "University",
+      "country": "Country",
+      "studyLevel": "Study level",
+      "fundingType": "Funding",
+      "opportunityType": "Opportunity type",
+      "deadline": "Deadline",
+      "fundingAmount": "Funding amount",
+      "languageRequirements": "Language requirements",
+      "majors": "Majors",
+      "eligibilityCriteria": "Eligibility criteria",
+      "requiredDocuments": "Required documents",
+      "apply": "How to apply",
+      "applyEmail": "Application email",
+      "applyPhone": "Application phone",
+      "source": "Source",
+      "publishedAt": "Published"
+    },
+    "applyNow": "Apply now",
+    "opensInNewTab": "(opens in a new tab)",
+    "notSpecified": "Not specified",
+    "bookmark": {
+      "save": "Save scholarship",
+      "remove": "Remove saved scholarship",
+      "pending": "Updating…",
+      "error": "Couldn't update saved scholarships. Try again."
+    }
   }
 }

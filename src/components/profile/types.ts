@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
 
 export interface ProfileUser {
@@ -22,15 +21,6 @@ export interface ProfileStep {
   label: string;
   number: string;
   status: StepStatus;
-}
-
-export interface SidebarMenuItem {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  href?: string;
-  active?: boolean;
-  badge?: string;
 }
 
 export type ProfileFieldKind = 'text' | 'select' | 'date' | 'phone';
