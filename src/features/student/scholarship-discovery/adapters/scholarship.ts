@@ -10,7 +10,8 @@ import type {
 const clean = (value: unknown) => (typeof value === 'string' && value.trim()) || undefined;
 // Backend text fields may be an array or one newline-separated string.
 export function toStringList(value?: readonly unknown[] | string | null): string[] {
-  const items = typeof value === 'string' ? value.split(/\r?\n/) : (value ?? []);
+  const items =
+    typeof value === 'string' ? value.split(/\r?\n/) : Array.isArray(value) ? value : [];
   return items.flatMap((item) => (typeof item === 'string' && item.trim() ? [item.trim()] : []));
 }
 export function toScholarshipCard(

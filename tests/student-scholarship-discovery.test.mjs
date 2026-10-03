@@ -424,7 +424,7 @@ test('API errors surface as ApiError with status, and 401/403/422 are not retrie
     assert.equal(error.status, 401);
     return true;
   });
-  for (const status of [401, 403, 422]) {
+  for (const status of [401, 403, 404, 422]) {
     assert.equal(shouldRetryScholarshipQuery(0, new ApiError('x', [], status)), false);
   }
   assert.equal(shouldRetryScholarshipQuery(0, new ApiError('x', [], 500)), true);
@@ -1811,4 +1811,333 @@ test('the active-filter count is the number of selected values', () => {
     5
   );
   assert.equal(countActiveFilters(parse('opportunity_type=training')), 1);
+});
+
+// --- Minimal details boundary (T052-T056) ----------------------------------------
+const { parseScholarshipId, getDetailsViewState } = load('lib/details-state.ts');
+const { scholarshipDetailQueryOptions } = load('lib/queries.ts');
+const { toSafeHref, getApplyLinks } = load('lib/safe-links.ts');
+const detailFixture = { ...card, ingestion_type: 'manual', source: 'manual' };
+
+test('details accept only canonical positive safe integer route IDs', () => {
+  for (const value of ['1', '7', '999', String(Number.MAX_SAFE_INTEGER)]) {
+    assert.equal(parseScholarshipId(value), Number(value));
+  }
+  for (const value of [
+    '0',
+    '-1',
+    'abc',
+    '7.0',
+    '01',
+    '',
+    ' 7',
+    '7 ',
+    '1e3',
+    '9007199254740992',
+    null,
+    7,
+  ]) {
+    assert.equal(parseScholarshipId(value), null, String(value));
+  }
+});
+
+test('invalid detail queries make zero requests, including forced refetch', async () => {
+  const { QueryClient, QueryObserver } = loadModule('@tanstack/react-query');
+  mockFetch(detailFixture);
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  try {
+    for (const id of [0, -1, NaN, Infinity, 1.5, Number.MAX_SAFE_INTEGER + 1]) {
+      const options = scholarshipDetailQueryOptions(id);
+      assert.equal(options.enabled, false);
+      const observer = new QueryObserver(client, { ...options, retry: false });
+      const unsubscribe = observer.subscribe(() => {});
+      await observer.refetch();
+      unsubscribe();
+    }
+    assert.equal(calls.length, 0);
+  } finally {
+    client.clear();
+  }
+});
+
+test('valid detail query uses the exact key, GET endpoint and AbortSignal', async () => {
+  mockFetch(detailFixture);
+  const options = scholarshipDetailQueryOptions(7);
+  assert.equal(options.enabled, true);
+  assert.deepEqual(options.queryKey, studentScholarshipKeys.detail(7));
+  const controller = new AbortController();
+  await options.queryFn({ signal: controller.signal });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url.pathname, '/api/scholarships/7');
+  assert.equal(calls[0].init.method ?? 'GET', 'GET');
+  assert.equal(calls[0].init.signal, controller.signal);
+});
+
+test('details distinguish invalid/loading/ready and all request errors with retry loading', () => {
+  const base = { id: card.id, data: undefined, error: null, isFetching: false };
+  assert.deepEqual(getDetailsViewState({ ...base, id: null }), { kind: 'invalid' });
+  assert.deepEqual(getDetailsViewState({ ...base, isFetching: true }), { kind: 'loading' });
+  assert.equal(getDetailsViewState({ ...base, data: detailFixture }).kind, 'ready');
+  for (const [status, reason] of [
+    [401, 'unauthorized'],
+    [403, 'forbidden'],
+    [404, 'notFound'],
+    [500, 'generic'],
+  ]) {
+    const error = new ApiError('failure', [], status);
+    assert.deepEqual(getDetailsViewState({ ...base, error }), { kind: 'error', reason });
+    assert.deepEqual(getDetailsViewState({ ...base, error, isFetching: true }), {
+      kind: 'loading',
+    });
+    assert.equal(shouldRetryScholarshipQuery(0, error), status === 500);
+  }
+  assert.deepEqual(getDetailsViewState({ ...base, error: new TypeError('network') }), {
+    kind: 'error',
+    reason: 'generic',
+  });
+  assert.equal(shouldRetryScholarshipQuery(0, new TypeError('network')), true);
+  assert.equal(shouldRetryScholarshipQuery(2, new TypeError('network')), false);
+});
+
+test('malformed detail payloads never succeed or freeze the manual retry', () => {
+  for (const data of [
+    null,
+    {},
+    [],
+    { ...detailFixture, id: 999 },
+    { ...detailFixture, source: {} },
+    { ...detailFixture, ingestion_type: 'fake' },
+    { ...detailFixture, is_saved: null },
+  ]) {
+    const base = { id: card.id, data, error: null, isFetching: false };
+    assert.deepEqual(getDetailsViewState(base), { kind: 'error', reason: 'generic' });
+    assert.deepEqual(getDetailsViewState({ ...base, isFetching: true }), { kind: 'loading' });
+  }
+});
+
+test('details normalize malformed optional lists and select only present factual fields', () => {
+  const { getDetailsFacts, getDetailsLists } = load('lib/details-fields.ts');
+  const details = toScholarshipDetails(
+    {
+      ...detailFixture,
+      title: '',
+      title_ar: null,
+      title_en: null,
+      organization_name: {},
+      university_name: null,
+      country: null,
+      study_level: null,
+      funding_type: null,
+      opportunity_type: null,
+      funding_amount: 42,
+      language_requirements: null,
+      published_at: 'bad date',
+      majors: {},
+      eligibility_criteria: 42,
+      required_documents: [' Passport ', null, ''],
+      source_url: 'javascript:alert(1)',
+    },
+    'ar'
+  );
+  assert.equal(details.title, undefined, 'view uses localized untitled fallback');
+  assert.deepEqual(
+    getDetailsFacts(details).map((fact) => fact.field),
+    ['deadline', 'source']
+  );
+  assert.equal(getDetailsFacts(details).find((fact) => fact.field === 'source').href, null);
+  assert.deepEqual(getDetailsLists(details), [{ field: 'requiredDocuments', items: ['Passport'] }]);
+  for (const locale of ['ar', 'en']) {
+    assert.equal(
+      toScholarshipDetails({ ...detailFixture, title_ar: 'عربي', title_en: 'English' }, locale)
+        .title,
+      locale === 'ar' ? 'عربي' : 'English'
+    );
+  }
+});
+
+test('backend links reject unsafe, malformed and unvalidated contacts', () => {
+  for (const value of [
+    'javascript:alert(1)',
+    'data:text/html,hi',
+    '/relative',
+    '//example.org',
+    'https:example.org',
+    'https://',
+    'https://user:pass@example.org',
+    'https://exa\nmple.org',
+    'mailto:bad',
+    'mailto:a@b.com?body=x',
+    'mailto:a%0d%0a@b.com',
+    'tel:abc',
+    'tel:---',
+    'tel:12',
+  ]) {
+    assert.equal(toSafeHref(value), null, value);
+  }
+  assert.deepEqual(
+    getApplyLinks({ applyLink: 'data:x', applyEmail: 'mailto:bad', applyPhone: 'tel:abc' }),
+    []
+  );
+  for (const value of [
+    'http://example.org/',
+    'https://example.org/apply',
+    'mailto:apply@example.org',
+    'tel:+123456789',
+  ])
+    assert.equal(toSafeHref(value), value);
+  assert.deepEqual(
+    getApplyLinks({
+      applyLink: 'https://example.org/apply',
+      applyEmail: 'apply@example.org',
+      applyPhone: '+1 (234) 567-890',
+    }).map(({ kind, href, external }) => ({ kind, href, external })),
+    [
+      { kind: 'link', href: 'https://example.org/apply', external: true },
+      { kind: 'email', href: 'mailto:apply@example.org', external: false },
+      { kind: 'phone', href: 'tel:+1234567890', external: false },
+    ]
+  );
+});
+
+test('details return to remembered discovery query with no storage or view/page_size', () => {
+  const {
+    rememberDiscoverySearch,
+    getRememberedDiscoverySearch,
+    getDiscoveryReturnHref,
+    forgetDiscoverySearch,
+  } = load('lib/discovery-return.ts');
+  forgetDiscoverySearch();
+  assert.equal(getDiscoveryReturnHref(getRememberedDiscoverySearch()), '/student/scholarships');
+  const search =
+    '?search=medicine&country=Germany&country=Japan&academic_level=master&sort=deadline_soon&page=3';
+  rememberDiscoverySearch(search);
+  assert.equal(
+    getDiscoveryReturnHref(getRememberedDiscoverySearch()),
+    '/student/scholarships' + search
+  );
+  const url = new URL(getDiscoveryReturnHref(search + '&view=list&page_size=99'), 'https://x.test');
+  assert.equal(url.searchParams.has('view'), false);
+  assert.equal(url.searchParams.has('page_size'), false);
+  const source = fs.readFileSync(path.join(featurePath, 'lib/discovery-return.ts'), 'utf8');
+  assert.doesNotMatch(source.replace(/\/\/[^\n]*/g, ''), /(?:localStorage|sessionStorage)\s*[.[]/);
+  forgetDiscoverySearch();
+});
+
+test('hostile description HTML is excluded and the thin route delegates to the shared boundary', () => {
+  const html = '<img src=x onerror=alert(1)><script>alert(1)</script><p>HTML must never render</p>';
+  const model = toScholarshipDetails({ ...detailFixture, description_html: html }, 'en');
+  assert.doesNotMatch(
+    JSON.stringify(model),
+    /onerror|<script>|HTML must never render|description_html|descriptionHtml/
+  );
+  for (const file of ['ScholarshipDetailsPage.tsx', 'ScholarshipDetailsView.tsx']) {
+    assert.doesNotMatch(
+      fs.readFileSync(path.join(featurePath, 'components', file), 'utf8'),
+      /dangerouslySetInnerHTML/
+    );
+  }
+  const route = fs.readFileSync(
+    path.join(srcPath, 'app/[locale]/student/scholarships/[id]/page.tsx'),
+    'utf8'
+  );
+  assert.doesNotMatch(route, /use client|StudentShell|RoleGuard/);
+  assert.match(route, /<ScholarshipDetailsPage rawId=\{id\}/);
+  const view = fs.readFileSync(
+    path.join(featurePath, 'components/ScholarshipDetailsView.tsx'),
+    'utf8'
+  );
+  assert.match(view, /rel: 'noopener noreferrer'/);
+  assert.match(view, /tCard\('card.untitled'\)/);
+});
+
+test('factual details render safely in Arabic and English with localized controls', () => {
+  const React = loadModule('react');
+  const { renderToStaticMarkup } = loadModule('react-dom/server');
+  const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+  const { IntlMessageFormat } = loadModule('intl-messageformat');
+  const originalLoad = Module._load;
+  let locale;
+  let messages;
+  // next-intl's Next navigation exports require a Next bundler. Supply its two
+  // rendering hooks while formatting the real catalogues with the ICU engine.
+  Module._load = function (request, ...rest) {
+    if (request === '@/i18n/navigation')
+      return { Link: ({ children, ...props }) => React.createElement('a', props, children) };
+    if (request === 'next-intl')
+      return {
+        useLocale: () => locale,
+        useTranslations: (namespace) => (key, values) => {
+          const message = (namespace + '.' + key)
+            .split('.')
+            .reduce((value, part) => value[part], messages);
+          return new IntlMessageFormat(message, locale).format(values);
+        },
+      };
+    return originalLoad.call(this, request, ...rest);
+  };
+  try {
+    const { ScholarshipDetailsView } = load('components/ScholarshipDetailsView.tsx');
+    const hostile = '<img src=x onerror=alert(1)><script>alert(1)</script>';
+    for (locale of ['ar', 'en']) {
+      const client = new QueryClient();
+      messages = JSON.parse(fs.readFileSync(path.join(srcPath, `messages/${locale}.json`), 'utf8'));
+      const details = toScholarshipDetails(
+        {
+          ...detailFixture,
+          is_saved: false,
+          title: '',
+          title_ar: null,
+          title_en: null,
+          description_html: hostile,
+          majors: [hostile],
+          source_url: 'https://example.org/source',
+          apply_link: 'https://example.org/apply',
+          apply_email: 'apply@example.org',
+          apply_phone: '+123456789',
+        },
+        locale
+      );
+      try {
+        const markup = renderToStaticMarkup(
+          React.createElement(
+            QueryClientProvider,
+            { client },
+            React.createElement(ScholarshipDetailsView, { details })
+          )
+        );
+        assert.ok(markup.includes(messages.StudentScholarshipDiscovery.card.untitled));
+        assert.ok(markup.includes(messages.StudentScholarshipDetails.bookmark.save));
+        assert.ok(markup.includes(messages.StudentScholarshipDetails.opensInNewTab));
+        assert.match(markup, /target="_blank" rel="noopener noreferrer"/);
+        assert.match(markup, /aria-pressed="false"/);
+        assert.match(markup, /&lt;script&gt;/, 'raw factual text is escaped');
+        assert.doesNotMatch(
+          markup,
+          /<script>alert|<img src=x|description_html|undefined|NaN|Invalid Date/
+        );
+      } finally {
+        client.clear();
+      }
+    }
+  } finally {
+    Module._load = originalLoad;
+  }
+});
+
+test('cached details yield to revoked access or removal but survive transient refresh failures', () => {
+  const base = { id: card.id, data: detailFixture, isFetching: false };
+  for (const [status, reason] of [
+    [401, 'unauthorized'],
+    [403, 'forbidden'],
+    [404, 'notFound'],
+  ]) {
+    assert.deepEqual(getDetailsViewState({ ...base, error: new ApiError('failed', [], status) }), {
+      kind: 'error',
+      reason,
+    });
+  }
+  assert.equal(
+    getDetailsViewState({ ...base, error: new ApiError('failed', [], 500) }).kind,
+    'ready'
+  );
 });

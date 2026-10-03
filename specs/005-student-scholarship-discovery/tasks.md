@@ -138,11 +138,16 @@
 
 ## Phase 9 — Minimal scholarship details boundary
 
-- [ ] T052 Add thin Server Component `[id]/page.tsx` delegating to `ScholarshipDetailsBoundary`; do not mount StudentShell or implement the future full Details Figma page.
-- [ ] T053 Implement detail query positive numeric-ID guard and real `GET /api/scholarships/{id}` request using `detail(id)`.
-- [ ] T054 Implement factual details states: loading, 401/403 convention, 404, retryable error, real nullable fields/bookmark, and localized Back to discovery. Show plain-text fields only; never render `description_html` in this feature.
-- [ ] T055 Preserve detail `is_saved` coherence through bookmark cache updates; fabricate no eligibility, match, application, or tracking information.
-- [ ] T056 Test ID validation/enable guard, endpoint/states/null fields, Back link, and bookmark coherence.
+- [x] T052 Add thin Server Component `[id]/page.tsx` delegating to `ScholarshipDetailsBoundary`; do not mount StudentShell or implement the future full Details Figma page.
+  - Evidence: Thin async Server Component delegates raw ID to `ScholarshipDetailsPage`; route-existence/link guard and shared-shell tests pass. No duplicated shell or RoleGuard.
+- [x] T053 Implement detail query positive numeric-ID guard and real `GET /api/scholarships/{id}` request using `detail(id)`.
+  - Evidence: Canonical positive safe-integer parsing and `scholarshipDetailQueryOptions` use `detail(id)` and apiClient GET with AbortSignal. Invalid and forced-refetch queries issue zero requests (automated).
+- [x] T054 Implement factual details states: loading, 401/403 convention, 404, retryable error, real nullable fields/bookmark, and localized Back to discovery. Show plain-text fields only; never render `description_html` in this feature.
+  - Evidence: Factual nullable-safe summary, safe source/application contacts, invalid/loading/401/403/404/generic/malformed/retry states; 401 invalidates the existing current-user query. Revoked access/removal replaces cached content. HTML excluded; module-memory Back URL preserves allowed query fields.
+- [x] T055 Preserve detail `is_saved` coherence through bookmark cache updates; fabricate no eligibility, match, application, or tracking information.
+  - Evidence: Details reuses `ScholarshipBookmark`/`useScholarshipBookmark`; existing real QueryClient tests verify detail/discovery/saved-cache optimism, rollback, pending guard and targeted settlement, never all-key invalidation.
+- [x] T056 Test ID validation/enable guard, endpoint/states/null fields, Back link, and bookmark coherence.
+  - Evidence: 89/89 discovery/details tests, including 11 new details tests and bilingual rendered HTML safety; 21/21 shell/numeral tests. Focused ESLint, typecheck (after regenerating stale Next route types), and diff check pass. Fixture browser verification: ar/en details, Grid/List, Back and 404 at 375/768/1440px; invalid/401/403/malformed states at 375px. Generic error → retry loading → success, bookmark failure/rollback and ar/en empty states also pass in the fixture browser; no runtime exceptions.
 
 ## Phase 10 — Localization and accessibility audit
 

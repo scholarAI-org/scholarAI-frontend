@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDiscoveryQueryState } from '../hooks/useDiscoveryQueryState';
+import { rememberDiscoverySearch } from '../lib/discovery-return';
 import { CountryFilter } from './CountryFilter';
 import { DiscoveryFilters } from './DiscoveryFilters';
 import { DiscoveryFiltersDialog } from './DiscoveryFiltersDialog';
@@ -21,6 +22,11 @@ export function ScholarshipDiscoveryPage() {
     useDiscoveryQueryState();
   // In-memory presentation state: not in the URL, query keys or storage.
   const [view, setView] = useState<DiscoveryView>('grid');
+
+  // The details page's Back link returns to exactly this URL (memory only).
+  useEffect(() => {
+    rememberDiscoverySearch(window.location.search);
+  }, [query]);
 
   return (
     <div className="mx-auto grid max-w-[1156px] items-start gap-x-6 gap-y-5 lg:grid-cols-[minmax(0,1fr)_212px]">

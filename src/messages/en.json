@@ -1131,11 +1131,16 @@
     "backToDiscovery": "Back to scholarship search",
     "loading": "Loading scholarship…",
     "invalidId": "This scholarship link isn't valid.",
+    "summary": "Scholarship summary",
+    "sections": {
+      "about": "About this scholarship"
+    },
     "notFound": {
       "title": "Scholarship not found",
       "description": "It may have been removed or is no longer available."
     },
     "errors": {
+      "unauthorized": "Your session has ended. Please log in again.",
       "forbidden": "You don't have access to this scholarship.",
       "generic": "The scholarship couldn't be loaded.",
       "retry": "Try again"
@@ -1159,6 +1164,8 @@
       "source": "Source",
       "publishedAt": "Published"
     },
+    "applyNow": "Apply now",
+    "opensInNewTab": "(opens in a new tab)",
     "notSpecified": "Not specified",
     "bookmark": {
       "save": "Save scholarship",

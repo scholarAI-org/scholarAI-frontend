@@ -137,14 +137,14 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 12. Minimal details
 
-- [ ] The canonical route is `/[locale]/student/scholarships/[id]` and rejects invalid/non-positive IDs before requesting data.
-  - Missing: details route (T052, T053). The detail hook already refuses invalid IDs (src/features/student/scholarship-discovery/hooks/useScholarshipDetail.ts).
-- [ ] The real detail endpoint renders loading, existing 401/403 behavior, 404, and retryable-error states.
-  - Missing: detail states (T054).
-- [ ] The details view is a factual nullable-safe summary with bookmark coherence and localized Back to discovery navigation.
-  - Missing: details view (T054, T055). The details adapter is ready (src/features/student/scholarship-discovery/adapters/scholarship.ts:33).
-- [ ] No full Details Figma experience, application flow, tracking, eligibility, or fabricated match content has entered the route.
-  - Missing: route not built (T052–T056).
+- [x] The canonical route is `/[locale]/student/scholarships/[id]` and rejects invalid/non-positive IDs before requesting data.
+  - Evidence: thin `[id]` Server Component and canonical safe-integer guard; disabled queries and forced refetch make zero API requests (T052–T056 tests).
+- [x] The real detail endpoint renders loading, existing 401/403 behavior, 404, and retryable-error states.
+  - Evidence: invalid/loading/401/403/404/generic/malformed/retry and cached access-revocation states tested; 401 uses current-user invalidation, 404 does not retry.
+- [x] The details view is a factual nullable-safe summary with bookmark coherence and localized Back to discovery navigation.
+  - Evidence: factual summary, optional/list normalization, safe links, bilingual rendered safety and localized fallback; module-memory return query, shared bookmark cache coherence tests pass.
+- [x] No full Details Figma experience, application flow, tracking, eligibility, or fabricated match content has entered the route.
+  - Evidence: model drops description_html; rendered hostile HTML is excluded/escaped; route includes factual fields and existing bookmark only. No future product sections.
 
 ## 13. Accessibility
 

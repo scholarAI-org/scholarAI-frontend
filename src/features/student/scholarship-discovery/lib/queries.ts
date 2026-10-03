@@ -1,5 +1,5 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query';
-import { getScholarshipFilterOptions, getScholarships } from '../api/scholarships';
+import { getScholarship, getScholarshipFilterOptions, getScholarships } from '../api/scholarships';
 import { studentScholarshipKeys } from '../query-keys';
 import type { DiscoveryQuery } from '../types';
 import { normalizeDiscoveryQuery } from './discovery-query-state';
@@ -25,5 +25,17 @@ export const filterOptionsQueryOptions = () =>
     queryKey: studentScholarshipKeys.filterOptions(),
     queryFn: ({ signal }) => getScholarshipFilterOptions(signal),
     staleTime: FILTER_OPTIONS_STALE_TIME,
+    retry: shouldRetryScholarshipQuery,
+  });
+
+// Details: only a positive integer ID is ever keyed as enabled or requested.
+export const scholarshipDetailQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: studentScholarshipKeys.detail(id),
+    queryFn: ({ signal }) => {
+      if (!Number.isSafeInteger(id) || id <= 0) throw new Error('Invalid scholarship ID');
+      return getScholarship(id, signal);
+    },
+    enabled: Number.isSafeInteger(id) && id > 0,
     retry: shouldRetryScholarshipQuery,
   });
