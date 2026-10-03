@@ -2141,3 +2141,80 @@ test('cached details yield to revoked access or removal but survive transient re
     'ready'
   );
 });
+
+// --- Translation/accessibility audit (T057-T060) -------------------------------
+test('all student JSX visible/accessible copy and literal translation keys use both catalogues', () => {
+  const messages = Object.fromEntries(
+    ['ar', 'en'].map((locale) => [
+      locale,
+      JSON.parse(fs.readFileSync(path.join(srcPath, `messages/${locale}.json`), 'utf8')),
+    ])
+  );
+  const files = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const file = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(file);
+      else if (file.endsWith('.tsx')) files.push(file);
+    }
+  };
+  walk(path.join(srcPath, 'features/student'));
+  let translatedCalls = 0;
+  for (const file of files) {
+    const ast = ts.createSourceFile(
+      file,
+      fs.readFileSync(file, 'utf8'),
+      ts.ScriptTarget.Latest,
+      true,
+      ts.ScriptKind.TSX
+    );
+    const namespaces = new Map();
+    const collect = (node) => {
+      if (
+        ts.isVariableDeclaration(node) &&
+        ts.isIdentifier(node.name) &&
+        node.initializer &&
+        ts.isCallExpression(node.initializer) &&
+        node.initializer.expression.getText(ast) === 'useTranslations' &&
+        ts.isStringLiteral(node.initializer.arguments[0])
+      ) {
+        namespaces.set(node.name.text, node.initializer.arguments[0].text);
+      }
+      ts.forEachChild(node, collect);
+    };
+    collect(ast);
+    const verify = (node) => {
+      if (ts.isJsxText(node)) assert.doesNotMatch(node.text, /[A-Za-z\u0600-\u06ff]/, file);
+      if (
+        ts.isJsxAttribute(node) &&
+        /^(aria-label|placeholder|title|alt)$/.test(node.name.getText(ast)) &&
+        node.initializer &&
+        ts.isStringLiteral(node.initializer)
+      ) {
+        assert.equal(
+          node.initializer.text.trim(),
+          '',
+          `${file}: ${node.name.getText(ast)} must be localized`
+        );
+      }
+      if (
+        ts.isCallExpression(node) &&
+        ts.isIdentifier(node.expression) &&
+        namespaces.has(node.expression.text) &&
+        node.arguments[0] &&
+        ts.isStringLiteral(node.arguments[0])
+      ) {
+        const key = namespaces.get(node.expression.text) + '.' + node.arguments[0].text;
+        for (const locale of ['ar', 'en']) {
+          const value = key.split('.').reduce((current, part) => current?.[part], messages[locale]);
+          assert.equal(typeof value, 'string', `${locale}: ${key} in ${file}`);
+        }
+        translatedCalls++;
+      }
+      ts.forEachChild(node, verify);
+    };
+    verify(ast);
+  }
+  assert.ok(files.length >= 28);
+  assert.ok(translatedCalls >= 50);
+});

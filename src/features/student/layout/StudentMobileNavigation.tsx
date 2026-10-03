@@ -26,6 +26,13 @@ export function StudentMobileNavigation({
     if (!isOpen) return;
     const returnTarget = returnFocusRef.current;
     closeButtonRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) onClose();
+    };
+    desktop.addEventListener('change', closeOnDesktop);
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -48,6 +55,8 @@ export function StudentMobileNavigation({
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      desktop.removeEventListener('change', closeOnDesktop);
+      document.body.style.overflow = previousOverflow;
       returnTarget?.focus();
     };
   }, [isOpen, onClose, returnFocusRef]);
@@ -71,7 +80,7 @@ export function StudentMobileNavigation({
             type="button"
             onClick={onClose}
             aria-label={t('closeNavigation')}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e2e8f0] text-[#274383]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#e2e8f0] text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
           >
             <X aria-hidden className="h-5 w-5" />
           </button>

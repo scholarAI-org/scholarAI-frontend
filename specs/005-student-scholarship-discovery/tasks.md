@@ -151,10 +151,14 @@
 
 ## Phase 10 — Localization and accessibility audit
 
-- [ ] T057 Audit translation completeness and ensure no visible or ARIA string was hard-coded during UI work.
-- [ ] T058 Refine Arabic and English copy, pluralization, RTL/LTR behavior, localized country unavailable/retry wording, and accessibility labels.
-- [ ] T059 Audit semantic controls/live regions and both mobile dialogs for labels, keyboard behavior, Escape, focus trap where appropriate, and focus return.
-- [ ] T060 Add focused Arabic/English and accessibility-critical tests/manual verification.
+- [x] T057 Audit translation completeness and ensure no visible or ARIA string was hard-coded during UI work.
+  - Evidence: AST audit across all 28 student TSX components finds no hard-coded visible/ARIA/placeholder/title/alt text; every literal translation key resolves in ar/en. Existing namespace-parity tests pass.
+- [x] T058 Refine Arabic and English copy, pluralization, RTL/LTR behavior, localized country unavailable/retry wording, and accessibility labels.
+  - Evidence: Arabic/English ICU plural categories and Latin numerals pass existing tests. Rendered details verify translated fallback, save/remove controls and new-tab hint. RTL/LTR screenshots pass at 375/768/1440px; backend country strings remain unchanged.
+- [x] T059 Audit semantic controls/live regions and both mobile dialogs for labels, keyboard behavior, Escape, focus trap where appropriate, and focus return.
+  - Evidence: Browser keyboard pass for filter and navigation dialogs at 375/768px in ar/en: opening focus, Tab containment, Escape, focus return; navigation now locks/restores body scrolling and closes at desktop resize. Native search/filter/country/sort controls, pressed view/bookmark controls, pagination and live states reviewed.
+- [x] T060 Add focused Arabic/English and accessibility-critical tests/manual verification.
+  - Evidence: 90 discovery/details + 15 student-layout + 6 numeral tests pass (111 total). Added AST translation audit and bilingual rendered-details checks. Browser fixture pass covers ar/en Grid/List/details/404/Back at all three widths; dialog keyboard and resize checks pass.
 
 ## Phase 11 — Figma visual convergence
 

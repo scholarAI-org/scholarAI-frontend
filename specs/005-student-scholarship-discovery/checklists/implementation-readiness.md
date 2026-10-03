@@ -74,7 +74,7 @@ Use this checklist to verify the delivered implementation and evidence against t
 - [x] Messages cover navigation, search, filters, Country loading/empty/unavailable states, sorting, Grid/List, cards, bookmarks, pagination, data states, dialogs, details, and accessibility labels.
   - Evidence: keys for navigation, search, filters, country states, sort, views, cards, bookmarks, pagination, data states, dialogs, details and ARIA labels; ICU and plural tests in tests/student-layout.test.mjs. Re-audit at T057.
 - [x] No visible or ARIA string introduced by Feature 005 is temporarily hard-coded.
-  - Evidence: foundation code has no user-facing strings; the title fallback is `undefined` (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31). Re-verify at T057.
+  - Evidence: T057 AST audit across all 28 student components finds no hard-coded visible or accessible text and validates literal keys in both catalogues; bilingual rendered-details fallback tested.
 
 ## 7. Scholarship rendering
 
@@ -150,12 +150,12 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 - [x] Search has a label; filter groups use fieldsets/legends and native checkboxes; Country and sort controls are labelled.
   - Evidence: `DiscoverySearchField` (sr-only label), `DiscoveryFilters` and `CountryFilter` (fieldset/legend, native checkboxes), `DiscoverySortSelect` (label); round-1 manual keyboard check passed in ar/en.
-- [ ] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
-  - Missing: toggle, bookmark and pagination controls (T034, T039, T043).
+- [x] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
+  - Evidence: translated aria-pressed view/bookmark controls and labelled Details links; server pagination aria-current and navigation verified with a three-page browser fixture. Live multi-page data remains pending under T043.
 - [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
   - Live announcements in place (role=status/alert); pagination `aria-current` is built but not yet seen with real data (one page).
 - [x] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
-  - Missing: both dialogs (T012, T048, T059).
+  - Evidence: ar/en keyboard checks at 375/768px verify focus, Tab containment, Escape and focus return; navigation scroll lock/restoration and desktop-resize dismissal verified (T059).
 
 ## 14. Figma convergence
 
