@@ -1051,7 +1051,7 @@
       },
       "country": {
         "legend": "Country",
-        "placeholder": "Choose countries",
+        "placeholder": "All countries",
         "loading": "Loading countries…",
         "empty": "No countries available",
         "unavailable": "Countries couldn't be loaded.",

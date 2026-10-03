@@ -61,14 +61,15 @@ export function DiscoverySearchField({ value, onCommit }: DiscoverySearchFieldPr
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className="relative min-w-0 flex-1">
+    <form
+      role="search"
+      onSubmit={handleSubmit}
+      className="flex h-[52px] min-w-0 flex-1 items-center gap-2 rounded-full border border-gray-300 bg-white px-6 shadow-[0_8px_16px_0_rgba(0,0,0,0.01)] transition-colors focus-within:border-[var(--color-border-focus)]"
+    >
       <label htmlFor={inputId} className="sr-only">
         {t('search.label')}
       </label>
-      <Search
-        aria-hidden
-        className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-[#979797]"
-      />
+      <Search aria-hidden className="size-5 shrink-0 text-gray-400" />
       <input
         ref={inputRef}
         id={inputId}
@@ -80,14 +81,14 @@ export function DiscoverySearchField({ value, onCommit }: DiscoverySearchFieldPr
           setDraft(event.target.value);
           debouncerRef.current?.schedule(event.target.value);
         }}
-        className="h-11 w-full rounded-full border border-[#e2e8f0] bg-[#f8fafc] ps-10 pe-11 text-start text-sm text-[#434343] outline-none transition-colors placeholder:text-[#979797] focus:border-[var(--color-border-focus)] [&::-webkit-search-cancel-button]:appearance-none"
+        className="h-full min-w-0 flex-1 bg-transparent text-start text-xs text-[#434343] outline-none placeholder:text-gray-400 [&::-webkit-search-cancel-button]:appearance-none"
       />
       {draft ? (
         <button
           type="button"
           onClick={handleClear}
           aria-label={t('search.clear')}
-          className="absolute end-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-[#979797] hover:bg-white hover:text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f97316]"
+          className="-me-2 flex size-8 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-[#f8fafc] hover:text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
         >
           <X aria-hidden className="size-4" />
         </button>

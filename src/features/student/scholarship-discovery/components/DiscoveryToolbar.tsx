@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { DiscoveryQuery, DiscoverySort } from '../types';
 import { DiscoverySearchField } from './DiscoverySearchField';
 import { DiscoverySortSelect } from './DiscoverySortSelect';
@@ -8,13 +9,18 @@ interface DiscoveryToolbarProps {
   query: DiscoveryQuery;
   onSearch: (search: string) => void;
   onSort: (sort: DiscoverySort) => void;
+  viewToggle?: ReactNode;
 }
 
-export function DiscoveryToolbar({ query, onSearch, onSort }: DiscoveryToolbarProps) {
+// Figma toolbar (2287:3434): search, sort and view toggle on the page background.
+export function DiscoveryToolbar({ query, onSearch, onSort, viewToggle }: DiscoveryToolbarProps) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-[0_4px_12px_rgba(2,38,71,0.04)] sm:flex-row sm:items-center sm:p-5">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <DiscoverySearchField value={query.search} onCommit={onSearch} />
-      <DiscoverySortSelect value={query.sort} onChange={onSort} />
+      <div className="flex items-center gap-2">
+        <DiscoverySortSelect value={query.sort} onChange={onSort} />
+        {viewToggle}
+      </div>
     </div>
   );
 }

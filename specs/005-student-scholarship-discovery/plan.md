@@ -255,6 +255,28 @@ tokens, build real-data behavior first, then compare Arabic desktop and separate
 responsive states. Download stable assets only; never ship MCP URLs. Dark nodes
 are out of scope.
 
+### Figma node map (file `snMA3CewSOTzniE7qsGCaZ`, inspected 2026-10-03)
+
+| Region                       | Node(s)                                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| Discovery screen (desktop)   | `2262:3331` "Search - 2 col"                                                                   |
+| Empty-state screen (desktop) | `2264:3472` "Search - null"; content `2264:4108`; illustration `2264:4109`                     |
+| Header                       | `2262:3332` "Header-Row" (controls `2262:3333`, title block `2262:3345`)                       |
+| Sidebar                      | `2979:9136` (nav instance `2979:9150`, component set `2979:6341`)                              |
+| Toolbar                      | `2287:3434` (view toggle `2287:3435`, sort `2287:3450`, search `2287:3458`); empty `2264:3984` |
+| Filter panel                 | `3100:7557` "filters-panel"; empty `2264:4013`                                                 |
+| Grid card                    | component `2358:9963` "scholarship card"; instance `2358:11086`                                |
+| List row                     | none in the file; inferred from the grid card (see Risks: "No List Figma")                     |
+| Pagination                   | `2264:3420` "Pagination"                                                                       |
+| Empty state                  | `2264:4108` (illustration `2264:4109`, texts `2264:4119`, actions `2264:4136`)                 |
+| Tablet / mobile discovery    | `3610:8118` "Tablet / Search"; `3606:11255` "Mobile / Search"                                  |
+
+Exported asset: `2264:4109` → `public/images/student/scholarship-empty-state.svg`.
+Spec conflicts follow the spec: highest-match sort and match badges on sample
+cards, notification bell/count, theme toggle, unimplemented navigation items,
+the empty state's "back to home" action (replaced by "edit search"), and sample
+preselected filters and counts.
+
 ## 32. Testing Strategy
 
 Unit tests in `tests/student-scholarship-discovery.test.mjs`: query parsing,

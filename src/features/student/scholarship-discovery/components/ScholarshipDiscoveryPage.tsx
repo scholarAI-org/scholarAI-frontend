@@ -7,14 +7,18 @@ import { DiscoveryResultsSummary } from './DiscoveryResultsSummary';
 import { DiscoveryToolbar } from './DiscoveryToolbar';
 
 // Page content only; the student frame comes from StudentShell in the route layout.
-// Below lg the filters stack above the results; the mobile dialog comes with T048.
+// Figma 2262:3331: toolbar and results share the main column; the 212px filter
+// panel sits on the inline-end side. Below lg everything stacks (T048 adds the
+// mobile filters dialog). DOM order (toolbar, filters, results) is the tab order.
 export function ScholarshipDiscoveryPage() {
   const { query, setSearch, setSort, setFilters, clearFilters } = useDiscoveryQueryState();
 
   return (
-    <div className="mx-auto max-w-[1156px] space-y-6">
-      <DiscoveryToolbar query={query} onSearch={setSearch} onSort={setSort} />
-      <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+    <div className="mx-auto grid max-w-[1156px] items-start gap-x-6 gap-y-5 lg:grid-cols-[minmax(0,1fr)_212px]">
+      <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+        <DiscoveryToolbar query={query} onSearch={setSearch} onSort={setSort} />
+      </div>
+      <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <DiscoveryFilters
           query={query}
           onChange={setFilters}
@@ -26,6 +30,8 @@ export function ScholarshipDiscoveryPage() {
             />
           }
         />
+      </div>
+      <div className="min-w-0 lg:col-start-1 lg:row-start-2">
         <DiscoveryResultsSummary query={query} />
       </div>
     </div>
