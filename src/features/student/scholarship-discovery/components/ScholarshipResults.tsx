@@ -1,11 +1,13 @@
 'use client';
 
 import { AlertCircle, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { toScholarshipCard } from '../adapters/scholarship';
 import { useScholarshipDiscovery } from '../hooks/useScholarshipDiscovery';
 import type { DiscoveryQuery, DiscoveryView } from '../types';
+import { ScholarshipDeadline } from './ScholarshipDeadline';
 import { ScholarshipGridCard } from './ScholarshipGridCard';
 import { ScholarshipListRow } from './ScholarshipListRow';
 
@@ -21,6 +23,8 @@ export function ScholarshipResults({ query, view }: ScholarshipResultsProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const locale = useLocale();
   const discovery = useScholarshipDiscovery(query);
+  // One "today" per mounted list, so all deadlines agree.
+  const [now] = useState(() => new Date());
   const cards = discovery.data?.items.map((item) => toScholarshipCard(item, locale)) ?? [];
 
   return (
@@ -65,9 +69,15 @@ export function ScholarshipResults({ query, view }: ScholarshipResultsProps) {
           {cards.map((card) => (
             <li key={card.id} className="min-w-0">
               {view === 'grid' ? (
-                <ScholarshipGridCard card={card} />
+                <ScholarshipGridCard
+                  card={card}
+                  footer={<ScholarshipDeadline card={card} now={now} />}
+                />
               ) : (
-                <ScholarshipListRow card={card} />
+                <ScholarshipListRow
+                  card={card}
+                  footer={<ScholarshipDeadline card={card} now={now} />}
+                />
               )}
             </li>
           ))}

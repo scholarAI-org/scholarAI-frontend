@@ -872,3 +872,102 @@ test('the card adapter tolerates wrongly typed optional fields', () => {
   assert.equal(model.opportunityType, undefined);
   assert.equal(model.fundingType, undefined);
 });
+
+// --- Deadlines (T041) ---------------------------------------------------------------
+
+const deadlines = () => load('lib/deadlines.ts');
+const withTimeZone = (timeZone, run) => {
+  const previous = process.env.TZ;
+  process.env.TZ = timeZone;
+  try {
+    return run();
+  } finally {
+    if (previous === undefined) delete process.env.TZ;
+    else process.env.TZ = previous;
+  }
+};
+
+test('deadline dates parse as calendar dates and reject malformed values', () => {
+  const { parseCalendarDate } = deadlines();
+  assert.deepEqual(parseCalendarDate('2026-12-31'), { year: 2026, month: 12, day: 31 });
+  assert.deepEqual(parseCalendarDate(' 2028-02-29 '), { year: 2028, month: 2, day: 29 });
+  for (const bad of [
+    '2026-02-30',
+    '2027-02-29',
+    '2026-13-01',
+    '2026-12-31T00:00:00Z',
+    '31/12/2026',
+    '',
+    null,
+    undefined,
+  ]) {
+    assert.equal(parseCalendarDate(bad), null, String(bad));
+  }
+});
+
+test('deadline status covers no deadline, missing, past, today and days left', () => {
+  const { getDeadlineStatus } = deadlines();
+  withTimeZone('Asia/Gaza', () => {
+    const now = new Date(2026, 9, 3, 12, 0); // 3 Oct 2026, local noon
+    assert.deepEqual(getDeadlineStatus('2026-12-31', true, now), { kind: 'none' });
+    assert.deepEqual(getDeadlineStatus(undefined, false, now), { kind: 'unspecified' });
+    assert.deepEqual(getDeadlineStatus('not-a-date', false, now), { kind: 'unspecified' });
+    assert.equal(getDeadlineStatus('2026-10-02', false, now).kind, 'past');
+    assert.equal(getDeadlineStatus('2026-10-03', false, now).kind, 'today');
+    assert.deepEqual(getDeadlineStatus('2026-10-04', false, now).daysLeft, 1);
+    assert.deepEqual(getDeadlineStatus('2027-10-03', false, now).daysLeft, 365);
+  });
+});
+
+test('days left flip exactly at local midnight, across a DST change', () => {
+  const { getDeadlineStatus } = deadlines();
+  withTimeZone('America/New_York', () => {
+    // US DST ends on 1 Nov 2026; the count must still be whole calendar days.
+    const beforeMidnight = new Date(2026, 9, 31, 23, 59, 59, 999);
+    const atMidnight = new Date(2026, 10, 1, 0, 0, 0, 0);
+    assert.equal(getDeadlineStatus('2026-11-02', false, beforeMidnight).daysLeft, 2);
+    assert.equal(getDeadlineStatus('2026-11-02', false, atMidnight).daysLeft, 1);
+    assert.equal(getDeadlineStatus('2026-11-01', false, beforeMidnight).daysLeft, 1);
+    assert.equal(getDeadlineStatus('2026-11-01', false, atMidnight).kind, 'today');
+  });
+});
+
+test('the same instant gives each time zone its own "today", never a UTC shift', () => {
+  const { getDeadlineStatus } = deadlines();
+  const instant = new Date('2026-12-31T07:30:00Z');
+  const status = (timeZone) =>
+    withTimeZone(timeZone, () => {
+      assert.equal(instant.getTimezoneOffset() === 0, timeZone === 'UTC', `TZ ${timeZone} active`);
+      return getDeadlineStatus('2026-12-31', false, instant);
+    });
+  assert.deepEqual(status('America/Los_Angeles'), {
+    kind: 'upcoming',
+    date: { year: 2026, month: 12, day: 31 },
+    daysLeft: 1,
+  }); // still 30 Dec locally
+  assert.equal(status('UTC').kind, 'today');
+  assert.equal(status('Asia/Gaza').kind, 'today');
+  assert.equal(status('Pacific/Kiritimati').kind, 'today'); // 21:30 on 31 Dec locally (UTC+14)
+  const later = new Date('2026-12-31T10:30:00Z'); // 00:30 on 1 Jan in UTC+14
+  withTimeZone('Pacific/Kiritimati', () => {
+    assert.equal(getDeadlineStatus('2026-12-31', false, later).kind, 'past');
+  });
+  withTimeZone('America/Los_Angeles', () => {
+    assert.equal(getDeadlineStatus('2026-12-31', false, later).kind, 'today'); // 02:30 on 31 Dec
+  });
+});
+
+test('deadline dates format as the stored day with Latin digits in every time zone', () => {
+  const { formatCalendarDate, toIsoCalendarDate } = deadlines();
+  const date = { year: 2026, month: 12, day: 31 };
+  for (const timeZone of ['America/Los_Angeles', 'UTC', 'Asia/Gaza', 'Pacific/Kiritimati']) {
+    withTimeZone(timeZone, () => {
+      const ar = formatCalendarDate(date, 'ar');
+      assert.match(ar, /31/, `${timeZone}: ${ar}`);
+      assert.match(ar, /2026/);
+      assert.equal(/[٠-٩]/.test(ar), false, `Latin digits: ${ar}`);
+      assert.match(formatCalendarDate(date, 'en'), /December 31, 2026/);
+    });
+  }
+  assert.equal(toIsoCalendarDate({ year: 2026, month: 1, day: 5 }), '2026-01-05');
+});

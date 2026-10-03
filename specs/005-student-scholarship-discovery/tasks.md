@@ -100,7 +100,8 @@
 
 ## Phase 7 — Pagination, loading, empty, and error states
 
-- [ ] T041 Add defensive calendar-date deadline helpers for no deadline, valid/today/future dates, missing/malformed values, locale wording, and no negative countdown.
+- [x] T041 Add defensive calendar-date deadline helpers for no deadline, valid/today/future dates, missing/malformed values, locale wording, and no negative countdown.
+  - Evidence: `lib/deadlines.ts` parses YYYY-MM-DD as calendar dates, compares against the local calendar day, never counts negative, and formats with the pinned Latin-digit locale; `ScholarshipDeadline` shows none/unspecified/past/today/days-left. tests/student-scholarship-discovery.test.mjs covers malformed and impossible dates, all statuses, local-midnight and DST flips, four time zones (and fails if "today" uses UTC), and Latin digits.
 - [ ] T042 Add bounded pagination-window/ellipsis helper and tests for first/middle/last/small/large windows.
 - [ ] T043 Implement accessible pagination from server `page`, `page_size`, and `total_pages`, including Previous/Next, disabled states, `aria-current`, URL update, and replace-based out-of-range reconciliation.
 - [ ] T044 Implement Grid/List skeletons and background-refresh busy behavior without removing usable results.

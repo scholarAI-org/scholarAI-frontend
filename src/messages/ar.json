@@ -1081,6 +1081,7 @@
       "deadlineNotSpecified": "الموعد النهائي غير محدد",
       "deadline": "آخر موعد: {date}",
       "deadlineToday": "يُغلق اليوم",
+      "deadlinePassed": "انتهى موعد التقديم",
       "daysLeft": "{count, plural, zero {يُغلق اليوم} one {يتبقى يوم واحد} two {يتبقى يومان} few {يتبقى {count, number, integer} أيام} many {يتبقى {count, number, integer} يومًا} other {يتبقى {count, number, integer} يوم}}"
     },
     "bookmark": {

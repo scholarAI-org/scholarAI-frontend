@@ -1081,6 +1081,7 @@
       "deadlineNotSpecified": "Deadline not specified",
       "deadline": "Deadline: {date}",
       "deadlineToday": "Closes today",
+      "deadlinePassed": "Deadline passed",
       "daysLeft": "{count, plural, =0 {Closes today} one {{count, number, integer} day left} other {{count, number, integer} days left}}"
     },
     "bookmark": {
