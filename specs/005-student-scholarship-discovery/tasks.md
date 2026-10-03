@@ -2,6 +2,10 @@
 
 **Purpose:** Deliver authenticated student scholarship discovery with a reusable Student Shell, backend-owned search/filter/sort/pagination, Grid/List views, real bookmarks, authoritative country options, and a minimal factual details boundary. Do not expand into dark mode, full details design, recommendations, fake future routes, or admin work.
 
+## Known external dependencies
+
+- **Backend discovery data** — see [backend-issues.md](backend-issues.md). All published scholarships have `study_level`, `funding_type` and `opportunity_type` set to null (plus `university_name`, `title_ar`, `title_en`), so the academic level, funding and opportunity filters return no matches and cards show no funding badge or study level. The study-level and funding matchers also reject common free-text forms. Reported to the backend team; no frontend workaround (decision 2026-10-03). End-to-end filter verification for T026, T029 and T045 depends on this fix or on manually classified records.
+
 ## Phase 1 — Contract, types, and URL query-state foundation
 
 - [x] T001 Confirm `docs/api/openapi.json`: discovery, detail, save, and filter-options routes; auth/error responses; repeated-filter OR semantics; nullable cards; and sort aliases.
