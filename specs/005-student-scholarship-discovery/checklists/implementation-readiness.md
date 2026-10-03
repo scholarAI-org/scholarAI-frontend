@@ -32,8 +32,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Evidence: serializer emits only these keys (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:67-77); unknown params such as `view` are dropped (tests/student-scholarship-discovery.test.mjs:427).
 - [x] `page_size` is fixed at 20, API-only, absent from browser URLs and Back/Forward restoration, and not user-editable.
   - Evidence: `DISCOVERY_PAGE_SIZE` (src/features/student/scholarship-discovery/constants.ts:9) used only in request params; URL `page_size` ignored and never serialized (tests/student-scholarship-discovery.test.mjs:114).
-- [ ] Grid/List is in-memory presentation state and absent from URLs.
-  - Missing: Grid/List state does not exist yet (T034). URL exclusion is already tested (tests/student-scholarship-discovery.test.mjs:427).
+- [x] Grid/List is in-memory presentation state and absent from URLs.
+  - Evidence: `useState` in ScholarshipDiscoveryPage; not in URL or keys (tests/student-scholarship-discovery.test.mjs view-switch and URL tests); round-2 manual re-test passed (ar/en).
 - [x] Search, filter, and sort changes reset only `page` to 1; pagination changes only `page`.
   - Evidence: `withSearch`/`withFilterChange`/`withSort`/`withPage` (src/features/student/scholarship-discovery/lib/discovery-query-state.ts:86-93); tests/student-scholarship-discovery.test.mjs:132.
 - [x] Back/Forward restores the effective search/filter/sort/page state.
@@ -80,8 +80,8 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 - [ ] Grid and List consume the same normalized `ScholarshipCardModel` and use the same bookmark/details actions.
   - Missing: Grid and List components not built (T031, T032).
-- [ ] Both views safely omit or represent nullable backend metadata without inventing facts.
-  - Missing: views not built. The adapter already omits empty fields (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31; tests/student-scholarship-discovery.test.mjs:240).
+- [x] Both views safely omit or represent nullable backend metadata without inventing facts.
+  - Evidence: adapter + rule A1 (`lib/card-labels.ts`) hide only null/blank values; real data with null fields renders cleanly; tests in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en).
 - [x] No compatibility score, eligibility result, match reason, or match badge is fabricated.
   - Evidence: adapter always sets `match: null` (src/features/student/scholarship-discovery/adapters/scholarship.ts:30); no match calculation exists; tests/student-scholarship-discovery.test.mjs:240. Re-verify when views are built.
 - [x] `ScholarshipMatchBadge` renders nothing when authoritative match data is absent.
@@ -89,10 +89,10 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 ## 8. Images
 
-- [ ] Runtime scholarship images use native `<img>` for arbitrary backend hosts with meaningful alt text, lazy loading, and stable aspect ratio.
-  - Missing: image component not built (T031).
-- [ ] Malformed URLs and image load failures use a local neutral placeholder.
-  - Missing: image fallback not built (T031).
+- [x] Runtime scholarship images use native `<img>` for arbitrary backend hosts with meaningful alt text, lazy loading, and stable aspect ratio.
+  - Evidence: `ScholarshipImage` (native lazy `<img>`, `card.imageAlt`, fixed aspect box); server-render test in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en).
+- [x] Malformed URLs and image load failures use a local neutral placeholder.
+  - Evidence: `getScholarshipImageSource` (invalid URL and onError paths) tested in tests/student-scholarship-discovery.test.mjs; headless Chrome: a failing https URL fell back with alt="" in the same box.
 - [x] Figma sample images are not runtime fallbacks.
   - Evidence: ScholarshipImage falls back to the local `/images/student/scholarship-image-fallback.svg` only; tests/student-scholarship-discovery.test.mjs image tests.
 - [x] No global ESLint disable, global ESLint policy modification, or broad arbitrary-host `next.config` allowlist is introduced.
@@ -114,26 +114,26 @@ Use this checklist to verify the delivered implementation and evidence against t
 ## 10. Pagination and states
 
 - [ ] Pagination uses server `page`, `page_size`, and `total_pages`, with Previous/Next, a bounded page window, ellipses, disabled states, and `aria-current`.
-  - Missing: pagination component and helper (T042, T043).
-- [ ] An out-of-range returned page is reconciled once using URL replacement.
-  - Missing: out-of-range reconciliation (T043).
-- [ ] Initial loading uses view-appropriate skeletons and background refresh retains usable results with a busy indication.
-  - Missing: skeletons and busy state (T044). `keepPreviousData` is set (src/features/student/scholarship-discovery/hooks/useScholarshipDiscovery.ts).
-- [ ] No-scholarships and no-matches empty states are distinct and offer truthful edit-search/clear actions.
-  - Missing: empty states (T045).
-- [ ] Authentication, 422, generic retryable, and malformed-data states are distinguishable and accessible.
-  - Missing: error states (T046).
+  - Built and unit-tested (tests/student-scholarship-discovery.test.mjs); not verifiable with real data yet (7 published scholarships = one page).
+- [x] An out-of-range returned page is reconciled once using URL replacement.
+  - Evidence: replace-mode `reconcilePage` once per URL with a visible notice (approved as built); target, notice and replace mode tested in tests/student-scholarship-discovery.test.mjs.
+- [x] Initial loading uses view-appropriate skeletons and background refresh retains usable results with a busy indication.
+  - Evidence: `ScholarshipSkeletons` + `getDiscoveryResultsState` (tested in tests/student-scholarship-discovery.test.mjs); round-2 manual re-test passed (ar/en).
+- [x] No-scholarships and no-matches empty states are distinct and offer truthful edit-search/clear actions.
+  - Evidence: `DiscoveryEmptyState` with edit search (focuses input) and clear filters; selection tested in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en).
+- [x] Authentication, 422, generic retryable, and malformed-data states are distinguishable and accessible.
+  - Evidence: `DiscoveryErrorState` + `getDiscoveryResultsState` (every error type, malformed responses/cards, canceled requests) tested in tests/student-scholarship-discovery.test.mjs; round-2 manual re-test passed (ar/en).
 
 ## 11. Responsive behavior
 
-- [ ] At desktop `lg`, the Student Shell/sidebar/header, discovery filters, two-column Grid, and full List are present.
-  - Missing: layout not built (T049).
+- [x] At desktop `lg`, the Student Shell/sidebar/header, discovery filters, two-column Grid, and full List are present.
+  - Evidence: shell, filter panel, two-column grid and full-width list rows; round-2 manual re-test passed (ar/en) at desktop width.
 - [ ] Below `lg`, results adapt and filters are reachable through a mobile trigger/panel.
   - Missing: mobile filter trigger and panel (T048).
 - [ ] On mobile, navigation, one-column Grid, compact/wrapping List, stacked toolbar, compact pagination, and no fixed-width overflow are verified.
   - Missing: mobile layout (T049–T051).
-- [ ] RTL and LTR use logical placement and preserve readable keyboard/focus order.
-  - Missing: RTL/LTR verification (T050).
+- [x] RTL and LTR use logical placement and preserve readable keyboard/focus order.
+  - Evidence: logical classes throughout; headless-Chrome geometry mirrored between /ar and /en; round-2 manual re-test passed (ar/en).
 
 ## 12. Minimal details
 
@@ -153,7 +153,7 @@ Use this checklist to verify the delivered implementation and evidence against t
 - [ ] Grid/List controls expose `aria-pressed`; bookmark controls, Details links, and pagination navigation have accessible names.
   - Missing: toggle, bookmark and pagination controls (T034, T039, T043).
 - [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
-  - Missing: pagination and live regions (T043, T046).
+  - Live announcements in place (role=status/alert); pagination `aria-current` is built but not yet seen with real data (one page).
 - [ ] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
   - Missing: both dialogs (T012, T048, T059).
 
