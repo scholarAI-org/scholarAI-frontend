@@ -19,6 +19,7 @@ import { DiscoveryEmptyState } from './DiscoveryEmptyState';
 import { DiscoveryErrorState } from './DiscoveryErrorState';
 import { DiscoveryPagination } from './DiscoveryPagination';
 import { DISCOVERY_SEARCH_INPUT_ID } from './DiscoverySearchField';
+import { ScholarshipBookmark } from './ScholarshipBookmark';
 import { ScholarshipDeadline } from './ScholarshipDeadline';
 import { ScholarshipGridCard } from './ScholarshipGridCard';
 import { ScholarshipListRow } from './ScholarshipListRow';
@@ -179,11 +180,13 @@ export function ScholarshipResults({
                   {view === 'grid' ? (
                     <ScholarshipGridCard
                       card={entry.card}
+                      bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="overlay" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
                     />
                   ) : (
                     <ScholarshipListRow
                       card={entry.card}
+                      bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="inline" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
                     />
                   )}

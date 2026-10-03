@@ -14,7 +14,7 @@ import { ScholarshipImage } from './ScholarshipImage';
 
 interface ScholarshipGridCardProps {
   card: ScholarshipCardModel;
-  // Layout slot for the bookmark action (T039); nothing renders here yet.
+  // Bookmark action (T039), placed in the image's top-end corner as in Figma.
   bookmarkSlot?: ReactNode;
   // Deadline line; filled by the deadline helpers (T041).
   footer?: ReactNode;
@@ -39,7 +39,7 @@ export function ScholarshipGridCard({ card, bookmarkSlot, footer }: ScholarshipG
           className="col-start-1 row-start-1 aspect-[448/184] w-full"
         />
         {bookmarkSlot ? (
-          <div className="col-start-1 row-start-1 m-4 self-start justify-self-end">
+          <div className="col-start-1 row-start-1 me-[23px] mt-4 self-start justify-self-end">
             {bookmarkSlot}
           </div>
         ) : null}
