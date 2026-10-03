@@ -745,3 +745,130 @@ test('switching Grid/List never refetches results or country options', async () 
   unsubscribe.forEach((stop) => stop());
   client.clear();
 });
+
+// --- Cards and images (T031-T035) ---------------------------------------------------
+
+test('image URLs: only absolute http(s) URLs are rendered', () => {
+  const { getSafeImageUrl } = load('lib/image-url.ts');
+  assert.equal(getSafeImageUrl('https://cdn.example.org/a.png'), 'https://cdn.example.org/a.png');
+  assert.equal(getSafeImageUrl('  http://example.org/b.jpg  '), 'http://example.org/b.jpg');
+  for (const bad of [
+    undefined,
+    null,
+    '',
+    '   ',
+    '/uploads/a.png',
+    '//cdn.example.org/a.png',
+    'javascript:alert(1)',
+    'data:image/png;base64,AAAA',
+    'ftp://example.org/a.png',
+    'not a url',
+  ]) {
+    assert.equal(getSafeImageUrl(bad), null, String(bad));
+  }
+});
+
+test('the image fallback is a local asset and the img exception exists exactly once', () => {
+  const imageSource = fs.readFileSync(
+    path.join(featurePath, 'components/ScholarshipImage.tsx'),
+    'utf8'
+  );
+  assert.match(imageSource, /FALLBACK_SRC = '\/images\/student\/scholarship-image-fallback\.svg'/);
+  assert.ok(
+    fs.existsSync(path.join(srcPath, '../public/images/student/scholarship-image-fallback.svg'))
+  );
+  assert.match(imageSource, /loading="lazy"/);
+  assert.match(imageSource, /alt=\{showFallback \? '' : alt\}/);
+
+  const walk = (dir) =>
+    fs
+      .readdirSync(dir, { withFileTypes: true })
+      .flatMap((entry) =>
+        entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
+      );
+  // Feature 005 code (the student area). The profile avatar's older exception in
+  // components/profile/ProfileSummaryCard.tsx predates this feature.
+  const suppressions = walk(path.join(srcPath, 'features/student')).filter(
+    (file) => /\.(t|j)sx?$/.test(file) && fs.readFileSync(file, 'utf8').includes('no-img-element')
+  );
+  assert.deepEqual(
+    suppressions.map((file) => path.relative(srcPath, file)),
+    ['features/student/scholarship-discovery/components/ScholarshipImage.tsx']
+  );
+  assert.equal(imageSource.match(/eslint-disable/g)?.length, 1);
+  const eslintConfig = fs.readFileSync(path.join(srcPath, '../eslint.config.mjs'), 'utf8');
+  assert.equal(eslintConfig.includes('no-img-element'), false, 'no global rule change');
+});
+
+test('details links stay off until the details route exists (and vice versa)', () => {
+  const { SCHOLARSHIP_DETAILS_ROUTE_ENABLED, getScholarshipDetailsHref } =
+    load('lib/details-link.ts');
+  const routeExists = fs.existsSync(
+    path.join(srcPath, 'app/[locale]/student/scholarships/[id]/page.tsx')
+  );
+  assert.equal(
+    SCHOLARSHIP_DETAILS_ROUTE_ENABLED,
+    routeExists,
+    routeExists
+      ? 'the [id] route exists: enable SCHOLARSHIP_DETAILS_ROUTE_ENABLED'
+      : 'no [id] route yet: details links must stay disabled'
+  );
+  if (!SCHOLARSHIP_DETAILS_ROUTE_ENABLED) {
+    assert.equal(getScholarshipDetailsHref(7), null);
+  } else {
+    assert.equal(getScholarshipDetailsHref(7), '/student/scholarships/7');
+    assert.equal(getScholarshipDetailsHref(0), null);
+  }
+});
+
+test('the match badge shows only authoritative data and nothing by default', () => {
+  const { getMatchBadgeDisplay } = load('lib/match-badge.ts');
+  assert.equal(getMatchBadgeDisplay(undefined), null);
+  assert.equal(getMatchBadgeDisplay(null), null);
+  assert.equal(getMatchBadgeDisplay({}), null);
+  assert.equal(getMatchBadgeDisplay({ score: null, level: null, reasons: [] }), null);
+  assert.equal(getMatchBadgeDisplay({ level: 'very-high' }), null);
+  assert.equal(getMatchBadgeDisplay({ score: Number.NaN }), null);
+  // A future authoritative fixture renders as given.
+  assert.deepEqual(getMatchBadgeDisplay({ level: 'high', score: 86.6 }), {
+    level: 'high',
+    score: 87,
+  });
+  assert.deepEqual(getMatchBadgeDisplay({ score: 40 }), { level: undefined, score: 40 });
+  // The adapter never supplies match data in Feature 005.
+  assert.equal(toScholarshipCard({ id: 1, title: 'T', is_saved: false }, 'en').match, null);
+});
+
+test('card labels translate known backend values and keep unknown ones as written', () => {
+  const { getFundingLabelKey, getStudyLevelLabelKey } = load('lib/card-labels.ts');
+  assert.equal(getFundingLabelKey('FULL'), 'filters.funding.full');
+  assert.equal(getFundingLabelKey(' Partial '), 'filters.funding.partial');
+  assert.equal(getFundingLabelKey('Self-funded'), null);
+  assert.equal(getFundingLabelKey(undefined), null);
+  assert.equal(getStudyLevelLabelKey('Master'), 'filters.academicLevel.master');
+  assert.equal(getStudyLevelLabelKey('PHD'), 'filters.academicLevel.phd');
+  assert.equal(getStudyLevelLabelKey('Diploma'), null);
+});
+
+test('the card adapter tolerates wrongly typed optional fields', () => {
+  const model = toScholarshipCard(
+    {
+      id: 3,
+      title: 'Scholarship',
+      is_saved: false,
+      country: 42,
+      image_url: { href: 'x' },
+      deadline: 20261231,
+      no_deadline: 'yes',
+      opportunity_type: 'internship',
+      funding_type: ['full'],
+    },
+    'en'
+  );
+  assert.equal(model.country, undefined);
+  assert.equal(model.imageUrl, undefined);
+  assert.equal(model.deadline, undefined);
+  assert.equal(model.noDeadline, false);
+  assert.equal(model.opportunityType, undefined);
+  assert.equal(model.fundingType, undefined);
+});

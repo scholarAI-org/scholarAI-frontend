@@ -1074,6 +1074,8 @@
       "untitled": "منحة بدون عنوان",
       "details": "عرض التفاصيل",
       "detailsFor": "عرض تفاصيل {title}",
+      "matchLevel": { "high": "توافق عالٍ", "medium": "توافق متوسط", "low": "توافق منخفض" },
+      "matchScore": "توافق {score}%",
       "imageAlt": "صورة {title}",
       "noDeadline": "بدون موعد نهائي",
       "deadlineNotSpecified": "الموعد النهائي غير محدد",

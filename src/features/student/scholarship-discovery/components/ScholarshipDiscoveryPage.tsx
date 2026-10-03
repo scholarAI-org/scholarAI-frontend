@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useDiscoveryQueryState } from '../hooks/useDiscoveryQueryState';
 import { CountryFilter } from './CountryFilter';
 import { DiscoveryFilters } from './DiscoveryFilters';
-import { DiscoveryResultsSummary } from './DiscoveryResultsSummary';
 import { DiscoveryToolbar } from './DiscoveryToolbar';
 import { DiscoveryViewToggle } from './DiscoveryViewToggle';
+import { ScholarshipResults } from './ScholarshipResults';
 import type { DiscoveryView } from '../types';
 
 // Page content only; the student frame comes from StudentShell in the route layout.
@@ -42,7 +42,7 @@ export function ScholarshipDiscoveryPage() {
         />
       </div>
       <div className="min-w-0 lg:col-start-1 lg:row-start-2">
-        <DiscoveryResultsSummary query={query} />
+        <ScholarshipResults query={query} view={view} />
       </div>
     </div>
   );

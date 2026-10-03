@@ -84,8 +84,8 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Missing: views not built. The adapter already omits empty fields (src/features/student/scholarship-discovery/adapters/scholarship.ts:13-31; tests/student-scholarship-discovery.test.mjs:240).
 - [x] No compatibility score, eligibility result, match reason, or match badge is fabricated.
   - Evidence: adapter always sets `match: null` (src/features/student/scholarship-discovery/adapters/scholarship.ts:30); no match calculation exists; tests/student-scholarship-discovery.test.mjs:240. Re-verify when views are built.
-- [ ] `ScholarshipMatchBadge` renders nothing when authoritative match data is absent.
-  - Missing: `ScholarshipMatchBadge` not built (T033).
+- [x] `ScholarshipMatchBadge` renders nothing when authoritative match data is absent.
+  - Evidence: components/ScholarshipMatchBadge.tsx returns null when `getMatchBadgeDisplay` does; tests/student-scholarship-discovery.test.mjs match-badge test.
 
 ## 8. Images
 
@@ -93,12 +93,12 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Missing: image component not built (T031).
 - [ ] Malformed URLs and image load failures use a local neutral placeholder.
   - Missing: image fallback not built (T031).
-- [ ] Figma sample images are not runtime fallbacks.
-  - Missing: no runtime image code yet (T031, T035).
+- [x] Figma sample images are not runtime fallbacks.
+  - Evidence: ScholarshipImage falls back to the local `/images/student/scholarship-image-fallback.svg` only; tests/student-scholarship-discovery.test.mjs image tests.
 - [x] No global ESLint disable, global ESLint policy modification, or broad arbitrary-host `next.config` allowlist is introduced.
   - Evidence: eslint.config.mjs and next.config.ts unchanged from `main`. Re-verify at T035.
-- [ ] Any `@next/next/no-img-element` suppression is narrowly documented and component-local to the scholarship backend-image component.
-  - Missing: image component not built; check any suppression at T031.
+- [x] Any `@next/next/no-img-element` suppression is narrowly documented and component-local to the scholarship backend-image component.
+  - Evidence: one documented `eslint-disable-next-line` in components/ScholarshipImage.tsx; tests/student-scholarship-discovery.test.mjs asserts it is the only one in src/features/student and that eslint.config.mjs is unchanged. (The profile avatar exception in components/profile/ProfileSummaryCard.tsx predates Feature 005.)
 
 ## 9. Bookmark behavior
 

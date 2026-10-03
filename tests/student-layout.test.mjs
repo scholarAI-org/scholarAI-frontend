@@ -72,7 +72,7 @@ test('the three student namespaces exist in both locales with identical keys', (
 });
 
 test('every student message is non-empty, valid ICU and formats in its locale', () => {
-  const values = { count: 3, title: 'T', date: '2026-12-31', page: 2 };
+  const values = { count: 3, title: 'T', date: '2026-12-31', page: 2, score: 87, requested: 9 };
   for (const locale of ['ar', 'en']) {
     for (const namespace of namespaces) {
       for (const [key, message] of flatten(messages[locale][namespace])) {

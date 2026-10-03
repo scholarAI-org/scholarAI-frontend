@@ -1,10 +1,13 @@
+import { opportunityTypes } from '../constants';
 import type {
+  OpportunityType,
   ScholarshipCardModel,
   ScholarshipDetailsModel,
   ScholarshipDetailsResponse,
   ScholarshipDiscoveryCard,
 } from '../types';
-const clean = (value?: string | null) => value?.trim() || undefined;
+// Tolerate wrongly typed optional fields: anything but a non-blank string is absent.
+const clean = (value: unknown) => (typeof value === 'string' && value.trim()) || undefined;
 // Backend text fields may be an array or one newline-separated string.
 export function toStringList(value?: readonly unknown[] | string | null): string[] {
   const items = typeof value === 'string' ? value.split(/\r?\n/) : (value ?? []);
@@ -22,10 +25,12 @@ export function toScholarshipCard(
     country: clean(item.country),
     studyLevel: clean(item.study_level),
     fundingType: clean(item.funding_type),
-    opportunityType: item.opportunity_type ?? undefined,
+    opportunityType: opportunityTypes.includes(item.opportunity_type as OpportunityType)
+      ? (item.opportunity_type as OpportunityType)
+      : undefined,
     imageUrl: clean(item.image_url),
     deadline: clean(item.deadline),
-    noDeadline: Boolean(item.no_deadline),
+    noDeadline: item.no_deadline === true,
     isSaved: item.is_saved,
     match: null,
   };
@@ -49,7 +54,7 @@ export function toScholarshipDetails(
     applyPhone: clean(item.apply_phone),
     pdfUrl: clean(item.pdf_url),
     attachments: toStringList(item.attachments),
-    isExtension: Boolean(item.is_extension),
+    isExtension: item.is_extension === true,
     publishedAt: clean(item.published_at),
   };
 }

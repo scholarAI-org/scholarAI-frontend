@@ -1074,6 +1074,8 @@
       "untitled": "Untitled scholarship",
       "details": "View details",
       "detailsFor": "View details for {title}",
+      "matchLevel": { "high": "High match", "medium": "Medium match", "low": "Low match" },
+      "matchScore": "{score}% match",
       "imageAlt": "Image for {title}",
       "noDeadline": "No deadline",
       "deadlineNotSpecified": "Deadline not specified",
