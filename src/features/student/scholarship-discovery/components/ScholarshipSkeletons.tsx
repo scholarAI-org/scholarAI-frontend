@@ -9,7 +9,7 @@ export function ScholarshipSkeletons({ view }: { view: DiscoveryView }) {
   return (
     <ul
       aria-hidden
-      className={view === 'grid' ? 'grid gap-6 md:grid-cols-2' : 'flex flex-col gap-4'}
+      className={view === 'grid' ? 'grid gap-4 sm:grid-cols-2 lg:gap-6' : 'flex flex-col gap-4'}
     >
       {Array.from({ length: SKELETON_COUNT }, (_, index) => (
         <li

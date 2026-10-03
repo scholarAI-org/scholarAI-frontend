@@ -10,15 +10,24 @@ interface DiscoveryToolbarProps {
   onSearch: (search: string) => void;
   onSort: (sort: DiscoverySort) => void;
   viewToggle?: ReactNode;
+  // Below lg: the mobile filters trigger (T048).
+  filtersButton?: ReactNode;
 }
 
 // Figma toolbar (2287:3434): search, sort and view toggle on the page background.
-export function DiscoveryToolbar({ query, onSearch, onSort, viewToggle }: DiscoveryToolbarProps) {
+export function DiscoveryToolbar({
+  query,
+  onSearch,
+  onSort,
+  viewToggle,
+  filtersButton,
+}: DiscoveryToolbarProps) {
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-2 md:flex-row md:items-center">
       <DiscoverySearchField value={query.search} onCommit={onSearch} />
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <DiscoverySortSelect value={query.sort} onChange={onSort} />
+        {filtersButton}
         {viewToggle}
       </div>
     </div>

@@ -128,9 +128,9 @@ Use this checklist to verify the delivered implementation and evidence against t
 
 - [x] At desktop `lg`, the Student Shell/sidebar/header, discovery filters, two-column Grid, and full List are present.
   - Evidence: shell, filter panel, two-column grid and full-width list rows; round-2 manual re-test passed (ar/en) at desktop width.
-- [ ] Below `lg`, results adapt and filters are reachable through a mobile trigger/panel.
+- [x] Below `lg`, results adapt and filters are reachable through a mobile trigger/panel.
   - Missing: mobile filter trigger and panel (T048).
-- [ ] On mobile, navigation, one-column Grid, compact/wrapping List, stacked toolbar, compact pagination, and no fixed-width overflow are verified.
+- [x] On mobile, navigation, one-column Grid, compact/wrapping List, stacked toolbar, compact pagination, and no fixed-width overflow are verified.
   - Missing: mobile layout (T049–T051).
 - [x] RTL and LTR use logical placement and preserve readable keyboard/focus order.
   - Evidence: logical classes throughout; headless-Chrome geometry mirrored between /ar and /en; round-2 manual re-test passed (ar/en).
@@ -154,7 +154,7 @@ Use this checklist to verify the delivered implementation and evidence against t
   - Missing: toggle, bookmark and pagination controls (T034, T039, T043).
 - [ ] Pagination exposes `aria-current`; loading, error, and empty states use appropriate live announcements.
   - Live announcements in place (role=status/alert); pagination `aria-current` is built but not yet seen with real data (one page).
-- [ ] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
+- [x] Mobile navigation and mobile filters are labelled dialogs with keyboard operation, Escape, focus management, focus return, and a focus trap where appropriate.
   - Missing: both dialogs (T012, T048, T059).
 
 ## 14. Figma convergence

@@ -1716,3 +1716,99 @@ test('bookmark: settling invalidates only discoveries, the detail and saved list
   }
   client.clear();
 });
+
+// --- Mobile/tablet discovery: chips and filters dialog (T048-T051) ---------------------------
+
+test('quick chips mirror the academic-level URL state, with "All" clearing it', () => {
+  const { getQuickChips, quickChipPatch } = load('lib/quick-chips.ts');
+  const pressed = (search) =>
+    getQuickChips(parse(search))
+      .filter((chip) => chip.pressed)
+      .map((chip) => chip.id);
+  assert.deepEqual(
+    getQuickChips(parse('')).map((chip) => chip.id),
+    ['all', 'bachelor', 'master', 'phd', 'exchange']
+  );
+  assert.deepEqual(pressed(''), ['all']);
+  assert.deepEqual(pressed('academic_level=master&academic_level=phd'), ['master', 'phd']);
+
+  // Chips navigate exactly like the checkboxes: push, page reset.
+  const router = fakeRouter();
+  const query = parse('academic_level=master&page=3&country=Germany');
+  const nav = createDiscoveryNavigator(router, '/ar/student/scholarships', query);
+  nav.setFilters(quickChipPatch(query, 'phd'));
+  nav.setFilters(quickChipPatch(query, 'master'));
+  nav.setFilters(quickChipPatch(query, 'all'));
+  assert.deepEqual(router.calls, [
+    [
+      'push',
+      '/ar/student/scholarships?academic_level=master&academic_level=phd&country=Germany',
+      { scroll: false },
+    ],
+    ['push', '/ar/student/scholarships?country=Germany', { scroll: false }],
+    ['push', '/ar/student/scholarships?country=Germany', { scroll: false }],
+  ]);
+  // "All" with nothing selected is a no-op.
+  const idle = fakeRouter();
+  createDiscoveryNavigator(idle, '/ar/student/scholarships', parse('')).setFilters(
+    quickChipPatch(parse(''), 'all')
+  );
+  assert.deepEqual(idle.calls, []);
+});
+
+test('the filters dialog applies its draft as a single navigation and discards on close', () => {
+  const { createFilterDraft, emptyFilterDraft } = load('lib/filter-draft.ts');
+  const query = parse('academic_level=bachelor&sort=deadline_soon&page=4&search=ai');
+  let draft = createFilterDraft(query);
+  // Several edits inside the dialog touch only the draft…
+  draft = { ...draft, academicLevels: [...draft.academicLevels, 'phd'] };
+  draft = { ...draft, fundingTypes: ['full'] };
+  draft = { ...draft, countries: [' Côte d’Ivoire ', 'Germany'] };
+  assert.deepEqual(query.academicLevels, ['bachelor'], 'URL state untouched while editing');
+
+  // …and "Show results" applies them in one push with a page reset.
+  const router = fakeRouter();
+  createDiscoveryNavigator(router, '/en/student/scholarships', query).setFilters(draft);
+  assert.equal(router.calls.length, 1);
+  const [mode, href] = router.calls[0];
+  const applied = new URL(href, 'https://x.test').searchParams;
+  assert.equal(mode, 'push');
+  assert.deepEqual(applied.getAll('academic_level'), ['bachelor', 'phd']);
+  assert.deepEqual(applied.getAll('funding_type'), ['full']);
+  assert.deepEqual(applied.getAll('country'), [' Côte d’Ivoire ', 'Germany']);
+  assert.equal(applied.get('page'), null);
+  assert.equal(applied.get('sort'), 'deadline_soon');
+  assert.equal(applied.get('search'), 'ai');
+
+  // Closing without applying: a fresh draft from the URL, nothing navigated.
+  const discarded = fakeRouter();
+  assert.deepEqual(createFilterDraft(query), {
+    academicLevels: ['bachelor'],
+    fundingTypes: [],
+    opportunityTypes: [],
+    countries: [],
+  });
+  assert.deepEqual(discarded.calls, []);
+  // "Clear all" in the dialog empties the draft only.
+  assert.deepEqual(emptyFilterDraft(), {
+    academicLevels: [],
+    fundingTypes: [],
+    opportunityTypes: [],
+    countries: [],
+  });
+});
+
+test('the active-filter count is the number of selected values', () => {
+  const { countActiveFilters } = load('lib/filter-draft.ts');
+  assert.equal(countActiveFilters(parse('')), 0);
+  assert.equal(countActiveFilters(parse('search=ai&sort=deadline_soon&page=2')), 0);
+  assert.equal(
+    countActiveFilters(
+      parse(
+        'academic_level=master&academic_level=phd&funding_type=full&country=Germany&country=Japan'
+      )
+    ),
+    5
+  );
+  assert.equal(countActiveFilters(parse('opportunity_type=training')), 1);
+});

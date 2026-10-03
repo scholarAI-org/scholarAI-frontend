@@ -13,14 +13,14 @@ export function StudentShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-start text-[#434343]">
-      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-[236px_minmax(0,1204px)] lg:gap-0 lg:px-0 lg:py-0">
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 lg:grid-cols-[236px_minmax(0,1204px)]">
         <div className="min-w-0 lg:order-2">
           <StudentHeader
             isNavigationOpen={isNavigationOpen}
             onNavigationToggle={() => setIsNavigationOpen((open) => !open)}
             menuButtonRef={menuButtonRef}
           />
-          <main className="pt-4 lg:px-6 lg:pt-6">{children}</main>
+          <main className="px-4 pt-4 pb-6 sm:px-6 lg:pt-6 lg:pb-0">{children}</main>
         </div>
         <aside className="hidden lg:sticky lg:top-0 lg:order-1 lg:row-span-2 lg:block lg:h-screen lg:self-start">
           <StudentSidebar />

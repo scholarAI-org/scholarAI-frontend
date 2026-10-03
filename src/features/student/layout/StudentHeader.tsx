@@ -2,6 +2,7 @@
 
 import type { RefObject } from 'react';
 import { Menu } from 'lucide-react';
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/features/auth/providers/AuthProvider';
@@ -37,10 +38,60 @@ export function StudentHeader({
     });
   }
 
+  const initial = getStudentInitial(name);
+  const languageButton = (
+    <button
+      type="button"
+      onClick={switchLanguage}
+      aria-label={t('languageSwitch.label')}
+      lang={nextLocale}
+      className="flex size-8 shrink-0 items-center justify-center rounded-full border-[0.8px] border-gray-300 bg-white text-xs text-black transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+    >
+      <span aria-hidden>{t('languageSwitch.short')}</span>
+    </button>
+  );
+
   return (
-    <header className="border-b border-[#e2e8f0] bg-white lg:h-[108px]">
-      <div className="flex h-full flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between lg:px-6 lg:py-6">
-        <div className="order-2 text-start sm:order-1">
+    <header>
+      {/* Below lg: Figma mobile header (3606:11257) - menu and brand at the start,
+          language and avatar at the end. */}
+      <div className="flex items-center justify-between gap-3 border-b border-gray-300 bg-white px-4 pt-2.5 pb-3 sm:px-6 lg:hidden">
+        <div className="flex items-center gap-3.5">
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={onNavigationToggle}
+            aria-expanded={isNavigationOpen}
+            aria-controls={STUDENT_MOBILE_NAVIGATION_ID}
+            aria-label={isNavigationOpen ? t('closeNavigation') : t('openNavigation')}
+            className="flex size-10 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+          >
+            <Menu aria-hidden className="size-5" />
+          </button>
+          <div className="grid h-10 w-[33px] shrink-0 place-items-center overflow-hidden">
+            <Image
+              src="/images/admin/brand.png"
+              alt={t('brand.name')}
+              width={55}
+              height={55}
+              className="size-[55px] max-w-none"
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-2.5">
+          {languageButton}
+          <span
+            role="img"
+            aria-label={name}
+            className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-[15px] text-white"
+          >
+            {initial}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 px-4 pt-5 sm:px-6 lg:h-[108px] lg:flex-row lg:items-center lg:justify-between lg:border-b lg:border-gray-300 lg:bg-white lg:py-6">
+        <div className="text-start">
           {pageKey && (
             <>
               <h1 className="text-lg font-bold leading-[1.2] text-[#434343]">
@@ -53,36 +104,15 @@ export function StudentHeader({
           )}
         </div>
 
-        <div className="order-1 flex items-center justify-end gap-2 sm:order-2">
-          <button
-            ref={menuButtonRef}
-            type="button"
-            onClick={onNavigationToggle}
-            aria-expanded={isNavigationOpen}
-            aria-controls={STUDENT_MOBILE_NAVIGATION_ID}
-            aria-label={isNavigationOpen ? t('closeNavigation') : t('openNavigation')}
-            className="me-auto flex h-10 w-10 items-center justify-center rounded-full border border-[#e2e8f0] text-[#274383] lg:hidden"
-          >
-            <Menu aria-hidden className="h-5 w-5" />
-          </button>
-
-          {/* Figma 2262:3341: one 32px white circle; Figma order puts it beside the title. */}
-          <button
-            type="button"
-            onClick={switchLanguage}
-            aria-label={t('languageSwitch.label')}
-            lang={nextLocale}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full border-[0.8px] border-gray-300 bg-white text-xs text-black transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
-          >
-            <span aria-hidden>{t('languageSwitch.short')}</span>
-          </button>
-
+        {/* lg: Figma 2262:3341 - the language circle beside the title, then the user chip. */}
+        <div className="hidden items-center gap-2 lg:flex">
+          {languageButton}
           <div className="flex min-w-0 items-center gap-2 rounded-full border border-gray-300 p-2">
             <span
               aria-hidden
               className="flex size-[18px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-[10px] leading-none text-white"
             >
-              {getStudentInitial(name)}
+              {initial}
             </span>
             <span className="truncate text-sm leading-5 text-black">
               <bdi>{name}</bdi>

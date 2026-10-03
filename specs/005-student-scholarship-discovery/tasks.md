@@ -127,10 +127,14 @@
 
 ## Phase 8 — Responsive and mobile behavior
 
-- [ ] T048 Build the mobile filter dialog from the same URL-owned filters with Apply/Clear/Close, labelled modal semantics, Escape, focus management/return, and no fetch on open/close.
-- [ ] T049 Apply `lg` shell/filter/two-column Grid/full List behavior; below `lg` adaptive results/filter trigger; at mobile one-column Grid, wrapping List, stacked toolbar, compact pagination, and mobile navigation.
-- [ ] T050 Verify no overflow and logical RTL/LTR placement/order across shell, toolbar, filters, cards, bookmarks, and pagination.
-- [ ] T051 Add responsive/mobile-filter and keyboard coverage, recording manual viewport evidence when the test harness cannot assess layout.
+- [x] T048 Build the mobile filter dialog from the same URL-owned filters with Apply/Clear/Close, labelled modal semantics, Escape, focus management/return, and no fetch on open/close.
+  - Evidence: `DiscoveryFiltersDialog` edits a local draft (`lib/filter-draft.ts`); Show results applies it through `setFilters` as one push with page reset, Clear all empties the draft, closing discards it. Pure tests in tests/student-scholarship-discovery.test.mjs. Headless Chrome (ar/en, 375 and 768 px): `role=dialog`, `aria-modal`, label, focus on open, Tab trap, Escape (first closes the open country list, then the dialog), focus back on the trigger, body scroll locked, history +1 on apply, no requests on open/close.
+- [x] T049 Apply `lg` shell/filter/two-column Grid/full List behavior; below `lg` adaptive results/filter trigger; at mobile one-column Grid, wrapping List, stacked toolbar, compact pagination, and mobile navigation.
+  - Evidence: Grid is one column below 640 px and two from 640 px; below `lg` the side panel is replaced by the filters trigger and the quick chips, and the Figma mobile header (3606:11257) replaces the desktop title bar. Headless Chrome: 1/2/2 columns at 375/768/1440 px, toolbar stacked at 375 px, pagination on one row at 375 and 768 px.
+- [x] T050 Verify no overflow and logical RTL/LTR placement/order across shell, toolbar, filters, cards, bookmarks, and pagination.
+  - Evidence: headless Chrome at 375 px (ar/en, Grid and List, page 2 of 3): `scrollWidth` equals the viewport and no element in `main` crosses it; the dialog slides from the inline end (left in ar, right in en); the chip row scrolls inside itself.
+- [x] T051 Add responsive/mobile-filter and keyboard coverage, recording manual viewport evidence when the test harness cannot assess layout.
+  - Evidence: tests for chip/URL mapping (including All), single-navigation apply, discard and the active-filter count; layout evidence above comes from the headless Chrome driver, and the 375/768/1440 manual pass is listed in the round 4 checklist.
 
 ## Phase 9 — Minimal scholarship details boundary
 

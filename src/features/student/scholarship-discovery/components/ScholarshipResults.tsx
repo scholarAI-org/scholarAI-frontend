@@ -165,7 +165,11 @@ export function ScholarshipResults({
               onClearFilters={onClearFilters}
             />
           ) : null}
-          <ul className={view === 'grid' ? 'grid gap-6 md:grid-cols-2' : 'flex flex-col gap-4'}>
+          <ul
+            className={
+              view === 'grid' ? 'grid gap-4 sm:grid-cols-2 lg:gap-6' : 'flex flex-col gap-4'
+            }
+          >
             {entries.map((entry) =>
               entry.kind === 'malformed' ? (
                 <li

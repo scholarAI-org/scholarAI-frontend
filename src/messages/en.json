@@ -1060,7 +1060,9 @@
         "selected": "{count, plural, =0 {No countries selected} one {{count, number, integer} country selected} other {{count, number, integer} countries selected}}"
       }
     },
+    "chips": { "all": "All" },
     "filtersDialog": {
+      "activeCount": "{count, plural, =0 {No active filters} one {{count, number, integer} active filter} other {{count, number, integer} active filters}}",
       "label": "Scholarship filters",
       "open": "Open filters",
       "close": "Close filters",

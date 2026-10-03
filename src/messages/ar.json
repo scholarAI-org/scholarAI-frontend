@@ -1060,7 +1060,9 @@
         "selected": "{count, plural, zero {لم يتم اختيار أي دولة} one {تم اختيار دولة واحدة} two {تم اختيار دولتين} few {تم اختيار {count, number, integer} دول} many {تم اختيار {count, number, integer} دولة} other {تم اختيار {count, number, integer} دولة}}"
       }
     },
+    "chips": { "all": "الكل" },
     "filtersDialog": {
+      "activeCount": "{count, plural, =0 {لا توجد فلاتر نشطة} one {فلتر واحد نشط} two {فلتران نشطان} few {{count, number, integer} فلاتر نشطة} many {{count, number, integer} فلترًا نشطًا} other {{count, number, integer} فلتر نشط}}",
       "label": "تصفية المنح",
       "open": "فتح التصفية",
       "close": "إغلاق التصفية",
