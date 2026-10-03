@@ -1291,3 +1291,66 @@ test('the URL-state hook uses the history router and the locale-prefixed pathnam
     'no Next router round-trip'
   );
 });
+
+// --- Canceled requests (React StrictMode double mount in dev) ---------------------------
+
+test('a request canceled by an unmount never leaves the results in an error state', async () => {
+  const { QueryClient, QueryObserver } = loadModule('@tanstack/react-query');
+  const { discoveryQueryOptions } = load('lib/queries.ts');
+  const { getDiscoveryResultsState } = load('lib/results-state.ts');
+  const outcomes = [];
+  globalThis.fetch = (url, init) =>
+    new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        outcomes.push('200');
+        resolve(
+          new Response(
+            JSON.stringify({ items: [], total: 0, page: 1, page_size: 20, total_pages: 0 }),
+            {
+              status: 200,
+            }
+          )
+        );
+      }, 30);
+      init.signal?.addEventListener('abort', () => {
+        clearTimeout(timer);
+        outcomes.push('canceled');
+        reject(new DOMException('The user aborted a request.', 'AbortError'));
+      });
+    });
+
+  const client = new QueryClient();
+  const query = parse('');
+  const seen = [];
+  const watch = (observer) =>
+    observer.subscribe((result) => {
+      seen.push(result.status);
+      seen.push(
+        getDiscoveryResultsState({
+          query,
+          data: result.data,
+          error: result.error,
+          isFetching: result.isFetching,
+          isPlaceholderData: result.isPlaceholderData,
+        }).kind
+      );
+    });
+
+  // StrictMode: mount, unmount (aborts the in-flight request), mount again.
+  const first = new QueryObserver(client, discoveryQueryOptions(query));
+  const stopFirst = watch(first);
+  await new Promise((r) => setTimeout(r, 5));
+  stopFirst();
+  const second = new QueryObserver(client, discoveryQueryOptions(query));
+  const stopSecond = watch(second);
+  for (let i = 0; i < 100 && second.getCurrentResult().status !== 'success'; i += 1) {
+    await new Promise((r) => setTimeout(r, 5));
+  }
+
+  assert.deepEqual(outcomes, ['canceled', '200']);
+  assert.equal(second.getCurrentResult().status, 'success');
+  assert.equal(second.getCurrentResult().error, null);
+  assert.equal(seen.includes('error'), false, `states seen: ${seen.join(', ')}`);
+  stopSecond();
+  client.clear();
+});
