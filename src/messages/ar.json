@@ -1097,7 +1097,8 @@
       "previous": "الصفحة السابقة",
       "next": "الصفحة التالية",
       "page": "الصفحة {page}",
-      "currentPage": "الصفحة {page}، الصفحة الحالية"
+      "currentPage": "الصفحة {page}، الصفحة الحالية",
+      "outOfRange": "الصفحة {requested} غير موجودة، لذلك تُعرض الصفحة {page}."
     },
     "empty": {
       "noScholarships": {

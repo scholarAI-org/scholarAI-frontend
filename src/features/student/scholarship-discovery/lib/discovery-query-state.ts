@@ -113,6 +113,8 @@ export const discoveryUpdates = {
   setSort: { update: withSort, mode: 'push' },
   setPage: { update: withPage, mode: 'push' },
   clearFilters: { update: withClearedFilters, mode: 'push' },
+  // Out-of-range repair: replace, so Back does not return to the invalid page.
+  reconcilePage: { update: withPage, mode: 'replace' },
 } as const satisfies Record<string, { update: unknown; mode: DiscoveryNavigationMode }>;
 export function planDiscoveryNavigation(
   pathname: string,

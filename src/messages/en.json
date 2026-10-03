@@ -1097,7 +1097,8 @@
       "previous": "Previous page",
       "next": "Next page",
       "page": "Page {page}",
-      "currentPage": "Page {page}, current page"
+      "currentPage": "Page {page}, current page",
+      "outOfRange": "Page {requested} doesn't exist, so page {page} is shown."
     },
     "empty": {
       "noScholarships": {

@@ -178,14 +178,18 @@ test('update helpers reset page for search/filter/sort and only change page for 
 
 test('each update helper maps to its navigation mode', () => {
   const modes = Object.fromEntries(
-    Object.values(discoveryUpdates).map(({ update, mode }) => [update.name, mode])
+    Object.entries(discoveryUpdates).map(([action, { update, mode }]) => [
+      action,
+      `${update.name}:${mode}`,
+    ])
   );
   assert.deepEqual(modes, {
-    withSearch: 'replace',
-    withFilterChange: 'push',
-    withSort: 'push',
-    withPage: 'push',
-    withClearedFilters: 'push',
+    setSearch: 'withSearch:replace',
+    setFilters: 'withFilterChange:push',
+    setSort: 'withSort:push',
+    setPage: 'withPage:push',
+    clearFilters: 'withClearedFilters:push',
+    reconcilePage: 'withPage:replace',
   });
   assert.equal(discoveryUpdates.setSearch.update, withSearch);
   assert.equal(discoveryUpdates.setFilters.update, withFilterChange);
@@ -970,4 +974,77 @@ test('deadline dates format as the stored day with Latin digits in every time zo
     });
   }
   assert.equal(toIsoCalendarDate({ year: 2026, month: 1, day: 5 }), '2026-01-05');
+});
+
+// --- Pagination (T042/T043) ----------------------------------------------------------
+
+const pagesOf = (items) => items.map((item) => (item.type === 'page' ? item.page : '…'));
+
+test('page window: small, first, middle, last and large ranges', () => {
+  const { getPageWindow } = load('lib/pagination.ts');
+  assert.deepEqual(pagesOf(getPageWindow(1, 0)), []);
+  assert.deepEqual(pagesOf(getPageWindow(1, 1)), [1]);
+  assert.deepEqual(pagesOf(getPageWindow(2, 3)), [1, 2, 3]);
+  assert.deepEqual(pagesOf(getPageWindow(4, 7)), [1, 2, 3, 4, 5, 6, 7]);
+  assert.deepEqual(pagesOf(getPageWindow(1, 10)), [1, 2, 3, 4, 5, '…', 10]);
+  assert.deepEqual(pagesOf(getPageWindow(4, 10)), [1, '…', 3, 4, 5, '…', 10]);
+  assert.deepEqual(pagesOf(getPageWindow(5, 10)), [1, '…', 4, 5, 6, '…', 10]);
+  assert.deepEqual(pagesOf(getPageWindow(7, 10)), [1, '…', 6, 7, 8, '…', 10]);
+  assert.deepEqual(pagesOf(getPageWindow(10, 10)), [1, '…', 6, 7, 8, 9, 10]);
+  assert.deepEqual(pagesOf(getPageWindow(250, 500)), [1, '…', 249, 250, 251, '…', 500]);
+  // Out-of-range or invalid current pages are clamped for display only.
+  assert.deepEqual(pagesOf(getPageWindow(99, 10)), [1, '…', 6, 7, 8, 9, 10]);
+  assert.deepEqual(pagesOf(getPageWindow(0, 10)), [1, 2, 3, 4, 5, '…', 10]);
+  // Bounded: never more than 7 slots with one sibling, and keys stay unique.
+  for (let total = 1; total <= 40; total += 1) {
+    for (let current = 1; current <= total; current += 1) {
+      const items = getPageWindow(current, total);
+      assert.ok(items.length <= 7, `${current}/${total}`);
+      assert.ok(items.some((item) => item.type === 'page' && item.page === current));
+      const keys = items.map((item) => (item.type === 'page' ? item.page : item.key));
+      assert.equal(new Set(keys).size, keys.length);
+    }
+  }
+});
+
+test('out-of-range pages reconcile to the last page, or page 1 with no results', () => {
+  const { getOutOfRangeTarget } = load('lib/pagination.ts');
+  assert.equal(getOutOfRangeTarget(3, 5), null);
+  assert.equal(getOutOfRangeTarget(5, 5), null);
+  assert.equal(getOutOfRangeTarget(9, 5), 5);
+  assert.equal(getOutOfRangeTarget(1, 0), null);
+  assert.equal(getOutOfRangeTarget(4, 0), 1);
+});
+
+test('the out-of-range notice survives the reconciling replace and clears afterwards', () => {
+  const { reduceOutOfRangeNotice } = load('lib/pagination.ts');
+  const source = 'country=Germany&page=9';
+  const target = 'country=Germany&page=3';
+  const detected = { requested: 9, page: 3, targetKey: target };
+
+  const first = reduceOutOfRangeNotice(null, source, detected);
+  assert.deepEqual(first, { requested: 9, page: 3, sourceKey: source, targetKey: target });
+  // Stable across re-renders (no render loop).
+  assert.equal(reduceOutOfRangeNotice(first, source, detected), first);
+  // After the replace, the target page is valid: keep the notice.
+  assert.equal(reduceOutOfRangeNotice(first, target, null), first);
+  // Any further navigation clears it.
+  assert.equal(reduceOutOfRangeNotice(first, 'country=Germany&page=2', null), null);
+  assert.equal(reduceOutOfRangeNotice(null, target, null), null);
+});
+
+test('reconciling an out-of-range page uses replace, so Back skips the invalid page', () => {
+  const router = fakeRouter();
+  const nav = createDiscoveryNavigator(
+    router,
+    '/student/scholarships',
+    parse('country=Germany&page=9')
+  );
+  nav.reconcilePage(3);
+  assert.deepEqual(router.calls, [
+    ['replace', '/student/scholarships?country=Germany&page=3', { scroll: false }],
+  ]);
+  const toFirst = createDiscoveryNavigator(router, '/student/scholarships', parse('page=4'));
+  toFirst.reconcilePage(1);
+  assert.deepEqual(router.calls.at(-1), ['replace', '/student/scholarships', { scroll: false }]);
 });

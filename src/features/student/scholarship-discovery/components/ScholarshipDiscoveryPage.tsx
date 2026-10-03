@@ -14,7 +14,8 @@ import type { DiscoveryView } from '../types';
 // panel sits on the inline-end side. Below lg everything stacks (T048 adds the
 // mobile filters dialog). DOM order (toolbar, filters, results) is the tab order.
 export function ScholarshipDiscoveryPage() {
-  const { query, setSearch, setSort, setFilters, clearFilters } = useDiscoveryQueryState();
+  const { query, setSearch, setSort, setFilters, setPage, clearFilters, reconcilePage } =
+    useDiscoveryQueryState();
   // In-memory presentation state: not in the URL, query keys or storage.
   const [view, setView] = useState<DiscoveryView>('grid');
 
@@ -42,7 +43,12 @@ export function ScholarshipDiscoveryPage() {
         />
       </div>
       <div className="min-w-0 lg:col-start-1 lg:row-start-2">
-        <ScholarshipResults query={query} view={view} />
+        <ScholarshipResults
+          query={query}
+          view={view}
+          onPageChange={setPage}
+          onReconcilePage={reconcilePage}
+        />
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export function createDiscoveryNavigator(
     else router.replace(plan.href, { scroll: false });
     return plan;
   };
-  const { setSearch, setFilters, setSort, setPage, clearFilters } = discoveryUpdates;
+  const { setSearch, setFilters, setSort, setPage, clearFilters, reconcilePage } = discoveryUpdates;
   return {
     setSearch: (search: string) => navigate(setSearch.update(query, search), setSearch.mode),
     setFilters: (patch: DiscoveryFilterPatch) =>
@@ -27,5 +27,7 @@ export function createDiscoveryNavigator(
     setSort: (sort: DiscoverySort) => navigate(setSort.update(query, sort), setSort.mode),
     setPage: (page: number) => navigate(setPage.update(query, page), setPage.mode),
     clearFilters: () => navigate(clearFilters.update(query), clearFilters.mode),
+    reconcilePage: (page: number) =>
+      navigate(reconcilePage.update(query, page), reconcilePage.mode),
   };
 }

@@ -102,8 +102,10 @@
 
 - [x] T041 Add defensive calendar-date deadline helpers for no deadline, valid/today/future dates, missing/malformed values, locale wording, and no negative countdown.
   - Evidence: `lib/deadlines.ts` parses YYYY-MM-DD as calendar dates, compares against the local calendar day, never counts negative, and formats with the pinned Latin-digit locale; `ScholarshipDeadline` shows none/unspecified/past/today/days-left. tests/student-scholarship-discovery.test.mjs covers malformed and impossible dates, all statuses, local-midnight and DST flips, four time zones (and fails if "today" uses UTC), and Latin digits.
-- [ ] T042 Add bounded pagination-window/ellipsis helper and tests for first/middle/last/small/large windows.
+- [x] T042 Add bounded pagination-window/ellipsis helper and tests for first/middle/last/small/large windows.
+  - Evidence: `lib/pagination.ts` `getPageWindow` (first/last, current ±1, ellipses, at most 7 slots); tests/student-scholarship-discovery.test.mjs covers empty, small, first, middle, last, large and clamped windows plus unique keys for every page up to 40.
 - [ ] T043 Implement accessible pagination from server `page`, `page_size`, and `total_pages`, including Previous/Next, disabled states, `aria-current`, URL update, and replace-based out-of-range reconciliation.
+  - Built: `DiscoveryPagination` (Figma 2264:3420) from server page/total_pages with Previous/Next, disabled bounds, `aria-current`, push-mode changes, focus and scroll to the results heading; an out-of-range URL page is reconciled once with replace mode and a visible `pagination.outOfRange` notice (target, notice reducer and replace mode tested in tests/student-scholarship-discovery.test.mjs). Awaiting manual check.
 - [ ] T044 Implement Grid/List skeletons and background-refresh busy behavior without removing usable results.
 - [ ] T045 Implement distinct no-scholarships/no-matches empty states with real edit-search/clear actions.
 - [ ] T046 Implement truthful auth, 422, generic retryable, malformed-card, loading/error/empty live states.
