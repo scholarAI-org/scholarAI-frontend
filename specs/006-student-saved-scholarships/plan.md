@@ -8,7 +8,7 @@
 
 ## Summary
 
-Deliver an authenticated Saved Scholarships page at `/[locale]/student/saved` (sibling of `/student/scholarships`, not nested under it, so the 005 nav active-match rule for `/student/scholarships/*` does not highlight two items) that reuses Feature 005's Student Shell, card primitives, bookmark system and query architecture. The saved query resolves to `ScholarshipDiscoveryCard[]` through the shared `toScholarshipCard` normalization. Optimistic unsave extends the existing `bookmark-cache` to remove/restore saved-array membership while keeping discovery and affected details flags coherent. The route, its nav item ("المحفوظات" / "Saved") and its data fetch all sit behind one server-read feature flag (OFF by default) that flips ON only after live backend contract acceptance passes.
+Deliver an authenticated Saved Scholarships page at `/[locale]/student/saved` (sibling of `/student/scholarships`, not nested under it, so the 005 nav active-match rule for `/student/scholarships/*` does not highlight two items) that reuses Feature 005's Student Shell, card primitives, bookmark system and query architecture. The saved query resolves to `ScholarshipDiscoveryCard[]` through the shared `toScholarshipCard` normalization. Optimistic unsave extends the existing `bookmark-cache` to remove/restore saved-array membership while keeping discovery and affected details flags coherent. The route, its nav item ("المحفوظات" / "Saved") and its data fetch all sit behind one server-only feature flag (OFF by default) that flips ON only after live backend contract acceptance passes.
 
 ## Pre-flight — 005 artifacts present on this branch
 
@@ -63,7 +63,7 @@ specs/006-student-saved-scholarships/
 ├── plan.md                     # This file
 ├── checklists/
 │   └── requirements.md         # Spec Quality Checklist
-└── tasks.md                    # NOT created by /speckit-plan (produced later by /speckit-tasks)
+└── tasks.md                    # Phase 3 output — produced by /speckit-tasks (committed)
 ```
 
 Research/data-model/contracts/quickstart artifacts are intentionally not generated as separate files: this feature is a bounded frontend reuse of a prior feature already recorded in `contract-notes.md` and the Feature 005 verification; folding their contents back out would duplicate what the spec and contract notes already distinguish.
@@ -97,13 +97,17 @@ src/
 │           │   └── savedCache.ts                     # Bounded extensions used by bookmark-cache for saved[]
 │           └── index.ts                              # Public exports for the page + hook
 ├── features/student/scholarship-discovery/
-│   ├── hooks/useScholarshipBookmark.ts               # EXTEND: integrate saved[] optimistic remove via savedCache
+│   ├── hooks/useScholarshipBookmark.ts               # no change — reused as-is
 │   └── lib/bookmark-cache.ts                         # EXTEND: cancel/snapshot/mutate/rollback saved() entries
+├── app/[locale]/student/layout.tsx                   # EXTEND: receive savedEnabled prop (reads flag server-only)
 ├── features/student/layout/
+│   ├── StudentShell.tsx                              # EXTEND: receive savedEnabled prop; applies withSavedEnabled
+│   ├── StudentSidebar.tsx                            # EXTEND: receive savedEnabled prop (via items list); icon map adds saved
+│   ├── StudentMobileNavigation.tsx                   # EXTEND: receive savedEnabled prop (via items list)
 │   ├── student-navigation.ts                         # EXTEND: optional 'saved' item under 'discover', behind flag
 │   └── types.ts                                      # EXTEND: 'saved' added to StudentNavigationItemId + StudentPageKey
 ├── lib/
-│   └── feature-flags.ts                              # NEW: server-read flag constants incl. savedScholarshipsEnabled
+│   └── feature-flags.ts                              # NEW: server-only flag constants incl. savedScholarshipsEnabled
 ├── messages/
 │   ├── ar.json                                       # EXTEND: StudentSavedScholarships + nav.saved
 │   └── en.json                                       # EXTEND: StudentSavedScholarships + nav.saved
@@ -150,10 +154,10 @@ Both `tests/` and `scripts/` are covered by the production-import guard (see Fix
 
 ```
             (feature flag OFF)
-Student navigates to /[locale]/student/scholarships/saved
+Student navigates to /[locale]/student/saved
     │
     ▼
-app/[locale]/student/scholarships/saved/page.tsx   (Server Component)
+app/[locale]/student/saved/page.tsx                (Server Component)
     │
     ├──  savedScholarshipsEnabled === false  ──▶  notFound()
     │

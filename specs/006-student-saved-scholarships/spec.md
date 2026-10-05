@@ -108,7 +108,7 @@ As a student, I can distinguish empty data from unavailable data and use the pag
 
 ### Functional Requirements
 
-- **FR-001**: Provide `/[locale]/student/scholarships/saved` for authenticated students, inheriting existing protection and exactly one shared Student Shell.
+- **FR-001**: Provide `/[locale]/student/saved` for authenticated students, inheriting existing protection and exactly one shared Student Shell. (The "sibling-of-discovery" rationale is captured in FR-024.)
 - **FR-002**: Enable Saved Scholarships in existing typed desktop/mobile navigation with Arabic/English labels and unique correct active-route state; leave unrelated future destinations unavailable.
 - **FR-003**: Show only the current student's real saved collection from the authenticated saved service; never substitute discovery, recommendations, Figma samples, or browser-persisted bookmarks.
 - **FR-004**: Under the required complete unpaged contract, display a localized plural-aware count equal to the successfully returned saved collection length. During optimistic removal use the length of that same updated collection; rollback restores the item and thereby the count. Never maintain an unrelated guessed count or substitute Figma samples or renderable-card count.
