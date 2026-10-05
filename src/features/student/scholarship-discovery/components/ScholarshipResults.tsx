@@ -31,6 +31,7 @@ interface ScholarshipResultsProps {
   onPageChange: (page: number) => void;
   onReconcilePage: (page: number) => void;
   onClearFilters: () => void;
+  detailsEnabled?: boolean;
 }
 
 export const RESULTS_HEADING_ID = 'scholarship-discovery-results-heading';
@@ -44,6 +45,7 @@ export function ScholarshipResults({
   onPageChange,
   onReconcilePage,
   onClearFilters,
+  detailsEnabled = false,
 }: ScholarshipResultsProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const locale = useLocale();
@@ -186,12 +188,14 @@ export function ScholarshipResults({
                       card={entry.card}
                       bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="overlay" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
+                      detailsEnabled={detailsEnabled}
                     />
                   ) : (
                     <ScholarshipListRow
                       card={entry.card}
                       bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="inline" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
+                      detailsEnabled={detailsEnabled}
                     />
                   )}
                 </li>

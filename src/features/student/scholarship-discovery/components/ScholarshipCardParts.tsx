@@ -42,9 +42,17 @@ export function ScholarshipBadges({ card }: { card: ScholarshipCardModel }) {
   );
 }
 
-export function ScholarshipTitle({ card, id }: { card: ScholarshipCardModel; id: string }) {
+export function ScholarshipTitle({
+  card,
+  id,
+  detailsEnabled = true,
+}: {
+  card: ScholarshipCardModel;
+  id: string;
+  detailsEnabled?: boolean;
+}) {
   const title = useCardTitle(card);
-  const href = getScholarshipDetailsHref(card.id);
+  const href = getScholarshipDetailsHref(card.id, detailsEnabled);
   return (
     <h3 id={id} className="text-base font-bold leading-6 text-black">
       {href ? (
@@ -91,11 +99,17 @@ export function ScholarshipMeta({
   );
 }
 
-// Hidden until the details route exists (getScholarshipDetailsHref returns null).
-export function ScholarshipDetailsAction({ card }: { card: ScholarshipCardModel }) {
+// Hidden until detailsEnabled is true and getScholarshipDetailsHref returns non-null.
+export function ScholarshipDetailsAction({
+  card,
+  detailsEnabled = true,
+}: {
+  card: ScholarshipCardModel;
+  detailsEnabled?: boolean;
+}) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const title = useCardTitle(card);
-  const href = getScholarshipDetailsHref(card.id);
+  const href = getScholarshipDetailsHref(card.id, detailsEnabled);
   if (!href) return null;
   return (
     <Link

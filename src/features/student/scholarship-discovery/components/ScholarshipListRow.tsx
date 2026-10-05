@@ -16,11 +16,17 @@ interface ScholarshipListRowProps {
   card: ScholarshipCardModel;
   bookmarkSlot?: ReactNode;
   footer?: ReactNode;
+  detailsEnabled?: boolean;
 }
 
 // No List View exists in Figma; this compact row reuses the grid card's model,
 // actions and visual system (plan risk "No List Figma").
-export function ScholarshipListRow({ card, bookmarkSlot, footer }: ScholarshipListRowProps) {
+export function ScholarshipListRow({
+  card,
+  bookmarkSlot,
+  footer,
+  detailsEnabled = true,
+}: ScholarshipListRowProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();
   const title = useCardTitle(card);
@@ -39,13 +45,13 @@ export function ScholarshipListRow({ card, bookmarkSlot, footer }: ScholarshipLi
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-2">
             <ScholarshipBadges card={card} />
-            <ScholarshipTitle card={card} id={titleId} />
+            <ScholarshipTitle card={card} id={titleId} detailsEnabled={detailsEnabled} />
           </div>
           {bookmarkSlot}
         </div>
         <ScholarshipMeta card={card} withProvider />
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-300 pt-3">
-          <ScholarshipDetailsAction card={card} />
+          <ScholarshipDetailsAction card={card} detailsEnabled={detailsEnabled} />
           <div className="min-w-0 flex-1 text-xs leading-5 text-[#b5b5b5]">{footer}</div>
         </div>
       </div>

@@ -18,11 +18,17 @@ interface ScholarshipGridCardProps {
   bookmarkSlot?: ReactNode;
   // Deadline line; filled by the deadline helpers (T041).
   footer?: ReactNode;
+  detailsEnabled?: boolean;
 }
 
 // Figma "scholarship card" (2358:9963): image with a top-end action slot, badges,
 // title, country and level, divider, then Details and the deadline.
-export function ScholarshipGridCard({ card, bookmarkSlot, footer }: ScholarshipGridCardProps) {
+export function ScholarshipGridCard({
+  card,
+  bookmarkSlot,
+  footer,
+  detailsEnabled = true,
+}: ScholarshipGridCardProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();
   const title = useCardTitle(card);
@@ -47,13 +53,13 @@ export function ScholarshipGridCard({ card, bookmarkSlot, footer }: ScholarshipG
       <div className="flex flex-1 flex-col gap-4 p-4">
         <ScholarshipBadges card={card} />
         <div className="flex flex-col gap-2">
-          <ScholarshipTitle card={card} id={titleId} />
+          <ScholarshipTitle card={card} id={titleId} detailsEnabled={detailsEnabled} />
           <ScholarshipMeta card={card} />
         </div>
         <div className="mt-auto flex flex-col gap-4">
           <hr className="border-0 border-t border-gray-300" />
           <div className="flex min-h-10 items-center gap-4">
-            <ScholarshipDetailsAction card={card} />
+            <ScholarshipDetailsAction card={card} detailsEnabled={detailsEnabled} />
             <div className="min-w-0 flex-1 text-center text-xs leading-5 text-[#b5b5b5]">
               {footer}
             </div>

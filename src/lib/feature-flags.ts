@@ -8,4 +8,9 @@ export const featureFlags = Object.freeze({
   get savedScholarshipsEnabled(): boolean {
     return process.env.SAVED_SCHOLARSHIPS_ENABLED === 'true';
   },
+  // Feature 007: Student Scholarship Details page.
+  // Default: false. The literal string "true" is the only enabling value.
+  get scholarshipDetailsEnabled(): boolean {
+    return process.env.SCHOLARSHIP_DETAILS_ENABLED === 'true';
+  },
 });
