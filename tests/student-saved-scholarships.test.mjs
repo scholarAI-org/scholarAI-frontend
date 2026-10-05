@@ -4,6 +4,7 @@ import Module, { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, test } from 'node:test';
+import { IntlMessageFormat } from 'intl-messageformat';
 import ts from 'typescript';
 
 const loadModule = createRequire(import.meta.url);
@@ -400,7 +401,6 @@ test('T020 page states: loading, populated, confirmed empty, error — each rend
   const React = loadModule('react');
   const { renderToStaticMarkup } = loadModule('react-dom/server');
   const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
-  const { IntlMessageFormat } = loadModule('intl-messageformat');
   const originalLoad = Module._load;
 
   let locale = 'en';
@@ -548,4 +548,83 @@ test('T020 page states: loading, populated, confirmed empty, error — each rend
   } finally {
     Module._load = originalLoad;
   }
+});
+
+// -------------------- Phase 5: Navigation Plumbing (T032, T033) -------------
+
+const {
+  studentNavigation,
+  withSavedEnabled,
+  getVisibleStudentNavigation,
+  getStudentNavigationSections,
+  isStudentNavigationItemActive,
+  getStudentPageKey,
+} = loadModule(path.join(srcPath, 'features/student/layout/student-navigation.ts'));
+
+test('T032 nav + flag: savedEnabled=false emits no saved item in nav sections', () => {
+  const items = withSavedEnabled(studentNavigation, false);
+  const visible = getVisibleStudentNavigation(items);
+  assert.equal(visible.some((item) => item.id === 'saved'), false);
+
+  const sections = getStudentNavigationSections(items);
+  const discoverSection = sections.find((sec) => sec.id === 'discover');
+  assert.ok(discoverSection, 'discover section should exist');
+  assert.equal(discoverSection.items.some((item) => item.id === 'saved'), false);
+});
+
+test('T032 nav + flag: savedEnabled=true includes saved item under discover group', () => {
+  const items = withSavedEnabled(studentNavigation, true);
+  const visible = getVisibleStudentNavigation(items);
+  assert.equal(visible.some((item) => item.id === 'saved'), true);
+
+  const sections = getStudentNavigationSections(items);
+  const discoverSection = sections.find((sec) => sec.id === 'discover');
+  assert.ok(discoverSection, 'discover section should exist');
+  assert.equal(discoverSection.items.some((item) => item.id === 'saved'), true);
+  assert.equal(discoverSection.items.find((item) => item.id === 'saved').href, '/student/saved');
+});
+
+test('T033 single-active-nav guarantee: exactly one item active per route', () => {
+  const items = withSavedEnabled(studentNavigation, true);
+  const routes = [
+    { path: '/student/profile', activeId: 'profile' },
+    { path: '/student/scholarships', activeId: 'scholarships' },
+    { path: '/student/scholarships/123', activeId: 'scholarships' },
+    { path: '/student/saved', activeId: 'saved' },
+  ];
+
+  for (const { path: pathname, activeId } of routes) {
+    const activeItems = items.filter((item) => isStudentNavigationItemActive(item, pathname));
+    assert.equal(
+      activeItems.length,
+      1,
+      `Expected exactly 1 active nav item for ${pathname}, got ${activeItems.length}`
+    );
+    assert.equal(
+      activeItems[0].id,
+      activeId,
+      `Expected active nav item for ${pathname} to be "${activeId}", got "${activeItems[0].id}"`
+    );
+  }
+
+  // Explicit assertions: /student/scholarships* NEVER activates saved, and /student/saved NEVER activates scholarships
+  const scholarshipsActiveForSaved = isStudentNavigationItemActive(
+    items.find((i) => i.id === 'scholarships'),
+    '/student/saved'
+  );
+  assert.equal(scholarshipsActiveForSaved, false, '/student/saved must not activate scholarships nav item');
+
+  const savedActiveForScholarships = isStudentNavigationItemActive(
+    items.find((i) => i.id === 'saved'),
+    '/student/scholarships'
+  );
+  assert.equal(savedActiveForScholarships, false, '/student/scholarships must not activate saved nav item');
+
+  const savedActiveForDetails = isStudentNavigationItemActive(
+    items.find((i) => i.id === 'saved'),
+    '/student/scholarships/123'
+  );
+  assert.equal(savedActiveForDetails, false, '/student/scholarships/123 must not activate saved nav item');
+
+  assert.equal(getStudentPageKey('/student/saved'), 'saved');
 });

@@ -15,6 +15,13 @@ export const studentNavigation: StudentNavigationItem[] = [
     group: 'discover',
   },
   {
+    id: 'saved',
+    labelKey: 'nav.saved',
+    href: '/student/saved',
+    enabled: false,
+    group: 'discover',
+  },
+  {
     id: 'profile',
     labelKey: 'nav.profile',
     href: '/student/profile',
@@ -22,6 +29,12 @@ export const studentNavigation: StudentNavigationItem[] = [
     group: 'personal',
   },
 ];
+
+export const withSavedEnabled = (
+  items: readonly StudentNavigationItem[],
+  savedEnabled: boolean
+): StudentNavigationItem[] =>
+  items.map((item) => (item.id === 'saved' ? { ...item, enabled: savedEnabled } : item));
 
 // Figma sidebar (2979:9150) section order. A label shows only above real items.
 export const studentNavigationGroups: StudentNavigationGroupId[] = ['discover', 'personal'];
@@ -49,6 +62,9 @@ export const getActiveStudentNavigationItem = (
 ) => items.find((item) => isStudentNavigationItemActive(item, pathname))?.id ?? null;
 
 export function getStudentPageKey(pathname: string): StudentPageKey | null {
+  if (pathname === '/student/saved' || pathname.startsWith('/student/saved/')) {
+    return 'saved';
+  }
   if (pathname === '/student/profile' || pathname.startsWith('/student/profile/')) {
     return 'profile';
   }

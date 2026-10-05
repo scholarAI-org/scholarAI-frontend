@@ -1,6 +1,6 @@
 'use client';
 
-import { GraduationCap, LogOut, Search, UserRound, type LucideIcon } from 'lucide-react';
+import { Bookmark, GraduationCap, LogOut, Search, UserRound, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
@@ -13,11 +13,12 @@ import {
   studentNavigation,
 } from './student-navigation';
 import { getStudentDisplayName, getStudentInitial } from './student-identity';
-import type { StudentNavigationItemId } from './types';
+import type { StudentNavigationItem, StudentNavigationItemId } from './types';
 
 const navigationIcons: Record<StudentNavigationItemId, LucideIcon> = {
   profile: UserRound,
   scholarships: Search,
+  saved: Bookmark,
 };
 
 // Figma sidebar (2979:9136): brand, user pill and grouped navigation at the top,
@@ -30,9 +31,14 @@ const variantClasses = {
 interface StudentSidebarProps {
   variant?: keyof typeof variantClasses;
   onNavigate?: () => void;
+  items?: readonly StudentNavigationItem[];
 }
 
-export function StudentSidebar({ variant = 'desktop', onNavigate }: StudentSidebarProps) {
+export function StudentSidebar({
+  variant = 'desktop',
+  onNavigate,
+  items = studentNavigation,
+}: StudentSidebarProps) {
   const t = useTranslations('StudentLayout');
   const pathname = usePathname();
   const sectionId = useId();
@@ -75,7 +81,7 @@ export function StudentSidebar({ variant = 'desktop', onNavigate }: StudentSideb
           </div>
 
           <nav aria-label={t('navigationLabel')} className="flex flex-col gap-6">
-            {getStudentNavigationSections(studentNavigation).map((section) => (
+            {getStudentNavigationSections(items).map((section) => (
               <section key={section.id} aria-labelledby={`${sectionId}-${section.id}`}>
                 <h2
                   id={`${sectionId}-${section.id}`}

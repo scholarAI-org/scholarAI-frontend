@@ -129,11 +129,12 @@ test('Arabic plurals render the expected forms', () => {
 
 // --- Navigation --------------------------------------------------------------
 
-test('navigation config has only Profile and Search Scholarships', () => {
+test('navigation config has Profile, Search Scholarships, and Saved', () => {
   assert.deepEqual(
     studentNavigation.map(({ id, href, group }) => [id, href, group]),
     [
       ['scholarships', '/student/scholarships', 'discover'],
+      ['saved', '/student/saved', 'discover'],
       ['profile', '/student/profile', 'personal'],
     ]
   );
@@ -259,9 +260,9 @@ test('the student layout mounts StudentShell once, inside RoleGuard', () => {
   assert.equal(layout.includes("'use client'"), false);
   assert.match(
     layout,
-    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*<StudentShell>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
+    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*<StudentShell[^>]*>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
   );
-  assert.equal(layout.match(/<StudentShell>/g)?.length, 1);
+  assert.equal(layout.match(/<StudentShell\b/g)?.length, 1);
 });
 
 test('student pages are Server Components that never mount a second frame', () => {

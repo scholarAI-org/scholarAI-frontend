@@ -1,4 +1,4 @@
-export type StudentNavigationItemId = 'profile' | 'scholarships';
+export type StudentNavigationItemId = 'profile' | 'scholarships' | 'saved';
 export type StudentNavigationGroupId = 'discover' | 'personal';
 
 export interface StudentNavigationItem {
@@ -15,4 +15,4 @@ export interface StudentNavigationSection {
   items: StudentNavigationItem[];
 }
 
-export type StudentPageKey = 'profile' | 'scholarships' | 'scholarshipDetails';
+export type StudentPageKey = 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved';

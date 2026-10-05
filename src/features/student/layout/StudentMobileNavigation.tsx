@@ -7,16 +7,20 @@ import { FOCUSABLE_SELECTOR, getFocusTrapTarget } from './focus-trap';
 import { STUDENT_MOBILE_NAVIGATION_ID } from './StudentHeader';
 import { StudentSidebar } from './StudentSidebar';
 
+import type { StudentNavigationItem } from './types';
+
 interface StudentMobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
   returnFocusRef: RefObject<HTMLButtonElement | null>;
+  items?: readonly StudentNavigationItem[];
 }
 
 export function StudentMobileNavigation({
   isOpen,
   onClose,
   returnFocusRef,
+  items,
 }: StudentMobileNavigationProps) {
   const t = useTranslations('StudentLayout');
   const panelRef = useRef<HTMLDivElement>(null);
@@ -85,7 +89,7 @@ export function StudentMobileNavigation({
             <X aria-hidden className="h-5 w-5" />
           </button>
         </div>
-        <StudentSidebar variant="drawer" onNavigate={onClose} />
+        <StudentSidebar variant="drawer" onNavigate={onClose} items={items} />
       </div>
     </div>
   );
