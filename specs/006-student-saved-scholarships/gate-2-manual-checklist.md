@@ -115,12 +115,12 @@ Before executing UI steps, open Chrome/Firefox DevTools (**F12** -> **Network** 
 
 ## 4. Verification Sign-off Record
 
-| Step                      | Inspector | Date | Environment | Status (PASS/FAIL) |
-| ------------------------- | --------- | ---- | ----------- | ------------------ |
-| 1. Flag OFF Guard         |           |      |             |                    |
-| 2. Nav & Route Resolution |           |      |             |                    |
-| 3. Empty State            |           |      |             |                    |
-| 4. Save & Coherence       |           |      |             |                    |
-| 5. Optimistic Unsave      |           |      |             |                    |
-| 6. Hard Refresh           |           |      |             |                    |
-| 7. DevTools Network Audit |           |      |             |                    |
+| Step                      | Inspector    | Date       | Environment                                                                              | Status (PASS/FAIL) |
+| ------------------------- | ------------ | ---------- | ---------------------------------------------------------------------------------------- | ------------------ |
+| 1. Flag OFF Guard         | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 2. Nav & Route Resolution | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 3. Empty State            | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 4. Save & Coherence       | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 5. Optimistic Unsave      | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 6. Hard Refresh           | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |
+| 7. DevTools Network Audit | Ahmed Zenaty | 2026-10-05 | Local dev (`pnpm dev`) + staging backend (`https://scholarai-backend-2e27.onrender.com`) | **PASS**           |

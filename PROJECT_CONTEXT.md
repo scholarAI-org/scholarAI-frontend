@@ -30,7 +30,7 @@
 - **Problem Solved**: Palestinian students face fragmented scholarship listings, language barriers, opaque eligibility criteria, and missed deadlines.
 - **Goal**: Provide an authenticated, bilingual (Arabic/English), AI-assisted platform with tailored matching, bookmarking/saved collection management, document optimization, and deadline tracking.
 - **Target Audience**: Palestinian students seeking Higher Education opportunities, and platform administrators managing listings and scrapers.
-- **Current Status**: Active production frontend. Auth, Student Profile, Scholarship Discovery (Feature 005), Admin Dashboard, Admin Scholarship Review, and Admin Manual Entry are implemented. Student Saved Scholarships (Feature 006) frontend implementation is complete (Gate 1 PASSED) behind an OFF feature flag.
+- **Current Status**: Active production frontend. Auth, Student Profile, Scholarship Discovery (Feature 005), Admin Dashboard, Admin Scholarship Review, and Admin Manual Entry are implemented. Student Saved Scholarships (Feature 006) live verification is complete (Gate 2 PASSED on staging); ready for production flag enablement decision.
 
 ---
 
@@ -55,15 +55,15 @@
 
 ## 3) Features Status
 
-| Feature ID / Module | Name                          | Status                           | Notes                                                                            |
-| ------------------- | ----------------------------- | -------------------------------- | -------------------------------------------------------------------------------- |
-| **001**             | Admin Application Shell       | Completed                        | Generic admin sidebar, header, role check                                        |
-| **002**             | Admin Dashboard               | Completed                        | System stats, pending review count, audit logs                                   |
-| **003**             | Admin Manual Scholarship      | Completed                        | Form submission for manual scholarship entry                                     |
-| **004**             | Admin Scholarship Review      | Completed                        | Approval/rejection workflow for scraped items                                    |
-| **005**             | Student Scholarship Discovery | Completed                        | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details |
-| **006**             | Student Saved Scholarships    | Frontend Implementation Complete | Gate 1 PASSED; Gate 2 (backend acceptance) pending API alignment                 |
-| **Auth**            | First-Party Cookie Auth       | Completed                        | Proxy rewrite in `middleware.ts`, `AuthProvider`, `RoleGuard`                    |
+| Feature ID / Module | Name                          | Status    | Notes                                                                                                |
+| ------------------- | ----------------------------- | --------- | ---------------------------------------------------------------------------------------------------- |
+| **001**             | Admin Application Shell       | Completed | Generic admin sidebar, header, role check                                                            |
+| **002**             | Admin Dashboard               | Completed | System stats, pending review count, audit logs                                                       |
+| **003**             | Admin Manual Scholarship      | Completed | Form submission for manual scholarship entry                                                         |
+| **004**             | Admin Scholarship Review      | Completed | Approval/rejection workflow for scraped items                                                        |
+| **005**             | Student Scholarship Discovery | Completed | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                     |
+| **006**             | Student Saved Scholarships    | Completed | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision |
+| **Auth**            | First-Party Cookie Auth       | Completed | Proxy rewrite in `middleware.ts`, `AuthProvider`, `RoleGuard`                                        |
 
 ---
 
@@ -536,7 +536,7 @@ pnpm test:scholarship-discovery
 
 ## 16) Current State & Verification Summary
 
-- **Feature 006 Status**: Frontend Implementation Complete (Gate 1 PASSED). Awaiting backend contract alignment (Gate 2).
+- **Feature 006 Status**: Gate 2 PASSED — Live verification complete on staging. Ready for production flag enablement decision.
 - **Branch**: `006-student-saved-scholarships`
 - **Working Tree**: Clean (`nothing to commit, working tree clean`).
 - **Test Results Verified**:
@@ -547,13 +547,14 @@ pnpm test:scholarship-discovery
   - `pnpm exec tsc --noEmit` -> **0 errors**
   - `pnpm lint` -> **0 errors (3 warnings)**
   - `pnpm build` -> **Compiled successfully**
+  - **Live Verification**: **All 7 scenarios PASSED** on Staging (`https://scholarai-backend-2e27.onrender.com`)
 
 ---
 
 ## 17) TODO / Pending Tasks
 
-- [x] **T001–T050** (Phases 1–9): Frontend Implementation Complete (Gate 1 PASSED).
-- [ ] **T051–T056** (Phase 10): Gate 2 Backend Integration Acceptance (flip `SAVED_SCHOLARSHIPS_ENABLED=true` after backend API alignment).
+- [x] **T001–T056** (Phases 1–10): Feature 006 Implementation & Live Verification Complete (Gate 1 & Gate 2 PASSED).
+- [ ] Production deployment environment variable flip (`SAVED_SCHOLARSHIPS_ENABLED=true` in Vercel Production dashboard).
 
 ---
 
