@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "title": "Scholarship A",
+    "title_en": "Scholarship A",
+    "title_ar": "المنحة أ",
+    "country": "Germany",
+    "study_level": "master",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "deadline": "2027-01-15",
+    "no_deadline": false,
+    "is_saved": true
+  },
+  {
+    "id": 2,
+    "title": "Scholarship B",
+    "title_en": "Scholarship B",
+    "title_ar": "المنحة ب",
+    "country": "France",
+    "study_level": "phd",
+    "funding_type": "full",
+    "opportunity_type": "research_fellowship",
+    "deadline": "2027-02-20",
+    "no_deadline": false,
+    "is_saved": true
+  },
+  {
+    "id": 3,
+    "title": "Scholarship C",
+    "title_en": "Scholarship C",
+    "title_ar": "المنحة ج",
+    "country": "Spain",
+    "study_level": "bachelor",
+    "funding_type": "partial",
+    "opportunity_type": "scholarship",
+    "deadline": "2027-03-30",
+    "no_deadline": false,
+    "is_saved": true
+  },
+  {
+    "id": 4,
+    "title": "Scholarship D",
+    "title_en": "Scholarship D",
+    "title_ar": "المنحة د",
+    "country": "Netherlands",
+    "study_level": "master",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "deadline": null,
+    "no_deadline": true,
+    "is_saved": true
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": 101,
+    "title": "DAAD Study Scholarship for International Graduates",
+    "title_en": "DAAD Study Scholarship for International Graduates",
+    "title_ar": "منحة DAAD للدراسة لخريجي الدول",
+    "organization_name": "DAAD",
+    "university_name": "Technische Universität München",
+    "country": "Germany",
+    "study_level": "master",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "image_url": "https://images.example.org/daad.jpg",
+    "deadline": "2027-01-15",
+    "no_deadline": false,
+    "is_saved": true
+  }
+]

@@ -693,7 +693,9 @@
     "save": "إنهاء"
   },
   "AdminShell": {
-    "brand": { "name": "ScholarAI" },
+    "brand": {
+      "name": "ScholarAI"
+    },
     "navigationLabel": "تنقل المسؤول",
     "openNavigation": "فتح قائمة تنقل المسؤول",
     "closeNavigation": "إغلاق قائمة تنقل المسؤول",
@@ -701,7 +703,10 @@
     "logout": "تسجيل الخروج",
     "logoutPending": "جاري تسجيل الخروج...",
     "unavailable": "هذه الصفحة غير متاحة بعد",
-    "identity": { "unknown": "المسؤول", "role": "مسؤول" },
+    "identity": {
+      "unknown": "المسؤول",
+      "role": "مسؤول"
+    },
     "groups": {
       "overview": "نظرة عامة",
       "content": "المحتوى",
@@ -992,10 +997,14 @@
       "fallbackName": "طالب",
       "role": "طالب"
     },
-    "navGroups": { "discover": "اكتشاف", "personal": "شخصي" },
+    "navGroups": {
+      "discover": "اكتشاف",
+      "personal": "شخصي"
+    },
     "nav": {
       "profile": "الملف الشخصي",
-      "scholarships": "البحث عن منح"
+      "scholarships": "البحث عن منح",
+      "saved": "المحفوظات"
     },
     "pages": {
       "profile": {
@@ -1009,6 +1018,10 @@
       "scholarshipDetails": {
         "title": "تفاصيل المنحة",
         "description": "المعلومات الأساسية عن هذه المنحة."
+      },
+      "saved": {
+        "title": "المنح المحفوظة",
+        "description": "المنح التي حفظتها لمراجعتها لاحقاً."
       }
     }
   },
@@ -1060,7 +1073,9 @@
         "selected": "{count, plural, zero {لم يتم اختيار أي دولة} one {تم اختيار دولة واحدة} two {تم اختيار دولتين} few {تم اختيار {count, number, integer} دول} many {تم اختيار {count, number, integer} دولة} other {تم اختيار {count, number, integer} دولة}}"
       }
     },
-    "chips": { "all": "الكل" },
+    "chips": {
+      "all": "الكل"
+    },
     "filtersDialog": {
       "activeCount": "{count, plural, =0 {لا توجد فلاتر نشطة} one {فلتر واحد نشط} two {فلتران نشطان} few {{count, number, integer} فلاتر نشطة} many {{count, number, integer} فلترًا نشطًا} other {{count, number, integer} فلتر نشط}}",
       "label": "تصفية المنح",
@@ -1078,7 +1093,11 @@
       "untitled": "منحة بدون عنوان",
       "details": "عرض التفاصيل",
       "detailsFor": "عرض تفاصيل {title}",
-      "matchLevel": { "high": "توافق عالٍ", "medium": "توافق متوسط", "low": "توافق منخفض" },
+      "matchLevel": {
+        "high": "توافق عالٍ",
+        "medium": "توافق متوسط",
+        "low": "توافق منخفض"
+      },
       "matchScore": "توافق {score}%",
       "imageAlt": "صورة {title}",
       "noDeadline": "بدون موعد نهائي",
@@ -1172,6 +1191,26 @@
       "remove": "إزالة المنحة من المحفوظات",
       "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
+    }
+  },
+  "StudentSavedScholarships": {
+    "title": "المنح المحفوظة",
+    "count": "{count, plural, =0 {لا توجد منح محفوظة} one {منحة محفوظة واحدة} two {منحتان محفوظتان} few {{count, number, integer} منح محفوظة} many {{count, number, integer} منحة محفوظة} other {{count, number, integer} منحة محفوظة}}",
+    "loading": "جاري تحميل المنح المحفوظة…",
+    "empty": {
+      "illustrationAlt": "",
+      "heading": "لم تحفظ أي منحة بعد",
+      "body": "تصفح المنح واحفظ ما تريد العودة إليه لاحقاً.",
+      "cta": "استكشاف المنح"
+    },
+    "errors": {
+      "generic": "تعذر تحميل المنح المحفوظة. حاول مرة أخرى.",
+      "unauthorized": "يرجى تسجيل الدخول من جديد لعرض المنح المحفوظة.",
+      "forbidden": "هذا القسم غير متاح لحسابك حالياً.",
+      "retry": "إعادة المحاولة"
+    },
+    "unsave": {
+      "failed": "تعذر إزالة هذه المنحة. حاول مرة أخرى."
     }
   }
 }

@@ -1,0 +1,50 @@
+[
+  {
+    "id": 101,
+    "title": "DAAD Study Scholarship for International Graduates",
+    "title_en": "DAAD Study Scholarship for International Graduates",
+    "title_ar": "منحة DAAD للدراسة لخريجي الدول",
+    "organization_name": "DAAD",
+    "university_name": "Technische Universität München",
+    "country": "Germany",
+    "study_level": "master",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "image_url": "https://images.example.org/daad.jpg",
+    "deadline": "2027-01-15",
+    "no_deadline": false,
+    "is_saved": true
+  },
+  {
+    "id": 202,
+    "title": "Chevening Scholarship",
+    "title_en": "Chevening Scholarship",
+    "title_ar": "منحة تشيفنينغ",
+    "organization_name": "UK Government",
+    "university_name": "University of Oxford",
+    "country": "United Kingdom",
+    "study_level": "master",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "image_url": "https://images.example.org/chevening.jpg",
+    "deadline": "2027-02-01",
+    "no_deadline": false,
+    "is_saved": true
+  },
+  {
+    "id": 303,
+    "title": "Fulbright Foreign Student Program",
+    "title_en": "Fulbright Foreign Student Program",
+    "title_ar": "برنامج فولبرايت للطلاب الدوليين",
+    "organization_name": "U.S. Department of State",
+    "university_name": "Harvard University",
+    "country": "United States",
+    "study_level": "phd",
+    "funding_type": "full",
+    "opportunity_type": "scholarship",
+    "image_url": "https://images.example.org/fulbright.jpg",
+    "deadline": "2027-05-01",
+    "no_deadline": false,
+    "is_saved": true
+  }
+]

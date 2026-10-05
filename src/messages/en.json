@@ -693,7 +693,9 @@
     "save": "Finish"
   },
   "AdminShell": {
-    "brand": { "name": "ScholarAI" },
+    "brand": {
+      "name": "ScholarAI"
+    },
     "navigationLabel": "Administrator navigation",
     "openNavigation": "Open administrator navigation",
     "closeNavigation": "Close administrator navigation",
@@ -701,7 +703,10 @@
     "logout": "Log out",
     "logoutPending": "Logging out...",
     "unavailable": "This page is not available yet",
-    "identity": { "unknown": "Administrator", "role": "Administrator" },
+    "identity": {
+      "unknown": "Administrator",
+      "role": "Administrator"
+    },
     "groups": {
       "overview": "Overview",
       "content": "Content",
@@ -992,10 +997,14 @@
       "fallbackName": "Student",
       "role": "Student"
     },
-    "navGroups": { "discover": "Discover", "personal": "Personal" },
+    "navGroups": {
+      "discover": "Discover",
+      "personal": "Personal"
+    },
     "nav": {
       "profile": "Profile",
-      "scholarships": "Search scholarships"
+      "scholarships": "Search scholarships",
+      "saved": "Saved"
     },
     "pages": {
       "profile": {
@@ -1009,6 +1018,10 @@
       "scholarshipDetails": {
         "title": "Scholarship details",
         "description": "Key information about this scholarship."
+      },
+      "saved": {
+        "title": "Saved Scholarships",
+        "description": "Scholarships you have saved for later."
       }
     }
   },
@@ -1060,7 +1073,9 @@
         "selected": "{count, plural, =0 {No countries selected} one {{count, number, integer} country selected} other {{count, number, integer} countries selected}}"
       }
     },
-    "chips": { "all": "All" },
+    "chips": {
+      "all": "All"
+    },
     "filtersDialog": {
       "activeCount": "{count, plural, =0 {No active filters} one {{count, number, integer} active filter} other {{count, number, integer} active filters}}",
       "label": "Scholarship filters",
@@ -1078,7 +1093,11 @@
       "untitled": "Untitled scholarship",
       "details": "View details",
       "detailsFor": "View details for {title}",
-      "matchLevel": { "high": "High match", "medium": "Medium match", "low": "Low match" },
+      "matchLevel": {
+        "high": "High match",
+        "medium": "Medium match",
+        "low": "Low match"
+      },
       "matchScore": "{score}% match",
       "imageAlt": "Image for {title}",
       "noDeadline": "No deadline",
@@ -1172,6 +1191,26 @@
       "remove": "Remove saved scholarship",
       "pending": "Updating…",
       "error": "Couldn't update saved scholarships. Try again."
+    }
+  },
+  "StudentSavedScholarships": {
+    "title": "Saved Scholarships",
+    "count": "{count, plural, =0 {No saved scholarships} one {{count, number, integer} saved scholarship} other {{count, number, integer} saved scholarships}}",
+    "loading": "Loading saved scholarships…",
+    "empty": {
+      "illustrationAlt": "",
+      "heading": "You have not saved any scholarships yet",
+      "body": "Browse scholarships and save the ones you want to come back to.",
+      "cta": "Explore scholarships"
+    },
+    "errors": {
+      "generic": "We could not load your saved scholarships. Please try again.",
+      "unauthorized": "Please sign in again to see your saved scholarships.",
+      "forbidden": "This section is not available for your account right now.",
+      "retry": "Try again"
+    },
+    "unsave": {
+      "failed": "We could not remove this scholarship. Please try again."
     }
   }
 }
