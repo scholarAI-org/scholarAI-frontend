@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
+import { useLocale, useTranslations } from 'next-intl';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Container } from '@/components/shared/Container';
 import { Logo } from '@/components/shared/Logo';
 import { buttonStyles } from '@/components/ui/Button';
@@ -18,6 +18,9 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const t = useTranslations('Landing.nav');
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -52,6 +55,14 @@ export function Navbar() {
           <Link href="/register" className={buttonStyles({ variant: 'primary', size: 'sm' })}>
             {t('start')}
           </Link>
+          <button
+            type="button"
+            onClick={() => router.replace(pathname, { locale: locale === 'ar' ? 'en' : 'ar' })}
+            className="rounded-lg px-2 py-1 text-sm font-bold text-[var(--color-navy-800)]"
+            aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+          >
+            {locale === 'ar' ? 'EN' : 'ع'}
+          </button>
         </div>
 
         <button
@@ -98,6 +109,13 @@ export function Navbar() {
                 {t('start')}
               </Link>
             </div>
+            <button
+              type="button"
+              onClick={() => router.replace(pathname, { locale: locale === 'ar' ? 'en' : 'ar' })}
+              className="mt-2 rounded-lg px-3 py-2.5 text-start text-sm font-bold text-[var(--color-navy-800)]"
+            >
+              {locale === 'ar' ? 'English' : 'العربية'}
+            </button>
           </Container>
         </div>
       )}

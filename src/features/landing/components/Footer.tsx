@@ -1,8 +1,6 @@
 import { useTranslations } from 'next-intl';
-import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/shared/Container';
 import { Logo } from '@/components/shared/Logo';
-import { GithubIcon, LinkedinIcon } from '@/components/icons';
 
 const COLUMN_KEYS = ['brand', 'discover', 'tools', 'platform'] as const;
 
@@ -35,13 +33,9 @@ export function Footer() {
               <div key={key} className="flex flex-col gap-3">
                 <p className="text-sm font-bold text-white">{column.title}</p>
                 {column.links.map((link) => (
-                  <Link
-                    key={link}
-                    href="#"
-                    className="text-sm text-[var(--color-gray-400)] transition-colors hover:text-white"
-                  >
+                  <p key={link} className="text-sm text-[var(--color-gray-400)]">
                     {link}
-                  </Link>
+                  </p>
                 ))}
               </div>
             );
@@ -52,26 +46,6 @@ export function Footer() {
 
         <div className="flex flex-col-reverse items-center gap-4 py-3 sm:flex-row sm:justify-between">
           <p className="text-sm text-[var(--color-gray-300)]">{t('copyright')}</p>
-          <div className="flex items-center gap-2">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-green-600)] transition-opacity hover:opacity-80"
-            >
-              <GithubIcon className="h-4 w-4 text-white" />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-green-600)] transition-opacity hover:opacity-80"
-            >
-              <LinkedinIcon className="h-4 w-4 text-white" />
-            </a>
-          </div>
         </div>
       </Container>
     </footer>

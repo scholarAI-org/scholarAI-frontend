@@ -22,10 +22,61 @@
       "start": "Get Started",
       "menuToggle": "Open menu"
     },
+    "trust": {
+      "badge": "Why PsScholar?",
+      "heading": "One platform for your academic journey",
+      "discover": "Discover verified opportunities",
+      "guidance": "Organize your academic details",
+      "tracking": "Track your next step"
+    },
+    "platformFeatures": {
+      "badge": "Platform features",
+      "heading": "Everything you need in one place",
+      "items": [
+        {
+          "title": "Start your profile",
+          "description": "Keep your academic information and preferences in one place."
+        },
+        {
+          "title": "An organized academic profile",
+          "description": "Keep your academic information and preferences in one place."
+        },
+        {
+          "title": "Document management",
+          "description": "Upload the documents you need for your academic journey."
+        },
+        {
+          "title": "Clear steps",
+          "description": "Complete your profile through clear, easy-to-follow stages."
+        }
+      ]
+    },
+    "faq": {
+      "badge": "Frequently asked questions",
+      "heading": "Common questions",
+      "items": [
+        {
+          "q": "Is the platform free to use?",
+          "a": "You can create an account and explore the platform features available to you without entering a credit card."
+        },
+        {
+          "q": "How do I get started?",
+          "a": "Create an account, then complete your academic profile and study preferences."
+        },
+        {
+          "q": "Can I add documents to my profile?",
+          "a": "Yes. The platform lets you manage the documents required in your personal profile."
+        },
+        {
+          "q": "Is the platform available in Arabic?",
+          "a": "Yes. The platform interface is available in both Arabic and English."
+        }
+      ]
+    },
     "hero": {
-      "badge": "AI-powered personalized recommendations",
-      "title": "Because Palestinian students deserve the best opportunities",
-      "subtitle": "Discover, match, and track global and local scholarship opportunities with smart guidance tailored for Palestinian students to ease your academic journey.",
+      "badge": "A platform for academic opportunities",
+      "title": "Find the study opportunity that fits your future",
+      "subtitle": "Keep your academic profile, documents, and study preferences in one place for a clearer academic journey.",
       "filters": {
         "all": "All",
         "bachelor": "Bachelor's",
@@ -35,7 +86,10 @@
       },
       "searchPlaceholder": "Scholarship name, university, or major",
       "searchCount": "+100",
-      "searchButton": "Search"
+      "searchButton": "Search",
+      "start": "Get started",
+      "howItWorks": "How it works",
+      "searchUnavailable": "Public scholarship search is coming soon"
     },
     "stats": {
       "scholarships": {
@@ -101,7 +155,7 @@
     },
     "howItWorks": {
       "badge": "How it works",
-      "heading": "From discovery to application",
+      "heading": "From account creation to profile completion",
       "steps": [
         {
           "number": "1",
@@ -110,18 +164,18 @@
         },
         {
           "number": "2",
-          "title": "AI recommendations",
-          "description": "Our AI matches your profile with thousands of scholarships and ranks them by compatibility."
+          "title": "Complete your details",
+          "description": "Add your academic information and study preferences to your profile."
         },
         {
           "number": "3",
-          "title": "Explore and save",
-          "description": "Browse results, check eligibility requirements, and save the scholarships you want to apply for."
+          "title": "Add your documents",
+          "description": "Manage important documents in your personal profile."
         },
         {
           "number": "4",
-          "title": "Prepare and apply",
-          "description": "Track your deadlines and apply directly through the scholarships' official links."
+          "title": "Review your progress",
+          "description": "Complete the remaining sections of your profile with ease."
         }
       ]
     },
@@ -169,7 +223,7 @@
     },
     "contact": {
       "heading": "Contact Us",
-      "subtitle": "We'd love to hear from you! Send us your message and we'll get back to you as soon as possible.",
+      "subtitle": "Thank you for your interest in PsScholar.",
       "nameLabel": "Full name",
       "namePlaceholder": "Enter your full name here",
       "emailLabel": "Email address",
@@ -179,11 +233,12 @@
       "messageLabel": "Message",
       "messagePlaceholder": "Write your message details here...",
       "submit": "Send message",
-      "sent": "Your message has been sent"
+      "sent": "Your message has been sent",
+      "unavailable": "The contact form is not available for submission yet."
     },
     "cta": {
       "heading": "Ready to find your scholarship?",
-      "subtitle": "Join thousands of Palestinian students using PsScholar to discover and apply for scholarship opportunities around the world.",
+      "subtitle": "Create an account to discover scholarship opportunities and organize your next step.",
       "register": "Create account",
       "login": "Login"
     },

@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
 import { Container } from '@/components/shared/Container';
 import { Reveal } from '@/components/shared/Reveal';
 import { Label } from '@/components/ui/Label';
@@ -12,13 +11,6 @@ import { MailIcon, UserIcon } from '@/components/icons';
 
 export function ContactSection() {
   const t = useTranslations('Landing.contact');
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
   return (
     <section id="contact" className="overflow-hidden bg-[var(--color-bg-page)]">
       <Container className="grid grid-cols-1 items-center gap-12 py-16 sm:py-20 lg:grid-cols-2">
@@ -30,7 +22,7 @@ export function ContactSection() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form className="flex flex-col gap-5" aria-describedby="contact-unavailable">
             <div className="flex flex-col gap-2">
               <Label htmlFor="contact-name" className="text-[var(--color-navy-800)]">
                 {t('nameLabel')}
@@ -39,6 +31,7 @@ export function ContactSection() {
                 id="contact-name"
                 name="name"
                 required
+                disabled
                 placeholder={t('namePlaceholder')}
                 icon={<UserIcon className="h-[18px] w-[18px]" />}
               />
@@ -53,6 +46,7 @@ export function ContactSection() {
                 name="email"
                 type="email"
                 required
+                disabled
                 placeholder={t('emailPlaceholder')}
                 icon={<MailIcon className="h-[18px] w-[18px]" />}
               />
@@ -66,6 +60,7 @@ export function ContactSection() {
                 id="contact-subject"
                 name="subject"
                 required
+                disabled
                 placeholder={t('subjectPlaceholder')}
                 icon={<MailIcon className="h-[18px] w-[18px]" />}
               />
@@ -79,17 +74,22 @@ export function ContactSection() {
                 id="contact-message"
                 name="message"
                 required
+                disabled
                 rows={4}
                 placeholder={t('messagePlaceholder')}
                 className="w-full resize-none rounded-[var(--radius-input)] border border-[var(--color-border-default)] px-4 py-3 text-xs text-[var(--color-text-label)] outline-none transition-colors focus:border-[var(--color-border-focus)]"
               />
             </div>
 
+            <p id="contact-unavailable" className="text-sm text-[var(--color-text-secondary)]">
+              {t('unavailable')}
+            </p>
             <button
-              type="submit"
+              type="button"
+              disabled
               className={buttonStyles({ variant: 'primary', className: 'w-full' })}
             >
-              {submitted ? t('sent') : t('submit')}
+              {t('submit')}
             </button>
           </form>
         </Reveal>
