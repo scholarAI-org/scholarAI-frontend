@@ -89,6 +89,7 @@ test('student messages never use `#`, which next-intl cannot pin', () => {
     'StudentLayout',
     'StudentScholarshipDiscovery',
     'StudentScholarshipDetails',
+    'StudentSavedScholarships',
   ]) {
     assert.equal(JSON.stringify(ar[namespace]).includes('#'), false, namespace);
   }

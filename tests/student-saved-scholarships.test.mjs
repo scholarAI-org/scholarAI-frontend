@@ -628,3 +628,74 @@ test('T033 single-active-nav guarantee: exactly one item active per route', () =
 
   assert.equal(getStudentPageKey('/student/saved'), 'saved');
 });
+
+// -------------------- Phase 6: i18n & Plurals (T036, T037) -----------------
+
+function flattenObjectKeys(value, prefix = '') {
+  return Object.entries(value).flatMap(([key, child]) =>
+    typeof child === 'string' ? [[`${prefix}${key}`, child]] : flattenObjectKeys(child, `${prefix}${key}.`)
+  );
+}
+
+test('T036 namespace key-parity: StudentSavedScholarships and nav.saved exist in ar and en with identical keys', () => {
+  const arData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/ar.json'), 'utf8'));
+  const enData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/en.json'), 'utf8'));
+
+  assert.ok(arData.StudentLayout?.nav?.saved, 'ar.json missing StudentLayout.nav.saved');
+  assert.ok(enData.StudentLayout?.nav?.saved, 'en.json missing StudentLayout.nav.saved');
+  assert.equal(arData.StudentLayout.nav.saved, 'المحفوظات');
+  assert.equal(enData.StudentLayout.nav.saved, 'Saved');
+
+  const arSaved = arData.StudentSavedScholarships;
+  const enSaved = enData.StudentSavedScholarships;
+  assert.ok(arSaved, 'ar.json missing StudentSavedScholarships namespace');
+  assert.ok(enSaved, 'en.json missing StudentSavedScholarships namespace');
+
+  const arKeys = flattenObjectKeys(arSaved).map(([k]) => k).sort();
+  const enKeys = flattenObjectKeys(enSaved).map(([k]) => k).sort();
+
+  assert.deepEqual(arKeys, enKeys, 'StudentSavedScholarships key sets must match between ar and en');
+});
+
+test('T037 ICU plural formatting: count formatting across 0, 1, 2, 3, 11, 100 in ar and en with Latin digits', () => {
+  const { intlFormats, toFormattingLocale } = loadModule(path.join(srcPath, 'i18n/formatting.ts'));
+  const arData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/ar.json'), 'utf8'));
+  const enData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/en.json'), 'utf8'));
+
+  const arMessage = arData.StudentSavedScholarships.count;
+  const enMessage = enData.StudentSavedScholarships.count;
+
+  const arFormatter = new IntlMessageFormat(arMessage, toFormattingLocale('ar'), { number: intlFormats.number });
+  const enFormatter = new IntlMessageFormat(enMessage, toFormattingLocale('en'), { number: intlFormats.number });
+
+  // Assert =0 branch is hit at count 0
+  assert.equal(arFormatter.format({ count: 0 }), 'لا توجد منح محفوظة');
+  assert.equal(enFormatter.format({ count: 0 }), 'No saved scholarships');
+
+  // Arabic plural branches: 1 (one), 2 (two), 3 (few), 11 (many), 100 (other)
+  const ar1 = arFormatter.format({ count: 1 });
+  const ar2 = arFormatter.format({ count: 2 });
+  const ar3 = arFormatter.format({ count: 3 });
+  const ar11 = arFormatter.format({ count: 11 });
+  const ar100 = arFormatter.format({ count: 100 });
+
+  assert.equal(ar1, 'منحة محفوظة واحدة');
+  assert.equal(ar2, 'منحتان محفوظتان');
+  assert.equal(ar3, '3 منح محفوظة');
+  assert.equal(ar11, '11 منحة محفوظة');
+  assert.equal(ar100, '100 منحة محفوظة');
+
+  // English plural branches: 1 (one), 2 (other), 3 (other), 11 (other), 100 (other)
+  assert.equal(enFormatter.format({ count: 1 }), '1 saved scholarship');
+  assert.equal(enFormatter.format({ count: 2 }), '2 saved scholarships');
+  assert.equal(enFormatter.format({ count: 3 }), '3 saved scholarships');
+
+  // Assert Latin digits are rendered (no Arabic-Indic digits ٠-٩)
+  const arabicIndicRegex = /[٠-٩۰-۹]/;
+  for (const count of [0, 1, 2, 3, 11, 100]) {
+    const formattedAr = arFormatter.format({ count });
+    const formattedEn = enFormatter.format({ count });
+    assert.equal(arabicIndicRegex.test(formattedAr), false, `Count ${count} in ar formatted with Arabic-Indic digits: ${formattedAr}`);
+    assert.equal(arabicIndicRegex.test(formattedEn), false, `Count ${count} in en formatted with Arabic-Indic digits: ${formattedEn}`);
+  }
+});
