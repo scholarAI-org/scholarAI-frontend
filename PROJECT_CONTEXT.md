@@ -55,15 +55,16 @@
 
 ## 3) Features Status
 
-| Feature ID / Module | Name                          | Status    | Notes                                                                                                |
-| ------------------- | ----------------------------- | --------- | ---------------------------------------------------------------------------------------------------- |
-| **001**             | Admin Application Shell       | Completed | Generic admin sidebar, header, role check                                                            |
-| **002**             | Admin Dashboard               | Completed | System stats, pending review count, audit logs                                                       |
-| **003**             | Admin Manual Scholarship      | Completed | Form submission for manual scholarship entry                                                         |
-| **004**             | Admin Scholarship Review      | Completed | Approval/rejection workflow for scraped items                                                        |
-| **005**             | Student Scholarship Discovery | Completed | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                     |
-| **006**             | Student Saved Scholarships    | Completed | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision |
-| **Auth**            | First-Party Cookie Auth       | Completed | Proxy rewrite in `middleware.ts`, `AuthProvider`, `RoleGuard`                                        |
+| Feature ID / Module | Name                          | Status        | Notes                                                                                                                      |
+| ------------------- | ----------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **001**             | Admin Application Shell       | Completed     | Generic admin sidebar, header, role check                                                                                  |
+| **002**             | Admin Dashboard               | Completed     | System stats, pending review count, audit logs                                                                             |
+| **003**             | Admin Manual Scholarship      | Completed     | Form submission for manual scholarship entry                                                                               |
+| **004**             | Admin Scholarship Review      | Completed     | Approval/rejection workflow for scraped items                                                                              |
+| **005**             | Student Scholarship Discovery | Completed     | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                                           |
+| **006**             | Student Saved Scholarships    | Completed     | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision                       |
+| **007**             | Student Scholarship Details   | Gate 1 PASSED | Frontend implementation complete. Feature flag SCHOLARSHIP_DETAILS_ENABLED remains OFF. Awaiting Gate 2 live verification. |
+| **Auth**            | First-Party Cookie Auth       | Completed     | Proxy rewrite in `middleware.ts`, `AuthProvider`, `RoleGuard`                                                              |
 
 ---
 
@@ -537,6 +538,7 @@ pnpm test:scholarship-discovery
 ## 16) Current State & Verification Summary
 
 - **Feature 006 Status**: Gate 2 PASSED — Live verification complete on staging. Ready for production flag enablement decision.
+- **Feature 007 Status**: Gate 1 PASSED — Frontend implementation complete. Feature flag `SCHOLARSHIP_DETAILS_ENABLED` remains OFF. Awaiting Gate 2 live verification.
 - **Branch**: `006-student-saved-scholarships`
 - **Working Tree**: Clean (`nothing to commit, working tree clean`).
 - **Test Results Verified**:
