@@ -369,6 +369,53 @@
               "default": "pending"
             },
             "description": "Stored scholarship review status"
+          },
+          {
+            "name": "min_source_confidence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Source Confidence"
+            }
+          },
+          {
+            "name": "max_source_confidence",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "maximum": 1,
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Max Source Confidence"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": ["newest", "source_confidence_asc", "source_confidence_desc"],
+              "type": "string",
+              "default": "newest",
+              "title": "Sort"
+            }
           }
         ],
         "responses": {
@@ -3485,6 +3532,37 @@
         ]
       }
     },
+    "/profile/scholarship-profile": {
+      "get": {
+        "tags": ["Profile"],
+        "summary": "Get the authenticated student's scholarship profile",
+        "description": "Read saved scholarship-related data in a flat response. Identity comes from the session cookie or Bearer token, never a student ID parameter. Missing data remains nullable or empty; no profile or document records are created.",
+        "operationId": "get_student_scholarship_profile_profile_scholarship_profile_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentScholarshipProfileResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account is disabled"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
     "/api/scholarships/": {
       "get": {
         "tags": ["Scholarships"],
@@ -3523,21 +3601,13 @@
             "schema": {
               "type": "array",
               "items": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/DiscoveryStudyLevel"
-                  },
-                  {
-                    "enum": ["bachelor", "master", "phd", "exchange"],
-                    "type": "string"
-                  }
-                ]
+                "$ref": "#/components/schemas/ScholarshipStudyLevel"
               },
               "maxItems": 20,
-              "description": "bachelor, master, phd or exchange (also accepts uppercase). Repeat for OR. Combined with legacy study_level selections using OR.",
+              "description": "bachelor, master, phd, postdoc or other (also accepts uppercase). Repeat for OR. Combined with legacy study_level selections using OR.",
               "title": "Academic Level"
             },
-            "description": "bachelor, master, phd or exchange (also accepts uppercase). Repeat for OR. Combined with legacy study_level selections using OR."
+            "description": "bachelor, master, phd, postdoc or other (also accepts uppercase). Repeat for OR. Combined with legacy study_level selections using OR."
           },
           {
             "name": "study_level",
@@ -3546,21 +3616,13 @@
             "schema": {
               "type": "array",
               "items": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/DiscoveryStudyLevel"
-                  },
-                  {
-                    "enum": ["bachelor", "master", "phd", "exchange"],
-                    "type": "string"
-                  }
-                ]
+                "$ref": "#/components/schemas/ScholarshipStudyLevel"
               },
               "maxItems": 20,
-              "description": "Repeat for multiple levels (OR); EXCHANGE matches stored academic-exchange labels.",
+              "description": "Legacy alias for academic_level; repeat canonical study levels for OR.",
               "title": "Study Level"
             },
-            "description": "Repeat for multiple levels (OR); EXCHANGE matches stored academic-exchange labels."
+            "description": "Legacy alias for academic_level; repeat canonical study levels for OR."
           },
           {
             "name": "funding_type",
@@ -3569,16 +3631,8 @@
             "schema": {
               "type": "array",
               "items": {
-                "anyOf": [
-                  {
-                    "enum": ["FULL", "PARTIAL"],
-                    "type": "string"
-                  },
-                  {
-                    "enum": ["full", "partial"],
-                    "type": "string"
-                  }
-                ]
+                "enum": ["FULL", "PARTIAL"],
+                "type": "string"
               },
               "maxItems": 20,
               "description": "full or partial (also accepts FULL/PARTIAL). Repeat for OR; other filters use AND.",
@@ -3593,21 +3647,13 @@
             "schema": {
               "type": "array",
               "items": {
-                "anyOf": [
-                  {
-                    "$ref": "#/components/schemas/ScholarshipOpportunityType"
-                  },
-                  {
-                    "enum": ["exchange", "fellowship"],
-                    "type": "string"
-                  }
-                ]
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
               },
               "maxItems": 20,
-              "description": "scholarship, exchange/academic_exchange, fellowship/research_fellowship, training. Repeat for OR. Internship is not a stored category. Unclassified listings do not match.",
+              "description": "scholarship, fellowship, grant, exchange, short_course, other. Repeat for OR. Internship is not a stored category. Unclassified listings do not match.",
               "title": "Opportunity Type"
             },
-            "description": "scholarship, exchange/academic_exchange, fellowship/research_fellowship, training. Repeat for OR. Internship is not a stored category. Unclassified listings do not match."
+            "description": "scholarship, fellowship, grant, exchange, short_course, other. Repeat for OR. Internship is not a stored category. Unclassified listings do not match."
           },
           {
             "name": "country",
@@ -3881,91 +3927,18 @@
       "get": {
         "tags": ["Scholarships"],
         "summary": "Get saved scholarships for the authenticated student",
-        "description": "Returns all scholarships saved by the currently authenticated student. Reuses the discovery page scholarship-card schema. Supports pagination via page and page_size (or skip and limit). Returns an empty list (200 OK) when no scholarships are saved.",
+        "description": "Requires an authenticated active account. Returns the complete, unpaged collection of the student's saved scholarships visible under discovery rules: approved listings with a deadline today or later (UTC), or an explicit no-deadline flag and no date. Reuses the discovery card schema with is_saved=true. Ordered by most recently saved first, then scholarship ID descending. No query parameters are supported (422). X-Total-Count equals the array length. Returns an empty list (200 OK) when no scholarships are saved.",
         "operationId": "get_saved_scholarships_endpoint_api_scholarships_saved_get",
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "description": "Page number starting at 1",
-              "default": 1,
-              "title": "Page"
-            },
-            "description": "Page number starting at 1"
-          },
-          {
-            "name": "page_size",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 100,
-              "minimum": 1,
-              "description": "Items per page",
-              "default": 20,
-              "title": "Page Size"
-            },
-            "description": "Items per page"
-          },
-          {
-            "name": "skip",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "minimum": 0
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Number of items to skip",
-              "title": "Skip"
-            },
-            "description": "Number of items to skip"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "integer",
-                  "maximum": 100,
-                  "minimum": 1
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Number of items to return",
-              "title": "Limit"
-            },
-            "description": "Number of items to return"
-          }
-        ],
         "responses": {
           "200": {
             "description": "List of saved scholarship cards (or empty list)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RecommendationScholarshipResponse"
+                    "$ref": "#/components/schemas/ScholarshipDiscoveryCard"
                   },
+                  "type": "array",
                   "title": "Response Get Saved Scholarships Endpoint Api Scholarships Saved Get"
                 }
               }
@@ -3974,15 +3947,108 @@
           "401": {
             "description": "Missing or invalid authentication"
           },
+          "403": {
+            "description": "Account disabled"
+          },
           "422": {
-            "description": "Validation Error",
+            "description": "Unsupported query parameter"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/scholarships/tracked/statistics": {
+      "get": {
+        "tags": ["Scholarships"],
+        "summary": "Get the authenticated student's application tracking counters",
+        "description": "Counts saved scholarships separately from application tracking statuses. Includes all owned records, including closed applications and expired scholarships. Missing statuses return zero. No filters are supported.",
+        "operationId": "get_tracking_statistics_endpoint_api_scholarships_tracked_statistics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/StudentScholarshipTrackingStatisticsResponse"
                 }
               }
             }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled"
+          },
+          "422": {
+            "description": "Unsupported query parameter"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/scholarships/tracked": {
+      "get": {
+        "tags": ["Scholarships"],
+        "summary": "List the authenticated student's tracked applications",
+        "description": "Returns all owned applications, newest first, including closed applications and expired scholarships. Optionally filter by exact application status. Scholarship cards reuse the discovery schema and current user's bookmark state.",
+        "operationId": "list_tracked_scholarships_api_scholarships_tracked_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ApplicationTrackingStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Exact application status; omitted returns all statuses.",
+              "title": "Status"
+            },
+            "description": "Exact application status; omitted returns all statuses."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentScholarshipTrackingResponse"
+                  },
+                  "title": "Response List Tracked Scholarships Api Scholarships Tracked Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled"
+          },
+          "422": {
+            "description": "Invalid status or unsupported query parameter"
           }
         }
       }
@@ -4015,6 +4081,24 @@
               "title": "Source Id"
             },
             "description": "المعرف الفريد للمنحة من الموقع الأصلي"
+          },
+          {
+            "name": "academic_year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Optional intake/cycle; omitted checks all cycles.",
+              "title": "Academic Year"
+            },
+            "description": "Optional intake/cycle; omitted checks all cycles."
           }
         ],
         "responses": {
@@ -4424,6 +4508,412 @@
         }
       }
     },
+    "/api/scholarships/tracked/{tracking_id}/status": {
+      "patch": {
+        "tags": ["Scholarships"],
+        "summary": "Update the authenticated student's application progress",
+        "description": "Use the outer tracking record ID returned by GET /api/scholarships/tracked. Updates only the authenticated account's existing application. All supported progress statuses may be selected; scholarship availability and bookmark state are unchanged. Repeating the current status preserves timestamps. Missing and other accounts' tracking records both return 404.",
+        "operationId": "update_status_by_tracking_id_api_scholarships_tracked__tracking_id__status_patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tracking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "maximum": 2147483647,
+              "exclusiveMinimum": 0,
+              "title": "Tracking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationStatusUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled or untrusted origin"
+          },
+          "404": {
+            "description": "Application not found in your tracking list"
+          },
+          "422": {
+            "description": "Invalid tracking ID, status, or request fields"
+          }
+        }
+      }
+    },
+    "/api/scholarships/tracked/{tracking_id}/note": {
+      "get": {
+        "tags": ["Scholarships"],
+        "summary": "Get Note By Tracking Id",
+        "description": "Read private notes using the outer ID from the tracked applications list.",
+        "operationId": "get_note_by_tracking_id_api_scholarships_tracked__tracking_id__note_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tracking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tracking Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationNoteResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Scholarships"],
+        "summary": "Update Note By Tracking Id",
+        "description": "Update application notes without changing status or bookmark state.",
+        "operationId": "update_note_by_tracking_id_api_scholarships_tracked__tracking_id__note_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tracking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tracking Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationNoteUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationNoteResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scholarships/{scholarship_id}/note": {
+      "get": {
+        "tags": ["Scholarships"],
+        "summary": "Get Note By Scholarship Id",
+        "description": "Read the authenticated student's private application notes.",
+        "operationId": "get_note_by_scholarship_id_api_scholarships__scholarship_id__note_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scholarship_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Scholarship Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationNoteResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Scholarships"],
+        "summary": "Update Note By Scholarship Id",
+        "description": "Update notes on an existing application; maximum 2000 characters.",
+        "operationId": "update_note_by_scholarship_id_api_scholarships__scholarship_id__note_put",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scholarship_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Scholarship Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationNoteUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationNoteResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scholarships/tracked/{tracking_id}": {
+      "delete": {
+        "tags": ["Scholarships"],
+        "summary": "Remove By Tracking Id",
+        "description": "Remove an application and its note, preserving the listing and bookmark.",
+        "operationId": "remove_by_tracking_id_api_scholarships_tracked__tracking_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "tracking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Tracking Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveApplicationTrackingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scholarships/{scholarship_id}/track": {
+      "delete": {
+        "tags": ["Scholarships"],
+        "summary": "Remove By Scholarship Id",
+        "description": "Remove only this student's application; repeated removal succeeds.",
+        "operationId": "remove_by_scholarship_id_api_scholarships__scholarship_id__track_delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scholarship_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Scholarship Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RemoveApplicationTrackingResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication"
+          },
+          "403": {
+            "description": "Account disabled, untrusted origin, or another user's record"
+          },
+          "404": {
+            "description": "Scholarship or application not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/scholarships/{scholarship_id}/review-details": {
       "get": {
         "tags": ["Admin"],
@@ -4465,6 +4955,161 @@
           },
           "404": {
             "description": "Scholarship not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/scholarships/eligibility": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Merge structured eligibility into an existing scholarship",
+        "description": "Admin only. Fills empty fields by default; update_fields explicitly permits replacement. Never creates a scholarship or clears populated data with null/empty values.",
+        "operationId": "import_eligibility_admin_scholarships_eligibility_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScholarshipEligibilityImport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScholarshipEligibilityResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Admin required"
+          },
+          "404": {
+            "description": "Scholarship not found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/admin/scholarships/eligibility/bulk": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Import up to 100 eligibility records independently",
+        "description": "Admin only. Each item validates and commits independently; results remain in input order. HTTP 200 includes per-item validation, missing-ID and database failures. Repeated IDs are processed in order.",
+        "operationId": "import_eligibility_bulk_admin_scholarships_eligibility_bulk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScholarshipEligibilityBulkImport"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScholarshipEligibilityBulkResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/scholarships/{scholarship_id}/eligibility": {
+      "get": {
+        "tags": ["Scholarships"],
+        "summary": "Get structured eligibility for a student-visible scholarship",
+        "description": "Requires an active authenticated account; uses the same visibility rules as scholarship details and discovery. Null means unknown; false and empty arrays are preserved.",
+        "operationId": "scholarship_eligibility_api_scholarships__scholarship_id__eligibility_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "scholarship_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "title": "Scholarship Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScholarshipEligibilityResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "403": {
+            "description": "Account disabled"
+          },
+          "404": {
+            "description": "Scholarship not found or not visible"
           },
           "422": {
             "description": "Validation Error",
@@ -5915,6 +6560,19 @@
               }
             ],
             "title": "Scraped At"
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence"
           }
         },
         "type": "object",
@@ -5935,6 +6593,32 @@
       },
       "AdminScholarshipUpdate": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
           "opportunity_type": {
             "anyOf": [
               {
@@ -5944,6 +6628,148 @@
                 "type": "null"
               }
             ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
+          "title_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ar"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "university_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "University Name"
+          },
+          "funding_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Funding Amount"
+          },
+          "language_requirements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language Requirements"
           },
           "title": {
             "anyOf": [
@@ -6074,30 +6900,6 @@
               }
             ],
             "title": "Source Url"
-          },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 100
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 100
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type"
           },
           "majors": {
             "anyOf": [
@@ -6396,6 +7198,150 @@
         "required": ["status"],
         "title": "AdminUserStatusUpdateRequest"
       },
+      "ApplicationNoteResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "Application tracking record ID, not bookmark ID"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "scholarship_id": {
+            "type": "integer",
+            "title": "Scholarship Id"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": ["id", "user_id", "scholarship_id", "notes", "created_at", "updated_at"],
+        "title": "ApplicationNoteResponse"
+      },
+      "ApplicationNoteUpdate": {
+        "properties": {
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "description": "Private application notes. Send an empty string or null to clear."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["notes"],
+        "title": "ApplicationNoteUpdate"
+      },
+      "ApplicationStatusResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "Application tracking record ID, not bookmark ID"
+          },
+          "user_id": {
+            "type": "integer",
+            "title": "User Id"
+          },
+          "scholarship_id": {
+            "type": "integer",
+            "title": "Scholarship Id"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationTrackingStatus"
+          },
+          "status_changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Status Changed At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_id",
+          "scholarship_id",
+          "notes",
+          "created_at",
+          "updated_at",
+          "status",
+          "status_changed_at"
+        ],
+        "title": "ApplicationStatusResponse"
+      },
+      "ApplicationStatusUpdate": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ApplicationTrackingStatus",
+            "description": "Student application progress, not scholarship availability."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["status"],
+        "title": "ApplicationStatusUpdate"
+      },
+      "ApplicationTrackingStatus": {
+        "type": "string",
+        "enum": [
+          "preparing_documents",
+          "ready_to_apply",
+          "applied",
+          "accepted",
+          "rejected",
+          "closed"
+        ],
+        "title": "ApplicationTrackingStatus"
+      },
       "AuditLogItem": {
         "properties": {
           "id": {
@@ -6653,10 +7599,26 @@
         "enum": ["BACHELOR", "MASTER", "PHD", "DIPLOMA", "OTHER"],
         "title": "DesiredDegreeLevel"
       },
-      "DiscoveryStudyLevel": {
-        "type": "string",
-        "enum": ["BACHELOR", "MASTER", "PHD", "EXCHANGE"],
-        "title": "DiscoveryStudyLevel"
+      "DocumentAvailability": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UploadStatus",
+            "default": "NOT_UPLOADED"
+          }
+        },
+        "type": "object",
+        "title": "DocumentAvailability"
       },
       "Documents": {
         "properties": {
@@ -6710,6 +7672,17 @@
       },
       "DuplicateCandidateItem": {
         "properties": {
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
           "id": {
             "type": "integer",
             "title": "Id",
@@ -7125,12 +8098,12 @@
       },
       "NotificationActionType": {
         "type": "string",
-        "enum": ["open_scholarship_review"],
+        "enum": ["open_scholarship_review", "open_scholarship_report"],
         "title": "NotificationActionType"
       },
       "NotificationType": {
         "type": "string",
-        "enum": ["general", "scholarship", "scholarship_review"],
+        "enum": ["general", "scholarship", "scholarship_review", "scholarship_report"],
         "title": "NotificationType"
       },
       "PendingScholarshipReviewStatisticsResponse": {
@@ -8009,6 +8982,41 @@
         "required": ["id", "title"],
         "title": "RecommendationScholarshipResponse"
       },
+      "RemoveApplicationTrackingResponse": {
+        "properties": {
+          "scholarship_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scholarship Id"
+          },
+          "is_tracked": {
+            "type": "boolean",
+            "title": "Is Tracked",
+            "default": false
+          },
+          "is_saved": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Saved",
+            "description": "Current bookmark state; null when the tracking ID does not exist."
+          }
+        },
+        "type": "object",
+        "required": ["scholarship_id", "is_saved"],
+        "title": "RemoveApplicationTrackingResponse"
+      },
       "ResendVerificationOtpRequest": {
         "properties": {
           "email": {
@@ -8120,8 +9128,39 @@
         "required": ["message", "scholarship_id"],
         "title": "ScholarshipActionResponse"
       },
+      "ScholarshipApplicationStatus": {
+        "type": "string",
+        "enum": ["open", "upcoming", "closed", "unknown"],
+        "title": "ScholarshipApplicationStatus"
+      },
       "ScholarshipApproveRequest": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
           "opportunity_type": {
             "anyOf": [
               {
@@ -8131,6 +9170,93 @@
                 "type": "null"
               }
             ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
           },
           "source_url": {
             "anyOf": [
@@ -8191,30 +9317,6 @@
             ],
             "title": "Country",
             "description": "دولة الدراسة"
-          },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level",
-            "description": "المستوى الدراسي"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type",
-            "description": "التغطية المالية"
           },
           "majors": {
             "anyOf": [
@@ -8415,6 +9517,130 @@
           }
         ],
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
+          "opportunity_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Canonical opportunity category. Missing classification is filled only from unambiguous stored source evidence."
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
           "ingestion_type": {
             "$ref": "#/components/schemas/ScholarshipIngestionType",
             "default": "scraped"
@@ -8474,17 +9700,6 @@
               }
             ],
             "title": "Language Requirements"
-          },
-          "opportunity_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ScholarshipOpportunityType"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Opportunity category; omitted means unclassified."
           },
           "source": {
             "type": "string",
@@ -8679,30 +9894,6 @@
             "description": "True when the ministry listing extends an existing scholarship.",
             "default": false
           },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level",
-            "description": "المستوى الدراسي (بكالوريوس، ماجستير، دكتوراه)"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type",
-            "description": "التغطية المالية (ممولة بالكامل، راتب شهري + رسوم)"
-          },
           "majors": {
             "anyOf": [
               {
@@ -8788,14 +9979,140 @@
         "title": "ScholarshipCreate",
         "example": {
           "country": "United Kingdom",
+          "funding_type": "full",
+          "opportunity_type": "scholarship",
           "source": "for9a",
           "source_id": "12345",
           "status": "pending",
+          "study_level": ["master"],
           "title": "Chevening Scholarship"
         }
       },
       "ScholarshipDetailResponse": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
+          "opportunity_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
           "ingestion_type": {
             "$ref": "#/components/schemas/ScholarshipIngestionType",
             "default": "scraped"
@@ -8856,16 +10173,6 @@
             ],
             "title": "Language Requirements"
           },
-          "opportunity_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ScholarshipOpportunityType"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "id": {
             "type": "integer",
             "title": "Id"
@@ -8896,17 +10203,6 @@
             ],
             "title": "Country"
           },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level"
-          },
           "deadline": {
             "anyOf": [
               {
@@ -8930,17 +10226,6 @@
             ],
             "title": "No Deadline",
             "default": false
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type"
           },
           "majors": {
             "anyOf": [
@@ -9203,6 +10488,100 @@
       },
       "ScholarshipDetailsResponse": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level"
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "opportunity_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
           "id": {
             "type": "integer",
             "title": "Id"
@@ -9276,38 +10655,6 @@
               }
             ],
             "title": "Country"
-          },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type"
-          },
-          "opportunity_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ScholarshipOpportunityType"
-              },
-              {
-                "type": "null"
-              }
-            ]
           },
           "image_url": {
             "anyOf": [
@@ -9618,7 +10965,10 @@
           "study_level": {
             "anyOf": [
               {
-                "type": "string"
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
               },
               {
                 "type": "null"
@@ -9629,13 +10979,12 @@
           "funding_type": {
             "anyOf": [
               {
-                "type": "string"
+                "$ref": "#/components/schemas/ScholarshipFundingType"
               },
               {
                 "type": "null"
               }
-            ],
-            "title": "Funding Type"
+            ]
           },
           "opportunity_type": {
             "anyOf": [
@@ -9746,8 +11095,53 @@
         "enum": ["newest", "deadline_soon", "deadline_soonest"],
         "title": "ScholarshipDiscoverySort"
       },
+      "ScholarshipDocuments": {
+        "properties": {
+          "cv": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "english_test": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "transcript": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "graduation_certificate": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "passport": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "recommendation_letters": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentAvailability"
+            },
+            "type": "array",
+            "title": "Recommendation Letters"
+          },
+          "motivation_letter": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          },
+          "university_admission_letter": {
+            "$ref": "#/components/schemas/DocumentAvailability"
+          }
+        },
+        "type": "object",
+        "title": "ScholarshipDocuments"
+      },
       "ScholarshipDuplicateCheckRequest": {
         "properties": {
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
           "title": {
             "type": "string",
             "minLength": 2,
@@ -9847,6 +11241,516 @@
         "required": ["is_suspected_duplicate", "highest_similarity_score"],
         "title": "ScholarshipDuplicateCheckResponse"
       },
+      "ScholarshipEligibilityBulkImport": {
+        "properties": {
+          "scholarships": {
+            "items": {},
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Scholarships"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["scholarships"],
+        "title": "ScholarshipEligibilityBulkImport"
+      },
+      "ScholarshipEligibilityBulkResponse": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "updated": {
+            "type": "integer",
+            "title": "Updated"
+          },
+          "skipped": {
+            "type": "integer",
+            "title": "Skipped"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "results": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "type": "object",
+        "required": ["total", "updated", "skipped", "failed", "results"],
+        "title": "ScholarshipEligibilityBulkResponse"
+      },
+      "ScholarshipEligibilityImport": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "title": "Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 10000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "extracted_deadline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extracted Deadline"
+          },
+          "allowed_nationalities": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "type": "array",
+                "maxItems": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Nationalities"
+          },
+          "target_degree_levels": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Degree Levels"
+          },
+          "allowed_gender": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["Any", "Male", "Female"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Gender"
+          },
+          "target_residencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "type": "array",
+                "maxItems": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Residencies"
+          },
+          "min_gpa_percentage": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Gpa Percentage"
+          },
+          "max_age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647,
+                "exclusiveMinimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Age"
+          },
+          "allowed_fields_of_study": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "type": "array",
+                "maxItems": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Fields Of Study"
+          },
+          "required_languages": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "type": "array",
+                "maxItems": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Languages"
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_req_experience": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Req Experience"
+          },
+          "is_Softskills_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Softskills Required"
+          },
+          "required_documents": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "type": "array",
+                "maxItems": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Documents"
+          },
+          "update_fields": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "extracted_deadline",
+                "allowed_nationalities",
+                "target_degree_levels",
+                "allowed_gender",
+                "target_residencies",
+                "min_gpa_percentage",
+                "max_age",
+                "allowed_fields_of_study",
+                "required_languages",
+                "funding_type",
+                "is_req_experience",
+                "is_Softskills_required",
+                "required_documents"
+              ]
+            },
+            "type": "array",
+            "maxItems": 13,
+            "title": "Update Fields",
+            "description": "Explicit permission to replace populated fields; null/blank/empty lists never clear data."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": ["id"],
+        "title": "ScholarshipEligibilityImport"
+      },
+      "ScholarshipEligibilityResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "extracted_deadline": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extracted Deadline"
+          },
+          "allowed_nationalities": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Nationalities"
+          },
+          "target_degree_levels": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Degree Levels"
+          },
+          "allowed_gender": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Gender"
+          },
+          "target_residencies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Residencies"
+          },
+          "min_gpa_percentage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Gpa Percentage"
+          },
+          "max_age": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Age"
+          },
+          "allowed_fields_of_study": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Fields Of Study"
+          },
+          "required_languages": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Languages"
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Funding Type"
+          },
+          "is_req_experience": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Req Experience"
+          },
+          "is_Softskills_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Softskills Required"
+          },
+          "required_documents": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Documents"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "extracted_deadline",
+          "allowed_nationalities",
+          "target_degree_levels",
+          "allowed_gender",
+          "target_residencies",
+          "min_gpa_percentage",
+          "max_age",
+          "allowed_fields_of_study",
+          "required_languages",
+          "funding_type",
+          "is_req_experience",
+          "is_Softskills_required",
+          "required_documents"
+        ],
+        "title": "ScholarshipEligibilityResponse"
+      },
+      "ScholarshipEligibilityResult": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["updated", "skipped"],
+            "title": "Status"
+          },
+          "updated_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Updated Fields"
+          },
+          "preserved_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preserved Fields"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ScholarshipEligibilityResponse"
+          }
+        },
+        "type": "object",
+        "required": ["id", "status", "updated_fields", "preserved_fields", "warnings", "data"],
+        "title": "ScholarshipEligibilityResult"
+      },
       "ScholarshipExistsResponse": {
         "properties": {
           "exists": {
@@ -9869,6 +11773,11 @@
         "required": ["exists"],
         "title": "ScholarshipExistsResponse"
       },
+      "ScholarshipFundingType": {
+        "type": "string",
+        "enum": ["full", "partial"],
+        "title": "ScholarshipFundingType"
+      },
       "ScholarshipIngestionType": {
         "type": "string",
         "enum": ["scraped", "manual"],
@@ -9876,7 +11785,7 @@
       },
       "ScholarshipOpportunityType": {
         "type": "string",
-        "enum": ["scholarship", "academic_exchange", "research_fellowship", "training"],
+        "enum": ["scholarship", "fellowship", "grant", "exchange", "short_course", "other"],
         "title": "ScholarshipOpportunityType"
       },
       "ScholarshipRejectRequest": {
@@ -10084,6 +11993,130 @@
       },
       "ScholarshipResponse": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
+          "opportunity_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Canonical opportunity category. Missing classification is filled only from unambiguous stored source evidence."
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
           "ingestion_type": {
             "$ref": "#/components/schemas/ScholarshipIngestionType",
             "default": "scraped"
@@ -10143,17 +12176,6 @@
               }
             ],
             "title": "Language Requirements"
-          },
-          "opportunity_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ScholarshipOpportunityType"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Opportunity category; omitted means unclassified."
           },
           "source": {
             "type": "string",
@@ -10346,30 +12368,6 @@
             "description": "True when the ministry listing extends an existing scholarship.",
             "default": false
           },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level",
-            "description": "المستوى الدراسي (بكالوريوس، ماجستير، دكتوراه)"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type",
-            "description": "التغطية المالية (ممولة بالكامل، راتب شهري + رسوم)"
-          },
           "majors": {
             "anyOf": [
               {
@@ -10530,6 +12528,129 @@
       },
       "ScholarshipReviewDetailsResponse": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
+          "opportunity_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipOpportunityType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
           "ingestion_type": {
             "$ref": "#/components/schemas/ScholarshipIngestionType",
             "default": "scraped"
@@ -10590,16 +12711,6 @@
             ],
             "title": "Language Requirements"
           },
-          "opportunity_type": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ScholarshipOpportunityType"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "id": {
             "anyOf": [
               {
@@ -10654,30 +12765,6 @@
               }
             ],
             "title": "Country"
-          },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level",
-            "description": "المستوى الدراسي (بكالوريوس، ماجستير، دكتوراه)"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type",
-            "description": "التغطية المالية (ممولة بالكامل، راتب شهري + رسوم)"
           },
           "deadline": {
             "anyOf": [
@@ -11052,8 +13139,39 @@
         "required": ["status"],
         "title": "ScholarshipStatusUpdateRequest"
       },
+      "ScholarshipStudyLevel": {
+        "type": "string",
+        "enum": ["bachelor", "master", "phd", "postdoc", "other"],
+        "title": "ScholarshipStudyLevel"
+      },
       "ScholarshipUpdate": {
         "properties": {
+          "study_level": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ScholarshipStudyLevel"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level",
+            "description": "Extract all supported levels as canonical values: bachelor, master, phd, postdoc, other. Use null without evidence; never return source prose in this array."
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScholarshipFundingType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Use full or partial only with explicit source evidence. Generic 'funded', a stipend, or up to 100% tuition does not establish full funding; otherwise null."
+          },
           "opportunity_type": {
             "anyOf": [
               {
@@ -11063,6 +13181,148 @@
                 "type": "null"
               }
             ]
+          },
+          "application_status": {
+            "$ref": "#/components/schemas/ScholarshipApplicationStatus",
+            "default": "unknown"
+          },
+          "eligible_nationalities": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligible Nationalities"
+          },
+          "academic_year": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Academic Year"
+          },
+          "opening_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opening Date"
+          },
+          "gpa_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Requirement"
+          },
+          "age_requirement": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age Requirement"
+          },
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence",
+            "description": "Exact source quotes and source URLs keyed by field; omit unavailable evidence. Never invent quotes."
+          },
+          "source_confidence": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Confidence",
+            "description": "Confidence in source authority, not correctness of scholarship data."
+          },
+          "title_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title Ar"
+          },
+          "title_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title En"
+          },
+          "university_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "University Name"
+          },
+          "funding_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Funding Amount"
+          },
+          "language_requirements": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language Requirements"
           },
           "title": {
             "anyOf": [
@@ -11192,28 +13452,6 @@
             ],
             "title": "Source Url"
           },
-          "study_level": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Study Level"
-          },
-          "funding_type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Funding Type"
-          },
           "majors": {
             "anyOf": [
               {
@@ -11314,6 +13552,332 @@
         "type": "object",
         "required": ["popular_languages", "suggested_skills_by_category"],
         "title": "SkillsAndLanguagesSuggestions"
+      },
+      "StudentScholarshipProfileResponse": {
+        "properties": {
+          "student_id": {
+            "type": "integer",
+            "title": "Student Id",
+            "description": "Authenticated User.id; there is no separate Student table."
+          },
+          "full_name_ar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name Ar"
+          },
+          "full_name_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Full Name En"
+          },
+          "nationality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nationality"
+          },
+          "country_of_residence": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country Of Residence"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City",
+            "description": "Stored Profile.city; not a country or region enum."
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Gender"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "birth_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birth Date"
+          },
+          "academic_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AcademicLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "field_of_study": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field Of Study"
+          },
+          "field_of_study_openalex_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field Of Study Openalex Id"
+          },
+          "gpa_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gpa Value"
+          },
+          "gpa_scale": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GPAScale"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "desired_degree_level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DesiredDegreeLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "funding_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FundingType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_field_of_study": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Field Of Study"
+          },
+          "preferred_countries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preferred Countries"
+          },
+          "open_to_all_countries": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open To All Countries"
+          },
+          "has_experience": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Experience"
+          },
+          "skills": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Skills"
+          },
+          "languages_data": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageItem"
+            },
+            "type": "array",
+            "title": "Languages Data"
+          },
+          "current_study_language": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Current Study Language"
+          },
+          "documents": {
+            "$ref": "#/components/schemas/ScholarshipDocuments"
+          }
+        },
+        "type": "object",
+        "required": ["student_id"],
+        "title": "StudentScholarshipProfileResponse"
+      },
+      "StudentScholarshipTrackingResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ApplicationTrackingStatus"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "status_changed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Status Changed At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "scholarship": {
+            "$ref": "#/components/schemas/ScholarshipDiscoveryCard"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "notes",
+          "status_changed_at",
+          "created_at",
+          "updated_at",
+          "scholarship"
+        ],
+        "title": "StudentScholarshipTrackingResponse"
+      },
+      "StudentScholarshipTrackingStatisticsResponse": {
+        "properties": {
+          "saved_scholarships": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Saved Scholarships"
+          },
+          "preparing_documents": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Preparing Documents",
+            "default": 0
+          },
+          "ready_to_apply": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Ready To Apply",
+            "default": 0
+          },
+          "applied": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Applied",
+            "default": 0
+          },
+          "accepted": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Accepted",
+            "default": 0
+          },
+          "rejected": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Rejected",
+            "default": 0
+          },
+          "closed": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Closed",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": ["saved_scholarships"],
+        "title": "StudentScholarshipTrackingStatisticsResponse"
       },
       "StudyStatus": {
         "type": "string",
