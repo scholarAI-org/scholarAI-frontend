@@ -16,7 +16,7 @@ interface ScholarshipListRowProps {
   card: ScholarshipCardModel;
   bookmarkSlot?: ReactNode;
   footer?: ReactNode;
-  detailsEnabled?: boolean;
+  detailsEnabled: boolean;
 }
 
 // No List View exists in Figma; this compact row reuses the grid card's model,
@@ -25,7 +25,7 @@ export function ScholarshipListRow({
   card,
   bookmarkSlot,
   footer,
-  detailsEnabled = true,
+  detailsEnabled,
 }: ScholarshipListRowProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();

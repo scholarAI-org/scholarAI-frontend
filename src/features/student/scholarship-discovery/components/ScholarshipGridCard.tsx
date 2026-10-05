@@ -18,7 +18,7 @@ interface ScholarshipGridCardProps {
   bookmarkSlot?: ReactNode;
   // Deadline line; filled by the deadline helpers (T041).
   footer?: ReactNode;
-  detailsEnabled?: boolean;
+  detailsEnabled: boolean;
 }
 
 // Figma "scholarship card" (2358:9963): image with a top-end action slot, badges,
@@ -27,7 +27,7 @@ export function ScholarshipGridCard({
   card,
   bookmarkSlot,
   footer,
-  detailsEnabled = true,
+  detailsEnabled,
 }: ScholarshipGridCardProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();

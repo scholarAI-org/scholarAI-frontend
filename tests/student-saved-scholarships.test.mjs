@@ -459,7 +459,7 @@ test('T020 page states: loading, populated, confirmed empty, error — each rend
         React.createElement(
           QueryClientProvider,
           { client },
-          React.createElement(SavedScholarshipsPage)
+          React.createElement(SavedScholarshipsPage, { detailsEnabled: true })
         )
       );
       client.clear();

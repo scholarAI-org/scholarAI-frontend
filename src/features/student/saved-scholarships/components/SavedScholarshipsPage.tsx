@@ -16,7 +16,7 @@ import { SavedScholarshipsLoading } from './SavedScholarshipsLoading';
 // student layout). `cards.length` is the single source of truth for both the
 // count and the empty-vs-populated branch; loading and error are never
 // rendered as "zero".
-export function SavedScholarshipsPage() {
+export function SavedScholarshipsPage({ detailsEnabled }: { detailsEnabled: boolean }) {
   const query = useSavedScholarshipsQuery();
   const locale = useLocale();
   // One "today" per mounted page so all deadlines agree.
@@ -62,6 +62,7 @@ export function SavedScholarshipsPage() {
                 card={card}
                 bookmarkSlot={<ScholarshipBookmark card={card} variant="overlay" />}
                 footer={<ScholarshipDeadline card={card} now={now} />}
+                detailsEnabled={detailsEnabled}
               />
             </li>
           );

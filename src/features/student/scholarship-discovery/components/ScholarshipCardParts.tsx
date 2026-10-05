@@ -45,11 +45,11 @@ export function ScholarshipBadges({ card }: { card: ScholarshipCardModel }) {
 export function ScholarshipTitle({
   card,
   id,
-  detailsEnabled = true,
+  detailsEnabled,
 }: {
   card: ScholarshipCardModel;
   id: string;
-  detailsEnabled?: boolean;
+  detailsEnabled: boolean;
 }) {
   const title = useCardTitle(card);
   const href = getScholarshipDetailsHref(card.id, detailsEnabled);
@@ -102,10 +102,10 @@ export function ScholarshipMeta({
 // Hidden until detailsEnabled is true and getScholarshipDetailsHref returns non-null.
 export function ScholarshipDetailsAction({
   card,
-  detailsEnabled = true,
+  detailsEnabled,
 }: {
   card: ScholarshipCardModel;
-  detailsEnabled?: boolean;
+  detailsEnabled: boolean;
 }) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const title = useCardTitle(card);

@@ -816,25 +816,21 @@ test('the image fallback is a local asset and the img exception exists exactly o
   assert.equal(eslintConfig.includes('no-img-element'), false, 'no global rule change');
 });
 
-test('details links stay off until the details route exists (and vice versa)', () => {
-  const { SCHOLARSHIP_DETAILS_ROUTE_ENABLED, getScholarshipDetailsHref } =
-    load('lib/details-link.ts');
-  const routeExists = fs.existsSync(
-    path.join(srcPath, 'app/[locale]/student/scholarships/[id]/page.tsx')
-  );
-  assert.equal(
-    SCHOLARSHIP_DETAILS_ROUTE_ENABLED,
-    routeExists,
-    routeExists
-      ? 'the [id] route exists: enable SCHOLARSHIP_DETAILS_ROUTE_ENABLED'
-      : 'no [id] route yet: details links must stay disabled'
-  );
-  if (!SCHOLARSHIP_DETAILS_ROUTE_ENABLED) {
-    assert.equal(getScholarshipDetailsHref(7), null);
-  } else {
-    assert.equal(getScholarshipDetailsHref(7), '/student/scholarships/7');
-    assert.equal(getScholarshipDetailsHref(0), null);
-  }
+test('details-link requires explicit enabled parameter (no default bypass)', () => {
+  const { getScholarshipDetailsHref } = load('lib/details-link.ts');
+  // enabled = true + valid id → returns path
+  assert.equal(getScholarshipDetailsHref(7, true), '/student/scholarships/7');
+  assert.equal(getScholarshipDetailsHref(1, true), '/student/scholarships/1');
+  // enabled = false → always null
+  assert.equal(getScholarshipDetailsHref(7, false), null);
+  assert.equal(getScholarshipDetailsHref(1, false), null);
+  // invalid id → null even when enabled
+  assert.equal(getScholarshipDetailsHref(0, true), null);
+  assert.equal(getScholarshipDetailsHref(-1, true), null);
+  // no deprecated constant export
+  const mod = load('lib/details-link.ts');
+  assert.equal('SCHOLARSHIP_DETAILS_ROUTE_ENABLED' in mod, false,
+    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED must not be exported');
 });
 
 test('the match badge shows only authoritative data and nothing by default', () => {

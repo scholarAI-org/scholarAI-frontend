@@ -31,7 +31,7 @@ interface ScholarshipResultsProps {
   onPageChange: (page: number) => void;
   onReconcilePage: (page: number) => void;
   onClearFilters: () => void;
-  detailsEnabled?: boolean;
+  detailsEnabled: boolean;
 }
 
 export const RESULTS_HEADING_ID = 'scholarship-discovery-results-heading';
@@ -45,7 +45,7 @@ export function ScholarshipResults({
   onPageChange,
   onReconcilePage,
   onClearFilters,
-  detailsEnabled = false,
+  detailsEnabled,
 }: ScholarshipResultsProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const locale = useLocale();
