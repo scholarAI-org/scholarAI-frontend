@@ -2,91 +2,85 @@
 
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/shared/Container';
-import { AiIcon, SearchIcon } from '@/components/icons';
 import { Link } from '@/i18n/navigation';
 import { buttonStyles } from '@/components/ui/Button';
+import { HeroArtwork } from './HeroArtwork';
+import { DesignAsset } from './DesignAsset';
 
-const FILTER_KEYS = ['bachelor', 'master', 'phd', 'exchange'] as const;
-
-export function Hero() {
-  const t = useTranslations('Landing.hero');
-
+export function Hero({ onSearch }: { onSearch: (query: string) => void }) {
+  const t = useTranslations('Landing.updated.hero');
+  const filters = t.raw('filters') as string[];
   return (
-    <section
-      id="home"
-      className="relative overflow-hidden bg-[linear-gradient(135deg,#274383_0%,#0A2243_100%)] pt-16 pb-20 sm:pt-20 sm:pb-24"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-10 h-[295px] w-[522px] -translate-x-1/2 rounded-full bg-[#10B981] opacity-90 blur-[100px]"
-      />
-
-      <Container className="relative flex flex-col items-center gap-8 text-center">
-        <div className="flex flex-col items-center gap-6">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs text-[var(--color-gray-300)]">
+    <section className="landing-hero">
+      <Container className="landing-hero-inner">
+        <div className="hero-content">
+          <span className="hero-eyebrow">
+            <DesignAsset name="2006-354-imgEllipse" />
             {t('badge')}
-            <AiIcon className="h-6 w-6 text-[var(--color-gray-300)]" />
           </span>
-
-          <div className="flex max-w-3xl flex-col items-center gap-6">
-            <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl lg:text-[48px] lg:leading-[1.25]">
-              {t('title')}
-            </h1>
-            <p className="max-w-xl text-base leading-relaxed text-[var(--color-gray-300)]">
-              {t('subtitle')}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-3">
+          <h1 data-landing-entrance="0">
+            {t('title')}
+            <br className="hero-title-break" />
+            <span>{t('accent')}</span>
+          </h1>
+          <p className="hero-subtitle" data-landing-entrance="1">
+            {t('subtitle')}
+          </p>
+          <div className="hero-actions" data-landing-entrance="2">
             <Link
               href="/register"
-              className={buttonStyles({ variant: 'primary', className: 'px-6' })}
+              className={buttonStyles({ variant: 'landing', className: 'landing-small' })}
             >
               {t('start')}
             </Link>
-            <a
+            <Link
               href="#how-it-works"
-              className={buttonStyles({ variant: 'outline', className: 'px-6 text-white' })}
+              className={buttonStyles({
+                variant: 'landingOutline',
+                className: 'landing-small landing-how',
+              })}
             >
-              {t('howItWorks')}
-            </a>
+              {t('how')}
+            </Link>
           </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-6">
-          <p className="text-xs text-[var(--color-gray-300)]">{t('searchUnavailable')}</p>
-          <div aria-hidden className="flex flex-wrap items-center justify-center gap-2">
-            {FILTER_KEYS.map((key) => {
-              return (
-                <span
-                  key={key}
-                  className="rounded-full bg-white/10 px-5 py-2.5 text-sm text-[var(--color-gray-300)]"
-                >
-                  {t(`filters.${key}`)}
-                </span>
-              );
-            })}
-          </div>
-
-          <div className="flex w-full max-w-3xl items-center gap-4 rounded-2xl bg-white p-4 shadow-[0_20px_40px_rgba(2,17,34,0.25)] sm:gap-8">
-            <div className="flex flex-1 items-center gap-2 px-2">
-              <SearchIcon className="h-5 w-5 shrink-0 text-[var(--color-gray-400)]" />
+          <form
+            action="#scholarships"
+            className="hero-search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const query = new FormData(event.currentTarget).get('search')?.toString() ?? '';
+              onSearch(query);
+            }}
+          >
+            <label className="hero-search-input">
+              <DesignAsset name="2006-354-imgSearch" />
               <input
-                type="text"
-                disabled
-                placeholder={t('searchPlaceholder')}
-                className="w-full bg-transparent text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-gray-400)]"
+                name="search"
+                type="search"
+                aria-label={t('placeholder')}
+                placeholder={t('placeholder')}
               />
+            </label>
+            <button type="submit">{t('search')}</button>
+          </form>
+          <div className="hero-quick">
+            <span>{t('quick')}</span>
+            <div>
+              {filters.map((filter) => (
+                <button
+                  key={filter}
+                  type="button"
+                  onClick={() => {
+                    onSearch(filter);
+                  }}
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
-            <button
-              type="button"
-              disabled
-              className="flex shrink-0 items-center justify-center rounded-lg bg-[var(--color-primary)] px-4 py-3 text-white opacity-60"
-            >
-              <span className="text-sm leading-tight">{t('searchButton')}</span>
-            </button>
           </div>
         </div>
+        <HeroArtwork />
       </Container>
     </section>
   );

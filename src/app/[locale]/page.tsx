@@ -1,46 +1,46 @@
-import type { Metadata } from 'next';
+import { Rubik, Cairo } from 'next/font/google';
 import { Navbar } from '@/features/landing/components/Navbar';
-import { Hero } from '@/features/landing/components/Hero';
-import { StatsRow } from '@/features/landing/components/StatsRow';
+import { LandingDiscovery } from '@/features/landing/components/LandingDiscovery';
+import { PlatformOverview } from '@/features/landing/components/PlatformOverview';
 import { HowItWorks } from '@/features/landing/components/HowItWorks';
+import { AiFeatures } from '@/features/landing/components/AiFeatures';
+import { FeatureSpotlight } from '@/features/landing/components/FeatureSpotlight';
+import { Faq } from '@/features/landing/components/Faq';
 import { ContactSection } from '@/features/landing/components/ContactSection';
 import { CtaBand } from '@/features/landing/components/CtaBand';
 import { Footer } from '@/features/landing/components/Footer';
-import { PlatformFeatures } from '@/features/landing/components/PlatformFeatures';
-import { Faq } from '@/features/landing/components/Faq';
+import { LandingMotion } from '@/features/landing/components/LandingMotion';
+import '@/features/landing/landing.css';
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  const isArabic = locale === 'ar';
-
-  return {
-    title: isArabic
-      ? 'PsScholar | منصة الفرص الأكاديمية'
-      : 'PsScholar | Academic opportunities platform',
-    description: isArabic
-      ? 'نظّم ملفك الأكاديمي ووثائقك وتفضيلاتك الدراسية مع PsScholar.'
-      : 'Organize your academic profile, documents, and study preferences with PsScholar.',
-  };
-}
+const rubik = Rubik({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-landing-rubik',
+  display: 'swap',
+});
+const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['500', '700', '900'],
+  variable: '--font-landing-cairo',
+  display: 'swap',
+});
 
 export default function LandingPage() {
   return (
-    <>
+    <LandingMotion className={`landing-page ${rubik.variable} ${cairo.variable}`}>
       <Navbar />
       <main>
-        <Hero />
-        <StatsRow />
-        <PlatformFeatures />
+        <LandingDiscovery />
+        <PlatformOverview />
+        <AiFeatures />
         <HowItWorks />
+        <FeatureSpotlight kind="matching" />
+        <FeatureSpotlight kind="documents" />
         <Faq />
-        <ContactSection />
         <CtaBand />
+        <ContactSection />
       </main>
       <Footer />
-    </>
+    </LandingMotion>
   );
 }

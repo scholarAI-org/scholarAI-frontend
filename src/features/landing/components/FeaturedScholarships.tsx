@@ -1,48 +1,50 @@
+'use client';
+
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/shared/Container';
-import { Reveal } from '@/components/shared/Reveal';
+import { Link } from '@/i18n/navigation';
+import { buttonStyles } from '@/components/ui/Button';
 import { SectionHeading } from './SectionHeading';
-import { ScholarshipCard } from './ScholarshipCard';
-import { LeftArrowIcon } from '@/components/icons';
+import { ScholarshipCard, type ScholarshipCardData } from './ScholarshipCard';
 
-interface ScholarshipItem {
-  fundingLabel: string;
-  title: string;
-  institution: string;
-  deadline: string;
-}
+const IMAGES = ['2019-1057-imgImage2', '2019-1057-imgImage1', '2019-1057-imgImage'] as const;
 
-export function FeaturedScholarships() {
-  const t = useTranslations('Landing.featured');
-  const items = t.raw('items') as ScholarshipItem[];
-
+export function FeaturedScholarships({ query }: { query: string }) {
+  const t = useTranslations('Landing.updated.featured');
+  const items = t.raw('items') as Omit<ScholarshipCardData, 'image'>[];
+  const visibleItems = items
+    .map((item, index) => ({
+      ...item,
+      image: IMAGES[index],
+      imageClass: index === 1 ? 'scholarship-crop' : undefined,
+    }))
+    .filter((item) =>
+      `${item.title} ${item.country} ${item.level} ${t('funding')}`
+        .toLocaleLowerCase()
+        .includes(query.trim().toLocaleLowerCase())
+    );
   return (
-    <section className="bg-[var(--color-bg-page)] py-16 sm:py-20">
-      <Container className="flex flex-col gap-8">
-        <Reveal>
-          <SectionHeading badge={t('badge')} heading={t('heading')} />
-        </Reveal>
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item, index) => (
-            <Reveal key={item.title + index} delay={index * 0.05}>
-              <ScholarshipCard
-                fundingLabel={item.fundingLabel}
-                title={item.title}
-                institution={item.institution}
-                deadline={item.deadline}
-                ctaLabel={t('cta')}
-              />
-            </Reveal>
+    <section id="scholarships" className="landing-featured">
+      <Container>
+        <SectionHeading badge={t('badge')} heading={t('heading')} />
+        <div className="landing-scholarships-grid">
+          {visibleItems.map((item, index) => (
+            <ScholarshipCard key={item.image + index} {...item} index={index} />
           ))}
         </div>
-
-        <Reveal className="flex justify-center">
-          <span className="group flex items-center gap-2 rounded-xl px-4 py-4 text-sm font-bold text-[var(--color-navy-800)]">
-            {t('browseAll')}
-            <LeftArrowIcon className="h-6 w-6 transition-transform ltr:rotate-180 ltr:group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
-          </span>
-        </Reveal>
+        {visibleItems.length === 0 && (
+          <p className="landing-empty" role="status">
+            {t('empty')}
+          </p>
+        )}
+        <div className="landing-browse">
+          <Link
+            href="/login"
+            className={buttonStyles({ variant: 'landing', className: 'landing-wide' })}
+          >
+            {t('browse')}
+          </Link>
+        </div>
       </Container>
     </section>
   );
