@@ -1,3 +1,5 @@
+import { toFormattingLocale } from '../../../../i18n/formatting';
+
 export type DeadlinePresentation =
   { kind: 'no-deadline' } | { kind: 'date'; value: string } | { kind: 'unavailable' };
 
@@ -18,7 +20,7 @@ export function formatDashboardNumber(
     return null;
   }
 
-  return new Intl.NumberFormat(locale).format(value);
+  return new Intl.NumberFormat(toFormattingLocale(locale)).format(value);
 }
 
 export function formatDashboardDate(
@@ -27,7 +29,7 @@ export function formatDashboardDate(
   options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }
 ): string | null {
   const date = toValidDate(value);
-  return date ? new Intl.DateTimeFormat(locale, options).format(date) : null;
+  return date ? new Intl.DateTimeFormat(toFormattingLocale(locale), options).format(date) : null;
 }
 
 export function formatDashboardDateTime(

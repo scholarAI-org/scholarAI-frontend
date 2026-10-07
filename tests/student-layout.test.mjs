@@ -1,0 +1,287 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { test } from 'node:test';
+import { IntlMessageFormat } from 'intl-messageformat';
+import ts from 'typescript';
+
+const loadModule = createRequire(import.meta.url);
+
+loadModule.extensions['.ts'] = (module, filename) => {
+  const { outputText } = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+  });
+  module._compile(outputText, filename);
+};
+
+const layoutPath = fileURLToPath(new URL('../src/features/student/layout', import.meta.url));
+const load = (file) => loadModule(path.join(layoutPath, file));
+const {
+  getActiveStudentNavigationItem,
+  getStudentNavigationSections,
+  getStudentPageKey,
+  getVisibleStudentNavigation,
+  studentNavigation,
+} = load('student-navigation.ts');
+const { getStudentDisplayName, getStudentInitial } = load('student-identity.ts');
+const { getFocusTrapTarget } = load('focus-trap.ts');
+const { intlFormats, toFormattingLocale } = loadModule(
+  fileURLToPath(new URL('../src/i18n/formatting.ts', import.meta.url))
+);
+const messageFormat = (message, locale) =>
+  new IntlMessageFormat(message, toFormattingLocale(locale), { number: intlFormats.number });
+
+const readMessages = (locale) =>
+  JSON.parse(fs.readFileSync(new URL(`../src/messages/${locale}.json`, import.meta.url), 'utf8'));
+
+const messages = { ar: readMessages('ar'), en: readMessages('en') };
+const namespaces = ['StudentLayout', 'StudentScholarshipDiscovery', 'StudentScholarshipDetails'];
+
+function flatten(value, prefix = '') {
+  return Object.entries(value).flatMap(([key, child]) =>
+    typeof child === 'string' ? [[`${prefix}${key}`, child]] : flatten(child, `${prefix}${key}.`)
+  );
+}
+
+function pluralNodes(ast) {
+  return ast.flatMap((node) =>
+    node.options
+      ? [
+          ...(node.pluralType ? [node] : []),
+          ...Object.values(node.options).flatMap((option) => pluralNodes(option.value)),
+        ]
+      : []
+  );
+}
+
+// --- Message catalogues ------------------------------------------------------
+
+test('the three student namespaces exist in both locales with identical keys', () => {
+  for (const namespace of namespaces) {
+    assert.ok(messages.ar[namespace], `ar.${namespace} missing`);
+    assert.ok(messages.en[namespace], `en.${namespace} missing`);
+    const arKeys = flatten(messages.ar[namespace])
+      .map(([key]) => key)
+      .sort();
+    const enKeys = flatten(messages.en[namespace])
+      .map(([key]) => key)
+      .sort();
+    assert.deepEqual(arKeys, enKeys, namespace);
+  }
+});
+
+test('every student message is non-empty, valid ICU and formats in its locale', () => {
+  const values = { count: 3, title: 'T', date: '2026-12-31', page: 2, score: 87, requested: 9 };
+  for (const locale of ['ar', 'en']) {
+    for (const namespace of namespaces) {
+      for (const [key, message] of flatten(messages[locale][namespace])) {
+        const id = `${locale}.${namespace}.${key}`;
+        assert.ok(message.trim(), `${id} is empty`);
+        const formatter = messageFormat(message, locale);
+        assert.equal(typeof formatter.format(values), 'string', id);
+      }
+    }
+  }
+});
+
+test('plural messages define every category their locale needs', () => {
+  const required = {
+    ar: ['one', 'two', 'few', 'many', 'other'],
+    en: ['one', 'other'],
+  };
+  let checked = 0;
+  for (const locale of ['ar', 'en']) {
+    for (const namespace of namespaces) {
+      for (const [key, message] of flatten(messages[locale][namespace])) {
+        for (const node of pluralNodes(messageFormat(message, locale).getAst())) {
+          const id = `${locale}.${namespace}.${key}`;
+          const options = Object.keys(node.options);
+          for (const category of required[locale]) {
+            assert.ok(options.includes(category), `${id} lacks "${category}"`);
+          }
+          if (locale === 'ar') {
+            assert.ok(
+              options.includes('zero') || options.includes('=0'),
+              `${id} lacks a zero case (zero or =0)`
+            );
+          }
+          checked += 1;
+        }
+      }
+    }
+  }
+  assert.ok(checked >= 6, `expected plural messages to be checked, saw ${checked}`);
+});
+
+test('Arabic plurals render the expected forms', () => {
+  const format = (key, count) =>
+    messageFormat(messages.ar.StudentScholarshipDiscovery.results[key], 'ar').format({
+      count,
+    });
+  assert.equal(format('count', 0), 'لا توجد منح');
+  assert.equal(format('count', 1), 'منحة واحدة');
+  assert.equal(format('count', 2), 'منحتان');
+  assert.match(format('count', 5), /منح$/);
+  assert.match(format('count', 11), /منحة$/);
+});
+
+// --- Navigation --------------------------------------------------------------
+
+test('navigation config has Profile, Search Scholarships, and Saved', () => {
+  assert.deepEqual(
+    studentNavigation.map(({ id, href, group }) => [id, href, group]),
+    [
+      ['scholarships', '/student/scholarships', 'discover'],
+      ['saved', '/student/saved', 'discover'],
+      ['profile', '/student/profile', 'personal'],
+    ]
+  );
+  for (const item of studentNavigation) {
+    assert.ok(messages.en.StudentLayout.nav[item.id], `missing label for ${item.id}`);
+  }
+});
+
+test('Search Scholarships stays hidden until its route exists (T023)', () => {
+  const visible = getVisibleStudentNavigation(studentNavigation).map((item) => item.id);
+  const routeExists = fs.existsSync(
+    new URL('../src/app/[locale]/student/scholarships/page.tsx', import.meta.url)
+  );
+  assert.deepEqual(visible.sort(), routeExists ? ['profile', 'scholarships'] : ['profile']);
+});
+
+test('navigation sections follow Figma and label only real items', () => {
+  const sections = getStudentNavigationSections(studentNavigation);
+  assert.deepEqual(
+    sections.map((section) => [section.id, section.labelKey, section.items.map((item) => item.id)]),
+    [
+      ['discover', 'navGroups.discover', ['scholarships']],
+      ['personal', 'navGroups.personal', ['profile']],
+    ]
+  );
+  for (const locale of ['ar', 'en']) {
+    for (const section of sections) {
+      assert.ok(
+        messages[locale].StudentLayout.navGroups[section.id],
+        `${locale} ${section.labelKey}`
+      );
+    }
+  }
+  assert.equal(messages.ar.StudentLayout.navGroups.discover, 'اكتشاف');
+  assert.equal(messages.ar.StudentLayout.navGroups.personal, 'شخصي');
+  // A section without enabled items gets no label.
+  const onlyProfile = studentNavigation.map((item) =>
+    item.id === 'scholarships' ? { ...item, enabled: false } : item
+  );
+  assert.deepEqual(
+    getStudentNavigationSections(onlyProfile).map((section) => section.id),
+    ['personal']
+  );
+});
+
+test('the scholarships page title matches Figma and carries no live count', () => {
+  assert.equal(messages.ar.StudentLayout.pages.scholarships.title, 'استكشاف المنح والفرص');
+  assert.equal(
+    messages.en.StudentLayout.pages.scholarships.title,
+    'Explore scholarships and opportunities'
+  );
+  for (const locale of ['ar', 'en']) {
+    const { title, description } = messages[locale].StudentLayout.pages.scholarships;
+    assert.equal(/\{/.test(title + description), false, 'no count placeholder in the header');
+  }
+});
+
+test('active navigation item resolves by section', () => {
+  assert.equal(getActiveStudentNavigationItem('/student/profile'), 'profile');
+  assert.equal(getActiveStudentNavigationItem('/student/scholarships'), 'scholarships');
+  assert.equal(getActiveStudentNavigationItem('/student/scholarships/12'), 'scholarships');
+  assert.equal(getActiveStudentNavigationItem('/student/profiles'), null);
+  assert.equal(getActiveStudentNavigationItem('/student'), null);
+  assert.equal(getActiveStudentNavigationItem('/admin/dashboard'), null);
+});
+
+test('page titles resolve per route and exist in both locales', () => {
+  assert.equal(getStudentPageKey('/student/profile'), 'profile');
+  assert.equal(getStudentPageKey('/student/scholarships'), 'scholarships');
+  assert.equal(getStudentPageKey('/student/scholarships/12'), 'scholarshipDetails');
+  assert.equal(getStudentPageKey('/student/scholarships/12/extra'), null);
+  assert.equal(getStudentPageKey('/student'), null);
+  for (const key of ['profile', 'scholarships', 'scholarshipDetails']) {
+    for (const locale of ['ar', 'en']) {
+      const page = messages[locale].StudentLayout.pages[key];
+      assert.ok(page?.title && page?.description, `${locale} pages.${key}`);
+    }
+  }
+});
+
+// --- Identity ----------------------------------------------------------------
+
+test('display name prefers the account name, then email, then the fallback', () => {
+  assert.equal(
+    getStudentDisplayName({ name: ' Lina Haddad ', email: 'l@x.test' }, 'Student'),
+    'Lina Haddad'
+  );
+  assert.equal(getStudentDisplayName({ name: '  ', email: 'l@x.test' }, 'Student'), 'l@x.test');
+  assert.equal(getStudentDisplayName({ name: '', email: '' }, 'Student'), 'Student');
+  assert.equal(getStudentDisplayName(null, 'طالب'), 'طالب');
+  assert.equal(getStudentInitial('لينا'), 'ل');
+  assert.equal(getStudentInitial('lina'), 'L');
+  assert.equal(getStudentInitial(''), '?');
+});
+
+// --- Mobile navigation focus trap ---------------------------------------------
+
+test('focus trap wraps at both ends and leaves the middle to the browser', () => {
+  assert.equal(getFocusTrapTarget(2, 3, false), 0);
+  assert.equal(getFocusTrapTarget(0, 3, true), 2);
+  assert.equal(getFocusTrapTarget(1, 3, false), null);
+  assert.equal(getFocusTrapTarget(1, 3, true), null);
+  assert.equal(getFocusTrapTarget(-1, 3, false), 0);
+  assert.equal(getFocusTrapTarget(-1, 3, true), 2);
+  assert.equal(getFocusTrapTarget(0, 1, false), 0);
+  assert.equal(getFocusTrapTarget(0, 0, false), null);
+});
+
+// --- Single shell / route boundaries ------------------------------------------
+
+const studentRoutePath = fileURLToPath(new URL('../src/app/[locale]/student', import.meta.url));
+const listFiles = (dir) =>
+  fs
+    .readdirSync(dir, { withFileTypes: true })
+    .flatMap((entry) =>
+      entry.isDirectory() ? listFiles(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
+    );
+const frameImport =
+  /(StudentShell|StudentHeader|StudentSidebar|StudentMobileNavigation|components\/profile\/(Navbar|Sidebar|ProfileLayout))/;
+
+test('the student layout mounts StudentShell once, inside RoleGuard', () => {
+  const layout = fs.readFileSync(path.join(studentRoutePath, 'layout.tsx'), 'utf8');
+  assert.equal(layout.includes("'use client'"), false);
+  assert.match(
+    layout,
+    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*<StudentShell[^>]*>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
+  );
+  assert.equal(layout.match(/<StudentShell\b/g)?.length, 1);
+});
+
+test('student pages are Server Components that never mount a second frame', () => {
+  const pages = listFiles(studentRoutePath).filter((file) => file.endsWith('page.tsx'));
+  assert.ok(pages.length >= 1);
+  for (const page of pages) {
+    const source = fs.readFileSync(page, 'utf8');
+    const name = path.relative(studentRoutePath, page);
+    assert.equal(/^\s*['"]use client['"]/.test(source), false, `${name} is a Client Component`);
+    assert.equal(frameImport.test(source), false, `${name} imports frame components`);
+  }
+});
+
+test('the old Profile frame components are gone', () => {
+  for (const file of ['Navbar.tsx', 'Sidebar.tsx', 'ProfileLayout.tsx']) {
+    assert.equal(
+      fs.existsSync(new URL(`../src/components/profile/${file}`, import.meta.url)),
+      false,
+      file
+    );
+  }
+});

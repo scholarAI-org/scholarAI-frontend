@@ -1,3 +1,5 @@
+import { toFormattingLocale } from '../../../../i18n/formatting';
+
 export function getSafeExternalUrl(value: string | null | undefined): string | null {
   if (!value?.trim()) return null;
   try {
@@ -22,5 +24,8 @@ export function formatDateTime(value: string | null | undefined, locale: string)
   const date = new Date(value);
   return Number.isNaN(date.getTime())
     ? null
-    : new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+    : new Intl.DateTimeFormat(toFormattingLocale(locale), {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      }).format(date);
 }
