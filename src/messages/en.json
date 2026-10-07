@@ -302,7 +302,6 @@
     "password": "Password",
     "submit": "Create Account",
     "nameMin": "Name must be at least 3 characters",
-    "passwordMin": "Password must be at least 6 characters",
     "emailInvalid": "Invalid email address",
     "agreeTerms": "I agree to the <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>",
     "agreeTermsRequired": "You must agree to the Terms and Privacy Policy to continue",
@@ -316,7 +315,8 @@
     "signUpWithGoogle": "Sign up with Google",
     "signingIn": "Signing in...",
     "googleAuthError": "Unable to sign in with Google. Please try again.",
-    "or": "OR"
+    "or": "OR",
+    "passwordRule": "At least 8 characters, including one digit and one special character."
   },
   "AuthTabs": {
     "createAccount": "Create New Account",

@@ -6,11 +6,12 @@ type RegisterResponse = {
 };
 
 export async function register(credentials: RegisterFormData): Promise<RegisterResponse> {
+  // Backend UserCreate schema is additionalProperties:false — only
+  // full_name, email and password are accepted. Role is server-assigned.
   const payload = {
     full_name: credentials.name,
     email: credentials.email,
     password: credentials.password,
-    role: 'student',
   };
 
   return apiClient<RegisterResponse>('/auth/register', {
