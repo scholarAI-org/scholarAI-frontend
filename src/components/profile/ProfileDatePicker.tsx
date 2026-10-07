@@ -1,6 +1,7 @@
 'use client';
 
 import { useLocale } from 'next-intl';
+import { toFormattingLocale } from '@/i18n/formatting';
 import { CalendarDays } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -50,7 +51,7 @@ function formatDisplayDate(value: string, locale: string) {
   const date = parseIsoDate(value);
   if (!date) return '';
 
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(toFormattingLocale(locale), {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -80,12 +81,16 @@ export default function ProfileDatePicker({
   const months = isArabic
     ? arabicMonths
     : Array.from({ length: 12 }, (_, month) =>
-        new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(2024, month, 1))
+        new Intl.DateTimeFormat(toFormattingLocale(locale), { month: 'long' }).format(
+          new Date(2024, month, 1)
+        )
       );
   const weekDays = isArabic
     ? arabicWeekDays
     : Array.from({ length: 7 }, (_, day) =>
-        new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(new Date(2024, 0, 7 + day))
+        new Intl.DateTimeFormat(toFormattingLocale(locale), { weekday: 'short' }).format(
+          new Date(2024, 0, 7 + day)
+        )
       );
   const selectedDate = parseIsoDate(value);
   const maxDateValue = parseIsoDate(maxDate) ?? new Date();

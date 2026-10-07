@@ -84,26 +84,31 @@ export function RegisterForm() {
           />
 
           <div className="space-y-4">
-            <FormField
-              label={t('password')}
-              type={showPassword ? 'text' : 'password'}
-              icon={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  tabIndex={-1}
-                  className="pointer-events-auto"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4.5 w-4.5" />
-                  ) : (
-                    <Eye className="h-4.5 w-4.5" />
-                  )}
-                </button>
-              }
-              errorMessage={errors.password?.message}
-              {...register('password')}
-            />
+            <div>
+              <FormField
+                label={t('password')}
+                type={showPassword ? 'text' : 'password'}
+                icon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                    className="pointer-events-auto"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4.5 w-4.5" />
+                    ) : (
+                      <Eye className="h-4.5 w-4.5" />
+                    )}
+                  </button>
+                }
+                errorMessage={errors.password?.message}
+                {...register('password')}
+              />
+              {!errors.password && (
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">{t('passwordRule')}</p>
+              )}
+            </div>
 
             <div>
               <Checkbox

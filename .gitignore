@@ -48,3 +48,7 @@ next-env.d.ts
 
 # local MCP config (may contain secrets)
 /.mcp.json
+# local AWS credentials/config (never commit)
+/.aws
+# Spec Kit: machine-local pointer to the active feature directory
+/.specify/feature.json
