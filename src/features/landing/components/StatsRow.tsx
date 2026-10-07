@@ -1,28 +1,24 @@
 import { useTranslations } from 'next-intl';
 import { Container } from '@/components/shared/Container';
 
-const STAT_KEYS = ['scholarships', 'students', 'countries', 'satisfaction'] as const;
-
 export function StatsRow() {
-  const t = useTranslations('Landing.stats');
+  const t = useTranslations('Landing.trust');
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-stretch sm:justify-between">
-        {STAT_KEYS.map((key, index) => (
-          <div key={key} className="flex items-center gap-8">
-            {index > 0 && (
-              <span className="hidden h-10 w-px bg-[var(--color-border-default)] sm:block" />
-            )}
-            <div className="flex flex-col items-center gap-2 text-center sm:items-start sm:text-start">
-              <span className="text-3xl font-extrabold text-[var(--color-navy-800)] sm:text-4xl">
-                <bdi dir="ltr">{t(`${key}.value`)}</bdi>
-              </span>
-              <span className="text-sm text-[var(--color-gray-500)]">{t(`${key}.label`)}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </Container>
+    <section id="about" className="bg-white">
+      <Container className="py-14">
+        <div className="mb-7 text-center">
+          <p className="text-sm font-bold text-[var(--color-primary)]">{t('badge')}</p>
+          <h2 className="mt-2 text-2xl font-bold text-[var(--color-navy-800)]">{t('heading')}</h2>
+        </div>
+        <div className="grid gap-4 rounded-2xl border border-[var(--color-border-default)] bg-white p-6 text-center sm:grid-cols-3">
+          {(['discover', 'guidance', 'tracking'] as const).map((key) => (
+            <p key={key} className="text-sm font-bold text-[var(--color-navy-800)]">
+              {t(key)}
+            </p>
+          ))}
+        </div>
+      </Container>
+    </section>
   );
 }

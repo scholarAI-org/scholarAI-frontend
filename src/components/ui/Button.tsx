@@ -1,7 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'landing' | 'landingOutline';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,6 +15,9 @@ const baseStyles =
   'inline-flex items-center justify-center gap-2 rounded-[var(--radius-button)] transition-colors disabled:cursor-not-allowed disabled:opacity-50';
 
 const variantStyles: Record<ButtonVariant, string> = {
+  landing: 'landing-button bg-[#f97316] font-bold text-white hover:bg-[#ea580c]',
+  landingOutline:
+    'landing-button border border-current bg-transparent font-bold hover:bg-[#f97316]/5',
   primary:
     'bg-[var(--color-primary)] font-bold text-[var(--color-primary-foreground)] shadow-[var(--shadow-button)] hover:bg-[var(--color-primary-hover)]',
   secondary:
