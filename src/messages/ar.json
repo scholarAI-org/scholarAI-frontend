@@ -302,7 +302,6 @@
     "password": "كلمة المرور",
     "submit": "إنشاء الحساب",
     "nameMin": "يجب أن يكون الاسم أكثر من 3 أحرف",
-    "passwordMin": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
     "emailInvalid": "البريد غير صالح",
     "agreeTerms": "أوافق على <terms>شروط الخدمة</terms> و <privacy>سياسة الخصوصية</privacy>",
     "agreeTermsRequired": "لازم توافق على الشروط وسياسة الخصوصية للمتابعة",
@@ -316,7 +315,8 @@
     "signUpWithGoogle": "التسجيل باستخدام Google",
     "signingIn": "جارٍ تسجيل الدخول...",
     "googleAuthError": "تعذر تسجيل الدخول باستخدام Google. حاول مرة أخرى.",
-    "or": "أو"
+    "or": "أو",
+    "passwordRule": "٨ أحرف على الأقل، تتضمن رقماً واحداً ورمزاً خاصاً واحداً."
   },
   "AuthTabs": {
     "createAccount": "إنشاء حساب جديد",
@@ -693,7 +693,9 @@
     "save": "إنهاء"
   },
   "AdminShell": {
-    "brand": { "name": "ScholarAI" },
+    "brand": {
+      "name": "ScholarAI"
+    },
     "navigationLabel": "تنقل المسؤول",
     "openNavigation": "فتح قائمة تنقل المسؤول",
     "closeNavigation": "إغلاق قائمة تنقل المسؤول",
@@ -701,7 +703,10 @@
     "logout": "تسجيل الخروج",
     "logoutPending": "جاري تسجيل الخروج...",
     "unavailable": "هذه الصفحة غير متاحة بعد",
-    "identity": { "unknown": "المسؤول", "role": "مسؤول" },
+    "identity": {
+      "unknown": "المسؤول",
+      "role": "مسؤول"
+    },
     "groups": {
       "overview": "نظرة عامة",
       "content": "المحتوى",
