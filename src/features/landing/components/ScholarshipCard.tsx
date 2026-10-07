@@ -1,48 +1,76 @@
+'use client';
+
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import { buttonStyles } from '@/components/ui/Button';
-import { CalendarIcon } from '@/components/icons';
+import { DesignAsset } from './DesignAsset';
+import type { landingAssets } from '../assets';
 
 export interface ScholarshipCardData {
-  fundingLabel: string;
   title: string;
-  institution: string;
+  country: string;
+  level: string;
   deadline: string;
-  ctaLabel: string;
+  image: keyof typeof landingAssets;
+  imageClass?: string;
+  index?: number;
 }
 
 export function ScholarshipCard({
-  fundingLabel,
   title,
-  institution,
+  country,
+  level,
   deadline,
-  ctaLabel,
+  image,
+  imageClass,
+  index = 0,
 }: ScholarshipCardData) {
+  const t = useTranslations('Landing.updated.featured');
+  const [saved, setSaved] = useState(false);
   return (
-    <article className="flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-[0_8px_24px_rgba(2,38,71,0.08)]">
-      <div className="flex flex-col gap-4">
-        <span className="inline-flex w-fit items-center rounded-full bg-[var(--color-teal-500)] px-3 py-1 text-[10px] font-normal text-[var(--color-gray-900)]">
-          {fundingLabel}
-        </span>
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-bold text-black">{title}</h3>
-          <p className="text-sm text-[var(--color-gray-500)]">{institution}</p>
-        </div>
+    <article className="landing-scholarship-card" data-landing-reveal={index}>
+      <div className={['scholarship-image', imageClass].filter(Boolean).join(' ')}>
+        <DesignAsset name={image} alt={country} />
+        <span className="scholarship-image-overlay" />
       </div>
-      <hr className="border-t border-[var(--color-border-default)]" />
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1 text-xs text-[var(--color-gray-500)]">
-          <CalendarIcon className="h-5 w-5 shrink-0" />
-          <span>{deadline}</span>
+      <button
+        type="button"
+        className="scholarship-save"
+        aria-label={saved ? t('saved') : t('save')}
+        aria-pressed={saved}
+        onClick={() => setSaved(!saved)}
+      >
+        <DesignAsset name="2019-1057-imgBookmark1" />
+      </button>
+      <div className="scholarship-content">
+        <div className="scholarship-badges">
+          <span>{t('funding')}</span>
+          <span>{t('match')}</span>
         </div>
-        <button
-          type="button"
-          className={buttonStyles({
-            variant: 'primary',
-            size: 'sm',
-            className: 'h-10 px-4 text-xs',
-          })}
-        >
-          {ctaLabel}
-        </button>
+        <h3>{title}</h3>
+        <div className="scholarship-metadata">
+          <p>
+            <DesignAsset name="2019-1057-imgLocation" />
+            {country}
+          </p>
+          <p>
+            <DesignAsset name="2019-1057-imgMageBook" />
+            {level}
+          </p>
+        </div>
+        <div className="scholarship-rule">
+          <DesignAsset name="2019-1057-imgLine" />
+        </div>
+        <div className="scholarship-bottom">
+          <p>{deadline}</p>
+          <Link
+            href="/login"
+            className={buttonStyles({ variant: 'landing', className: 'scholarship-details' })}
+          >
+            {t('details')}
+          </Link>
+        </div>
       </div>
     </article>
   );

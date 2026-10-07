@@ -20,7 +20,8 @@
     "test:scholarship-review": "node --test tests/scholarship-review.test.mjs",
     "test:scholarship-discovery": "node --test tests/student-scholarship-discovery.test.mjs",
     "test:student-layout": "node --test tests/student-layout.test.mjs",
-    "test:i18n": "node --test tests/i18n-numerals.test.mjs"
+    "test:i18n": "node --test tests/i18n-numerals.test.mjs",
+    "test:public-landing-page": "node --test tests/public-landing-page.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",

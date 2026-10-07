@@ -1,106 +1,131 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { AnimatePresence, motion, useIsPresent, useReducedMotion } from 'framer-motion';
+import { landingMotion } from '../motion';
+import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Container } from '@/components/shared/Container';
-import { Logo } from '@/components/shared/Logo';
 import { buttonStyles } from '@/components/ui/Button';
 import { MenuIcon, CloseIcon } from '@/components/icons';
+import { LandingLogo } from './LandingLogo';
+import { DesignAsset } from './DesignAsset';
 
 const NAV_LINKS = [
-  { key: 'home', href: '/', active: true },
-  { key: 'howItWorks', href: '#how-it-works', active: false },
-  { key: 'features', href: '#features', active: false },
-  { key: 'about', href: '#about', active: false },
-  { key: 'contact', href: '#contact', active: false },
+  { key: 'home', href: '/' },
+  { key: 'howItWorks', href: '#how-it-works' },
+  { key: 'features', href: '#features' },
+  { key: 'about', href: '#about' },
+  { key: 'contact', href: '#contact' },
 ] as const;
 
-export function Navbar() {
-  const t = useTranslations('Landing.nav');
-  const [isOpen, setIsOpen] = useState(false);
-
+function MobileMenu({ children, label }: { children: ReactNode; label: string }) {
+  const present = useIsPresent();
+  const reducedMotion = useReducedMotion();
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-[0_4px_16px_rgba(10,34,67,0.06)]">
-      <Container className="flex h-[71px] items-center justify-between">
-        <Logo />
+    <motion.nav
+      id="landing-mobile-nav"
+      className="landing-mobile-nav"
+      aria-label={label}
+      aria-hidden={!present}
+      inert={!present}
+      initial={reducedMotion ? false : { opacity: 0, y: -8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
+      transition={{
+        duration: reducedMotion ? 0 : landingMotion.feedback,
+        ease: [...landingMotion.ease],
+      }}
+    >
+      {children}
+    </motion.nav>
+  );
+}
 
-        <nav className="hidden items-center gap-2 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.key}
-              href={link.href}
-              className={[
-                'relative px-2.5 py-2.5 text-sm transition-colors',
-                link.active
-                  ? 'font-medium text-[var(--color-primary)]'
-                  : 'text-[var(--color-gray-400)] hover:text-[var(--color-navy-800)]',
-              ].join(' ')}
-            >
-              {t(link.key)}
-              {link.active && (
-                <span className="absolute inset-x-2.5 -bottom-0.5 h-0.5 rounded-full bg-[var(--color-primary)]" />
-              )}
-            </Link>
-          ))}
+export function Navbar() {
+  const t = useTranslations('Landing.updated.nav');
+  const locale = useLocale();
+  const [isOpen, setIsOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!isOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setIsOpen(false);
+      toggle.current?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [isOpen]);
+  const links = NAV_LINKS.map(({ key, href }) => (
+    <Link
+      key={key}
+      href={href}
+      onClick={() => setIsOpen(false)}
+      className={key === 'home' ? 'active' : undefined}
+      aria-current={key === 'home' ? 'page' : undefined}
+    >
+      {t(key)}
+    </Link>
+  ));
+  const actions = (
+    <>
+      <Link
+        href="/"
+        locale={locale === 'ar' ? 'en' : 'ar'}
+        className="landing-nav-circle"
+        aria-label={t('language')}
+      >
+        {locale === 'ar' ? 'En' : 'ع'}
+      </Link>
+      <button
+        type="button"
+        className="landing-nav-circle"
+        disabled
+        aria-label={t('themeUnavailable')}
+        title={t('themeUnavailable')}
+      >
+        <DesignAsset name="2104-2444-imgSun1" />
+      </button>
+      <Link href="/login" className="landing-login">
+        {t('login')}
+      </Link>
+      <Link
+        href="/register"
+        className={buttonStyles({ variant: 'landing', className: 'landing-small' })}
+      >
+        {t('start')}
+      </Link>
+    </>
+  );
+  return (
+    <header className="landing-nav">
+      <Container className="landing-nav-inner">
+        <LandingLogo />
+        <nav className="landing-desktop-nav" aria-label={t('menu')}>
+          {links}
         </nav>
-
-        <div className="hidden items-center gap-2 lg:flex">
-          <Link href="/login" className={buttonStyles({ variant: 'ghost', size: 'sm' })}>
-            {t('login')}
-          </Link>
-          <Link href="/register" className={buttonStyles({ variant: 'primary', size: 'sm' })}>
-            {t('start')}
-          </Link>
-        </div>
-
+        <div className="landing-nav-actions">{actions}</div>
         <button
           type="button"
-          aria-label={t('menuToggle')}
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-[var(--color-navy-800)] lg:hidden"
+          aria-label={t('menu')}
+          aria-expanded={isOpen}
+          aria-controls={isOpen ? 'landing-mobile-nav' : undefined}
+          ref={toggle}
+          onClick={() => setIsOpen(!isOpen)}
+          className="landing-menu-toggle"
         >
-          {isOpen ? <CloseIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
+          {isOpen ? <CloseIcon /> : <MenuIcon />}
         </button>
       </Container>
-
-      {isOpen && (
-        <div className="border-t border-[var(--color-border-default)] bg-white lg:hidden">
-          <Container className="flex flex-col gap-1 py-4">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.key}
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-                className={[
-                  'rounded-lg px-3 py-2.5 text-sm',
-                  link.active
-                    ? 'font-medium text-[var(--color-primary)]'
-                    : 'text-[var(--color-gray-400)]',
-                ].join(' ')}
-              >
-                {t(link.key)}
-              </Link>
-            ))}
-            <div className="mt-2 flex items-center gap-2">
-              <Link
-                href="/login"
-                onClick={() => setIsOpen(false)}
-                className={buttonStyles({ variant: 'ghost', size: 'sm', className: 'flex-1' })}
-              >
-                {t('login')}
-              </Link>
-              <Link
-                href="/register"
-                onClick={() => setIsOpen(false)}
-                className={buttonStyles({ variant: 'primary', size: 'sm', className: 'flex-1' })}
-              >
-                {t('start')}
-              </Link>
-            </div>
-          </Container>
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <MobileMenu label={t('menu')}>
+            {links}
+            <div>{actions}</div>
+          </MobileMenu>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

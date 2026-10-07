@@ -22,10 +22,61 @@
       "start": "Get Started",
       "menuToggle": "Open menu"
     },
+    "trust": {
+      "badge": "Why PsScholar?",
+      "heading": "One platform for your academic journey",
+      "discover": "Discover verified opportunities",
+      "guidance": "Organize your academic details",
+      "tracking": "Track your next step"
+    },
+    "platformFeatures": {
+      "badge": "Platform features",
+      "heading": "Everything you need in one place",
+      "items": [
+        {
+          "title": "Start your profile",
+          "description": "Keep your academic information and preferences in one place."
+        },
+        {
+          "title": "An organized academic profile",
+          "description": "Keep your academic information and preferences in one place."
+        },
+        {
+          "title": "Document management",
+          "description": "Upload the documents you need for your academic journey."
+        },
+        {
+          "title": "Clear steps",
+          "description": "Complete your profile through clear, easy-to-follow stages."
+        }
+      ]
+    },
+    "faq": {
+      "badge": "Frequently asked questions",
+      "heading": "Common questions",
+      "items": [
+        {
+          "q": "Is the platform free to use?",
+          "a": "You can create an account and explore the platform features available to you without entering a credit card."
+        },
+        {
+          "q": "How do I get started?",
+          "a": "Create an account, then complete your academic profile and study preferences."
+        },
+        {
+          "q": "Can I add documents to my profile?",
+          "a": "Yes. The platform lets you manage the documents required in your personal profile."
+        },
+        {
+          "q": "Is the platform available in Arabic?",
+          "a": "Yes. The platform interface is available in both Arabic and English."
+        }
+      ]
+    },
     "hero": {
-      "badge": "AI-powered personalized recommendations",
-      "title": "Because Palestinian students deserve the best opportunities",
-      "subtitle": "Discover, match, and track global and local scholarship opportunities with smart guidance tailored for Palestinian students to ease your academic journey.",
+      "badge": "A platform for academic opportunities",
+      "title": "Find the study opportunity that fits your future",
+      "subtitle": "Keep your academic profile, documents, and study preferences in one place for a clearer academic journey.",
       "filters": {
         "all": "All",
         "bachelor": "Bachelor's",
@@ -35,7 +86,10 @@
       },
       "searchPlaceholder": "Scholarship name, university, or major",
       "searchCount": "+100",
-      "searchButton": "Search"
+      "searchButton": "Search",
+      "start": "Get started",
+      "howItWorks": "How it works",
+      "searchUnavailable": "Public scholarship search is coming soon"
     },
     "stats": {
       "scholarships": {
@@ -101,7 +155,7 @@
     },
     "howItWorks": {
       "badge": "How it works",
-      "heading": "From discovery to application",
+      "heading": "From account creation to profile completion",
       "steps": [
         {
           "number": "1",
@@ -110,18 +164,18 @@
         },
         {
           "number": "2",
-          "title": "AI recommendations",
-          "description": "Our AI matches your profile with thousands of scholarships and ranks them by compatibility."
+          "title": "Complete your details",
+          "description": "Add your academic information and study preferences to your profile."
         },
         {
           "number": "3",
-          "title": "Explore and save",
-          "description": "Browse results, check eligibility requirements, and save the scholarships you want to apply for."
+          "title": "Add your documents",
+          "description": "Manage important documents in your personal profile."
         },
         {
           "number": "4",
-          "title": "Prepare and apply",
-          "description": "Track your deadlines and apply directly through the scholarships' official links."
+          "title": "Review your progress",
+          "description": "Complete the remaining sections of your profile with ease."
         }
       ]
     },
@@ -169,7 +223,7 @@
     },
     "contact": {
       "heading": "Contact Us",
-      "subtitle": "We'd love to hear from you! Send us your message and we'll get back to you as soon as possible.",
+      "subtitle": "Thank you for your interest in PsScholar.",
       "nameLabel": "Full name",
       "namePlaceholder": "Enter your full name here",
       "emailLabel": "Email address",
@@ -179,11 +233,12 @@
       "messageLabel": "Message",
       "messagePlaceholder": "Write your message details here...",
       "submit": "Send message",
-      "sent": "Your message has been sent"
+      "sent": "Your message has been sent",
+      "unavailable": "The contact form is not available for submission yet."
     },
     "cta": {
       "heading": "Ready to find your scholarship?",
-      "subtitle": "Join thousands of Palestinian students using PsScholar to discover and apply for scholarship opportunities around the world.",
+      "subtitle": "Create an account to discover scholarship opportunities and organize your next step.",
       "register": "Create account",
       "login": "Login"
     },
@@ -203,6 +258,259 @@
           "title": "Discover",
           "links": ["Browse Scholarships", "Smart Recommendations", "Grants & Programs"]
         }
+      }
+    },
+    "updated": {
+      "hero": {
+        "badge": "An intelligent AI-powered platform",
+        "title": "Find the scholarship",
+        "accent": "that fits your future",
+        "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and prepare your academic documents with intelligent assistance.",
+        "start": "Start now",
+        "how": "How it works",
+        "search": "Search",
+        "placeholder": "Scholarship, university, or subject",
+        "quick": "Quick browse by level:",
+        "filters": [
+          "Full funding",
+          "Master’s",
+          "Bachelor’s",
+          "Germany",
+          "United Kingdom",
+          "Türkiye"
+        ],
+        "imageAlt": "Students celebrating graduation outside a university",
+        "accepted": "You were accepted for",
+        "award": "Fulbright Scholarship 2025",
+        "universities": "Universities & countries",
+        "students": "Students & researchers",
+        "scholarships": "Scholarships",
+        "notification": "New notification",
+        "recommendations": "New recommendations"
+      },
+      "featured": {
+        "badge": "Featured scholarships",
+        "heading": "The latest opportunities",
+        "browse": "Find scholarships",
+        "details": "Details",
+        "funding": "Full funding",
+        "match": "High match",
+        "save": "Save scholarship",
+        "saved": "Unsave scholarship",
+        "empty": "No featured scholarships match your search.",
+        "items": [
+          {
+            "title": "Türkiye Government Scholarship (YTB)",
+            "country": "Türkiye",
+            "level": "Master’s",
+            "deadline": "30 September 2026 · 43 days left"
+          },
+          {
+            "title": "Türkiye Government Scholarship (YTB)",
+            "country": "Türkiye",
+            "level": "Master’s",
+            "deadline": "30 September 2026 · 43 days left"
+          },
+          {
+            "title": "Japanese Government Scholarship (MEXT)",
+            "country": "Japan",
+            "level": "PhD",
+            "deadline": "15 November 2026 · 128 days left"
+          }
+        ]
+      },
+      "overview": {
+        "badge": "Why PsScholar?",
+        "heading": "One platform for your academic journey",
+        "subtitle": "From discovering scholarships to applying and tracking progress, every step in one place designed for Palestinian students.",
+        "items": [
+          {
+            "title": "Search & discover",
+            "description": "Browse hundreds of scholarships by country, level, and subject, and search easily with keywords."
+          },
+          {
+            "title": "Apply smarter",
+            "description": "Get the required document checklist for each scholarship and improve your documents with AI before applying."
+          },
+          {
+            "title": "Track applications",
+            "description": "Track every application from interested to accepted with automatic deadline reminders."
+          }
+        ]
+      },
+      "features": {
+        "badge": "Platform features",
+        "heading": "Everything you need, together in one platform",
+        "items": [
+          {
+            "title": "AI recommendations",
+            "description": "Analyzes your profile to suggest scholarships that fit your experience, subject, and academic goals."
+          },
+          {
+            "title": "Advanced filters",
+            "description": "Browse by country, study level, subject, funding type, and study duration."
+          },
+          {
+            "title": "Eligibility & matching",
+            "description": "See your match with each scholarship, which criteria you meet, and what needs improvement."
+          },
+          {
+            "title": "AI document improvement",
+            "description": "Upload your CV and motivation letter for suggestions tailored to each scholarship."
+          },
+          {
+            "title": "Deadline reminders",
+            "description": "Automatic reminders seven days and 48 hours before applications close."
+          },
+          {
+            "title": "Verified scholarships",
+            "description": "Each scholarship is manually reviewed for accurate information and valid links."
+          },
+          {
+            "title": "Save & track applications",
+            "description": "Save your favorites and update application status from interest to acceptance."
+          },
+          {
+            "title": "Instant notifications",
+            "description": "Get notified when new scholarships match your profile."
+          },
+          {
+            "title": "Multiple countries",
+            "description": "Scholarships from Türkiye, Germany, the UK, Canada, Saudi Arabia, and more, in one place."
+          }
+        ]
+      },
+      "steps": {
+        "badge": "How does it work?",
+        "heading": "How does Scholar AI work?",
+        "items": [
+          {
+            "title": "Complete your profile",
+            "description": "Enter your grades, subject, languages, and preferred countries."
+          },
+          {
+            "title": "Get recommendations",
+            "description": "AI analyzes your profile and ranks scholarships automatically."
+          },
+          {
+            "title": "Apply with confidence",
+            "description": "Prepare documents with AI and review scholarship requirements."
+          },
+          {
+            "title": "Track your application",
+            "description": "Update each application and get deadline reminders until acceptance."
+          }
+        ]
+      },
+      "matching": {
+        "badge": "Artificial intelligence",
+        "heading": "Smart recommendations for your academic profile",
+        "description": "No more searching through hundreds of scholarships. Scholar AI analyzes your profile and ranks opportunities by match, explaining your strengths and areas to improve.",
+        "bullets": [
+          "Instant analysis of your grades, nationality, and subject",
+          "A precise match score with explanations for each criterion",
+          "Alerts for new scholarships that match your profile",
+          "Compare scholarships side by side to make your decision"
+        ],
+        "cta": "Try recommendations now",
+        "imageAlt": "Academic profile matched to scholarships with a 92% score"
+      },
+      "documents": {
+        "badge": "Document improvement",
+        "heading": "Improve your documents and strengthen your chances",
+        "description": "Upload your CV and motivation letter for specific suggestions tailored to each scholarship. Nothing changes without your approval.",
+        "bullets": [
+          "Language and structure suggestions for your documents",
+          "Suggestions tailored to each scholarship’s requirements",
+          "Accept or reject each suggestion — you stay in control",
+          "Supports CVs, motivation letters, and recommendation letters"
+        ],
+        "cta": "Explore document improvement",
+        "imageAlt": "Original document compared with AI suggestions"
+      },
+      "faq": {
+        "badge": "Frequently asked questions",
+        "heading": "Questions you often ask",
+        "subtitle": "Answers to common questions about accio",
+        "items": [
+          {
+            "question": "Is the service free?",
+            "answer": "Yes, the platform offers a free plan with access to the scholarship database and basic tools. Paid plans are available for advanced features such as the AI writing assistant."
+          },
+          {
+            "question": "How does AI matching work?",
+            "answer": "It compares your grades, nationality, and subject with scholarship requirements and explains your match for each criterion."
+          },
+          {
+            "question": "Can I apply directly through the platform?",
+            "answer": "The platform helps you prepare documents and track applications. Submit your application through the scholarship provider’s official website."
+          },
+          {
+            "question": "How accurate is the scholarship data?",
+            "answer": "Scholarships are reviewed manually for accurate information and valid links. Check the official source before applying."
+          },
+          {
+            "question": "Is the platform only available in Arabic?",
+            "answer": "The platform supports Arabic and English. Switch languages in the navigation bar."
+          }
+        ]
+      },
+      "cta": {
+        "badge": "Start your journey",
+        "heading": "Everything a student needs",
+        "headingEnd": "in one place",
+        "description": "Join over 50,000 students using accio to find scholarships worldwide. Start free today.",
+        "bullets": [
+          "Instant free access, no credit card required",
+          "Over 12,000 continuously updated scholarships",
+          "An AI assistant specializing in scholarships"
+        ],
+        "login": "Log in",
+        "start": "Start your journey"
+      },
+      "contact": {
+        "badge": "Contact",
+        "heading": "Contact us",
+        "subtitle": "We would love to hear from you! Send us a message and we will respond as soon as possible.",
+        "labels": ["Full name", "Email address", "Subject", "Message"],
+        "placeholders": [
+          "Enter your full name",
+          "example@std.najah.edu",
+          "What is your message about?",
+          "Write your message here…"
+        ],
+        "submit": "Send message",
+        "unavailable": "Message sending is currently unavailable. Please try again later."
+      },
+      "footer": {
+        "description": "An intelligent scholarship discovery platform for Palestinian students, graduates, and researchers.",
+        "copyright": "© 2026 PsScholar · All rights reserved",
+        "columns": [
+          {
+            "title": "Discover",
+            "links": ["Browse scholarships", "Smart recommendations", "Scholarships & programs"]
+          },
+          {
+            "title": "Tools",
+            "links": ["Improve documents", "Your profile", "Notifications"]
+          },
+          {
+            "title": "Platform",
+            "links": ["About & privacy", "Admin dashboard", "Create an account"]
+          }
+        ]
+      },
+      "nav": {
+        "home": "Home",
+        "howItWorks": "How it works",
+        "features": "Features",
+        "about": "About",
+        "contact": "Contact us",
+        "login": "Log in",
+        "start": "Start now",
+        "menu": "Toggle navigation menu",
+        "themeUnavailable": "Theme switching is currently unavailable",
+        "language": "العربية"
       }
     }
   },
