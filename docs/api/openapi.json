@@ -3532,19 +3532,49 @@
         ]
       }
     },
-    "/profile/scholarship-profile": {
+    "/admin/students/scholarship-profiles": {
       "get": {
-        "tags": ["Profile"],
-        "summary": "Get the authenticated student's scholarship profile",
-        "description": "Read saved scholarship-related data in a flat response. Identity comes from the session cookie or Bearer token, never a student ID parameter. Missing data remains nullable or empty; no profile or document records are created.",
-        "operationId": "get_student_scholarship_profile_profile_scholarship_profile_get",
+        "tags": ["Admin"],
+        "summary": "List all students' scholarship profiles for admins",
+        "description": "Requires an active admin. Lists accounts with role=student, including inactive students and students without profiles, ordered by student ID ascending. Use page and page_size to retrieve all pages. Missing data remains nullable or empty; no profile or document records are created.",
+        "operationId": "get_student_scholarship_profiles_admin_students_scholarship_profiles_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StudentScholarshipProfileResponse"
+                  "$ref": "#/components/schemas/StudentScholarshipProfilesResponse"
                 }
               }
             }
@@ -3553,14 +3583,19 @@
             "description": "Missing or invalid authentication"
           },
           "403": {
-            "description": "Account is disabled"
+            "description": "Requires an active admin"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
-        },
-        "security": [
-          {
-            "HTTPBearer": []
-          }
-        ]
+        }
       }
     },
     "/api/scholarships/": {
@@ -13558,7 +13593,7 @@
           "student_id": {
             "type": "integer",
             "title": "Student Id",
-            "description": "Authenticated User.id; there is no separate Student table."
+            "description": "Student's User.id; there is no separate Student table."
           },
           "full_name_ar": {
             "anyOf": [
@@ -13779,6 +13814,42 @@
         "type": "object",
         "required": ["student_id"],
         "title": "StudentScholarshipProfileResponse"
+      },
+      "StudentScholarshipProfilesResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StudentScholarshipProfileResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Total",
+            "description": "All student accounts before pagination"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1,
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Page Size"
+          },
+          "total_pages": {
+            "type": "integer",
+            "minimum": 0,
+            "title": "Total Pages"
+          }
+        },
+        "type": "object",
+        "required": ["items", "total", "page", "page_size", "total_pages"],
+        "title": "StudentScholarshipProfilesResponse"
       },
       "StudentScholarshipTrackingResponse": {
         "properties": {
