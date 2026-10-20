@@ -10,7 +10,7 @@ import {
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // Proxy before any next-intl logic, so /backend/* never gets a locale prefix or redirect.

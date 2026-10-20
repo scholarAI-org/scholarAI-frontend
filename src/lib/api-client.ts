@@ -1,7 +1,7 @@
 import { BACKEND_PREFIX } from './backend-proxy';
 
 /**
- * Browser calls go through the same-origin proxy in src/middleware.ts, so the
+ * Browser calls go through the same-origin proxy in src/proxy.ts, so the
  * auth cookie is first-party. Server-side callers need the absolute backend
  * URL and must forward the user's cookie themselves.
  */
