@@ -1,4 +1,4 @@
-import { academicLevels, fundingTypes } from '../constants';
+import { fundingTypes, studyLevels } from '../constants';
 
 // Rule A1 for free-text card fields (funding_type, study_level):
 // - a known enum value, in any letter case, shows its translated label;
@@ -37,13 +37,13 @@ export function getStudyLevelLabel(value: unknown): CardFieldLabel {
   if (parts.length === 1) {
     return resolveSingle(
       STUDY_LEVEL_SEPARATORS.test(value) ? parts[0] : value,
-      academicLevels,
+      studyLevels,
       'filters.academicLevel'
     );
   }
   return {
     kind: 'list',
-    parts: parts.map((part) => resolveSingle(part, academicLevels, 'filters.academicLevel')),
+    parts: parts.map((part) => resolveSingle(part, studyLevels, 'filters.academicLevel')),
   };
 }
 

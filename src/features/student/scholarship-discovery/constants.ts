@@ -5,6 +5,7 @@ import type {
   DiscoverySortOption,
   FundingType,
   OpportunityType,
+  StudyLevel,
 } from './types';
 export const DISCOVERY_PAGE_SIZE = 20;
 // Request limits from GET /api/scholarships/ in docs/api/openapi.json.
@@ -14,13 +15,17 @@ export const DISCOVERY_LIMITS = {
   countryMaxItems: 50,
   filterMaxItems: 20,
 } as const;
-export const academicLevels: AcademicLevel[] = ['bachelor', 'master', 'phd', 'exchange'];
+export const academicLevels: AcademicLevel[] = ['bachelor', 'master', 'phd', 'postdoc'];
+// Every stored level has a label; `other` is not offered as a filter.
+export const studyLevels: StudyLevel[] = [...academicLevels, 'other'];
 export const fundingTypes: FundingType[] = ['full', 'partial'];
 export const opportunityTypes: OpportunityType[] = [
   'scholarship',
-  'academic_exchange',
-  'research_fellowship',
-  'training',
+  'fellowship',
+  'grant',
+  'exchange',
+  'short_course',
+  'other',
 ];
 // A future `match` option is added here with `available: false` until its backend contract exists.
 export const discoverySortOptions: DiscoverySortOption<DiscoverySort>[] = [

@@ -1344,7 +1344,8 @@
         "bachelor": "بكالوريوس",
         "master": "ماجستير",
         "phd": "دكتوراه",
-        "exchange": "تبادل طلابي"
+        "postdoc": "ما بعد الدكتوراه",
+        "other": "أخرى"
       },
       "funding": {
         "legend": "نوع التمويل",
@@ -1354,9 +1355,11 @@
       "opportunity": {
         "legend": "نوع الفرصة",
         "scholarship": "منحة دراسية",
-        "academic_exchange": "تبادل أكاديمي",
-        "research_fellowship": "زمالة بحثية",
-        "training": "تدريب"
+        "fellowship": "زمالة",
+        "grant": "منحة مالية",
+        "exchange": "تبادل أكاديمي",
+        "short_course": "دورة قصيرة",
+        "other": "أخرى"
       },
       "country": {
         "legend": "الدولة",
