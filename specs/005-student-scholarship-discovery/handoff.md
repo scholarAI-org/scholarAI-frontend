@@ -164,7 +164,7 @@ Profile الحالي Client Component ويمتلك Navbar وSidebar وProfileLay
 | الحفظ        | `POST /api/scholarships/{id}/save`     |
 | إلغاء الحفظ  | `DELETE /api/scholarships/{id}/save`   |
 
-الفلاتر: academic level = `bachelor/master/phd/exchange`، funding = `full/partial`، opportunity = `scholarship/academic_exchange/research_fellowship/training`. الترتيب المعروض فقط newest وdeadline soon.
+الفلاتر: academic level = `bachelor/master/phd/postdoc`، funding = `full/partial`، opportunity = `scholarship/fellowship/grant/exchange/short_course/other` (محاذاة قيم الـ backend في PR #27؛ القيمة `other` للمستوى تُستخدم كتسمية بطاقة فقط وليست فلترًا). حالة البيانات: PR #56 في الـ backend (إصلاح المصنِّف) ما زال مفتوحًا، والمنح الموجودة تبقى بلا تصنيف حتى يشغّل مشغّل النظام الـ backfill يدويًا؛ وجد الـ dry run في PR #56 عدد 384 صفًا بلا تصنيف، لذلك تُرجع الفلاتر نتائج قليلة أو لا شيء حتى ذلك الحين. الترتيب المعروض فقط newest وdeadline soon.
 
 مصدر الدول الوحيد هو filter-options؛ اعرض وأرسل السلسلة المرجعة نفسها، دون قائمة دول ثابتة أو مكتبة أكواد ISO. فشل خيارات الدول له حالة مستقلة ولا يمنع ظهور نتائج المنح.
 

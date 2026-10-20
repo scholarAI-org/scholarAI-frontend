@@ -194,3 +194,5 @@ query to GET /api/scholarships/ with page_size and abort signal` and
 - Final verification documentation is committed separately after the checks.
 
 Nothing was pushed. Only Feature 005 implementation/evidence files were staged.
+
+- Filter values were aligned to the backend enums in PR #27 (frontend). Live verification against classified data is still pending, because existing rows stay unclassified until the backend backfill is run.

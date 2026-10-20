@@ -3,6 +3,27 @@
 Status: reported to the backend team; the frontend does not work around these
 (decision 2026-10-03, option A). Scholarship fields only; no personal data.
 
+## Current status
+
+- **Filter values (frontend, PR #27, merged):** the frontend now sends only the
+  backend's canonical values, so unsupported values no longer cause a 422.
+  - `academic_level`: `bachelor`, `master`, `phd`, `postdoc` (the backend also
+    accepts `other`, which the frontend uses only as a card label).
+  - `funding_type`: `full`, `partial`.
+  - `opportunity_type`: `scholarship`, `fellowship`, `grant`, `exchange`,
+    `short_course`, `other`.
+- **Classification (backend PR #56, open):** fixes how the classifier reads
+  study level (titles before page text, required degrees ignored) and Arabic
+  prefixes. Merging it only classifies newly ingested listings.
+- **Existing rows stay unclassified until the backfill is run manually** by an
+  operator (`scripts/backfill_scholarship_classification.py`, dry run first).
+  PR #56's read-only dry run found 384 rows with no classification.
+- **Effect today:** the level, funding and opportunity filters return little or
+  nothing until the backfill is done. Live verification against classified data
+  is still pending.
+
+Sections (a) and (b) below record the original findings and are kept as history.
+
 ## Summary
 
 The discovery filters for academic level, funding type and opportunity type
@@ -55,8 +76,9 @@ Even when the fields are filled, the matching in
 ## Suggested fixes
 
 1. Extract and store structured values at ingestion: `study_level` as one or
-   more of `bachelor | master | phd | exchange`, `funding_type` as
-   `full | partial`, `opportunity_type` as the existing enum; also fill
+   more of `bachelor | master | phd | postdoc | other`, `funding_type` as
+   `full | partial`, `opportunity_type` as one of `scholarship | fellowship |
+   grant | exchange | short_course | other`; also fill
    `university_name`, `title_ar` and `title_en` where the source has them.
 2. Backfill the existing rows (at least the 7 published ones above).
 3. Make admin edit/review require these fields before a scholarship can be
@@ -76,16 +98,19 @@ project's own storage at ingestion (with permission/attribution as required)
 and serving them from there. The frontend already falls back to a neutral local
 image when a URL is invalid or fails to load.
 
-## Values the current matcher accepts (for manual data fixes)
+## Values the backend accepts (canonical enums)
 
-- `study_level` — case-insensitive, spaces ignored; separate several levels with
-  `,` `،` `;` or `/`. Labels: bachelor, bachelors, bachelor's, bachelor's degree,
-  undergraduate, بكالوريوس · master, masters, master's, master's degree, ماجستير ·
-  phd, ph.d, ph.d., doctorate, doctoral, دكتوراه · exchange, academic exchange,
-  تبادل أكاديمي, تبادل اكاديمي. Example: `master, phd`.
-- `funding_type` — one whole value, case-insensitive: full, fully_funded,
-  fully funded, full funding, تمويل كامل, ممولة بالكامل · partial,
-  partially_funded, partially funded, partial funding, تمويل جزئي, ممولة جزئيا,
-  ممولة جزئيًا. Prefer `full` / `partial`.
-- `opportunity_type` — exactly one of `scholarship`, `academic_exchange`,
-  `research_fellowship`, `training`.
+Source: `GET /api/scholarships/` in `docs/api/openapi.json`. Repeat a parameter
+for OR; letter case is accepted.
+
+- `academic_level` (alias `study_level`) — `bachelor`, `master`, `phd`,
+  `postdoc`, `other`. Responses return `study_level` as an array of these, or
+  `null`.
+- `funding_type` — `full`, `partial`.
+- `opportunity_type` — `scholarship`, `fellowship`, `grant`, `exchange`,
+  `short_course`, `other`. Internship is not a stored category, and
+  unclassified listings (`null`) never match.
+
+The free-text label lists described in section (b) (for example `exchange`,
+`academic_exchange`, `research_fellowship`, `training`) are the old matcher's
+inputs and are no longer the contract.
