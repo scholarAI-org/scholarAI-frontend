@@ -9,20 +9,14 @@ import { ScholarshipCard, type ScholarshipCardData } from './ScholarshipCard';
 
 const IMAGES = ['2019-1057-imgImage2', '2019-1057-imgImage1', '2019-1057-imgImage'] as const;
 
-export function FeaturedScholarships({ query }: { query: string }) {
+export function FeaturedScholarships() {
   const t = useTranslations('Landing.updated.featured');
   const items = t.raw('items') as Omit<ScholarshipCardData, 'image'>[];
-  const visibleItems = items
-    .map((item, index) => ({
-      ...item,
-      image: IMAGES[index],
-      imageClass: index === 1 ? 'scholarship-crop' : undefined,
-    }))
-    .filter((item) =>
-      `${item.title} ${item.country} ${item.level} ${t('funding')}`
-        .toLocaleLowerCase()
-        .includes(query.trim().toLocaleLowerCase())
-    );
+  const visibleItems = items.map((item, index) => ({
+    ...item,
+    image: IMAGES[index],
+    imageClass: index === 1 ? 'scholarship-crop' : undefined,
+  }));
   return (
     <section id="scholarships" className="landing-featured">
       <Container>
@@ -32,11 +26,6 @@ export function FeaturedScholarships({ query }: { query: string }) {
             <ScholarshipCard key={item.image + index} {...item} index={index} />
           ))}
         </div>
-        {visibleItems.length === 0 && (
-          <p className="landing-empty" role="status">
-            {t('empty')}
-          </p>
-        )}
         <div className="landing-browse">
           <Link
             href="/login"

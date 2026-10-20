@@ -44,7 +44,6 @@ export function Hero({ onSearch }: { onSearch: (query: string) => void }) {
             </Link>
           </div>
           <form
-            action="#scholarships"
             className="hero-search"
             onSubmit={(event) => {
               event.preventDefault();

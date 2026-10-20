@@ -1,19 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from '@/i18n/navigation';
 import { Hero } from './Hero';
 import { FeaturedScholarships } from './FeaturedScholarships';
 
 export function LandingDiscovery() {
-  const [query, setQuery] = useState('');
+  const router = useRouter();
   function search(value: string) {
-    setQuery(value);
-    requestAnimationFrame(() => document.getElementById('scholarships')?.scrollIntoView());
+    const query = value.trim();
+    router.push(
+      query ? `/student/scholarships?search=${encodeURIComponent(query)}` : '/student/scholarships'
+    );
   }
   return (
     <>
       <Hero onSearch={search} />
-      <FeaturedScholarships query={query} />
+      <FeaturedScholarships />
     </>
   );
 }
