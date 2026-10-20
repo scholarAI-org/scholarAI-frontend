@@ -1,8 +1,10 @@
 export type DiscoverySort = 'newest' | 'deadline_soon';
-export type AcademicLevel = 'bachelor' | 'master' | 'phd' | 'exchange';
+// Canonical backend values (ScholarshipStudyLevel / ScholarshipOpportunityType).
+export type AcademicLevel = 'bachelor' | 'master' | 'phd' | 'postdoc';
+export type StudyLevel = AcademicLevel | 'other';
 export type FundingType = 'full' | 'partial';
 export type OpportunityType =
-  'scholarship' | 'academic_exchange' | 'research_fellowship' | 'training';
+  'scholarship' | 'fellowship' | 'grant' | 'exchange' | 'short_course' | 'other';
 export type ScholarshipIngestionType = 'scraped' | 'manual';
 // Presentation only: never part of the URL, query keys or storage.
 export type DiscoveryView = 'grid' | 'list';
@@ -35,7 +37,7 @@ export interface ScholarshipDiscoveryCard {
   organization_name?: string | null;
   university_name?: string | null;
   country?: string | null;
-  study_level?: string | null;
+  study_level?: string[] | string | null;
   funding_type?: string | null;
   opportunity_type?: OpportunityType | null;
   image_url?: string | null;

@@ -88,17 +88,18 @@ test('parse maps the deadline_soonest alias and never emits it', () => {
 test('parse keeps repeated params, normalizes enums and drops unsupported values', () => {
   const query = parse(
     'academic_level=Bachelor&academic_level=master&academic_level=bachelor&academic_level=postdoc' +
-      '&funding_type=FULL&funding_type=none&opportunity_type=training&opportunity_type=internship' +
+      '&academic_level=exchange&funding_type=FULL&funding_type=none&opportunity_type=short_course' +
+      '&opportunity_type=training&opportunity_type=academic_exchange&opportunity_type=internship' +
       '&country=Germany&country=Germany&country=&country=%20%20&country=United%20Kingdom'
   );
-  assert.deepEqual(query.academicLevels, ['bachelor', 'master']);
+  assert.deepEqual(query.academicLevels, ['bachelor', 'master', 'postdoc']);
   assert.deepEqual(query.fundingTypes, ['full']);
-  assert.deepEqual(query.opportunityTypes, ['training']);
+  assert.deepEqual(query.opportunityTypes, ['short_course']);
   assert.deepEqual(query.countries, ['Germany', 'United Kingdom']);
   assert.equal(
     serializeDiscoveryQuery(query).toString(),
-    'academic_level=bachelor&academic_level=master&funding_type=full&opportunity_type=training' +
-      '&country=Germany&country=United+Kingdom'
+    'academic_level=bachelor&academic_level=master&academic_level=postdoc&funding_type=full' +
+      '&opportunity_type=short_course&country=Germany&country=United+Kingdom'
   );
 });
 
@@ -358,7 +359,7 @@ test('getScholarships maps the query to GET /api/scholarships/ with page_size an
   const controller = new AbortController();
   const query = parse(
     'search=ai&academic_level=master&academic_level=phd&funding_type=full' +
-      '&opportunity_type=research_fellowship&country=C%C3%B4te%20d%E2%80%99Ivoire&country=Germany&page=2'
+      '&opportunity_type=fellowship&country=C%C3%B4te%20d%E2%80%99Ivoire&country=Germany&page=2'
   );
   await getScholarships(query, controller.signal);
 
@@ -370,7 +371,7 @@ test('getScholarships maps the query to GET /api/scholarships/ with page_size an
   assert.equal(url.searchParams.get('search'), 'ai');
   assert.deepEqual(url.searchParams.getAll('academic_level'), ['master', 'phd']);
   assert.deepEqual(url.searchParams.getAll('funding_type'), ['full']);
-  assert.deepEqual(url.searchParams.getAll('opportunity_type'), ['research_fellowship']);
+  assert.deepEqual(url.searchParams.getAll('opportunity_type'), ['fellowship']);
   assert.equal(url.searchParams.get('sort'), 'newest');
   assert.equal(url.searchParams.get('page'), '2');
   assert.equal(url.searchParams.get('page_size'), '20');
@@ -619,7 +620,7 @@ test('navigator resets page to 1 for filter and sort changes and skips no-op cha
 
 test('clear all resets filters and page but keeps search and sort', () => {
   const query = parse(
-    'search=ai&academic_level=phd&funding_type=full&opportunity_type=training&country=%20X%20&sort=deadline_soon&page=4'
+    'search=ai&academic_level=phd&funding_type=full&opportunity_type=short_course&country=%20X%20&sort=deadline_soon&page=4'
   );
   const cleared = withClearedFilters(query);
   assert.deepEqual(cleared, { ...defaultDiscoveryQuery, search: 'ai', sort: 'deadline_soon' });
@@ -672,17 +673,50 @@ test('every filter value has a label in both locales', () => {
   const read = (locale) =>
     JSON.parse(fs.readFileSync(path.join(srcPath, `messages/${locale}.json`), 'utf8'))
       .StudentScholarshipDiscovery.filters;
-  const { academicLevels, fundingTypes, opportunityTypes } = load('constants.ts');
+  const { studyLevels, fundingTypes, opportunityTypes } = load('constants.ts');
   for (const locale of ['ar', 'en']) {
     const filters = read(locale);
     for (const [group, values] of [
-      ['academicLevel', academicLevels],
+      ['academicLevel', studyLevels],
       ['funding', fundingTypes],
       ['opportunity', opportunityTypes],
     ]) {
       assert.ok(filters[group].legend, `${locale} ${group}.legend`);
       for (const value of values) assert.ok(filters[group][value], `${locale} ${group}.${value}`);
     }
+  }
+});
+
+test('every filter value is accepted by GET /api/scholarships/ in docs/api/openapi.json', () => {
+  // The backend answers 422 to any value outside its enums, failing the whole search.
+  const spec = JSON.parse(
+    fs.readFileSync(fileURLToPath(new URL('../docs/api/openapi.json', import.meta.url)), 'utf8')
+  );
+  const resolve = (schema) =>
+    schema.$ref ? resolve(spec.components.schemas[schema.$ref.split('/').pop()]) : schema;
+  const enumOf = (schema) => {
+    const s = resolve(schema);
+    return [
+      ...(s.enum ?? []),
+      ...(s.items ? enumOf(s.items) : []),
+      ...['anyOf', 'oneOf', 'allOf'].flatMap((key) => (s[key] ?? []).flatMap(enumOf)),
+    ];
+  };
+  const params = spec.paths['/api/scholarships/'].get.parameters;
+  const accepted = (name) => {
+    const values = enumOf(params.find((param) => param.name === name).schema);
+    assert.ok(values.length > 0, `${name} has an enum`);
+    // Backend validators normalize letter case before matching.
+    return values.map((value) => value.toLowerCase());
+  };
+  const { academicLevels, fundingTypes, opportunityTypes } = load('constants.ts');
+  for (const [name, values] of [
+    ['academic_level', academicLevels],
+    ['funding_type', fundingTypes],
+    ['opportunity_type', opportunityTypes],
+  ]) {
+    const allowed = accepted(name);
+    for (const value of values) assert.ok(allowed.includes(value), `${name}=${value}`);
   }
 });
 
@@ -868,16 +902,20 @@ test('rule A1: known values are translated in any case, others shown raw, blanks
     kind: 'translated',
     key: 'filters.academicLevel.phd',
   });
-  assert.deepEqual(getStudyLevelLabel('exchange'), {
+  assert.deepEqual(getStudyLevelLabel('postdoc'), {
     kind: 'translated',
-    key: 'filters.academicLevel.exchange',
+    key: 'filters.academicLevel.postdoc',
+  });
+  assert.deepEqual(getStudyLevelLabel('other'), {
+    kind: 'translated',
+    key: 'filters.academicLevel.other',
   });
   // Unknown values: shown exactly as received.
   for (const raw of ['ممولة بالكامل', 'Self-funded', 'Fully Funded']) {
     assert.deepEqual(getFundingLabel(raw), { kind: 'raw', text: raw });
   }
   // Multi-level values like 'Master, PhD' are covered by the multi-level test below.
-  for (const raw of ['ماجستير ودكتوراه', 'Master and PhD', 'Diploma']) {
+  for (const raw of ['ماجستير ودكتوراه', 'Master and PhD', 'Diploma', 'exchange']) {
     assert.deepEqual(getStudyLevelLabel(raw), { kind: 'raw', text: raw });
   }
   // Hidden only for null, empty or blank (or a non-string from a malformed card).
@@ -898,6 +936,26 @@ test('rule A1: known values are translated in any case, others shown raw, blanks
   );
   assert.equal(blank.fundingType, undefined);
   assert.equal(blank.studyLevel, undefined);
+});
+
+test('canonical study_level arrays become one translated label per level', () => {
+  const { getStudyLevelLabel } = load('lib/card-labels.ts');
+  const card = toScholarshipCard(
+    { id: 9, title: 'T', is_saved: false, study_level: ['master', 'phd'] },
+    'en'
+  );
+  assert.equal(card.studyLevel, 'master, phd');
+  assert.deepEqual(getStudyLevelLabel(card.studyLevel), {
+    kind: 'list',
+    parts: [
+      { kind: 'translated', key: 'filters.academicLevel.master' },
+      { kind: 'translated', key: 'filters.academicLevel.phd' },
+    ],
+  });
+  for (const empty of [[], ['  '], [null]]) {
+    const blank = toScholarshipCard({ id: 9, title: 'T', is_saved: false, study_level: empty }, 'en');
+    assert.equal(blank.studyLevel, undefined, JSON.stringify(empty));
+  }
 });
 
 test('the card adapter tolerates wrongly typed optional fields', () => {
@@ -1723,7 +1781,7 @@ test('quick chips mirror the academic-level URL state, with "All" clearing it', 
       .map((chip) => chip.id);
   assert.deepEqual(
     getQuickChips(parse('')).map((chip) => chip.id),
-    ['all', 'bachelor', 'master', 'phd', 'exchange']
+    ['all', 'bachelor', 'master', 'phd', 'postdoc']
   );
   assert.deepEqual(pressed(''), ['all']);
   assert.deepEqual(pressed('academic_level=master&academic_level=phd'), ['master', 'phd']);
@@ -1806,7 +1864,7 @@ test('the active-filter count is the number of selected values', () => {
     ),
     5
   );
-  assert.equal(countActiveFilters(parse('opportunity_type=training')), 1);
+  assert.equal(countActiveFilters(parse('opportunity_type=short_course')), 1);
 });
 
 // --- Minimal details boundary (T052-T056) ----------------------------------------

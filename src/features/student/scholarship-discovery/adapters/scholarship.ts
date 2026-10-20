@@ -24,7 +24,8 @@ export function toScholarshipCard(
     organizationName: clean(item.organization_name),
     universityName: clean(item.university_name),
     country: clean(item.country),
-    studyLevel: clean(item.study_level),
+    // Canonical levels arrive as an array; card labels split this joined form.
+    studyLevel: toStringList(item.study_level).join(', ') || undefined,
     fundingType: clean(item.funding_type),
     opportunityType: opportunityTypes.includes(item.opportunity_type as OpportunityType)
       ? (item.opportunity_type as OpportunityType)
