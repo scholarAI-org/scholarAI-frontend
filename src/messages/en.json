@@ -1451,7 +1451,8 @@
       "validation": "Some search options aren't valid. Adjust them and try again.",
       "generic": "Scholarships couldn't be loaded.",
       "malformedCard": "This scholarship couldn't be displayed.",
-      "retry": "Try again"
+      "retry": "Try again",
+      "login": "Log in again"
     }
   },
   "StudentScholarshipDetails": {

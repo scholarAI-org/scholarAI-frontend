@@ -2,7 +2,8 @@
 
 import { AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/Button';
+import { Button, buttonStyles } from '@/components/ui/Button';
+import { Link } from '@/i18n/navigation';
 import type { DiscoveryErrorReason } from '../lib/results-state';
 
 interface DiscoveryErrorStateProps {
@@ -12,8 +13,10 @@ interface DiscoveryErrorStateProps {
   compact?: boolean;
 }
 
-// 401 shows a short message only; the existing AuthProvider/RoleGuard flow does the
-// redirect. 403 has no action, 422 offers clear filters, others offer retry.
+// 401 also invalidates the current-user query (see ScholarshipResults), which
+// normally redirects via AuthProvider/RoleGuard — the login link is a manual
+// escape hatch for while that recheck is in flight (e.g. a cold backend).
+// 403 has no action, 422 offers clear filters, others offer retry.
 export function DiscoveryErrorState({
   reason,
   onRetry,
@@ -34,6 +37,14 @@ export function DiscoveryErrorState({
     >
       <AlertCircle aria-hidden className="size-5 shrink-0 text-orange-500" />
       <span className="text-[var(--color-text-error)]">{t(`errors.${reason}`)}</span>
+      {reason === 'unauthorized' ? (
+        <Link
+          href="/login"
+          className={buttonStyles({ variant: 'secondary', size: 'sm', className: 'rounded-full' })}
+        >
+          {t('errors.login')}
+        </Link>
+      ) : null}
       {action ? (
         <Button
           type="button"
