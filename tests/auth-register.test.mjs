@@ -22,7 +22,7 @@ Module._resolveFilename = function (request, ...rest) {
   return resolveFilename.call(this, target, ...rest);
 };
 
-process.env.NEXT_PUBLIC_API_URL = 'https://backend.test/';
+process.env.BACKEND_URL = 'https://backend.test/';
 
 const { createRegisterSchema } = loadModule(
   path.join(srcPath, 'features/auth/schemas/create-register.schema.ts')
