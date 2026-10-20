@@ -11,7 +11,7 @@
 ### Quick Onboarding & Critical Invariants
 
 1. **Repository Layout**: Next.js 16 App Router + TypeScript + Tailwind CSS v4 + `next-intl` (ar/en, RTL/LTR) + React Query v5.
-2. **First-Party Auth Cookie Architecture**: The browser calls `/backend/*`, which `src/middleware.ts` proxies to `process.env.BACKEND_URL`. Cookies are HttpOnly and first-party. **DO NOT modify `src/lib/api-client.ts`, `src/middleware.ts`, or core auth providers (`AuthProvider.tsx`, `RoleGuard.tsx`) unless explicitly requested.**
+2. **First-Party Auth Cookie Architecture**: The browser calls `/backend/*`, which `src/proxy.ts` proxies to `process.env.BACKEND_URL`. Cookies are HttpOnly and first-party. **DO NOT modify `src/lib/api-client.ts`, `src/proxy.ts`, or core auth providers (`AuthProvider.tsx`, `RoleGuard.tsx`) unless explicitly requested.**
 3. **Server-Only Feature Flags**: Feature flags (e.g., `SAVED_SCHOLARSHIPS_ENABLED` in `src/lib/feature-flags.ts`) are **server-only** and read directly from `process.env.SAVED_SCHOLARSHIPS_ENABLED === 'true'`. They MUST NEVER be prefixed with `NEXT_PUBLIC_` and MUST NEVER default to `true` or fall back to `|| true`.
 4. **Route Gating**: Server Components (e.g. `src/app/[locale]/student/saved/page.tsx`) must check the feature flag server-side and invoke `notFound()` immediately when `false` before any API fetch or client render.
 5. **Internationalization (i18n)**: All user-facing strings must be localized in `src/messages/ar.json` and `src/messages/en.json`.
@@ -64,7 +64,7 @@
 | **005**             | Student Scholarship Discovery | Completed     | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                                           |
 | **006**             | Student Saved Scholarships    | Completed     | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision                       |
 | **007**             | Student Scholarship Details   | Gate 1 PASSED | Frontend implementation complete. Feature flag SCHOLARSHIP_DETAILS_ENABLED remains OFF. Awaiting Gate 2 live verification. |
-| **Auth**            | First-Party Cookie Auth       | Completed     | Proxy rewrite in `middleware.ts`, `AuthProvider`, `RoleGuard`                                                              |
+| **Auth**            | First-Party Cookie Auth       | Completed     | Proxy rewrite in `proxy.ts`, `AuthProvider`, `RoleGuard`                                                                   |
 
 ---
 
@@ -90,7 +90,7 @@
        │
        │ HTTP / JSON (same-origin: /backend/api/...)
        ▼
-[ Next.js Server (src/middleware.ts) ]
+[ Next.js Server (src/proxy.ts) ]
        │
        │ Rewrites /backend/* to process.env.BACKEND_URL
        │ Forwards Cookie & X-Forwarded-For + PROXY_SHARED_SECRET
@@ -199,7 +199,7 @@ scholarai-frontend/
 
 ## 7) Critical Files & Snippets
 
-### A. Next.js Middleware Proxy (`src/middleware.ts`)
+### A. Next.js Middleware Proxy (`src/proxy.ts`)
 
 ```typescript
 import createMiddleware from 'next-intl/middleware';
@@ -214,7 +214,7 @@ import {
 
 const intlMiddleware = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   if (isBackendPath(pathname)) {
