@@ -24,14 +24,19 @@ test('landing source has no stale Figma branding, temporary assets, or placehold
   );
 });
 
-test('hero search and contact form are explicitly unavailable and do not submit', () => {
+test('hero search navigates to student discovery with a search param and makes no API calls', () => {
   const hero = read('src/features/landing/components/Hero.tsx');
+  const discovery = read('src/features/landing/components/LandingDiscovery.tsx');
+  assert.match(discovery, /from '@\/i18n\/navigation'/);
+  assert.match(discovery, /\/student\/scholarships\?search=\$\{encodeURIComponent\(query\)\}/);
+  assert.doesNotMatch(`${hero}\n${discovery}`, /apiClient|fetch\(|action="#/);
+});
+
+test('contact form reports honestly that no contact endpoint exists', () => {
   const contact = read('src/features/landing/components/ContactSection.tsx');
-  assert.match(hero, /searchUnavailable/);
-  assert.match(hero, /disabled/);
-  assert.doesNotMatch(hero, /apiClient|router\.push|fetch\(/);
-  assert.match(contact, /contact-unavailable/);
-  assert.doesNotMatch(contact, /useState|onSubmit|fetch\(|setTimeout/);
+  assert.match(contact, /t\('unavailable'\)/);
+  assert.match(contact, /event\.preventDefault\(\)/);
+  assert.doesNotMatch(contact, /fetch\(|apiClient|setTimeout/);
 });
 
 test('FAQ exposes matching accordion control and panel identifiers', () => {
@@ -41,12 +46,11 @@ test('FAQ exposes matching accordion control and panel identifiers', () => {
   assert.match(faq, /aria-expanded/);
 });
 
-test('Arabic and English landing translations include availability notices', () => {
+test('Arabic and English landing translations include the contact availability notice', () => {
   const ar = JSON.parse(read('src/messages/ar.json'));
   const en = JSON.parse(read('src/messages/en.json'));
   for (const messages of [ar, en]) {
-    assert.ok(messages.Landing.hero.searchUnavailable);
-    assert.ok(messages.Landing.contact.unavailable);
-    assert.ok(messages.Landing.nav.home);
+    assert.ok(messages.Landing.updated.contact.unavailable);
+    assert.ok(messages.Landing.updated.hero.placeholder);
   }
 });
