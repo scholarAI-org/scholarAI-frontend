@@ -3,7 +3,8 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { useAuth } from '../providers/AuthProvider';
-import { useRouter } from '@/i18n/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
+import { loginPathWithNext } from '../lib/post-login-path';
 
 import type { UserRole } from '../types';
 
@@ -14,6 +15,7 @@ type RoleGuardProps = {
 
 export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const redirectTargetRef = useRef<string | null>(null);
 
   const { user, isLoading, isUnauthenticated, error } = useAuth();
@@ -28,7 +30,7 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
     let redirectTarget: string | null = null;
 
     if (isUnauthenticated) {
-      redirectTarget = '/login';
+      redirectTarget = loginPathWithNext(`${pathname}${window.location.search}`);
     } else if (user && !allowedRoles.includes(user.role)) {
       if (user.role === 'admin') {
         redirectTarget = '/admin/dashboard';
@@ -41,7 +43,7 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
       redirectTargetRef.current = redirectTarget;
       router.replace(redirectTarget);
     }
-  }, [user, isLoading, isUnauthenticated, allowedRoles, router]);
+  }, [user, isLoading, isUnauthenticated, allowedRoles, router, pathname]);
 
   if (isLoading) {
     return <div>جاري التحقق من الجلسة...</div>;
