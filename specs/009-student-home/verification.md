@@ -58,7 +58,7 @@ The fake backend served `/auth/me`, `/profile`, saved, tracked and the discovery
 
 1. **Existing bug, outside this feature**: Tailwind's `rtl:` variant also matches `[dir=rtl] *`, and the root `<html>` is always `dir="rtl"`, so `rtl:` classes fire on English pages. Measured: the sidebar's logout icon (`rtl:rotate-180`) is rotated 180° in `/en`. Home avoids the variant (it uses `:dir(rtl)`, with a guard test), but the sidebar was left alone. Suggested follow-up: switch it to `[&:dir(rtl)]:rotate-180`, or set the real direction on `<html>`.
 2. **HTTP status of a flag-off `/student` is 200, not 404.** The student layout streams its session-check shell before the page runs `notFound()`, so the status line is already sent. The visible result is the not-found page with `noindex`, and no Home data is fetched. This is how the existing flag-gated pages (Saved, Details) behave too. If a true 404 status matters, it needs a change in the shared layout or the proxy, which are out of bounds here.
-3. **Locked-panel copy vs Q1**: the Figma text promises "personalized recommendations and match scores", while the unlocked panel shows the newest published scholarships ("Latest scholarships", no score) per decision Q1. The copy is kept as designed; worth revisiting when personalized recommendations ship.
+3. **Locked-panel copy (resolved 2026-10-24)**: the Figma text promised "smart/personalized recommendations and match scores" while the unlocked panel shows the newest published scholarships. The product owner approved honest copy: the section heading is always "Latest scholarships"; the locked panel says "This section is locked" / "Complete at least 70% of your profile to see the latest scholarships here." (ar: "هذا القسم مقفل" / "أكمل 70% من ملفك الشخصي على الأقل لعرض أحدث المنح هنا."). A test forbids recommendation/personalization wording in the locked state in both languages.
 4. `/favicon.ico` returns 404 app-wide (unrelated to Home).
 5. The sidebar bell is a non-interactive indicator (`role="img"`) because no notifications page exists; it becomes a link when one does.
 
@@ -107,7 +107,7 @@ Also confirm, for the Production deployment:
 - Make Home the students' post-login landing (`ROLE_HOME.student`), which needs an auth change and approval.
 - Replace `home/schemas/tracked-application.schema.ts` and `studentHomeKeys.tracked()` with the Tracking feature's type and key after it merges.
 - Mobile layout (separate feature).
-- When "Personalized scholarship recommendations" ships, switch the unlocked panel to "Latest recommendations" with match scores.
+- When "Personalized scholarship recommendations" ships, switch the unlocked panel to personalized recommendations with match scores, and revisit the section heading and the locked-panel copy together.
 - Fix the sidebar's `rtl:` icon flip on English pages (Observation 1).
 - Backend security ask (public recommendations feed) tracked in `contract-notes.md` §2; Home never calls that endpoint.
 

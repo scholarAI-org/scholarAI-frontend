@@ -1559,12 +1559,11 @@
       "error": "We could not load your upcoming deadlines."
     },
     "recommendations": {
-      "title": "Latest recommendations",
       "latestTitle": "Latest scholarships",
       "viewAll": "View all",
       "locked": {
-        "title": "Smart recommendations are locked",
-        "text": "Complete at least {percent, number, integer}% of your profile to unlock personalized recommendations and match scores.",
+        "title": "This section is locked",
+        "text": "Complete at least {percent, number, integer}% of your profile to see the latest scholarships here.",
         "cta": "Complete profile"
       },
       "empty": "There are no scholarships to show yet.",

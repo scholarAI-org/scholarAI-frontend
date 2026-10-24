@@ -96,7 +96,7 @@ The student sees how many scholarships they saved, how many applications are in 
 
 ### User Story 3 - Understand why recommendations are locked and fix it (Priority: P2)
 
-A student whose profile is below 70% complete sees the "Latest recommendations" section in a locked state that explains the requirement and offers a "Complete profile" button that opens the profile page.
+A student whose profile is below 70% complete sees the "Latest scholarships" section in a locked state that explains the requirement and offers a "Complete profile" button that opens the profile page.
 
 **Why this priority**: It drives profile completion, which improves every matching feature. The lock is driven by real data.
 
@@ -104,7 +104,7 @@ A student whose profile is below 70% complete sees the "Latest recommendations" 
 
 **Acceptance Scenarios**:
 
-1. **Given** profile completion 10%, **When** Home loads, **Then** the recommendations section shows the lock icon, the "Smart recommendations are locked" title, the text asking to complete at least 70%, and a "Complete profile" button that opens the profile page.
+1. **Given** profile completion 10%, **When** Home loads, **Then** the recommendations section shows the lock icon, the "This section is locked" title, the text asking to complete at least 70%, and a "Complete profile" button that opens the profile page.
 2. **Given** profile completion exactly 70%, **When** Home loads, **Then** the section is unlocked and shows "Latest scholarships" (FR-034).
 3. **Given** profile completion 69.6%, **When** Home loads, **Then** the section is locked (no rounding up to unlock).
 
@@ -199,7 +199,7 @@ The student sees how many unread notifications they have and their four most rec
 **Latest recommendations (section 6)**
 
 - **FR-031**: The lock threshold MUST be 70% profile completion. The section is locked when completion is below 70 or unknown.
-- **FR-032**: The locked state MUST show the icon, the title "Smart recommendations are locked", the text "Complete at least 70% of your profile to unlock personalized recommendations and match scores.", and a primary "Complete profile" button that opens the profile page.
+- **FR-032**: The locked state MUST show the icon, the title "This section is locked", the text "Complete at least 70% of your profile to see the latest scholarships here.", and a primary "Complete profile" button that opens the profile page. The copy MUST NOT promise personalized recommendations, smart matching or match scores, because the unlocked state shows the newest published scholarships without scores. (Changed from the Figma wording on 2026-10-24 by the product owner.)
 - **FR-033**: The "View all" header link MUST open scholarship search. It is shown only when the section is unlocked.
 - **FR-034**: When profile completion is 70% or higher, the recommendations section MUST be titled "Latest scholarships" and MUST show the 3 newest published scholarships from the student discovery list (sorted newest first), using the existing scholarship card, with no match score and no personalization claim. "View all" opens scholarship search. The unfiltered recommendations feed MUST NOT be used.
 

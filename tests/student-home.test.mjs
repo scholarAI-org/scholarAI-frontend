@@ -1366,15 +1366,19 @@ const discoveryCard = (id, overrides = {}) =>
 
 test('US3 locked: icon, title, 70% text and a Complete profile link; no View all', () => {
   const html = renderRecommendations({ state: 'locked' });
-  assert.match(html, /Smart recommendations are locked/);
-  assert.match(html, /Complete at least 70% of your profile/);
+  assert.match(html, /This section is locked/);
+  assert.match(html, /Complete at least 70% of your profile to see the latest scholarships here/);
   assert.match(html, /<a\b[^>]*href="\/student\/profile"[^>]*>\s*Complete profile\s*<\/a>/);
   assert.match(html, /<svg\b/);
   assert.doesNotMatch(html, /View all/);
   assert.doesNotMatch(html, /<article\b/);
-  assert.match(html, /<h2[^>]*>Latest recommendations<\/h2>/);
+  assert.match(html, /<h2[^>]*>Latest scholarships<\/h2>/);
+  assert.doesNotMatch(html, /recommend|personali[sz]ed|smart|match/i, 'no promise of personalization');
   const ar = renderRecommendations({ state: 'locked' }, { locale: 'ar' });
-  assert.match(ar, /التوصيات الذكية مقفلة/);
+  assert.match(ar, /هذا القسم مقفل/);
+  assert.match(ar, /لعرض أحدث المنح هنا/);
+  assert.match(ar, /<h2[^>]*>أحدث المنح<\/h2>/);
+  assert.doesNotMatch(ar, /توصية|توصيات|التوصيات|المخصصة|الذكية|التوافق/, 'no promise of personalization');
   assert.match(ar, /إكمال الملف الشخصي/);
   assert.match(ar, /70%/);
 });
@@ -1414,7 +1418,7 @@ test('US3 unlocked: three existing scholarship cards titled Latest scholarships,
   assert.equal((html.match(/<article\b/g) ?? []).length, 3);
   assert.match(html, /Scholarship 1/);
   assert.doesNotMatch(html, /87/);
-  assert.doesNotMatch(html, /Smart recommendations are locked/);
+  assert.doesNotMatch(html, /This section is locked/);
   assert.match(html, /<a\b[^>]*href="\/student\/scholarships"[^>]*>[\s\S]*?View all/);
   const arabic = renderRecommendations({ state: 'ready', items }, { locale: 'ar' });
   assert.match(arabic, /أحدث المنح/);
@@ -1441,7 +1445,8 @@ test('US3 unlocked: details links follow the flag, and the grid adapts to the co
 test('US3 unlocked: loading, empty and error states keep the heading', () => {
   const loading = renderRecommendations({ state: 'loading' });
   assert.equal((loading.match(/data-skeleton="recommendation"/g) ?? []).length, 3);
-  assert.doesNotMatch(loading, /Smart recommendations are locked/);
+  assert.doesNotMatch(loading, /This section is locked/);
+  assert.match(loading, /<h2[^>]*>Latest scholarships<\/h2>/, 'the heading does not flip while loading');
 
   const empty = renderRecommendations({ state: 'empty' });
   assert.match(empty, /There are no scholarships to show yet/);
@@ -1474,7 +1479,6 @@ test('US3 i18n: recommendations messages exist in both locales', () => {
   for (const locale of ['en', 'ar']) {
     const home = messages[locale].StudentHome.recommendations;
     for (const key of [
-      'title',
       'latestTitle',
       'viewAll',
       'locked.title',

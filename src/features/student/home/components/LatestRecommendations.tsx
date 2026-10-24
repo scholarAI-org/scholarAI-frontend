@@ -37,7 +37,9 @@ export function LatestRecommendations({ view, detailsEnabled, today }: LatestRec
   const headingId = useId();
 
   const showsLatest = view.state === 'ready' || view.state === 'empty' || view.state === 'error';
-  const heading = showsLatest ? t('recommendations.latestTitle') : t('recommendations.title');
+  // One heading in every state (no flip while loading or when locked): the section only
+  // ever shows the newest published scholarships.
+  const heading = t('recommendations.latestTitle');
 
   return (
     <section aria-labelledby={headingId} className="flex min-w-0 flex-col gap-4">
