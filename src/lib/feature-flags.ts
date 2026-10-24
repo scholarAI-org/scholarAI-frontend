@@ -13,4 +13,9 @@ export const featureFlags = Object.freeze({
   get scholarshipDetailsEnabled(): boolean {
     return process.env.SCHOLARSHIP_DETAILS_ENABLED === 'true';
   },
+  // Feature 009: Student Home page (/student) and its sidebar item.
+  // Default: false. The literal string "true" is the only enabling value.
+  get studentHomeEnabled(): boolean {
+    return process.env.STUDENT_HOME_ENABLED === 'true';
+  },
 });
