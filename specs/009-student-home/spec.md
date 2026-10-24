@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-24
 
-**Status**: Draft
+**Status**: Approved (clarifications resolved 2026-10-24)
 
 **Input**: User description: "Build the authenticated student Home page (Figma file vy2q4AYXDerSsF1U8xu6Gf, node 2353:5365; desktop only). Header, welcome card with today's date and profile completion, four stat cards, upcoming deadlines, recent activity, latest recommendations (locked below 70% profile completion). Sections with an existing backend API use real data; sections without one may use a flagged, contract-validated mock source that is never reachable in Production or Preview, and are hidden otherwise."
 
@@ -14,28 +14,29 @@
 
 ### Session 2026-10-24
 
-Status: **open**. Questions are recorded, not answered, per the product owner's instruction. Options and recommendations are in [clarifications.md](./clarifications.md).
+Status: **resolved** by the product owner on 2026-10-24. Options considered are in [clarifications.md](./clarifications.md).
 
-- Q1: What should "Latest recommendations" show when profile completion is 70% or higher? → A: [NEEDS CLARIFICATION] (FR-034)
-- Q2: Which URL should Home use, and should a "Home" item be added to the existing sidebar? → A: [NEEDS CLARIFICATION] (FR-002, FR-004)
-- Q3: Should Home ship behind a server-only feature flag, like Saved and Details? → A: [NEEDS CLARIFICATION] (FR-003)
-- Q4: What should the header's notification bell and theme toggle do, given that no student notifications API and no theme system exist? → A: [NEEDS CLARIFICATION] (FR-008)
-- Q5: Should tracked scholarships whose application is accepted, rejected or closed count as upcoming deadlines? → A: [NEEDS CLARIFICATION] (FR-020)
+- Q1: What should "Latest recommendations" show at 70% completion or higher? → A: The 3 newest published scholarships from the existing discovery list (sorted newest first) in the existing scholarship card, titled "Latest scholarships", with no match score. (FR-034)
+- Q2: Which URL, and a sidebar item? → A: `/student` plus one "Home" sidebar item. (FR-002, FR-004)
+- Q3: Release flag? → A: Yes. `STUDENT_HOME_ENABLED`, server-only, off by default. "Turn on `STUDENT_HOME_ENABLED`" is a launch-checklist item in verification.md. (FR-003)
+- Q4: Bell and theme toggle? → A: **Changed from the recommendation.** Hide both entirely, with no disabled controls. The bell appears only when a notifications source exists. There is no theme toggle. (FR-008)
+- Q5: Do accepted, rejected or closed tracked items count as upcoming deadlines? → A: No, they are excluded. (FR-020)
+- Additional rules: Home MUST NOT call `GET /api/scholarships/recommendations` (it returns unpublished and closed scholarships). With the notifications card hidden, the stat-card row MUST lay out correctly with 3 cards (and with 4 when a notifications source exists). Backend asks are named by title, not by ClickUp number.
 
 ## Data Source Investigation _(recorded before writing requirements)_
 
 Sources: `docs/api/openapi.json` (Scholar AI API 1.0.0) and the frontend code on `main` at `18c1453`.
 
-| Home section                      | Backend source                                                                                                                                                                                                                                                                                                                                         | Status           | Behavior on Home                                                                                                       |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Student name (greeting, welcome)  | `GET /auth/me` → `CurrentUserResponse.name`, already provided to every student page by the existing current-user source.                                                                                                                                                                                                                               | **Exists**       | Real data.                                                                                                             |
-| Profile completion %              | (a) `GET /profile` → `UserProfile.profile_completion_percentage` (number, 0–100, default 0). The frontend already reads it (Profile page summary ring). No separate frontend calculation of an _overall_ percentage exists; only per-step percentages exist.                                                                                           | **Exists**       | Real data. Never mocked.                                                                                               |
-| Saved scholarships count          | `GET /api/scholarships/saved` (unpaged array, only listings still visible: deadline today or later in UTC, or explicit no-deadline). Already used by Feature 006.                                                                                                                                                                                      | **Exists**       | Real data: length of the saved list.                                                                                   |
-| Applications in progress count    | `GET /api/scholarships/tracked` (array of tracked applications, all statuses incl. closed and expired; each embeds the scholarship card). Statuses: `preparing_documents`, `ready_to_apply`, `applied`, `accepted`, `rejected`, `closed`. Also `GET /api/scholarships/tracked/statistics` returns per-status counters.                                 | **Exists**       | Real data: tracked items whose status is not `accepted`, `rejected` or `closed`.                                       |
-| Upcoming deadlines (list + count) | Derived from the saved list and the tracked list above.                                                                                                                                                                                                                                                                                                | **Exists**       | Real data, derived on the student's device (see FR-020 to FR-027).                                                     |
-| Unread notifications count        | (b) Only `GET /admin/notifications/unread-count` and `GET /admin/notifications` exist, and they require the **admin** role. There is no student notifications endpoint.                                                                                                                                                                                | **Missing**      | Mock (flagged) or hidden. Backend ask BE-09.                                                                           |
-| Recent activity                   | (b) No activity or event-feed endpoint for students. The admin audit log is admin-only and is a different concept.                                                                                                                                                                                                                                     | **Missing**      | Mock (flagged) or hidden. Backend ask BE-09.                                                                           |
-| Latest recommendations            | (c) `GET /api/scholarships/recommendations` exists but is documented as a "public feed of all scholarships, ordered by ID, regardless of status" (it includes unpublished/closed listings and full description HTML). It is not personalized. The discovery list says "personalized match ranking is unavailable" and accepts no profile-based filter. | **Not suitable** | Locked state is real (driven by real completion). Unlocked state: see FR-034 [NEEDS CLARIFICATION]. Backend ask BL-04. |
+| Home section                      | Backend source                                                                                                                                                                                                                                                                                                                                         | Status           | Behavior on Home                                                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Student name (greeting, welcome)  | `GET /auth/me` → `CurrentUserResponse.name`, already provided to every student page by the existing current-user source.                                                                                                                                                                                                                               | **Exists**       | Real data.                                                                                                                           |
+| Profile completion %              | (a) `GET /profile` → `UserProfile.profile_completion_percentage` (number, 0–100, default 0). The frontend already reads it (Profile page summary ring). No separate frontend calculation of an _overall_ percentage exists; only per-step percentages exist.                                                                                           | **Exists**       | Real data. Never mocked.                                                                                                             |
+| Saved scholarships count          | `GET /api/scholarships/saved` (unpaged array, only listings still visible: deadline today or later in UTC, or explicit no-deadline). Already used by Feature 006.                                                                                                                                                                                      | **Exists**       | Real data: length of the saved list.                                                                                                 |
+| Applications in progress count    | `GET /api/scholarships/tracked` (array of tracked applications, all statuses incl. closed and expired; each embeds the scholarship card). Statuses: `preparing_documents`, `ready_to_apply`, `applied`, `accepted`, `rejected`, `closed`. Also `GET /api/scholarships/tracked/statistics` returns per-status counters.                                 | **Exists**       | Real data: tracked items whose status is not `accepted`, `rejected` or `closed`.                                                     |
+| Upcoming deadlines (list + count) | Derived from the saved list and the tracked list above.                                                                                                                                                                                                                                                                                                | **Exists**       | Real data, derived on the student's device (see FR-020 to FR-027).                                                                   |
+| Unread notifications count        | (b) Only `GET /admin/notifications/unread-count` and `GET /admin/notifications` exist, and they require the **admin** role. There is no student notifications endpoint.                                                                                                                                                                                | **Missing**      | Mock (flagged) or hidden. Backend ask: student notifications unread count.                                                           |
+| Recent activity                   | (b) No activity or event-feed endpoint for students. The admin audit log is admin-only and is a different concept.                                                                                                                                                                                                                                     | **Missing**      | Mock (flagged) or hidden. Backend ask: student notifications unread count.                                                           |
+| Latest recommendations            | (c) `GET /api/scholarships/recommendations` exists but is documented as a "public feed of all scholarships, ordered by ID, regardless of status" (it includes unpublished/closed listings and full description HTML). It is not personalized. The discovery list says "personalized match ranking is unavailable" and accepts no profile-based filter. | **Not suitable** | Locked state is real (driven by real completion). Unlocked state: see FR-034. Backend ask: personalized scholarship recommendations. |
 
 Other findings:
 
@@ -104,7 +105,7 @@ A student whose profile is below 70% complete sees the "Latest recommendations" 
 **Acceptance Scenarios**:
 
 1. **Given** profile completion 10%, **When** Home loads, **Then** the recommendations section shows the lock icon, the "Smart recommendations are locked" title, the text asking to complete at least 70%, and a "Complete profile" button that opens the profile page.
-2. **Given** profile completion exactly 70%, **When** Home loads, **Then** the section is unlocked (behavior per FR-034).
+2. **Given** profile completion exactly 70%, **When** Home loads, **Then** the section is unlocked and shows "Latest scholarships" (FR-034).
 3. **Given** profile completion 69.6%, **When** Home loads, **Then** the section is locked (no rounding up to unlock).
 
 ---
@@ -150,8 +151,8 @@ The student sees how many unread notifications they have and their four most rec
 **Page, access and shell**
 
 - **FR-001**: The Home page MUST be available only to signed-in users with the student role, through the existing student layout and role guard. Unauthenticated visitors MUST be sent to login with a return path to Home.
-- **FR-002**: Home MUST be served at [NEEDS CLARIFICATION: Q2 — route path and sidebar entry. Option A: `/student` (index of the student area) with a new "Home" sidebar item as the first item. Option B: `/student/home`. Both need a "Home" entry added to the existing sidebar's navigation list, which the Tracking session will likely also edit.]
-- **FR-003**: Home MUST be released behind [NEEDS CLARIFICATION: Q3 — release gating. Option A (matches Features 006/007): a server-only flag `STUDENT_HOME_ENABLED`, default off, page returns "not found" and the nav item is hidden when off. Option B: no flag; Home is live on merge.]
+- **FR-002**: Home MUST be served at `/student`, the index of the student area, with one new "Home" item at the top of the sidebar's first group. The Home item is active only on `/student` itself, and exactly one sidebar item is active on every student page.
+- **FR-003**: Home MUST be released behind a server-only feature flag `STUDENT_HOME_ENABLED`, off by default (only the literal value `true` enables it). While it is off, `/student` MUST return "not found" and the sidebar MUST NOT show the Home item. Turning the flag on is an explicit item of the launch checklist.
 - **FR-004**: The existing sidebar MUST be reused, not rebuilt. Only a "Home" navigation entry is added, and exactly one navigation item is active on Home. "Document improvement" MUST NOT be wired.
 - **FR-005**: The students' post-login landing page MUST NOT change in this feature, because auth is out of bounds. Making Home the landing page is recorded as a follow-up.
 
@@ -159,7 +160,7 @@ The student sees how many unread notifications they have and their four most rec
 
 - **FR-006**: The header MUST show a greeting with the student's real display name ("Hello, {name}") and the subtitle "Here's a quick look at your opportunities and upcoming deadlines." in the active language.
 - **FR-007**: The header MUST keep the existing language toggle and user chip, which show the real name and initial.
-- **FR-008**: Notification bell and theme toggle: [NEEDS CLARIFICATION: Q4 — no student notifications API and no theme system exist. Option A: omit both until they exist. Option B: bell shown only when a notifications source is active (real or demo), theme toggle shown disabled with "Theme switching is currently unavailable" (same as landing). Option C: build both now. Also: should these controls appear on Home only, or in the shared header on every student page?]
+- **FR-008**: The header MUST NOT show a theme toggle (no theme system exists), and MUST NOT show any disabled placeholder control. The notification bell MUST appear only while a notifications source exists (real, or demo in local development), and then it MUST show an unread dot driven by the same count as the stat card. With no source, the header shows no bell.
 
 **Welcome card (section 2)**
 
@@ -170,7 +171,7 @@ The student sees how many unread notifications they have and their four most rec
 
 **Stat cards (section 3)**
 
-- **FR-013**: Home MUST show stat cards in this order (reading direction): unread notifications, saved scholarships, applications in progress, upcoming deadlines, each with its icon, number and label as in the design.
+- **FR-013**: Home MUST show stat cards in this order (reading direction): unread notifications, saved scholarships, applications in progress, upcoming deadlines, each with its icon, number and label as in the design. The unread-notifications card is shown only while a notifications source exists. The row MUST fill the full width evenly with 3 cards (no notifications source) and with 4 cards, and MUST NOT leave an empty slot or overflow.
 - **FR-014**: "Saved scholarships" MUST equal the number of items in the student's saved list.
 - **FR-015**: "Applications in progress" MUST equal the number of tracked applications whose status is not accepted, rejected or closed (that is, preparing documents, ready to apply, or applied).
 - **FR-016**: "Upcoming deadlines" MUST equal the count defined in FR-023.
@@ -180,7 +181,7 @@ The student sees how many unread notifications they have and their four most rec
 
 **Upcoming deadlines (section 4)**
 
-- **FR-020**: The candidate set MUST be the union of the student's saved scholarships and tracked scholarships, de-duplicated by scholarship ID. [NEEDS CLARIFICATION: Q5 — should tracked scholarships whose application is accepted, rejected or closed be included? Recommended: exclude them, because those applications are finished.]
+- **FR-020**: The candidate set MUST be the union of the student's saved scholarships and tracked scholarships, de-duplicated by scholarship ID. Tracked scholarships whose application status is accepted, rejected or closed MUST be excluded from the tracked side; if such a scholarship is also saved, it still counts through the saved list.
 - **FR-021**: A candidate is eligible only if it has a valid calendar deadline (not flagged as having no deadline) that is today or later on the student's local calendar.
 - **FR-022**: The upcoming window MUST be **30 days**: eligible items with 0 ≤ days remaining ≤ 30.
 - **FR-023**: The "Upcoming deadlines" count MUST be the number of distinct scholarships in the window.
@@ -200,7 +201,7 @@ The student sees how many unread notifications they have and their four most rec
 - **FR-031**: The lock threshold MUST be 70% profile completion. The section is locked when completion is below 70 or unknown.
 - **FR-032**: The locked state MUST show the icon, the title "Smart recommendations are locked", the text "Complete at least 70% of your profile to unlock personalized recommendations and match scores.", and a primary "Complete profile" button that opens the profile page.
 - **FR-033**: The "View all" header link MUST open scholarship search. It is shown only when the section is unlocked.
-- **FR-034**: Unlocked state (no design exists): [NEEDS CLARIFICATION: Q1 — Option A (minimal, recommended by the brief): reuse the existing scholarship card to show the 3 newest published scholarships from the existing discovery list, titled "Latest scholarships" with no match score; real data, not personalized. Option B: show the flagged demo recommendations source in development and hide the section elsewhere until BL-04. Option C: show a neutral "Recommendations are coming soon" empty state until BL-04. The `/api/scholarships/recommendations` feed is not used in any option, because it includes unpublished and closed listings.]
+- **FR-034**: When profile completion is 70% or higher, the recommendations section MUST be titled "Latest scholarships" and MUST show the 3 newest published scholarships from the student discovery list (sorted newest first), using the existing scholarship card, with no match score and no personalization claim. "View all" opens scholarship search. The unfiltered recommendations feed MUST NOT be used.
 
 **States, data integrity and demo data**
 
@@ -255,7 +256,7 @@ The student sees how many unread notifications they have and their four most rec
 ## Dependencies
 
 - Backend: `GET /auth/me`, `GET /profile`, `GET /api/scholarships/saved`, `GET /api/scholarships/tracked`, `GET /api/scholarships/` (only if Q1 selects Option A).
-- Backend asks (not blocking release, because sections are hidden without them): BE-09 student notifications unread count and student activity feed; BL-04 personalized recommendations. See `contract-notes.md`.
+- Backend asks (not blocking release, because sections are hidden without them): student notifications unread count, student activity feed, personalized scholarship recommendations, and a security fix for the public recommendations feed. See `contract-notes.md`.
 - Existing frontend: student layout, sidebar, header, role guard, current-user source, saved scholarships data access, scholarship card and deadline helpers.
 
 ## Out of Scope

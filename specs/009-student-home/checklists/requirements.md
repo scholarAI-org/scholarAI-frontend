@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain. See note 2.
+- [x] No [NEEDS CLARIFICATION] markers remain. See note 2.
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -32,4 +32,4 @@
 ## Notes
 
 1. The "Data Source Investigation" section names backend endpoints and fields on purpose: the brief asks for the investigation to be recorded in the spec. Requirements and success criteria stay technology-agnostic. The env setting name `HOME_MOCK_SECTIONS` appears in FR-038 because the product owner fixed it as a requirement.
-2. Five open questions (Q1–Q5) stay open on purpose: the brief says to record unknowns as [NEEDS CLARIFICATION] and not to guess. This exceeds the template's limit of 3 by the product owner's instruction. They are listed in `clarifications.md` with options and a recommendation, for product-owner decision.
+2. The five open questions were resolved by the product owner on 2026-10-24 and are recorded in the spec's Clarifications section.

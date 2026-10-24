@@ -1,10 +1,14 @@
 # Clarifications: 009 Student Home
 
-**Status**: OPEN, waiting for product-owner decisions
+**Status**: RESOLVED on 2026-10-24 by the product owner
 **Session**: 2026-10-24
 **Spec**: [spec.md](./spec.md)
 
-Per the brief, these are recorded as `[NEEDS CLARIFICATION]` and not guessed. Each question has a recommendation so you can reply with letters, for example `Q1: A, Q2: A, Q3: A, Q4: B, Q5: A`. The plan names the **provisional default** it was written against and what changes if you choose differently.
+Resolved answers: **Q1 A, Q2 A, Q3 A, Q4 changed (hide both controls entirely), Q5 A.** The option tables below are kept as the record of what was considered.
+
+**Q4 decision (differs from the recommendation):** no theme toggle and no disabled controls. The bell appears only when a notifications source exists. This is Option A for the theme toggle and a stricter form of Option B for the bell.
+
+Additional rules from the product owner: do not use `GET /api/scholarships/recommendations` (it returns unpublished and closed scholarships); the stat-card row must lay out with 3 cards and with 4; backend asks are named by title.
 
 ---
 
@@ -14,12 +18,12 @@ Per the brief, these are recorded as `[NEEDS CLARIFICATION]` and not guessed. Ea
 
 **Recommended:** Option A. It is the minimal option from the brief: real, published data in an existing component, with no fake personalization. The title must not say "recommended", because nothing is personalized yet.
 
-| Option | Description                                                                                                                                                                                                                                                 |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A      | Reuse the existing scholarship grid card to show the 3 newest published scholarships from the discovery list (sorted newest). The heading reads "Latest scholarships" and there is no match score. "View all" opens search. Swapped to BL-04 when it ships. |
-| B      | Show the flagged demo recommendations source (dev only, "Demo data" badge). Hide the section in Preview/Production until BL-04.                                                                                                                             |
-| C      | Show a neutral empty state, "Personalized recommendations are coming soon", until BL-04.                                                                                                                                                                    |
-| Short  | Your own answer (5 words or fewer)                                                                                                                                                                                                                          |
+| Option | Description                                                                                                                                                                                                                                                                         |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A      | Reuse the existing scholarship grid card to show the 3 newest published scholarships from the discovery list (sorted newest). The heading reads "Latest scholarships" and there is no match score. "View all" opens search. Swapped to personalized recommendations when they ship. |
+| B      | Show the flagged demo recommendations source (dev only, "Demo data" badge). Hide the section in Preview/Production until personalized recommendations exist.                                                                                                                        |
+| C      | Show a neutral empty state, "Personalized recommendations are coming soon", until personalized recommendations exist.                                                                                                                                                               |
+| Short  | Your own answer (5 words or fewer)                                                                                                                                                                                                                                                  |
 
 Not offered: `GET /api/scholarships/recommendations`. It is a public feed of **all** scholarships regardless of status (unpublished and closed included) and returns full description HTML.
 

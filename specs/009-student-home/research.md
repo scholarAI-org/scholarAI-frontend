@@ -2,13 +2,13 @@
 
 **Date**: 2026-10-24 · **Inputs**: [spec.md](./spec.md), `docs/api/openapi.json`, code on `main` @ `18c1453`, Figma `2353:5365`
 
-The spec's open product questions (Q1–Q5) are **not** answered here. They belong to the product owner ([clarifications.md](./clarifications.md)). This document settles the technical unknowns and records the provisional default the plan uses for each open question.
+The product owner resolved the spec's open questions on 2026-10-24 ([clarifications.md](./clarifications.md)); each section below states the decision it implements. This document settles the technical unknowns.
 
 ---
 
 ## R1. Which data exists in the backend? (brief: "investigate first")
 
-**Decision**: Real data for name, profile completion, saved count, in-progress count and deadlines. Notifications and activity have no API (BE-09). Personalized recommendations have no API (BL-04).
+**Decision**: Real data for name, profile completion, saved count, in-progress count and deadlines. Notifications and activity have no API. Personalized recommendations have no API.
 
 **Evidence**:
 
@@ -36,7 +36,7 @@ The spec's open product questions (Q1–Q5) are **not** answered here. They belo
 
 **Decision**:
 
-- Candidates = saved cards ∪ tracked-item scholarships (Q5-A provisional: tracked items with status `accepted`/`rejected`/`closed` are excluded), de-duplicated by `scholarship.id`. An item present in both keeps `origin: 'both'`.
+- Candidates = saved cards ∪ tracked-item scholarships (Q5: tracked items with status `accepted`/`rejected`/`closed` are excluded), de-duplicated by `scholarship.id`. An item present in both keeps `origin: 'both'`.
 - Days remaining come from `getDeadlineStatus(deadline, no_deadline, now)`, which compares **calendar dates** against the student's **local** calendar day (it never parses `YYYY-MM-DD` as UTC midnight). `kind: 'today'` → 0, `upcoming` → n, while `past`/`none`/`unspecified` are excluded.
 - Window: `0 ≤ daysLeft ≤ 30` (`UPCOMING_WINDOW_DAYS = 30`).
 - Urgency: `urgent` 0–7, `soon` 8–14, `comfortable` 15–30 (`URGENCY_URGENT_MAX = 7`, `URGENCY_SOON_MAX = 14`).
@@ -81,13 +81,13 @@ The spec's open product questions (Q1–Q5) are **not** answered here. They belo
 
 **Decision**: `section-state.ts` maps the queries a section needs to one state:
 
-| State     | Rule                                                                                |
-| --------- | ----------------------------------------------------------------------------------- |
-| `hidden`  | source `unavailable` (notifications, activity, recommendations-unlocked under Q1-B) |
-| `loading` | any required query pending with no data                                             |
-| `error`   | any required query errored (contract or HTTP non-401)                               |
-| `empty`   | all succeeded and the derived list/count is empty (lists only; counts show `0`)     |
-| `ready`   | otherwise                                                                           |
+| State     | Rule                                                                                           |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| `hidden`  | source `unavailable` (notifications, activity, a recommendations source, if one is ever wired) |
+| `loading` | any required query pending with no data                                                        |
+| `error`   | any required query errored (contract or HTTP non-401)                                          |
+| `empty`   | all succeeded and the derived list/count is empty (lists only; counts show `0`)                |
+| `ready`   | otherwise                                                                                      |
 
 Retry = `Promise.all(failedQueries.map(q => q.refetch()))`, so healthy queries are untouched. For **401**, `useUnauthorizedRedirect` watches the Home queries and calls `queryClient.invalidateQueries({ queryKey: currentUserQueryKey })` once. `AuthProvider` then sees 401, and `RoleGuard` replaces the route with `/login?next=/student`. The same pattern is used in `ScholarshipResults.tsx` and `useScholarshipBookmark.ts`. While this happens, the section shows its loading skeleton, not an error. Retry policy reuses `shouldRetryScholarshipQuery` (no retry on 401/403/404/422).
 
@@ -105,19 +105,19 @@ Retry = `Promise.all(failedQueries.map(q => q.refetch()))`, so healthy queries a
 
 **Decision**: `firstName(name)` = the first whitespace-separated token of `user.name.trim()`, or `null`. The greeting in the header uses `getStudentDisplayName` (full name, falling back to email and then "Student"). The welcome card uses `firstName`; when it is `null`, the copy is "Welcome back 👋". The avatar uses `getStudentInitial(displayName)` (one character, the same as the sidebar and chip). Recorded as an intentional deviation from the two-letter Figma avatar.
 
-## R11. Route, nav activation and post-login (Q2 provisional A)
+## R11. Route, nav activation and post-login (Q2: A)
 
 **Decision**: `src/app/[locale]/student/page.tsx`. `isStudentNavigationItemActive` uses a prefix match (`href + '/'`), so `/student` would match every student page. The `home` item therefore gets **exact** matching: a per-item `match: 'exact'` field (default `'prefix'`), which keeps exactly one active item per route (an invariant in PROJECT_CONTEXT). `getStudentPageKey('/student')` → `'home'`. `post-login-path.ts` (auth) is **not** touched, so students still land on `/student/profile` (follow-up).
 
-## R12. Release flag (Q3 provisional A)
+## R12. Release flag (Q3: A)
 
 **Decision**: `featureFlags.studentHomeEnabled` → `process.env.STUDENT_HOME_ENABLED === 'true'`, with the same tests as 006/007 (default off, only the literal `"true"`, no `NEXT_PUBLIC_`). `page.tsx` calls `notFound()` before rendering when it is off; `layout.tsx` passes `homeEnabled` to the shell to hide the nav item.
 
-## R13. Header controls (Q4 provisional B)
+## R13. Header controls (Q4: hide both)
 
-**Decision**: `StudentShell` gets an optional `headerActions?: ReactNode`, and `StudentHeader` renders it before the language button in the desktop control group. `layout.tsx` passes `<><HomeNotificationBell mockEnabled={…} /><HeaderThemeToggle /></>`. `HomeNotificationBell` uses the notifications source. When the source is `unavailable` it renders `null`; when available it renders a 32px bell with a dot if `unread_count > 0`, sharing the query (and cache key) with the stat card, so both always show the same number (resolves the Figma 10-vs-2 inconsistency by construction). It links nowhere until a notifications page exists (a `button` with an accessible name and the count). `HeaderThemeToggle` is a disabled `button` with `aria-disabled`, `title` and an accessible name from `StudentLayout.theme.unavailable`, mirroring the landing `Navbar` pattern.
+**Decision**: there is no theme toggle and no disabled placeholder. `StudentShell` gets an optional `headerActions?: ReactNode`, and `StudentHeader` renders it before the language button in the desktop control group when it is not empty. `app/[locale]/student/layout.tsx` passes `<HomeNotificationBell mockSections={…} />`. The bell uses the notifications source: with `unavailable` it renders `null` and the header is identical to today's; with a source it renders a 32px bell with a dot when `unreadCount > 0`, sharing the query (and cache key) with the stat card, so both show the same number (this resolves the Figma 10-vs-2 inconsistency by construction). It is a plain button with an accessible name and the count, since no notifications page exists yet.
 
-## R14. Recommendations unlocked (Q1 provisional A)
+## R14. Recommendations unlocked (Q1: A)
 
 **Decision**: `useQuery({ queryKey: studentScholarshipKeys.discovery(NEWEST_DEFAULT_QUERY), queryFn: getScholarships })` with the Discovery page's default query (`sort: 'newest'`, page 1, no filters), which shares the cache. Home takes `items.slice(0, 3)`, maps them with the existing `toScholarshipCard` adapter and renders `ScholarshipGridCard` (bookmark slot reused via `ScholarshipBookmark`, `detailsEnabled` from the server flag). The heading switches to "Latest scholarships" in the unlocked state. The query runs **only** when unlocked (`enabled: unlocked`).
 

@@ -12,7 +12,7 @@ Frontend-only models. "Wire" types are validated payloads, "derived" types are c
 | `DEADLINE_LIST_LIMIT`            | 3                                                  | FR-025                |
 | `ACTIVITY_LIST_LIMIT`            | 4                                                  | FR-028                |
 | `RECOMMENDATIONS_UNLOCK_PERCENT` | 70                                                 | FR-031                |
-| `RECOMMENDATIONS_LIST_LIMIT`     | 3                                                  | FR-034 (Q1-A)         |
+| `RECOMMENDATIONS_LIST_LIMIT`     | 3                                                  | FR-034                |
 | `IN_PROGRESS_STATUSES`           | `preparing_documents`, `ready_to_apply`, `applied` | FR-015                |
 | `TERMINAL_TRACKING_STATUSES`     | `accepted`, `rejected`, `closed`                   | FR-015, FR-020 (Q5-A) |
 
@@ -46,7 +46,7 @@ This is the existing `ScholarshipDiscoveryCard[]`, validated by `validateSavedRe
 
 Superseded by the Tracking feature's types when it merges (research R15).
 
-### Requested contracts (BE-09, BL-04): validated identically for real and mock
+### Requested contracts (backend asks): validated identically for real and mock
 
 See [contracts/requested-backend.openapi.yaml](./contracts/requested-backend.openapi.yaml).
 
@@ -101,16 +101,16 @@ Rules: eligible only if `getDeadlineStatus` gives `today` or `upcoming` and `day
 
 `'hidden' | 'loading' | 'error' | 'empty' | 'ready'`. Mapping rules are in research R7.
 
-| Section                 | Required sources                     | `empty` when                                                               |
-| ----------------------- | ------------------------------------ | -------------------------------------------------------------------------- |
-| Welcome completion      | profile                              | never (a number always renders)                                            |
-| Stat: saved             | saved                                | never (shows 0)                                                            |
-| Stat: in progress       | tracked                              | never (shows 0)                                                            |
-| Stat: upcoming          | saved + tracked                      | never (shows 0)                                                            |
-| Stat: notifications     | notifications source                 | never; `hidden` if unavailable                                             |
-| Upcoming deadlines list | saved + tracked                      | `items.length === 0`                                                       |
-| Recent activity         | activity source                      | `items.length === 0`; `hidden` if unavailable                              |
-| Recommendations         | profile (lock) + Q1-A discovery list | locked → shows the lock panel (not `empty`); unlocked with 0 items → empty |
+| Section                 | Required sources                         | `empty` when                                                               |
+| ----------------------- | ---------------------------------------- | -------------------------------------------------------------------------- |
+| Welcome completion      | profile                                  | never (a number always renders)                                            |
+| Stat: saved             | saved                                    | never (shows 0)                                                            |
+| Stat: in progress       | tracked                                  | never (shows 0)                                                            |
+| Stat: upcoming          | saved + tracked                          | never (shows 0)                                                            |
+| Stat: notifications     | notifications source                     | never; `hidden` if unavailable                                             |
+| Upcoming deadlines list | saved + tracked                          | `items.length === 0`                                                       |
+| Recent activity         | activity source                          | `items.length === 0`; `hidden` if unavailable                              |
+| Recommendations         | profile (lock) + discovery list (newest) | locked → shows the lock panel (not `empty`); unlocked with 0 items → empty |
 
 ## Source adapter (`home/sources/types.ts`)
 
@@ -129,7 +129,7 @@ type HomeSource<T> =
 | Key                                                                             | Owner       | Shared with                              |
 | ------------------------------------------------------------------------------- | ----------- | ---------------------------------------- |
 | `studentScholarshipKeys.saved()`                                                | Feature 006 | Saved page, bookmark mutations           |
-| `studentScholarshipKeys.discovery(NEWEST_DEFAULT_QUERY)`                        | Feature 005 | Discovery default view (Q1-A)            |
+| `studentScholarshipKeys.discovery(NEWEST_DEFAULT_QUERY)`                        | Feature 005 | Discovery default view                   |
 | `studentHomeKeys.profileCompletion()` = `['student-home','profile-completion']` | Home        | none (see research R6)                   |
 | `studentHomeKeys.tracked()` = `['student-home','tracked']`                      | Home        | replaced by the Tracking key later (R15) |
 | `studentHomeKeys.notifications()` / `.activity()` / `.recommendations()`        | Home        | header bell shares `notifications()`     |

@@ -1,5 +1,5 @@
 # REQUESTED backend contract for Feature 009 (Student Home).
-# Not implemented by the backend yet. Proposed by frontend for ClickUp BE-09 and BL-04.
+# Not implemented by the backend yet. Proposed by the frontend; each path is a separate backend ask (see ../contract-notes.md).
 # Home's zod schemas and mock payloads follow this file exactly.
 openapi: 3.1.0
 info:
@@ -9,7 +9,7 @@ paths:
   /api/notifications/unread-count:
     get:
       tags: [Notifications]
-      summary: Unread notifications count for the authenticated student (BE-09)
+      summary: Unread notifications count for the authenticated student
       description: >
         Same shape as GET /admin/notifications/unread-count, scoped to the current
         user (student or admin). Drives the Home stat card and the header bell dot.
@@ -26,7 +26,7 @@ paths:
   /api/activity:
     get:
       tags: [Activity]
-      summary: Recent activity of the authenticated student (BE-09)
+      summary: Recent activity of the authenticated student
       description: >
         Newest first. Returns structured events only (no pre-rendered sentences), so
         the frontend localizes them in Arabic and English. Includes events produced by
@@ -62,7 +62,7 @@ paths:
   /api/scholarships/recommended:
     get:
       tags: [Scholarships]
-      summary: Personalized recommendations for the authenticated student (BL-04)
+      summary: Personalized recommendations for the authenticated student
       description: >
         Published, student-visible scholarships (same visibility rules as
         GET /api/scholarships/) ranked by profile match. Reuses ScholarshipDiscoveryCard
