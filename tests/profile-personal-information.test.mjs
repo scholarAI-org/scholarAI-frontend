@@ -183,3 +183,24 @@ test('combines a country calling code with a local phone number', () => {
   assert.equal(schema.safeParse({ ...form, phone: '+970594189740' }).success, true);
   assert.equal(schema.safeParse({ ...form, phone: '0594189740' }).success, false);
 });
+
+test('enforces the backend 15-80 age range on the birth date', () => {
+  const today = new Date();
+  const dateYearsAgo = (years, dayOffset = 0) => {
+    const d = new Date(today.getFullYear() - years, today.getMonth(), today.getDate() + dayOffset);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
+  const birthDateIssue = (birthDate) =>
+    schema.safeParse({ ...form, birthDate }).error?.issues.find((i) => i.path[0] === 'birthDate')
+      ?.message;
+
+  assert.equal(birthDateIssue(dateYearsAgo(15)), undefined);
+  assert.equal(birthDateIssue(dateYearsAgo(80)), undefined);
+  assert.equal(birthDateIssue(dateYearsAgo(15, 1)), 'validation.ageRange');
+  assert.equal(birthDateIssue(dateYearsAgo(81)), 'validation.ageRange');
+  assert.equal(birthDateIssue(dateYearsAgo(10)), 'validation.ageRange');
+  // Future and impossible dates keep their own message.
+  assert.equal(birthDateIssue('2999-01-01'), 'validation.minimumAge');
+  assert.equal(birthDateIssue('2000-02-31'), 'validation.minimumAge');
+});

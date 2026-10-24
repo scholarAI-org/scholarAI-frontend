@@ -31,6 +31,28 @@ function isValidBirthDate(value: string) {
   return birthDate <= todayDate;
 }
 
+// Same bounds as the backend (PersonalInfoUpdate.validate_age); a date that is not a real
+// past date is reported by isValidBirthDate, so it passes here.
+const minimumApplicantAge = 15;
+const maximumApplicantAge = 80;
+function isAllowedApplicantAge(value: string) {
+  const dateParts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!dateParts || !isValidBirthDate(value)) {
+    return true;
+  }
+
+  const [, year, month, day] = dateParts.map(Number);
+  const today = new Date();
+  const age =
+    today.getFullYear() -
+    year -
+    (today.getMonth() + 1 < month || (today.getMonth() + 1 === month && today.getDate() < day)
+      ? 1
+      : 0);
+
+  return age >= minimumApplicantAge && age <= maximumApplicantAge;
+}
+
 export function createPersonalInformationSchema(t: (key: string) => string) {
   return z.object({
     firstName: z
@@ -67,6 +89,9 @@ export function createPersonalInformationSchema(t: (key: string) => string) {
       .min(1, { message: t('validation.birthDate') })
       .refine((value) => isValidBirthDate(value), {
         message: t('validation.minimumAge'),
+      })
+      .refine((value) => isAllowedApplicantAge(value), {
+        message: t('validation.ageRange'),
       }),
     nationalityCode: z.string().regex(/^[A-Z]{2}$/, { message: t('validation.nationality') }),
     residenceCountryCode: z.string().regex(/^[A-Z]{2}$/, { message: t('validation.residence') }),
