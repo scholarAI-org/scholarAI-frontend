@@ -129,7 +129,7 @@ type HomeSource<T> =
 | Key                                                                             | Owner       | Shared with                              |
 | ------------------------------------------------------------------------------- | ----------- | ---------------------------------------- |
 | `studentScholarshipKeys.saved()`                                                | Feature 006 | Saved page, bookmark mutations           |
-| `studentScholarshipKeys.discovery(NEWEST_DEFAULT_QUERY)`                        | Feature 005 | Discovery default view                   |
+| `studentScholarshipKeys.discovery(defaultDiscoveryQuery)`                       | Feature 005 | Discovery default view                   |
 | `studentHomeKeys.profileCompletion()` = `['student-home','profile-completion']` | Home        | none (see research R6)                   |
 | `studentHomeKeys.tracked()` = `['student-home','tracked']`                      | Home        | replaced by the Tracking key later (R15) |
 | `studentHomeKeys.notifications()` / `.activity()` / `.recommendations()`        | Home        | header bell shares `notifications()`     |

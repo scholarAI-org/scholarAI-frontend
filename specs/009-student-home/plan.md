@@ -183,6 +183,18 @@ tests/student-layout.test.mjs          # EDIT: nav config assertion gains 'home'
 
 Re-checked after research.md, data-model.md and the contracts were written. **Still PASS.** Two items to watch during implementation: (1) `StudentHeader` must keep rendering titles from `pages.{key}` and receive `name` only as an ICU argument, so no Home data enters the shell; (2) nothing under `features/student/layout/**` may import from `features/student/home/**`. The bell lives in the home feature and reaches the header only as a `ReactNode` that `app/[locale]/student/layout.tsx` passes to the generic `headerActions` slot.
 
-## Phase 2 Preview (not generated)
+## Implementation notes (as built, 2026-10-24)
+
+Deviations and additions found while implementing; the spec and requirements are unchanged.
+
+1. **Q4 as decided**: no `HeaderThemeToggle` and no disabled controls. `HomeNotificationBell` (home feature) is injected through the generic `headerActions` slot only while the flag is on, and renders nothing unless a notifications source exists. It is a non-interactive indicator (`role="img"`) until a notifications page exists.
+2. **Latest scholarships** reuse the existing `defaultDiscoveryQuery` and `discoveryQueryOptions` (there is no `NEWEST_DEFAULT_QUERY`); the query is `enabled` only when unlocked.
+3. **Direction**: the root `<html>` is always `dir="rtl"` and Tailwind's `rtl:` variant also matches it, so `rtl:` fires on English pages. Home uses `[&:dir(rtl)]:` for the one directional icon, and a guard test forbids the bare variant in Home.
+4. **Demo data and bundles**: the demo `import()` must sit inside an inline `process.env.NODE_ENV !== 'production'` branch, otherwise the demo chunk ships in production builds (found by a build grep, fixed in `8a188dd`, guarded by a test).
+5. **Added files** beyond the structure above: `lib/home-summary.ts` (per-section state from the queries), `lib/recommendations-view.ts`, `lib/source-query.ts`, `hooks/useHomeSources.ts` (sources and source queries), `components/Skeleton.tsx`, `components/NotificationBell.tsx` (presentational bell), `mocks/marker.ts`. `useHomeSourceQuery` lives in `hooks/useHomeSources.ts`, and the activity `scholarship` object is required (non-null) in the requested contract.
+6. **Layout**: the route layout passes one `shellProps` object to `StudentShell` so the existing layout test's JSX shape still matches.
+7. **Test harness**: `tests/student-home.test.mjs` stubs `next-intl`, `@/i18n/navigation`, `next/image`, `AuthProvider` and `useLogout` through `Module._load`, and restores the real system timezone explicitly after timezone tests (deleting `TZ` does not on every platform).
+
+## Phase 2 Preview (generated; see tasks.md)
 
 `/speckit.tasks` will produce phases roughly as follows: Setup (flag, env docs, test file skeleton) → Foundational (schemas, sources, mock guard and its tests, derivations and their tests) → US1 welcome → US2 stats and deadlines → US3 recommendations lock → US4 notifications and activity (mock/hidden) → Shell (nav, header slot) → i18n and RTL audit → verification. This is blocked on "approved".

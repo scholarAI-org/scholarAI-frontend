@@ -127,9 +127,7 @@ components:
         type: { $ref: '#/components/schemas/ActivityType' }
         occurred_at: { type: string, format: date-time, description: UTC with offset }
         scholarship:
-          oneOf:
-            - $ref: '#/components/schemas/ActivityScholarshipRef'
-            - type: 'null'
+          $ref: '#/components/schemas/ActivityScholarshipRef'
         data:
           type: object
           description: >

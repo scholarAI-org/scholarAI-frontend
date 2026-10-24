@@ -55,16 +55,17 @@
 
 ## 3) Features Status
 
-| Feature ID / Module | Name                          | Status        | Notes                                                                                                                      |
-| ------------------- | ----------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **001**             | Admin Application Shell       | Completed     | Generic admin sidebar, header, role check                                                                                  |
-| **002**             | Admin Dashboard               | Completed     | System stats, pending review count, audit logs                                                                             |
-| **003**             | Admin Manual Scholarship      | Completed     | Form submission for manual scholarship entry                                                                               |
-| **004**             | Admin Scholarship Review      | Completed     | Approval/rejection workflow for scraped items                                                                              |
-| **005**             | Student Scholarship Discovery | Completed     | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                                           |
-| **006**             | Student Saved Scholarships    | Completed     | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision                       |
-| **007**             | Student Scholarship Details   | Gate 1 PASSED | Frontend implementation complete. Feature flag SCHOLARSHIP_DETAILS_ENABLED remains OFF. Awaiting Gate 2 live verification. |
-| **Auth**            | First-Party Cookie Auth       | Completed     | Proxy rewrite in `proxy.ts`, `AuthProvider`, `RoleGuard`                                                                   |
+| Feature ID / Module | Name                          | Status        | Notes                                                                                                                                                                                               |
+| ------------------- | ----------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **001**             | Admin Application Shell       | Completed     | Generic admin sidebar, header, role check                                                                                                                                                           |
+| **002**             | Admin Dashboard               | Completed     | System stats, pending review count, audit logs                                                                                                                                                      |
+| **003**             | Admin Manual Scholarship      | Completed     | Form submission for manual scholarship entry                                                                                                                                                        |
+| **004**             | Admin Scholarship Review      | Completed     | Approval/rejection workflow for scraped items                                                                                                                                                       |
+| **005**             | Student Scholarship Discovery | Completed     | Grid/list view, URL-query sync, search debounce, bookmark cache, minimal details                                                                                                                    |
+| **006**             | Student Saved Scholarships    | Completed     | Gate 1 & Gate 2 live verification complete on staging; ready for production flag enablement decision                                                                                                |
+| **007**             | Student Scholarship Details   | Gate 1 PASSED | Frontend implementation complete. Feature flag SCHOLARSHIP_DETAILS_ENABLED remains OFF. Awaiting Gate 2 live verification.                                                                          |
+| **009**             | Student Home                  | Gate 1 PASSED | `/student` dashboard on branch `feat/009-student-home`. Flag `STUDENT_HOME_ENABLED` OFF by default; demo data only via dev-only `HOME_MOCK_SECTIONS`. See `specs/009-student-home/verification.md`. |
+| **Auth**            | First-Party Cookie Auth       | Completed     | Proxy rewrite in `proxy.ts`, `AuthProvider`, `RoleGuard`                                                                                                                                            |
 
 ---
 

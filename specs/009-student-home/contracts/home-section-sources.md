@@ -15,7 +15,7 @@ type HomeSource<T> =
 interface HomeSources {
   notifications: HomeSource<UnreadNotifications>; // { unreadCount: number }
   activity: HomeSource<ActivityItem[]>; // validated, newest first, ≤ limit
-  recommendations: HomeSource<RecommendationCard[]>; // not wired in the UI today (Q1 uses the discovery list)
+  recommendations: HomeSource<RecommendationsResult>; // { locked, items }; not wired in the UI today (Q1 uses the discovery list)
 }
 
 function createHomeSources(input: { mockSections: readonly HomeSectionId[] }): HomeSources;
