@@ -10,6 +10,18 @@
 
 **Design source**: Figma `vy2q4AYXDerSsF1U8xu6Gf`, frame `2353:5365` ("Student-Home-null", 1440×1127, Arabic/RTL). Desktop only. Mobile is a later feature; Tablet and Admin are out of scope.
 
+## Clarifications
+
+### Session 2026-10-24
+
+Status: **open**. Questions are recorded, not answered, per the product owner's instruction. Options and recommendations are in [clarifications.md](./clarifications.md).
+
+- Q1: What should "Latest recommendations" show when profile completion is 70% or higher? → A: [NEEDS CLARIFICATION] (FR-034)
+- Q2: Which URL should Home use, and should a "Home" item be added to the existing sidebar? → A: [NEEDS CLARIFICATION] (FR-002, FR-004)
+- Q3: Should Home ship behind a server-only feature flag, like Saved and Details? → A: [NEEDS CLARIFICATION] (FR-003)
+- Q4: What should the header's notification bell and theme toggle do, given that no student notifications API and no theme system exist? → A: [NEEDS CLARIFICATION] (FR-008)
+- Q5: Should tracked scholarships whose application is accepted, rejected or closed count as upcoming deadlines? → A: [NEEDS CLARIFICATION] (FR-020)
+
 ## Data Source Investigation _(recorded before writing requirements)_
 
 Sources: `docs/api/openapi.json` (Scholar AI API 1.0.0) and the frontend code on `main` at `18c1453`.
