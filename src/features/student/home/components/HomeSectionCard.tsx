@@ -8,6 +8,8 @@ interface HomeSectionCardProps {
   icon: LucideIcon;
   // Tint of the icon chip (Figma uses a different tint per section).
   chipClassName: string;
+  // Optional marker after the heading (e.g. the demo-data badge).
+  badge?: ReactNode;
   children: ReactNode;
 }
 
@@ -16,6 +18,7 @@ export function HomeSectionCard({
   title,
   icon: Icon,
   chipClassName,
+  badge,
   children,
 }: HomeSectionCardProps) {
   const headingId = useId();
@@ -31,6 +34,7 @@ export function HomeSectionCard({
         <h2 id={headingId} className="min-w-0 text-base font-bold text-[#434343]">
           {title}
         </h2>
+        {badge}
       </div>
       <div className="min-w-0 rounded-2xl border border-gray-300 bg-white p-4 sm:p-6">
         {children}

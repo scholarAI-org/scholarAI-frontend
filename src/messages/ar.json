@@ -1555,6 +1555,27 @@
       },
       "empty": "لا توجد منح لعرضها حالياً.",
       "error": "تعذّر تحميل أحدث المنح."
+    },
+    "demoBadge": "بيانات تجريبية",
+    "activity": {
+      "title": "آخر النشاطات",
+      "empty": "لا توجد نشاطات بعد.",
+      "error": "تعذّر تحميل آخر النشاطات.",
+      "justNow": "الآن",
+      "types": {
+        "new_recommendation": "توصية جديدة: {title}",
+        "deadline_reminder": "{days, plural, =0 {موعد {title} اليوم} one {تبقّى يوم واحد على موعد {title}} two {تبقّى يومان على موعد {title}} few {تبقّى {days, number, integer} أيام على موعد {title}} many {تبقّى {days, number, integer} يومًا على موعد {title}} other {تبقّى {days, number, integer} يوم على موعد {title}}}",
+        "scholarship_saved": "حفظت منحة {title}",
+        "application_status_changed": "حدّثت حالة {title} إلى \"{status}\""
+      },
+      "status": {
+        "preparing_documents": "تجهيز المستندات",
+        "ready_to_apply": "جاهز للتقديم",
+        "applied": "تم التقديم",
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "closed": "مغلق"
+      }
     }
   }
 }

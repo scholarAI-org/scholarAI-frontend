@@ -4,13 +4,18 @@ import type { LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
 import { Link } from '@/i18n/navigation';
+import { DemoDataBadge } from './DemoDataBadge';
 import { Skeleton } from './Skeleton';
 
-export type StatView =
+export type StatView = (
   | { state: 'loading' }
   | { state: 'error'; onRetry: () => void }
   // `href`: set only when the destination exists and is enabled.
-  | { state: 'ready'; value: number; href?: string | null };
+  | { state: 'ready'; value: number; href?: string | null }
+) & {
+  // True when the number comes from demo data (local development only).
+  demo?: boolean;
+};
 
 export type StatId = 'notifications' | 'saved' | 'inProgress' | 'upcoming';
 
@@ -55,6 +60,7 @@ export function StatCard({ id, label, icon: Icon, chipClassName, view }: StatCar
         <div role="alert" className={CARD}>
           {top}
           <p className="text-sm text-[#434343]">{label}</p>
+          {view.demo ? <DemoDataBadge /> : null}
           <p className="text-xs text-[var(--color-text-error)]">{t('stats.error')}</p>
           <Button
             type="button"
@@ -74,6 +80,7 @@ export function StatCard({ id, label, icon: Icon, chipClassName, view }: StatCar
     <>
       {top}
       <p className="text-sm text-[#434343]">{label}</p>
+      {view.demo ? <DemoDataBadge /> : null}
     </>
   );
   return (

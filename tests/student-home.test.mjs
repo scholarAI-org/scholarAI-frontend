@@ -1261,3 +1261,186 @@ test('US3 i18n: recommendations messages exist in both locales', () => {
     }
   }
 });
+
+// ----------------------------- Phase 6: US4 notifications + activity ---------
+
+function renderHomePage(props = {}, locale = 'en') {
+  const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+  const { StudentHomePage } = loadHome('components/StudentHomePage.tsx');
+  env.user = { name: 'Ahmad Hajjar', email: 'a@x.test' };
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const html = render(h(QueryClientProvider, { client }, h(StudentHomePage, props)), { locale });
+  client.clear();
+  return html;
+}
+
+test('US4 hidden: with no source there is no notifications card, no activity section, no demo text', () => {
+  for (const props of [{}, { mockSections: [] }]) {
+    const html = renderHomePage(props);
+    assert.deepEqual(statOrder(html), ['saved', 'inProgress', 'upcoming']);
+    assert.match(html, /lg:grid-cols-3/);
+    assert.doesNotMatch(html, /Unread notifications/);
+    assert.doesNotMatch(html, /Recent activity/);
+    assert.doesNotMatch(html, /Demo data/);
+  }
+});
+
+test('US4 demo: listed sections render with a Demo data badge, and only those sections', () => {
+  const html = withEnv({ NODE_ENV: 'development' }, () =>
+    renderHomePage({ mockSections: ['notifications', 'activity'] })
+  );
+  assert.deepEqual(statOrder(html), ['notifications', 'saved', 'inProgress', 'upcoming']);
+  assert.match(html, /lg:grid-cols-4/);
+  assert.match(html, /Recent activity/);
+  assert.equal((html.match(/Demo data/g) ?? []).length, 2, 'one badge on the card, one on the section');
+
+  const onlyActivity = withEnv({ NODE_ENV: 'development' }, () => renderHomePage({ mockSections: ['activity'] }));
+  assert.deepEqual(statOrder(onlyActivity), ['saved', 'inProgress', 'upcoming']);
+  assert.equal((onlyActivity.match(/Demo data/g) ?? []).length, 1);
+
+  // A production build ignores the list entirely.
+  const production = withEnv({ NODE_ENV: 'production' }, () =>
+    renderHomePage({ mockSections: ['notifications', 'activity', 'recommendations'] })
+  );
+  assert.deepEqual(statOrder(production), ['saved', 'inProgress', 'upcoming']);
+  assert.doesNotMatch(production, /Demo data|Recent activity/);
+});
+
+test('US4 badge: only demo sources are labeled', () => {
+  const real = renderStats({ notifications: ready(2) });
+  assert.doesNotMatch(real, /Demo data/);
+  const demo = renderStats({ notifications: ready(2, { demo: true }) });
+  assert.equal((demo.match(/Demo data/g) ?? []).length, 1);
+  const { RecentActivity } = loadHome('components/RecentActivity.tsx');
+  const view = { state: 'ready', items: [] };
+  assert.doesNotMatch(render(h(RecentActivity, { view, now: NOW, demo: false })), /Demo data/);
+  assert.match(render(h(RecentActivity, { view, now: NOW, demo: true })), /Demo data/);
+});
+
+const activity = (id, type, overrides = {}) => ({
+  id,
+  type,
+  occurredAt: new Date(NOW.getTime() - 3 * 3_600_000).toISOString(),
+  scholarship: { id: 9, title: 'Fulbright', titleAr: 'فولبرايت', titleEn: 'Fulbright Program' },
+  data: {},
+  message: 'SERVER SENTENCE',
+  ...overrides,
+});
+
+function renderActivity(view, { locale = 'en', now = NOW, demo = false } = {}) {
+  const { RecentActivity } = loadHome('components/RecentActivity.tsx');
+  return render(h(RecentActivity, { view, now, demo }), { locale });
+}
+
+test('US4 activity rows: one localized sentence per type, relative time, no server text', () => {
+  const html = renderActivity({
+    state: 'ready',
+    items: [
+      activity(1, 'new_recommendation'),
+      activity(2, 'deadline_reminder', { data: { daysLeft: 7 } }),
+      activity(3, 'scholarship_saved'),
+      activity(4, 'application_status_changed', { data: { newStatus: 'applied' } }),
+    ],
+  });
+  assert.match(html, /<ol\b/);
+  assert.match(html, /New recommendation: Fulbright Program/);
+  assert.match(html, /7 days left until the deadline of Fulbright Program/);
+  assert.match(html, /You saved Fulbright Program/);
+  assert.match(html, /Fulbright Program[\s\S]{0,30}updated to[\s\S]{0,12}Applied/);
+  assert.equal((html.match(/3 hours ago/g) ?? []).length, 4);
+  assert.doesNotMatch(html, /SERVER SENTENCE/);
+  assert.ok(html.indexOf('New recommendation') < html.indexOf('You saved'), 'keeps the given (newest first) order');
+});
+
+test('US4 activity rows: Arabic sentences and plural forms, Latin digits, capped at four', () => {
+  const items = [
+    activity(1, 'new_recommendation'),
+    activity(2, 'deadline_reminder', { data: { daysLeft: 1 } }),
+    activity(3, 'deadline_reminder', { data: { daysLeft: 2 } }),
+    activity(4, 'deadline_reminder', { data: { daysLeft: 11 } }),
+    activity(5, 'scholarship_saved'),
+  ];
+  const html = renderActivity({ state: 'ready', items }, { locale: 'ar' });
+  assert.match(html, /توصية جديدة: فولبرايت/);
+  assert.match(html, /تبقّى يوم واحد على موعد فولبرايت/);
+  assert.match(html, /تبقّى يومان على موعد فولبرايت/);
+  assert.match(html, /تبقّى 11 يومًا على موعد فولبرايت/);
+  assert.doesNotMatch(html, /حفظت منحة/, 'the fifth item is not shown');
+  assert.doesNotMatch(html, /[٠-٩۰-۹]/);
+  assert.equal((html.match(/<li\b/g) ?? []).length, 4);
+  const status = renderActivity(
+    { state: 'ready', items: [activity(1, 'application_status_changed', { data: { newStatus: 'applied' } })] },
+    { locale: 'ar' }
+  );
+  assert.match(status, /تم التقديم/);
+});
+
+test('US4 activity states: empty, loading, error never look like each other', () => {
+  const empty = renderActivity({ state: 'empty' });
+  assert.match(empty, /No activity yet/);
+  assert.match(empty, /Recent activity/);
+  assert.doesNotMatch(empty, /<ol\b/);
+
+  const loading = renderActivity({ state: 'loading' });
+  assert.equal((loading.match(/data-skeleton="activity"/g) ?? []).length, 4);
+
+  const error = renderActivity({ state: 'error', onRetry: noop });
+  assert.match(error, /role="alert"/);
+  assert.match(error, /Try again/);
+  assert.doesNotMatch(error, /No activity yet/);
+
+  // Before mount there is no "now", so the time is a skeleton rather than a guess.
+  const early = renderActivity({ state: 'ready', items: [activity(1, 'scholarship_saved')] }, { now: null });
+  assert.match(early, /data-skeleton="time"/);
+  assert.doesNotMatch(early, /ago/);
+});
+
+test('US4 source query: keys end with the source kind and an unavailable source never runs', async () => {
+  const { sourceQueryOptions } = loadHome('lib/source-query.ts');
+  const real = { kind: 'real', load: async () => 'real-data' };
+  const mock = { kind: 'mock', load: async () => 'mock-data' };
+  const unavailable = { kind: 'unavailable' };
+
+  const realOptions = sourceQueryOptions('notifications', real);
+  const mockOptions = sourceQueryOptions('notifications', mock);
+  const offOptions = sourceQueryOptions('notifications', unavailable);
+  assert.equal(realOptions.queryKey.at(-1), 'real');
+  assert.equal(mockOptions.queryKey.at(-1), 'mock');
+  assert.equal(offOptions.queryKey.at(-1), 'unavailable');
+  assert.notDeepEqual(realOptions.queryKey, mockOptions.queryKey);
+  assert.equal(realOptions.enabled, true);
+  assert.equal(mockOptions.enabled, true);
+  assert.equal(offOptions.enabled, false);
+  assert.equal(await realOptions.queryFn({ signal: undefined }), 'real-data');
+  assert.equal(await mockOptions.queryFn({ signal: undefined }), 'mock-data');
+  await assert.rejects(() => offOptions.queryFn({ signal: undefined }));
+  assert.notDeepEqual(
+    sourceQueryOptions('notifications', real).queryKey,
+    sourceQueryOptions('activity', real).queryKey
+  );
+});
+
+test('US4 i18n: notifications, activity and demo copy exist in both locales with complete plurals', () => {
+  for (const locale of ['en', 'ar']) {
+    const home = messages[locale].StudentHome;
+    for (const key of [
+      'demoBadge',
+      'activity.title',
+      'activity.empty',
+      'activity.error',
+      'activity.justNow',
+      'activity.types.new_recommendation',
+      'activity.types.deadline_reminder',
+      'activity.types.scholarship_saved',
+      'activity.types.application_status_changed',
+      'activity.status.preparing_documents',
+      'activity.status.ready_to_apply',
+      'activity.status.applied',
+      'activity.status.accepted',
+      'activity.status.rejected',
+      'activity.status.closed',
+    ]) {
+      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+    }
+  }
+});

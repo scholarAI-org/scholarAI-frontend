@@ -165,18 +165,18 @@ Commit: `feat(student-home): add notifications and activity sections with gated 
 
 ### Tests first
 
-- [ ] T045 [P] [US4] Section "US4 hidden": with sources `unavailable`, `StudentHomePage`-level composition renders no notifications card, no "Recent activity" heading, no "Demo data" text, and no placeholder numbers; the stat row has exactly 3 cards.
-- [ ] T046 [P] [US4] Section "US4 demo": with a `mock` notifications source the row has 4 cards (notifications first) and the card carries a "Demo data" badge; with a `mock` activity source the section renders 4 rows with a "Demo data" badge and nothing else on the page carries one; with `real` kind there is no badge.
-- [ ] T047 [P] [US4] Section "US4 activity rows": each of the four types renders its icon, a localized sentence built from type and data (`new_recommendation`, `deadline_reminder` with `days` plural, `scholarship_saved`, `application_status_changed` with a translated status), the scholarship title in the active language, and a relative time with Latin digits; no server-provided sentence is displayed; empty list renders "No activity yet"; a contract error renders `SectionError`, never the empty state; rows are an `<ol>` newest first, capped at 4.
-- [ ] T048 [P] [US4] Section "US4 source query": `useHomeSourceQuery` keys end with the source kind (a cached mock result can never serve `real`); an `unavailable` source never runs a query (`enabled: false`) and returns state `hidden`.
+- [x] T045 [P] [US4] Section "US4 hidden": with sources `unavailable`, `StudentHomePage`-level composition renders no notifications card, no "Recent activity" heading, no "Demo data" text, and no placeholder numbers; the stat row has exactly 3 cards.
+- [x] T046 [P] [US4] Section "US4 demo": with a `mock` notifications source the row has 4 cards (notifications first) and the card carries a "Demo data" badge; with a `mock` activity source the section renders 4 rows with a "Demo data" badge and nothing else on the page carries one; with `real` kind there is no badge.
+- [x] T047 [P] [US4] Section "US4 activity rows": each of the four types renders its icon, a localized sentence built from type and data (`new_recommendation`, `deadline_reminder` with `days` plural, `scholarship_saved`, `application_status_changed` with a translated status), the scholarship title in the active language, and a relative time with Latin digits; no server-provided sentence is displayed; empty list renders "No activity yet"; a contract error renders `SectionError`, never the empty state; rows are an `<ol>` newest first, capped at 4.
+- [x] T048 [P] [US4] Section "US4 source query": `useHomeSourceQuery` keys end with the source kind (a cached mock result can never serve `real`); an `unavailable` source never runs a query (`enabled: false`) and returns state `hidden`.
 
 ### Implementation
 
-- [ ] T049 [P] [US4] Extend messages (en + ar): `StudentHome.stats.notifications`, `StudentHome.activity.{title, empty, relative.*, types.{new_recommendation, deadline_reminder, scholarship_saved, application_status_changed} (ICU plurals for days), status.{preparing_documents, ready_to_apply, applied, accepted, rejected, closed}}`, `StudentHome.demoBadge`.
-- [ ] T050 [P] [US4] Create `home/components/DemoDataBadge.tsx`, `ActivityRow.tsx`, `RecentActivity.tsx` per Figma `2358:7688` (icon chips by type, `<ol>`, relative time via `formatRelativeTime`).
-- [ ] T051 [US4] Create `home/hooks/useHomeSourceQuery.ts` (takes a `HomeSource<T>`, key from `studentHomeKeys.*(kind)`, `enabled: kind !== 'unavailable'`, `retry` per policy) and `home/hooks/useHomeSources.ts` (memoizes `createHomeSources({ mockSections })`). Pass `mockSections` from `src/app/[locale]/student/page.tsx` (server: `resolveHomeMockSections(process.env)`) into `StudentHomePage` as a prop.
-- [ ] T052 [US4] Wire the notifications card into `StatCards` (fourth card, first in order, with `DemoDataBadge` when `kind === 'mock'`) and `RecentActivity` into `StudentHomePage.tsx` (below deadlines on the start side, as in Figma). Makes T045–T048 pass.
-- [ ] T053 [US4] Run tests, `tsc`, `lint`; commit the phase.
+- [x] T049 [P] [US4] Extend messages (en + ar): `StudentHome.stats.notifications`, `StudentHome.activity.{title, empty, relative.*, types.{new_recommendation, deadline_reminder, scholarship_saved, application_status_changed} (ICU plurals for days), status.{preparing_documents, ready_to_apply, applied, accepted, rejected, closed}}`, `StudentHome.demoBadge`.
+- [x] T050 [P] [US4] Create `home/components/DemoDataBadge.tsx`, `ActivityRow.tsx`, `RecentActivity.tsx` per Figma `2358:7688` (icon chips by type, `<ol>`, relative time via `formatRelativeTime`).
+- [x] T051 [US4] Create `home/hooks/useHomeSourceQuery.ts` (takes a `HomeSource<T>`, key from `studentHomeKeys.*(kind)`, `enabled: kind !== 'unavailable'`, `retry` per policy) and `home/hooks/useHomeSources.ts` (memoizes `createHomeSources({ mockSections })`). Pass `mockSections` from `src/app/[locale]/student/page.tsx` (server: `resolveHomeMockSections(process.env)`) into `StudentHomePage` as a prop.
+- [x] T052 [US4] Wire the notifications card into `StatCards` (fourth card, first in order, with `DemoDataBadge` when `kind === 'mock'`) and `RecentActivity` into `StudentHomePage.tsx` (below deadlines on the start side, as in Figma). Makes T045–T048 pass.
+- [x] T053 [US4] Run tests, `tsc`, `lint`; commit the phase.
 
 ---
 

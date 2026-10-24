@@ -1568,6 +1568,27 @@
       },
       "empty": "There are no scholarships to show yet.",
       "error": "We could not load the latest scholarships."
+    },
+    "demoBadge": "Demo data",
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No activity yet.",
+      "error": "We could not load your recent activity.",
+      "justNow": "Just now",
+      "types": {
+        "new_recommendation": "New recommendation: {title}",
+        "deadline_reminder": "{days, plural, =0 {The deadline of {title} is today} one {{days, number, integer} day left until the deadline of {title}} other {{days, number, integer} days left until the deadline of {title}}}",
+        "scholarship_saved": "You saved {title}",
+        "application_status_changed": "Status of {title} updated to \"{status}\""
+      },
+      "status": {
+        "preparing_documents": "Preparing documents",
+        "ready_to_apply": "Ready to apply",
+        "applied": "Applied",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "closed": "Closed"
+      }
     }
   }
 }

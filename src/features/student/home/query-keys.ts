@@ -1,6 +1,6 @@
 import type { HomeSectionId } from './config/home-sections';
 
-export type HomeSourceKind = 'real' | 'mock';
+export type HomeSourceKind = 'real' | 'mock' | 'unavailable';
 
 // Home-local keys. Saved scholarships and the latest-scholarships list reuse the
 // shared studentScholarshipKeys so bookmark changes keep Home fresh.
