@@ -49,12 +49,24 @@ paths:
                   - id: 981
                     type: new_recommendation
                     occurred_at: '2026-10-24T09:12:00Z'
-                    scholarship: { id: 42, title: Fulbright Foreign Student Program, title_ar: منحة فولبرايت, title_en: Fulbright Foreign Student Program }
+                    scholarship:
+                      {
+                        id: 42,
+                        title: Fulbright Foreign Student Program,
+                        title_ar: منحة فولبرايت,
+                        title_en: Fulbright Foreign Student Program,
+                      }
                     data: {}
                   - id: 977
                     type: deadline_reminder
                     occurred_at: '2026-10-23T08:00:00Z'
-                    scholarship: { id: 17, title: Türkiye Scholarships, title_ar: منحة الحكومة التركية, title_en: Türkiye Scholarships }
+                    scholarship:
+                      {
+                        id: 17,
+                        title: Türkiye Scholarships,
+                        title_ar: منحة الحكومة التركية,
+                        title_en: Türkiye Scholarships,
+                      }
                     data: { days_left: 7 }
         '401': { description: Missing or invalid authentication }
         '403': { description: Account disabled }

@@ -537,6 +537,28 @@ test('guards: only the source factory references home/mocks, and only through im
   assert.doesNotMatch(source, /^\s*import\s[^;]*from\s+['"]\.\.\/mocks['"]/m);
 });
 
+// A production build must not ship demo data at all. A bundler only drops the demo chunk
+// when the import() sits inside a branch whose condition it can fold to a constant, so the
+// NODE_ENV check must be inline right before each import and not hoisted into a variable
+// (a closure created before the branch keeps the import reachable).
+test('guards: every demo import() sits inside an inline production check', () => {
+  const source = read(path.join(homePath, 'sources/create-home-sources.ts'));
+  const check = "process.env.NODE_ENV !== 'production'";
+  const imports = [...source.matchAll(/import\(\s*'\.\.\/mocks'\s*\)/g)];
+  assert.equal(imports.length, 3, 'one demo import per section');
+  for (const match of imports) {
+    const before = source.slice(0, match.index);
+    const checkAt = before.lastIndexOf(check);
+    assert.ok(checkAt >= 0, 'an inline production check precedes the import');
+    assert.ok(match.index - checkAt < 400, 'the check is the branch that guards this import');
+  }
+  assert.doesNotMatch(
+    source,
+    /const\s+\w+\s*=\s*process\.env\.NODE_ENV/,
+    'the check must not be hoisted'
+  );
+});
+
 test('guards: the mock-section resolver is imported only by server files under src/app', () => {
   const importers = srcFiles().filter(
     (file) => !file.endsWith('resolve-mock-sections.ts') && /resolve-mock-sections/.test(read(file))
