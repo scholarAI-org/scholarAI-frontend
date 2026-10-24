@@ -56,7 +56,10 @@ const env = { locale: 'en', pathname: '/student', user: null };
 const lookup = (namespace, key) =>
   `${namespace}.${key}`
     .split('.')
-    .reduce((value, part) => (value && typeof value === 'object' ? value[part] : undefined), messages[env.locale]);
+    .reduce(
+      (value, part) => (value && typeof value === 'object' ? value[part] : undefined),
+      messages[env.locale]
+    );
 
 const nextIntlStub = {
   useLocale: () => env.locale,
@@ -69,7 +72,11 @@ const nextIntlStub = {
 
 const navigationStub = {
   Link: ({ href, children, ...props }) =>
-    React.createElement('a', { href: typeof href === 'string' ? href : href?.pathname, ...props }, children),
+    React.createElement(
+      'a',
+      { href: typeof href === 'string' ? href : href?.pathname, ...props },
+      children
+    ),
   usePathname: () => env.pathname,
   useRouter: () => ({ replace() {}, push() {}, prefetch() {} }),
 };
@@ -77,7 +84,13 @@ const navigationStub = {
 const imageStub = {
   __esModule: true,
   default: ({ src, alt, width, height, className }) =>
-    React.createElement('img', { src: typeof src === 'string' ? src : '', alt, width, height, className }),
+    React.createElement('img', {
+      src: typeof src === 'string' ? src : '',
+      alt,
+      width,
+      height,
+      className,
+    }),
 };
 const authStub = { useAuth: () => ({ user: env.user }) };
 const logoutStub = { useLogout: () => ({ mutate() {}, isPending: false }) };
@@ -187,13 +200,17 @@ const tracked = (id, status, scholarship) => ({
 
 test('flag: STUDENT_HOME_ENABLED is off unless the literal "true"', () => {
   const { featureFlags } = loadSrc('lib/feature-flags.ts');
-  withEnv({ STUDENT_HOME_ENABLED: undefined }, () => assert.equal(featureFlags.studentHomeEnabled, false));
+  withEnv({ STUDENT_HOME_ENABLED: undefined }, () =>
+    assert.equal(featureFlags.studentHomeEnabled, false)
+  );
   for (const value of ['', 'false', '0', '1', 'yes', 'TRUE', ' true ', 'True']) {
     withEnv({ STUDENT_HOME_ENABLED: value }, () =>
       assert.equal(featureFlags.studentHomeEnabled, false, `value=${JSON.stringify(value)}`)
     );
   }
-  withEnv({ STUDENT_HOME_ENABLED: 'true' }, () => assert.equal(featureFlags.studentHomeEnabled, true));
+  withEnv({ STUDENT_HOME_ENABLED: 'true' }, () =>
+    assert.equal(featureFlags.studentHomeEnabled, true)
+  );
 });
 
 test('flag: static scan finds no NEXT_PUBLIC_ variant and no default-true fallback', () => {
@@ -214,17 +231,31 @@ test('flag: static scan finds no NEXT_PUBLIC_ variant and no default-true fallba
 test('mock gate: the resolver returns [] in production, Vercel production/preview, or when unset', () => {
   const { resolveHomeMockSections } = loadHome('config/resolve-mock-sections.ts');
   const flag = 'notifications,activity,recommendations';
-  assert.deepEqual(resolveHomeMockSections({ NODE_ENV: 'production', HOME_MOCK_SECTIONS: flag }), []);
   assert.deepEqual(
-    resolveHomeMockSections({ NODE_ENV: 'development', VERCEL_ENV: 'production', HOME_MOCK_SECTIONS: flag }),
+    resolveHomeMockSections({ NODE_ENV: 'production', HOME_MOCK_SECTIONS: flag }),
     []
   );
   assert.deepEqual(
-    resolveHomeMockSections({ NODE_ENV: 'development', VERCEL_ENV: 'preview', HOME_MOCK_SECTIONS: flag }),
+    resolveHomeMockSections({
+      NODE_ENV: 'development',
+      VERCEL_ENV: 'production',
+      HOME_MOCK_SECTIONS: flag,
+    }),
+    []
+  );
+  assert.deepEqual(
+    resolveHomeMockSections({
+      NODE_ENV: 'development',
+      VERCEL_ENV: 'preview',
+      HOME_MOCK_SECTIONS: flag,
+    }),
     []
   );
   for (const value of [undefined, '', '   ', ',,']) {
-    assert.deepEqual(resolveHomeMockSections({ NODE_ENV: 'development', HOME_MOCK_SECTIONS: value }), []);
+    assert.deepEqual(
+      resolveHomeMockSections({ NODE_ENV: 'development', HOME_MOCK_SECTIONS: value }),
+      []
+    );
   }
   assert.deepEqual(resolveHomeMockSections({}), []);
 });
@@ -232,15 +263,25 @@ test('mock gate: the resolver returns [] in production, Vercel production/previe
 test('mock gate: the resolver trims, lower-cases, de-duplicates and drops unknown names', () => {
   const { resolveHomeMockSections } = loadHome('config/resolve-mock-sections.ts');
   assert.deepEqual(
-    resolveHomeMockSections({ NODE_ENV: 'development', HOME_MOCK_SECTIONS: ' Notifications , ACTIVITY ,activity' }),
+    resolveHomeMockSections({
+      NODE_ENV: 'development',
+      HOME_MOCK_SECTIONS: ' Notifications , ACTIVITY ,activity',
+    }),
     ['notifications', 'activity']
   );
   assert.deepEqual(
-    resolveHomeMockSections({ NODE_ENV: 'development', HOME_MOCK_SECTIONS: 'foo,activity,__proto__' }),
+    resolveHomeMockSections({
+      NODE_ENV: 'development',
+      HOME_MOCK_SECTIONS: 'foo,activity,__proto__',
+    }),
     ['activity']
   );
   assert.deepEqual(
-    resolveHomeMockSections({ NODE_ENV: 'test', VERCEL_ENV: 'development', HOME_MOCK_SECTIONS: 'recommendations' }),
+    resolveHomeMockSections({
+      NODE_ENV: 'test',
+      VERCEL_ENV: 'development',
+      HOME_MOCK_SECTIONS: 'recommendations',
+    }),
     ['recommendations']
   );
 });
@@ -248,8 +289,13 @@ test('mock gate: the resolver trims, lower-cases, de-duplicates and drops unknow
 test('mock gate: the source factory never yields a mock in production, and real beats mock', () => {
   const { createHomeSources } = loadHome('sources/create-home-sources.ts');
   const all = ['notifications', 'activity', 'recommendations'];
-  const kinds = (sources) => Object.fromEntries(Object.entries(sources).map(([id, s]) => [id, s.kind]));
-  const allUnavailable = { notifications: 'unavailable', activity: 'unavailable', recommendations: 'unavailable' };
+  const kinds = (sources) =>
+    Object.fromEntries(Object.entries(sources).map(([id, s]) => [id, s.kind]));
+  const allUnavailable = {
+    notifications: 'unavailable',
+    activity: 'unavailable',
+    recommendations: 'unavailable',
+  };
 
   withEnv({ NODE_ENV: 'production' }, () => {
     assert.deepEqual(kinds(createHomeSources({ mockSections: all })), allUnavailable);
@@ -272,14 +318,22 @@ test('mock gate: the source factory never yields a mock in production, and real 
   });
   // The default availability is all-false until the backend ships (contract-notes.md).
   const { HOME_API_AVAILABILITY } = loadHome('config/home-sections.ts');
-  assert.deepEqual(HOME_API_AVAILABILITY, { notifications: false, activity: false, recommendations: false });
+  assert.deepEqual(HOME_API_AVAILABILITY, {
+    notifications: false,
+    activity: false,
+    recommendations: false,
+  });
   // A real API is used even in production once it exists.
   withEnv({ NODE_ENV: 'production' }, () => {
     const sources = createHomeSources({
       mockSections: [],
       availability: { notifications: true, activity: true, recommendations: true },
     });
-    assert.deepEqual(kinds(sources), { notifications: 'real', activity: 'real', recommendations: 'real' });
+    assert.deepEqual(kinds(sources), {
+      notifications: 'real',
+      activity: 'real',
+      recommendations: 'real',
+    });
   });
 });
 
@@ -312,8 +366,16 @@ test('schemas: profile completion defaults, rejects non-numbers', () => {
   assert.equal(parseProfileCompletion({ profile_completion_percentage: 69.6 }), 69.6);
   assert.equal(parseProfileCompletion({}), 0);
   assert.equal(parseProfileCompletion({ profile_completion_percentage: null }), 0);
-  for (const bad of [{ profile_completion_percentage: '80' }, { profile_completion_percentage: NaN }, null, 'x']) {
-    assert.throws(() => parseProfileCompletion(bad), (error) => error instanceof HomeContractError);
+  for (const bad of [
+    { profile_completion_percentage: '80' },
+    { profile_completion_percentage: NaN },
+    null,
+    'x',
+  ]) {
+    assert.throws(
+      () => parseProfileCompletion(bad),
+      (error) => error instanceof HomeContractError
+    );
   }
 });
 
@@ -323,7 +385,8 @@ test('schemas: tracked applications accept extras, reject unknown statuses, allo
   const ok = tracked(1, 'applied', card(1, { deadline: '2026-11-02', extra_field: 'x' }));
   assert.equal(parseTrackedApplications([ok]).length, 1);
   assert.equal(
-    parseTrackedApplications([tracked(2, 'closed', card(2, { deadline: null }))])[0].scholarship.deadline,
+    parseTrackedApplications([tracked(2, 'closed', card(2, { deadline: null }))])[0].scholarship
+      .deadline,
     null
   );
   assert.deepEqual(parseTrackedApplications([]), []);
@@ -331,7 +394,10 @@ test('schemas: tracked applications accept extras, reject unknown statuses, allo
     () => parseTrackedApplications([tracked(3, 'pending', card(3))]),
     (error) => error instanceof HomeContractError
   );
-  assert.throws(() => parseTrackedApplications({ items: [] }), (error) => error instanceof HomeContractError);
+  assert.throws(
+    () => parseTrackedApplications({ items: [] }),
+    (error) => error instanceof HomeContractError
+  );
   assert.throws(
     () => parseTrackedApplications([{ id: 1, status: 'applied' }]),
     (error) => error instanceof HomeContractError
@@ -343,8 +409,17 @@ test('schemas: unread notifications must be a non-negative integer', () => {
   const { HomeContractError } = loadHome('schemas/contract-error.ts');
   assert.deepEqual(parseUnreadNotifications({ unread_count: 0 }), { unreadCount: 0 });
   assert.deepEqual(parseUnreadNotifications({ unread_count: 12 }), { unreadCount: 12 });
-  for (const bad of [{ unread_count: -1 }, { unread_count: 1.5 }, { unread_count: '3' }, {}, null]) {
-    assert.throws(() => parseUnreadNotifications(bad), (error) => error instanceof HomeContractError);
+  for (const bad of [
+    { unread_count: -1 },
+    { unread_count: 1.5 },
+    { unread_count: '3' },
+    {},
+    null,
+  ]) {
+    assert.throws(
+      () => parseUnreadNotifications(bad),
+      (error) => error instanceof HomeContractError
+    );
   }
 });
 
@@ -372,7 +447,15 @@ test('schemas: the activity feed validates per-type data and skips unknown types
   assert.equal(items[3].data.newStatus, 'applied');
   assert.equal(
     parseActivityFeed({
-      items: [{ id: 1, type: 'scholarship_saved', data: {}, ...base, occurred_at: '2026-10-24T11:00:00+03:00' }],
+      items: [
+        {
+          id: 1,
+          type: 'scholarship_saved',
+          data: {},
+          ...base,
+          occurred_at: '2026-10-24T11:00:00+03:00',
+        },
+      ],
     }).length,
     1
   );
@@ -380,14 +463,23 @@ test('schemas: the activity feed validates per-type data and skips unknown types
   const bad = [
     feed({ id: 1, type: 'deadline_reminder', data: {}, ...base }),
     feed({ id: 1, type: 'application_status_changed', data: {}, ...base }),
-    feed({ id: 1, type: 'new_recommendation', data: {}, occurred_at: base.occurred_at, scholarship: null }),
+    feed({
+      id: 1,
+      type: 'new_recommendation',
+      data: {},
+      occurred_at: base.occurred_at,
+      scholarship: null,
+    }),
     feed({ id: 1, type: 'scholarship_saved', data: {}, ...base, occurred_at: '2026-10-24' }),
     feed({ id: 1, type: 'scholarship_saved', data: {}, ...base, occurred_at: 'yesterday' }),
     { items: 'nope' },
     null,
   ];
   for (const payload of bad) {
-    assert.throws(() => parseActivityFeed(payload), (error) => error instanceof HomeContractError);
+    assert.throws(
+      () => parseActivityFeed(payload),
+      (error) => error instanceof HomeContractError
+    );
   }
   assert.deepEqual(parseActivityFeed({ items: [] }), []);
 });
@@ -410,7 +502,10 @@ test('schemas: recommendations carry locked, cards and an optional 0-100 score',
     { locked: 'no', items: [] },
     null,
   ]) {
-    assert.throws(() => parseRecommendations(bad), (error) => error instanceof HomeContractError);
+    assert.throws(
+      () => parseRecommendations(bad),
+      (error) => error instanceof HomeContractError
+    );
   }
 });
 
@@ -448,7 +543,11 @@ test('guards: the mock-section resolver is imported only by server files under s
   );
   for (const file of importers) {
     assert.ok(rel(file).startsWith('src/app/'), `${rel(file)} must not import the resolver`);
-    assert.doesNotMatch(read(file), /^['"]use client['"]/m, `${rel(file)} must be a Server Component`);
+    assert.doesNotMatch(
+      read(file),
+      /^['"]use client['"]/m,
+      `${rel(file)} must be a Server Component`
+    );
   }
 });
 
@@ -545,7 +644,10 @@ test('derive: the window is 0..30 days and excludes past, undated and invalid de
       [10, 9],
     ]
   );
-  assert.deepEqual(deriveUpcomingDeadlines({ saved: [], tracked: [], now: NOW }), { items: [], count: 0 });
+  assert.deepEqual(deriveUpcomingDeadlines({ saved: [], tracked: [], now: NOW }), {
+    items: [],
+    count: 0,
+  });
 });
 
 test('derive: order is days then id, the list caps at 3 while the count keeps counting', () => {
@@ -611,7 +713,14 @@ test('derive: the item carries a date, urgency and raw funding/level for labels'
 
 test('derive: urgency thresholds are 0-7 urgent, 8-14 soon, 15-30 comfortable', () => {
   const { urgencyFor } = loadHome('lib/urgency.ts');
-  const expected = { 0: 'urgent', 7: 'urgent', 8: 'soon', 14: 'soon', 15: 'comfortable', 30: 'comfortable' };
+  const expected = {
+    0: 'urgent',
+    7: 'urgent',
+    8: 'soon',
+    14: 'soon',
+    15: 'comfortable',
+    30: 'comfortable',
+  };
   for (const [days, urgency] of Object.entries(expected)) {
     assert.equal(urgencyFor(Number(days)), urgency, `days=${days}`);
   }
@@ -660,7 +769,8 @@ test('relative time: buckets, future clock skew and Latin digits in Arabic', () 
   const MIN = 60_000;
   const HOUR = 60 * MIN;
   const DAY = 24 * HOUR;
-  const fmt = (when, locale = 'en', justNow = 'just now') => formatRelativeTime(when, NOW, locale, justNow);
+  const fmt = (when, locale = 'en', justNow = 'just now') =>
+    formatRelativeTime(when, NOW, locale, justNow);
   assert.equal(fmt(ago(30_000)), 'just now');
   assert.equal(fmt(ago(5 * MIN)), '5 minutes ago');
   assert.equal(fmt(ago(3 * HOUR)), '3 hours ago');
@@ -713,14 +823,25 @@ test('section state: error, loading, empty, ready and hidden; a 401 is loading, 
   assert.equal(getSectionState([q('pending')]), 'loading');
   assert.equal(getSectionState([q('success'), q('pending')]), 'loading');
   assert.equal(getSectionState([q('error', new ApiError('x', [], 500))]), 'error');
-  assert.equal(getSectionState([q('error', new HomeContractError('saved', []))], { empty: true }), 'error');
+  assert.equal(
+    getSectionState([q('error', new HomeContractError('saved', []))], { empty: true }),
+    'error'
+  );
   assert.equal(getSectionState([q('success'), q('error', new Error('x'))]), 'error');
   assert.equal(getSectionState([q('error', new ApiError('x', [], 401))]), 'loading');
   assert.equal(getSectionState([q('pending')], { hidden: true }), 'hidden');
 
   assert.equal(shouldInvalidateSession([q('error', new ApiError('x', [], 401))]), true);
-  assert.equal(shouldInvalidateSession([q('success'), q('error', new ApiError('x', [], 401))]), true);
-  for (const error of [new ApiError('x', [], 403), new ApiError('x', [], 500), new Error('x'), null]) {
+  assert.equal(
+    shouldInvalidateSession([q('success'), q('error', new ApiError('x', [], 401))]),
+    true
+  );
+  for (const error of [
+    new ApiError('x', [], 403),
+    new ApiError('x', [], 500),
+    new Error('x'),
+    null,
+  ]) {
     assert.equal(shouldInvalidateSession([q('error', error)]), false);
   }
 });
@@ -749,7 +870,9 @@ test('section state: retry refetches only the failed queries', async () => {
 
 const flatten = (object, prefix = '') =>
   Object.entries(object).flatMap(([key, value]) =>
-    value && typeof value === 'object' ? flatten(value, `${prefix}${key}.`) : [[`${prefix}${key}`, value]]
+    value && typeof value === 'object'
+      ? flatten(value, `${prefix}${key}.`)
+      : [[`${prefix}${key}`, value]]
   );
 
 const h = React.createElement;
@@ -840,16 +963,26 @@ test('US1 header: the home route has a page key and a greeting with the full nam
     env.pathname = pathname;
     env.user = user;
     return render(
-      h(StudentHeader, { isNavigationOpen: false, onNavigationToggle: noop, menuButtonRef: { current: null } }),
+      h(StudentHeader, {
+        isNavigationOpen: false,
+        onNavigationToggle: noop,
+        menuButtonRef: { current: null },
+      }),
       { locale }
     );
   };
   const home = header('/student', { name: 'Ahmad Hajjar', email: 'a@x.test' });
   assert.match(home, /<h1[^>]*>Hello, Ahmad Hajjar<\/h1>/);
   assert.match(home, /quick look at your opportunities and upcoming deadlines/);
-  assert.match(header('/student', { name: 'أحمد الحجار', email: 'a@x.test' }, 'ar'), /مرحباً، أحمد الحجار/);
+  assert.match(
+    header('/student', { name: 'أحمد الحجار', email: 'a@x.test' }, 'ar'),
+    /مرحباً، أحمد الحجار/
+  );
   assert.match(header('/student/profile', { name: 'Ahmad Hajjar' }), /<h1[^>]*>Profile<\/h1>/);
-  assert.match(header('/student/scholarships', { name: 'Ahmad Hajjar' }), /Explore scholarships and opportunities/);
+  assert.match(
+    header('/student/scholarships', { name: 'Ahmad Hajjar' }),
+    /Explore scholarships and opportunities/
+  );
   env.pathname = '/student';
 });
 
@@ -860,7 +993,10 @@ test('US1 route: /student is a flag-gated Server Component', () => {
   assert.match(source, /featureFlags\.studentHomeEnabled/);
   const gate = source.indexOf('notFound()');
   const render = source.indexOf('<StudentHomePage');
-  assert.ok(gate > -1 && render > -1 && gate < render, 'notFound() must run before the page renders');
+  assert.ok(
+    gate > -1 && render > -1 && gate < render,
+    'notFound() must run before the page renders'
+  );
   assert.match(source, /from\s+['"]next\/navigation['"]/);
 });
 
@@ -880,8 +1016,12 @@ test('US1 page: renders identity and loading states without crashing, and handle
 
 test('US1 i18n: StudentHome and the home page copy exist in both locales with identical keys', () => {
   for (const namespace of ['StudentHome']) {
-    const en = flatten(messages.en[namespace] ?? {}).map(([key]) => key).sort();
-    const ar = flatten(messages.ar[namespace] ?? {}).map(([key]) => key).sort();
+    const en = flatten(messages.en[namespace] ?? {})
+      .map(([key]) => key)
+      .sort();
+    const ar = flatten(messages.ar[namespace] ?? {})
+      .map(([key]) => key)
+      .sort();
     assert.ok(en.length > 0, `${namespace} exists in en`);
     assert.deepEqual(ar, en, namespace);
   }
@@ -891,7 +1031,10 @@ test('US1 i18n: StudentHome and the home page copy exist in both locales with id
     for (const [key, value] of [...flatten(messages[locale].StudentHome), ...flatten(page)]) {
       assert.equal(typeof value, 'string');
       assert.ok(value.trim().length > 0, `${locale} ${key} is empty`);
-      assert.doesNotThrow(() => new IntlMessageFormat(value, locale, intlFormats), `${locale} ${key}`);
+      assert.doesNotThrow(
+        () => new IntlMessageFormat(value, locale, intlFormats),
+        `${locale} ${key}`
+      );
     }
   }
 });
@@ -931,7 +1074,12 @@ test('US2 stat row (FR-013): 3 cards fill a 3-column row, 4 cards a 4-column row
 
 test('US2 stat cards: labels, zero is shown, large counts are not clipped, Arabic labels', () => {
   const en = renderStats({ saved: ready(0), inProgress: ready(120), notifications: ready(10) });
-  for (const label of ['Saved scholarships', 'Applications in progress', 'Upcoming deadlines', 'Unread notifications']) {
+  for (const label of [
+    'Saved scholarships',
+    'Applications in progress',
+    'Upcoming deadlines',
+    'Unread notifications',
+  ]) {
     assert.match(en, new RegExp(label));
   }
   assert.match(en, />0</);
@@ -1012,7 +1160,14 @@ test('US2 deadlines: today, singular day, and Arabic plural forms', () => {
     { state: 'ready', items: [0, 1, 2, 3, 11, 25].map((days, i) => deadline(i + 1, days)) },
     { locale: 'ar' }
   );
-  for (const text of ['ينتهي اليوم', 'باقي يوم واحد', 'باقي يومان', 'باقي 3 أيام', 'باقي 11 يومًا', 'باقي 25 يومًا']) {
+  for (const text of [
+    'ينتهي اليوم',
+    'باقي يوم واحد',
+    'باقي يومان',
+    'باقي 3 أيام',
+    'باقي 11 يومًا',
+    'باقي 25 يومًا',
+  ]) {
     assert.ok(ar.includes(text), `missing "${text}"`);
   }
   assert.doesNotMatch(ar, /[٠-٩۰-۹]/);
@@ -1041,11 +1196,16 @@ test('US2 deadlines: secondary line joins funding and level; missing parts are o
 });
 
 test('US2 deadlines: the title follows the language and long titles are clamped', () => {
-  const items = [deadline(1, 3, { title: { default: 'Default title', ar: 'عنوان عربي', en: 'English title' } })];
+  const items = [
+    deadline(1, 3, { title: { default: 'Default title', ar: 'عنوان عربي', en: 'English title' } }),
+  ];
   assert.match(renderDeadlines({ state: 'ready', items }), /English title/);
   assert.match(renderDeadlines({ state: 'ready', items }, { locale: 'ar' }), /عنوان عربي/);
   const fallback = [deadline(1, 3, { title: { default: 'Default title', ar: null, en: null } })];
-  assert.match(renderDeadlines({ state: 'ready', items: fallback }, { locale: 'ar' }), /Default title/);
+  assert.match(
+    renderDeadlines({ state: 'ready', items: fallback }, { locale: 'ar' }),
+    /Default title/
+  );
   const html = renderDeadlines({ state: 'ready', items });
   assert.match(html, /line-clamp-2/);
   assert.match(html, /min-w-0/);
@@ -1054,7 +1214,10 @@ test('US2 deadlines: the title follows the language and long titles are clamped'
 test('US2 deadlines: rows link to details only when the details page is enabled', () => {
   const view = { state: 'ready', items: [deadline(10, 2)] };
   assert.doesNotMatch(renderDeadlines(view, { detailsEnabled: false }), /<a\b/);
-  assert.match(renderDeadlines(view, { detailsEnabled: true }), /<a\b[^>]*href="\/student\/scholarships\/10"/);
+  assert.match(
+    renderDeadlines(view, { detailsEnabled: true }),
+    /<a\b[^>]*href="\/student\/scholarships\/10"/
+  );
 });
 
 test('US2 deadlines: empty, loading and error states', () => {
@@ -1086,14 +1249,18 @@ test('US2 independence: one failing source affects only the sections that need i
   const ok = (data) => ({ status: 'success', error: null, data });
   const failed = (error) => ({ status: 'error', error, data: undefined });
   const pending = { status: 'pending', error: null, data: undefined };
-  const summary = (saved, trackedQuery, now = NOW) => buildHomeSummary({ saved, tracked: trackedQuery, now });
+  const summary = (saved, trackedQuery, now = NOW) =>
+    buildHomeSummary({ saved, tracked: trackedQuery, now });
 
   const healthy = summary(ok(savedCards), ok(trackedItems));
   assert.deepEqual(healthy.saved, { state: 'ready', value: 2 });
   assert.deepEqual(healthy.inProgress, { state: 'ready', value: 2 });
   assert.deepEqual(healthy.upcoming, { state: 'ready', value: 2 });
   assert.equal(healthy.deadlines.state, 'ready');
-  assert.deepEqual(healthy.deadlines.items.map((item) => item.id), [1, 3]);
+  assert.deepEqual(
+    healthy.deadlines.items.map((item) => item.id),
+    [1, 3]
+  );
 
   const savedFailed = summary(failed(new ApiError('x', [], 500)), ok(trackedItems));
   assert.equal(savedFailed.saved.state, 'error');
@@ -1110,12 +1277,15 @@ test('US2 independence: one failing source affects only the sections that need i
   assert.equal(trackedFailed.deadlines.state, 'error');
 
   const loading = summary(pending, pending);
-  assert.deepEqual([loading.saved.state, loading.inProgress.state, loading.upcoming.state, loading.deadlines.state], [
-    'loading',
-    'loading',
-    'loading',
-    'loading',
-  ]);
+  assert.deepEqual(
+    [
+      loading.saved.state,
+      loading.inProgress.state,
+      loading.upcoming.state,
+      loading.deadlines.state,
+    ],
+    ['loading', 'loading', 'loading', 'loading']
+  );
 
   const none = summary(ok([]), ok([]));
   assert.deepEqual(none.saved, { state: 'ready', value: 0 });
@@ -1136,8 +1306,22 @@ test('US2 independence: one failing source affects only the sections that need i
 test('US2 i18n: stats and deadlines messages exist in both locales and plurals are complete', () => {
   for (const locale of ['en', 'ar']) {
     const home = messages[locale].StudentHome;
-    for (const key of ['stats.saved', 'stats.inProgress', 'stats.upcoming', 'stats.error', 'deadlines.title', 'deadlines.daysLeft', 'deadlines.empty.title', 'deadlines.empty.action', 'deadlines.error']) {
-      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+    for (const key of [
+      'stats.saved',
+      'stats.inProgress',
+      'stats.upcoming',
+      'stats.error',
+      'deadlines.title',
+      'deadlines.daysLeft',
+      'deadlines.empty.title',
+      'deadlines.empty.action',
+      'deadlines.error',
+    ]) {
+      assert.equal(
+        typeof key.split('.').reduce((value, part) => value?.[part], home),
+        'string',
+        `${locale} ${key}`
+      );
     }
   }
 });
@@ -1155,7 +1339,8 @@ function renderRecommendations(view, { locale = 'en', detailsEnabled = false, to
   client.clear();
   return html;
 }
-const discoveryCard = (id, overrides = {}) => card(id, { is_saved: false, deadline: dateIn(20), ...overrides });
+const discoveryCard = (id, overrides = {}) =>
+  card(id, { is_saved: false, deadline: dateIn(20), ...overrides });
 
 test('US3 locked: icon, title, 70% text and a Complete profile link; no View all', () => {
   const html = renderRecommendations({ state: 'locked' });
@@ -1216,7 +1401,10 @@ test('US3 unlocked: three existing scholarship cards titled Latest scholarships,
 
 test('US3 unlocked: details links follow the flag, and the grid adapts to the column width', () => {
   const items = [discoveryCard(7)];
-  assert.doesNotMatch(renderRecommendations({ state: 'ready', items }), /href="\/student\/scholarships\/7"/);
+  assert.doesNotMatch(
+    renderRecommendations({ state: 'ready', items }),
+    /href="\/student\/scholarships\/7"/
+  );
   assert.match(
     renderRecommendations({ state: 'ready', items }, { detailsEnabled: true }),
     /href="\/student\/scholarships\/7"/
@@ -1224,7 +1412,8 @@ test('US3 unlocked: details links follow the flag, and the grid adapts to the co
   const html = renderRecommendations({ state: 'ready', items });
   assert.match(html, /@container/);
   assert.match(html, /@3xl:grid-cols-3/);
-  assert.match(html, /rtl:rotate-180/, 'the View all chevron mirrors in RTL');
+  assert.ok(html.includes('[&amp;:dir(rtl)]:rotate-180'), 'the View all chevron mirrors in RTL');
+  assert.doesNotMatch(html, /rtl:/, 'the bare rtl: variant also fires in LTR pages here');
 });
 
 test('US3 unlocked: loading, empty and error states keep the heading', () => {
@@ -1250,7 +1439,11 @@ test('US3 data source: the query is the Discovery default view and runs only whe
   assert.equal(defaultDiscoveryQuery.sort, 'newest');
   assert.equal(defaultDiscoveryQuery.page, 1);
   assert.deepEqual(
-    [defaultDiscoveryQuery.academicLevels, defaultDiscoveryQuery.fundingTypes, defaultDiscoveryQuery.countries],
+    [
+      defaultDiscoveryQuery.academicLevels,
+      defaultDiscoveryQuery.fundingTypes,
+      defaultDiscoveryQuery.countries,
+    ],
     [[], [], []]
   );
 });
@@ -1258,8 +1451,21 @@ test('US3 data source: the query is the Discovery default view and runs only whe
 test('US3 i18n: recommendations messages exist in both locales', () => {
   for (const locale of ['en', 'ar']) {
     const home = messages[locale].StudentHome.recommendations;
-    for (const key of ['title', 'latestTitle', 'viewAll', 'locked.title', 'locked.text', 'locked.cta', 'empty', 'error']) {
-      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+    for (const key of [
+      'title',
+      'latestTitle',
+      'viewAll',
+      'locked.title',
+      'locked.text',
+      'locked.cta',
+      'empty',
+      'error',
+    ]) {
+      assert.equal(
+        typeof key.split('.').reduce((value, part) => value?.[part], home),
+        'string',
+        `${locale} ${key}`
+      );
     }
   }
 });
@@ -1294,9 +1500,15 @@ test('US4 demo: listed sections render with a Demo data badge, and only those se
   assert.deepEqual(statOrder(html), ['notifications', 'saved', 'inProgress', 'upcoming']);
   assert.match(html, /lg:grid-cols-4/);
   assert.match(html, /Recent activity/);
-  assert.equal((html.match(/Demo data/g) ?? []).length, 2, 'one badge on the card, one on the section');
+  assert.equal(
+    (html.match(/Demo data/g) ?? []).length,
+    2,
+    'one badge on the card, one on the section'
+  );
 
-  const onlyActivity = withEnv({ NODE_ENV: 'development' }, () => renderHomePage({ mockSections: ['activity'] }));
+  const onlyActivity = withEnv({ NODE_ENV: 'development' }, () =>
+    renderHomePage({ mockSections: ['activity'] })
+  );
   assert.deepEqual(statOrder(onlyActivity), ['saved', 'inProgress', 'upcoming']);
   assert.equal((onlyActivity.match(/Demo data/g) ?? []).length, 1);
 
@@ -1351,7 +1563,10 @@ test('US4 activity rows: one localized sentence per type, relative time, no serv
   assert.match(html, /Fulbright Program[\s\S]{0,30}updated to[\s\S]{0,12}Applied/);
   assert.equal((html.match(/3 hours ago/g) ?? []).length, 4);
   assert.doesNotMatch(html, /SERVER SENTENCE/);
-  assert.ok(html.indexOf('New recommendation') < html.indexOf('You saved'), 'keeps the given (newest first) order');
+  assert.ok(
+    html.indexOf('New recommendation') < html.indexOf('You saved'),
+    'keeps the given (newest first) order'
+  );
 });
 
 test('US4 activity rows: Arabic sentences and plural forms, Latin digits, capped at four', () => {
@@ -1371,7 +1586,10 @@ test('US4 activity rows: Arabic sentences and plural forms, Latin digits, capped
   assert.doesNotMatch(html, /[٠-٩۰-۹]/);
   assert.equal((html.match(/<li\b/g) ?? []).length, 4);
   const status = renderActivity(
-    { state: 'ready', items: [activity(1, 'application_status_changed', { data: { newStatus: 'applied' } })] },
+    {
+      state: 'ready',
+      items: [activity(1, 'application_status_changed', { data: { newStatus: 'applied' } })],
+    },
     { locale: 'ar' }
   );
   assert.match(status, /تم التقديم/);
@@ -1392,7 +1610,10 @@ test('US4 activity states: empty, loading, error never look like each other', ()
   assert.doesNotMatch(error, /No activity yet/);
 
   // Before mount there is no "now", so the time is a skeleton rather than a guess.
-  const early = renderActivity({ state: 'ready', items: [activity(1, 'scholarship_saved')] }, { now: null });
+  const early = renderActivity(
+    { state: 'ready', items: [activity(1, 'scholarship_saved')] },
+    { now: null }
+  );
   assert.match(early, /data-skeleton="time"/);
   assert.doesNotMatch(early, /ago/);
 });
@@ -1442,7 +1663,11 @@ test('US4 i18n: notifications, activity and demo copy exist in both locales with
       'activity.status.rejected',
       'activity.status.closed',
     ]) {
-      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+      assert.equal(
+        typeof key.split('.').reduce((value, part) => value?.[part], home),
+        'string',
+        `${locale} ${key}`
+      );
     }
   }
 });
@@ -1450,12 +1675,29 @@ test('US4 i18n: notifications, activity and demo copy exist in both locales with
 // ----------------------------- Phase 7: shell (nav, header slot, bell) -------
 
 const nav = () => loadSrc('features/student/layout/student-navigation.ts');
-const ALL_ROUTES = ['/student', '/student/profile', '/student/scholarships', '/student/scholarships/12', '/student/saved'];
+const ALL_ROUTES = [
+  '/student',
+  '/student/profile',
+  '/student/scholarships',
+  '/student/scholarships/12',
+  '/student/saved',
+];
 
 test('shell nav: Home is the first Discover item and is active only on /student', () => {
-  const { studentNavigation, withSavedEnabled, withHomeEnabled, isStudentNavigationItemActive, getActiveStudentNavigationItem } = nav();
+  const {
+    studentNavigation,
+    withSavedEnabled,
+    withHomeEnabled,
+    isStudentNavigationItemActive,
+    getActiveStudentNavigationItem,
+  } = nav();
   assert.deepEqual(
-    [studentNavigation[0].id, studentNavigation[0].href, studentNavigation[0].group, studentNavigation[0].match],
+    [
+      studentNavigation[0].id,
+      studentNavigation[0].href,
+      studentNavigation[0].group,
+      studentNavigation[0].match,
+    ],
     ['home', '/student', 'discover', 'exact']
   );
   assert.equal(studentNavigation[0].enabled, false, 'off until the flag turns it on');
@@ -1478,19 +1720,32 @@ test('shell nav: Home is the first Discover item and is active only on /student'
 });
 
 test('shell nav: the flag shows or hides Home in the list and in the sections', () => {
-  const { studentNavigation, withSavedEnabled, withHomeEnabled, getVisibleStudentNavigation, getStudentNavigationSections } = nav();
+  const {
+    studentNavigation,
+    withSavedEnabled,
+    withHomeEnabled,
+    getVisibleStudentNavigation,
+    getStudentNavigationSections,
+  } = nav();
   const base = withSavedEnabled(studentNavigation, true);
 
   const off = withHomeEnabled(base, false);
-  assert.equal(getVisibleStudentNavigation(off).some((item) => item.id === 'home'), false);
+  assert.equal(
+    getVisibleStudentNavigation(off).some((item) => item.id === 'home'),
+    false
+  );
   assert.deepEqual(
-    getStudentNavigationSections(off).find((section) => section.id === 'discover').items.map((i) => i.id),
+    getStudentNavigationSections(off)
+      .find((section) => section.id === 'discover')
+      .items.map((i) => i.id),
     ['scholarships', 'saved']
   );
 
   const on = withHomeEnabled(base, true);
   assert.deepEqual(
-    getStudentNavigationSections(on).find((section) => section.id === 'discover').items.map((i) => i.id),
+    getStudentNavigationSections(on)
+      .find((section) => section.id === 'discover')
+      .items.map((i) => i.id),
     ['home', 'scholarships', 'saved']
   );
   assert.equal(messages.en.StudentLayout.nav.home, 'Home');
@@ -1547,7 +1802,10 @@ test('shell header: an action is rendered in the desktop group before the langua
   const html = renderHeader(h('span', { 'data-header-action': true }, 'X'));
   assert.equal((html.match(/data-header-action/g) ?? []).length, 1);
   const desktop = html.slice(html.indexOf('lg:flex'));
-  assert.ok(desktop.indexOf('data-header-action') < desktop.indexOf('<button'), 'before the language button');
+  assert.ok(
+    desktop.indexOf('data-header-action') < desktop.indexOf('<button'),
+    'before the language button'
+  );
   assert.doesNotMatch(html, /theme/i);
 });
 
@@ -1561,15 +1819,24 @@ test('shell bell: nothing without a source, an indicator with one, the same coun
   assert.match(none, /aria-label="No unread notifications"/);
   assert.doesNotMatch(none, /data-bell-dot/);
   assert.doesNotMatch(render(h(NotificationBell, { unreadCount: null })), /data-bell-dot/);
-  assert.match(render(h(NotificationBell, { unreadCount: 2 }), { locale: 'ar' }), /إشعاران غير مقروءان/);
-  assert.doesNotMatch(withCount, /<button\b|<a\b|href=/, 'no destination exists, so it is not a control');
+  assert.match(
+    render(h(NotificationBell, { unreadCount: 2 }), { locale: 'ar' }),
+    /إشعاران غير مقروءان/
+  );
+  assert.doesNotMatch(
+    withCount,
+    /<button\b|<a\b|href=/,
+    'no destination exists, so it is not a control'
+  );
 
   const { HomeNotificationBell } = loadHome('components/HomeNotificationBell.tsx');
   const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
   const bell = (mockSections, nodeEnv) =>
     withEnv({ NODE_ENV: nodeEnv }, () => {
       const client = new QueryClient();
-      const html = render(h(QueryClientProvider, { client }, h(HomeNotificationBell, { mockSections })));
+      const html = render(
+        h(QueryClientProvider, { client }, h(HomeNotificationBell, { mockSections }))
+      );
       client.clear();
       return html;
     });
@@ -1603,4 +1870,268 @@ test('shell i18n: the bell label and the Home nav label exist in both locales', 
     assert.equal(typeof messages[locale].StudentLayout.nav.home, 'string');
     assert.equal(typeof messages[locale].StudentHome.bell.label, 'string');
   }
+});
+
+// ----------------------------- Phase 8: i18n + RTL ---------------------------
+
+const homeComponentFiles = () => walk(path.join(homePath, 'components'));
+
+function pluralNodes(ast) {
+  return ast.flatMap((node) =>
+    node.options
+      ? [
+          ...(node.pluralType ? [node] : []),
+          ...Object.values(node.options).flatMap((option) => pluralNodes(option.value)),
+        ]
+      : []
+  );
+}
+
+test('i18n: every Home message is valid ICU, formats in both locales and never uses #', () => {
+  const values = {
+    name: 'Lina',
+    date: 'October 24, 2026',
+    percent: 70,
+    count: 3,
+    days: 3,
+    title: 'T',
+    status: 'S',
+  };
+  const entries = (locale) => [
+    ...flatten(messages[locale].StudentHome).map(([key, value]) => [`StudentHome.${key}`, value]),
+    ...flatten(messages[locale].StudentLayout.pages.home).map(([key, value]) => [
+      `StudentLayout.pages.home.${key}`,
+      value,
+    ]),
+    ['StudentLayout.nav.home', messages[locale].StudentLayout.nav.home],
+  ];
+  for (const locale of ['en', 'ar']) {
+    for (const [key, value] of entries(locale)) {
+      assert.equal(typeof value, 'string', `${locale} ${key}`);
+      assert.ok(value.trim(), `${locale} ${key} is empty`);
+      assert.doesNotMatch(value, /#/, `${locale} ${key} uses # (not pinned to Latin digits)`);
+      const formatted = new IntlMessageFormat(value, locale, intlFormats).format(values);
+      assert.equal(typeof formatted, 'string', `${locale} ${key}`);
+      assert.doesNotMatch(
+        formatted,
+        /[\u0660-\u0669\u06F0-\u06F9]/,
+        `${locale} ${key} has non-Latin digits`
+      );
+    }
+  }
+  const en = entries('en')
+    .map(([key]) => key)
+    .sort();
+  const ar = entries('ar')
+    .map(([key]) => key)
+    .sort();
+  assert.deepEqual(ar, en);
+});
+
+test('i18n: Home plural messages define every category their locale needs', () => {
+  const required = { ar: ['one', 'two', 'few', 'many', 'other'], en: ['one', 'other'] };
+  let checked = 0;
+  for (const locale of ['en', 'ar']) {
+    for (const [key, message] of flatten(messages[locale].StudentHome)) {
+      for (const node of pluralNodes(
+        new IntlMessageFormat(message, locale, intlFormats).getAst()
+      )) {
+        const options = Object.keys(node.options);
+        for (const category of required[locale]) {
+          assert.ok(options.includes(category), `${locale} StudentHome.${key} lacks "${category}"`);
+        }
+        assert.ok(
+          options.includes('=0') || options.includes('zero'),
+          `${locale} StudentHome.${key} lacks a zero case`
+        );
+        checked += 1;
+      }
+    }
+  }
+  assert.ok(checked >= 6, `expected the plural messages to be checked, saw ${checked}`);
+});
+
+test('i18n: Arabic plural forms render correctly for 0, 1, 2, 3, 11 and 100', () => {
+  const format = (key, count) => {
+    const message = key.split('.').reduce((value, part) => value[part], messages.ar.StudentHome);
+    return new IntlMessageFormat(message, 'ar', intlFormats).format({
+      count,
+      days: count,
+      title: 'فولبرايت',
+    });
+  };
+  assert.equal(format('deadlines.daysLeft', 0), 'ينتهي اليوم');
+  assert.equal(format('deadlines.daysLeft', 1), 'باقي يوم واحد');
+  assert.equal(format('deadlines.daysLeft', 2), 'باقي يومان');
+  assert.equal(format('deadlines.daysLeft', 3), 'باقي 3 أيام');
+  assert.equal(format('deadlines.daysLeft', 11), 'باقي 11 يومًا');
+  assert.equal(format('deadlines.daysLeft', 100), 'باقي 100 يوم');
+  assert.equal(format('bell.label', 0), 'لا توجد إشعارات غير مقروءة');
+  assert.equal(format('bell.label', 1), 'إشعار واحد غير مقروء');
+  assert.equal(format('bell.label', 2), 'إشعاران غير مقروءان');
+  assert.equal(format('bell.label', 3), '3 إشعارات غير مقروءة');
+  assert.equal(format('bell.label', 11), '11 إشعارًا غير مقروء');
+  assert.equal(format('bell.label', 100), '100 إشعار غير مقروء');
+  assert.equal(format('activity.types.deadline_reminder', 2), 'تبقّى يومان على موعد فولبرايت');
+  assert.equal(format('activity.types.deadline_reminder', 0), 'موعد فولبرايت اليوم');
+});
+
+test('i18n: every literal translation key used by Home exists in both locales', () => {
+  const files = [...homeComponentFiles()];
+  const missing = [];
+  let checked = 0;
+  for (const file of files) {
+    const source = read(file);
+    const namespaces = Object.fromEntries(
+      [...source.matchAll(/const\s+(\w+)\s*=\s*useTranslations\(\s*'(\w+)'\s*\)/g)].map((m) => [
+        m[1],
+        m[2],
+      ])
+    );
+    for (const [variable, namespace] of Object.entries(namespaces)) {
+      const calls = source.matchAll(new RegExp(`\\b${variable}\\(\\s*(['\`])([^'\`]+)\\1`, 'g'));
+      for (const [, , key] of calls) {
+        if (key.includes('${')) continue; // dynamic keys are covered below
+        for (const locale of ['en', 'ar']) {
+          const found = `${namespace}.${key}`
+            .split('.')
+            .reduce((value, part) => value?.[part], messages[locale]);
+          checked += 1;
+          if (typeof found !== 'string')
+            missing.push(`${locale} ${namespace}.${key} (${rel(file)})`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(missing, []);
+  assert.ok(checked > 40, `expected many keys to be checked, saw ${checked}`);
+
+  // Dynamic key families: one message per member.
+  for (const locale of ['en', 'ar']) {
+    const home = messages[locale].StudentHome;
+    for (const id of ['notifications', 'saved', 'inProgress', 'upcoming'])
+      assert.equal(typeof home.stats[id], 'string');
+    for (const type of [
+      'new_recommendation',
+      'deadline_reminder',
+      'scholarship_saved',
+      'application_status_changed',
+    ]) {
+      assert.equal(typeof home.activity.types[type], 'string', `${locale} activity.types.${type}`);
+    }
+    for (const status of [
+      'preparing_documents',
+      'ready_to_apply',
+      'applied',
+      'accepted',
+      'rejected',
+      'closed',
+    ]) {
+      assert.equal(
+        typeof home.activity.status[status],
+        'string',
+        `${locale} activity.status.${status}`
+      );
+    }
+  }
+});
+
+test('RTL: Home components use logical properties only and mirror directional icons', () => {
+  const physical = [
+    /\b(?:ml|mr|pl|pr)-\S/,
+    /\b(?:left|right)-\S/,
+    /\btext-(?:left|right)\b/,
+    /\brounded-(?:l|r|tl|tr|bl|br)(?:-|\b)/,
+    /\bborder-(?:l|r)(?:-|\b)/,
+    /\bfloat-(?:left|right)\b/,
+    /\bspace-x-/,
+  ];
+  const offenders = [];
+  for (const file of [...homeComponentFiles()]) {
+    const source = read(file);
+    for (const line of source.split('\n')) {
+      if (
+        !/className|class=|`[^`]*\b(?:flex|grid|px|py|text)-/.test(line) &&
+        !/^\s*['"`][\w:\[\]\-./ ]+['"`],?$/.test(line)
+      )
+        continue;
+      for (const pattern of physical) {
+        if (pattern.test(line)) offenders.push(`${rel(file)}: ${line.trim()}`);
+      }
+    }
+    // A chevron or arrow must flip with the writing direction.
+    if (
+      /\b(?:ChevronRight|ChevronLeft|ArrowRight|ArrowLeft)\b/.test(
+        source.replace(/import[^;]+;/g, '')
+      )
+    ) {
+      assert.ok(
+        source.includes('[&:dir(rtl)]:rotate-180'),
+        `${rel(file)} has a directional icon without a :dir(rtl) flip`
+      );
+    }
+  }
+  assert.deepEqual(offenders, []);
+});
+
+// Tailwind's `rtl:` variant also matches `[dir=rtl] *`, and this app's root <html> is always
+// dir=rtl (the locale wrapper div sets the real direction), so `rtl:` fires on English pages
+// too. `:dir(rtl)` follows the element's actual direction.
+test('RTL: Home never uses the bare rtl: variant, which also fires on English pages', () => {
+  const offenders = [...homeComponentFiles()]
+    .filter((file) => /(^|[\s'"`])rtl:/.test(read(file)))
+    .map(rel);
+  assert.deepEqual(offenders, []);
+});
+
+test('overflow: no wide fixed widths, no viewport-wide boxes, and text containers can shrink', () => {
+  const offenders = [];
+  for (const file of [...homeComponentFiles()]) {
+    const source = read(file);
+    for (const [, value] of source.matchAll(/\b(?:w|min-w|max-w)-\[(\d+)px\]/g)) {
+      if (Number(value) > 360) offenders.push(`${rel(file)}: ${value}px`);
+    }
+    if (/\bw-screen\b|\bmin-w-screen\b/.test(source)) offenders.push(`${rel(file)}: w-screen`);
+  }
+  assert.deepEqual(offenders, []);
+  const page = read(path.join(homePath, 'components/StudentHomePage.tsx'));
+  assert.match(page, /min-w-0/);
+  assert.match(page, /minmax\(0,1fr\)/, 'the page grid columns can shrink');
+  for (const name of [
+    'WelcomeCard',
+    'DeadlineRow',
+    'ActivityRow',
+    'StatCard',
+    'LatestRecommendations',
+    'HomeSectionCard',
+  ]) {
+    assert.match(
+      read(path.join(homePath, `components/${name}.tsx`)),
+      /min-w-0/,
+      `${name} lets text shrink`
+    );
+  }
+});
+
+test('numerals: the whole page renders Latin digits in Arabic', () => {
+  const html = withEnv({ NODE_ENV: 'development' }, () =>
+    renderHomePage({ mockSections: ['notifications', 'activity'] }, 'ar')
+  );
+  assert.doesNotMatch(html, /[\u0660-\u0669\u06F0-\u06F9]/);
+  const { NotificationBell } = loadHome('components/NotificationBell.tsx');
+  assert.doesNotMatch(
+    render(h(NotificationBell, { unreadCount: 12 }), { locale: 'ar' }),
+    /[\u0660-\u0669\u06F0-\u06F9]/
+  );
+  const stats = renderStats({ saved: ready(1234), notifications: ready(10) }, 'ar');
+  assert.doesNotMatch(stats, /[\u0660-\u0669\u06F0-\u06F9]/);
+  assert.match(stats, />1234</);
+});
+
+test('direction: the Arabic page declares nothing that forces left-to-right layout', () => {
+  const html = withEnv({ NODE_ENV: 'development' }, () =>
+    renderHomePage({ mockSections: ['notifications', 'activity'] }, 'ar')
+  );
+  assert.doesNotMatch(html, /dir="ltr"/);
+  assert.doesNotMatch(html, /style="[^"]*(?:margin|padding)-(?:left|right)/);
 });

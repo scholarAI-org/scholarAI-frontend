@@ -8,7 +8,7 @@ export function DemoDataBadge() {
   return (
     <span
       data-demo
-      className="inline-flex h-5 shrink-0 items-center rounded-full bg-amber-50 px-2 text-[10px] font-medium text-amber-700"
+      className="inline-flex h-5 w-fit shrink-0 items-center rounded-full bg-amber-50 px-2 text-[10px] font-medium text-amber-700"
     >
       {t('demoBadge')}
     </span>

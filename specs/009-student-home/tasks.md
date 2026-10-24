@@ -205,14 +205,14 @@ Commit: `feat(student-home): add notifications and activity sections with gated 
 
 ### Tests first
 
-- [ ] T061 [P] Section "i18n full": `StudentHome` and every new `StudentLayout` key (`nav.home`, `pages.home.*`, bell label) have identical key sets in `en.json`/`ar.json`; every message is non-empty, valid ICU and formats in its locale; every plural message defines the categories its locale needs (`en`: `one`, `other`; `ar`: `zero`/`=0`, `one`, `two`, `few`, `many`, `other`) and renders the expected Arabic forms for 0, 1, 2, 3, 11, 100; no message uses `#`; every literal `t('…')` key used under `src/features/student/home/**` and the bell exists in `en.json`.
-- [ ] T062 [P] Section "RTL/overflow static audit": no Home component or the bell contains physical-direction classes (`\b(ml|mr|pl|pr|left|right)-`, `text-left`, `text-right`, `rounded-(l|r)`, `border-(l|r)`, `float-(left|right)`); directional icons (chevrons/arrows) carry `rtl:rotate-180` or use logical icons; every flex child that holds user text has `min-w-0` or `truncate`/`line-clamp`; no fixed pixel widths above 360px on Home components (guard against horizontal scroll); the page root has no `w-screen`.
-- [ ] T063 [P] Section "numerals": rendering the deadlines, stats, activity and welcome date in `ar` produces no characters in `[٠-٩۰-۹]`.
+- [x] T061 [P] Section "i18n full": `StudentHome` and every new `StudentLayout` key (`nav.home`, `pages.home.*`, bell label) have identical key sets in `en.json`/`ar.json`; every message is non-empty, valid ICU and formats in its locale; every plural message defines the categories its locale needs (`en`: `one`, `other`; `ar`: `zero`/`=0`, `one`, `two`, `few`, `many`, `other`) and renders the expected Arabic forms for 0, 1, 2, 3, 11, 100; no message uses `#`; every literal `t('…')` key used under `src/features/student/home/**` and the bell exists in `en.json`.
+- [x] T062 [P] Section "RTL/overflow static audit": no Home component or the bell contains physical-direction classes (`\b(ml|mr|pl|pr|left|right)-`, `text-left`, `text-right`, `rounded-(l|r)`, `border-(l|r)`, `float-(left|right)`); directional icons (chevrons/arrows) carry `rtl:rotate-180` or use logical icons; every flex child that holds user text has `min-w-0` or `truncate`/`line-clamp`; no fixed pixel widths above 360px on Home components (guard against horizontal scroll); the page root has no `w-screen`.
+- [x] T063 [P] Section "numerals": rendering the deadlines, stats, activity and welcome date in `ar` produces no characters in `[٠-٩۰-۹]`.
 
 ### Implementation
 
-- [ ] T064 Fix every finding from T061–T063 (missing keys, plural categories, physical classes, missing `min-w-0`, `rtl:` mirrors).
-- [ ] T065 Run the dev server and check `/ar/student` and `/en/student` at 1024, 1280 and 1440 px for horizontal scroll and mirroring using the available browser tooling; record the results (or "not run: no browser/credentials") in verification.md. Commit the phase.
+- [x] T064 Fix every finding from T061–T063 (missing keys, plural categories, physical classes, missing `min-w-0`, `rtl:` mirrors).
+- [x] T065 Run the dev server and check `/ar/student` and `/en/student` at 1024, 1280 and 1440 px for horizontal scroll and mirroring using the available browser tooling; record the results (or "not run: no browser/credentials") in verification.md. Commit the phase.
 
 ---
 

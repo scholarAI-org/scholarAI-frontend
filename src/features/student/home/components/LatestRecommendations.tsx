@@ -51,7 +51,8 @@ export function LatestRecommendations({ view, detailsEnabled, today }: LatestRec
             className="inline-flex shrink-0 items-center gap-1 text-sm text-orange-500 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
           >
             {t('recommendations.viewAll')}
-            <ChevronRight aria-hidden className="size-4 rtl:rotate-180" />
+            {/* :dir(rtl) follows the real direction; Tailwind's rtl variant also matches the always-rtl root <html>. */}
+            <ChevronRight aria-hidden className="size-4 [&:dir(rtl)]:rotate-180" />
           </Link>
         ) : null}
       </div>
