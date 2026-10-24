@@ -1310,6 +1310,7 @@
       "personal": "Personal"
     },
     "nav": {
+      "home": "Home",
       "profile": "Profile",
       "scholarships": "Search scholarships",
       "saved": "Saved"
@@ -1589,6 +1590,9 @@
         "rejected": "Rejected",
         "closed": "Closed"
       }
+    },
+    "bell": {
+      "label": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
     }
   }
 }

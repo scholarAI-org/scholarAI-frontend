@@ -1,6 +1,6 @@
 'use client';
 
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
@@ -15,12 +15,15 @@ interface StudentHeaderProps {
   isNavigationOpen: boolean;
   onNavigationToggle: () => void;
   menuButtonRef: RefObject<HTMLButtonElement | null>;
+  // Extra controls before the language button (desktop). Nothing renders when empty.
+  headerActions?: ReactNode;
 }
 
 export function StudentHeader({
   isNavigationOpen,
   onNavigationToggle,
   menuButtonRef,
+  headerActions,
 }: StudentHeaderProps) {
   const t = useTranslations('StudentLayout');
   const locale = useLocale();
@@ -106,6 +109,7 @@ export function StudentHeader({
 
         {/* lg: Figma 2262:3341 - the language circle beside the title, then the user chip. */}
         <div className="hidden items-center gap-2 lg:flex">
+          {headerActions}
           {languageButton}
           <div className="flex min-w-0 items-center gap-2 rounded-full border border-gray-300 p-2">
             <span

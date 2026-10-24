@@ -1297,6 +1297,7 @@
       "personal": "شخصي"
     },
     "nav": {
+      "home": "الرئيسية",
       "profile": "الملف الشخصي",
       "scholarships": "البحث عن منح",
       "saved": "المحفوظات"
@@ -1576,6 +1577,9 @@
         "rejected": "مرفوض",
         "closed": "مغلق"
       }
+    },
+    "bell": {
+      "label": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءان} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعارًا غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
     }
   }
 }

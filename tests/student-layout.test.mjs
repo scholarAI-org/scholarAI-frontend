@@ -137,10 +137,11 @@ test('Arabic plurals render the expected forms', () => {
 
 // --- Navigation --------------------------------------------------------------
 
-test('navigation config has Profile, Search Scholarships, and Saved', () => {
+test('navigation config has Home, Profile, Search Scholarships, and Saved', () => {
   assert.deepEqual(
     studentNavigation.map(({ id, href, group }) => [id, href, group]),
     [
+      ['home', '/student', 'discover'],
       ['scholarships', '/student/scholarships', 'discover'],
       ['saved', '/student/saved', 'discover'],
       ['profile', '/student/profile', 'personal'],
@@ -205,7 +206,7 @@ test('active navigation item resolves by section', () => {
   assert.equal(getActiveStudentNavigationItem('/student/scholarships'), 'scholarships');
   assert.equal(getActiveStudentNavigationItem('/student/scholarships/12'), 'scholarships');
   assert.equal(getActiveStudentNavigationItem('/student/profiles'), null);
-  assert.equal(getActiveStudentNavigationItem('/student'), null);
+  assert.equal(getActiveStudentNavigationItem('/student'), 'home');
   assert.equal(getActiveStudentNavigationItem('/admin/dashboard'), null);
 });
 

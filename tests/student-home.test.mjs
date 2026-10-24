@@ -80,6 +80,7 @@ const imageStub = {
     React.createElement('img', { src: typeof src === 'string' ? src : '', alt, width, height, className }),
 };
 const authStub = { useAuth: () => ({ user: env.user }) };
+const logoutStub = { useLogout: () => ({ mutate() {}, isPending: false }) };
 
 const originalLoad = Module._load;
 Module._load = function (request, parent, ...rest) {
@@ -87,6 +88,7 @@ Module._load = function (request, parent, ...rest) {
   if (request === '@/i18n/navigation') return navigationStub;
   if (request === 'next/image') return imageStub;
   if (request === '@/features/auth/providers/AuthProvider') return authStub;
+  if (request === '@/features/auth/hooks/useLogout') return logoutStub;
   return originalLoad.call(this, request, parent, ...rest);
 };
 
@@ -1442,5 +1444,163 @@ test('US4 i18n: notifications, activity and demo copy exist in both locales with
     ]) {
       assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
     }
+  }
+});
+
+// ----------------------------- Phase 7: shell (nav, header slot, bell) -------
+
+const nav = () => loadSrc('features/student/layout/student-navigation.ts');
+const ALL_ROUTES = ['/student', '/student/profile', '/student/scholarships', '/student/scholarships/12', '/student/saved'];
+
+test('shell nav: Home is the first Discover item and is active only on /student', () => {
+  const { studentNavigation, withSavedEnabled, withHomeEnabled, isStudentNavigationItemActive, getActiveStudentNavigationItem } = nav();
+  assert.deepEqual(
+    [studentNavigation[0].id, studentNavigation[0].href, studentNavigation[0].group, studentNavigation[0].match],
+    ['home', '/student', 'discover', 'exact']
+  );
+  assert.equal(studentNavigation[0].enabled, false, 'off until the flag turns it on');
+
+  const home = studentNavigation[0];
+  assert.equal(isStudentNavigationItemActive(home, '/student'), true);
+  for (const route of ALL_ROUTES.slice(1)) {
+    assert.equal(isStudentNavigationItemActive(home, route), false, route);
+  }
+  // Exactly one item is active on every student route.
+  const enabled = withHomeEnabled(withSavedEnabled(studentNavigation, true), true);
+  for (const route of ALL_ROUTES) {
+    const active = enabled.filter((item) => isStudentNavigationItemActive(item, route));
+    assert.equal(active.length, 1, `${route} activates ${active.map((i) => i.id)}`);
+  }
+  assert.equal(getActiveStudentNavigationItem('/student'), 'home');
+  assert.equal(getActiveStudentNavigationItem('/student/profile'), 'profile');
+  assert.equal(getActiveStudentNavigationItem('/student/scholarships/12'), 'scholarships');
+  assert.equal(getActiveStudentNavigationItem('/student/saved'), 'saved');
+});
+
+test('shell nav: the flag shows or hides Home in the list and in the sections', () => {
+  const { studentNavigation, withSavedEnabled, withHomeEnabled, getVisibleStudentNavigation, getStudentNavigationSections } = nav();
+  const base = withSavedEnabled(studentNavigation, true);
+
+  const off = withHomeEnabled(base, false);
+  assert.equal(getVisibleStudentNavigation(off).some((item) => item.id === 'home'), false);
+  assert.deepEqual(
+    getStudentNavigationSections(off).find((section) => section.id === 'discover').items.map((i) => i.id),
+    ['scholarships', 'saved']
+  );
+
+  const on = withHomeEnabled(base, true);
+  assert.deepEqual(
+    getStudentNavigationSections(on).find((section) => section.id === 'discover').items.map((i) => i.id),
+    ['home', 'scholarships', 'saved']
+  );
+  assert.equal(messages.en.StudentLayout.nav.home, 'Home');
+  assert.equal(messages.ar.StudentLayout.nav.home, 'الرئيسية');
+});
+
+test('shell nav: the sidebar marks Home as the current page on /student only', () => {
+  const { StudentSidebar } = loadSrc('features/student/layout/StudentSidebar.tsx');
+  const { studentNavigation, withSavedEnabled, withHomeEnabled } = nav();
+  const items = withHomeEnabled(withSavedEnabled(studentNavigation, true), true);
+  const sidebar = (pathname) => {
+    env.pathname = pathname;
+    env.user = { name: 'Ahmad Hajjar', email: 'a@x.test' };
+    return render(h(StudentSidebar, { items }));
+  };
+  const onHome = sidebar('/student');
+  assert.equal((onHome.match(/aria-current="page"/g) ?? []).length, 1);
+  assert.match(onHome, /<a\b[^>]*href="\/student"[^>]*aria-current="page"/);
+  const onProfile = sidebar('/student/profile');
+  assert.equal((onProfile.match(/aria-current="page"/g) ?? []).length, 1);
+  assert.doesNotMatch(onProfile, /<a\b[^>]*href="\/student"[^>]*aria-current="page"/);
+  assert.match(onProfile, /<a\b[^>]*href="\/student\/profile"[^>]*aria-current="page"/);
+  env.pathname = '/student';
+});
+
+const renderHeader = (headerActions, { pathname = '/student', locale = 'en' } = {}) => {
+  const { StudentHeader } = loadSrc('features/student/layout/StudentHeader.tsx');
+  env.pathname = pathname;
+  env.user = { name: 'Ahmad Hajjar', email: 'a@x.test' };
+  return render(
+    h(StudentHeader, {
+      isNavigationOpen: false,
+      onNavigationToggle: noop,
+      menuButtonRef: { current: null },
+      headerActions,
+    }),
+    { locale }
+  );
+};
+
+test('shell header: with no actions the header is unchanged and has no placeholder controls', () => {
+  const plain = renderHeader(undefined);
+  assert.equal(renderHeader(null), plain);
+  assert.equal(renderHeader(false), plain);
+  // Menu button + the language button in the mobile and the desktop bar.
+  assert.equal((plain.match(/<button\b/g) ?? []).length, 3);
+  assert.doesNotMatch(plain, /aria-disabled/);
+  assert.doesNotMatch(plain, /\bdisabled\b/);
+  assert.doesNotMatch(plain, /theme/i);
+  assert.doesNotMatch(plain, /data-header-action/);
+});
+
+test('shell header: an action is rendered in the desktop group before the language button', () => {
+  const html = renderHeader(h('span', { 'data-header-action': true }, 'X'));
+  assert.equal((html.match(/data-header-action/g) ?? []).length, 1);
+  const desktop = html.slice(html.indexOf('lg:flex'));
+  assert.ok(desktop.indexOf('data-header-action') < desktop.indexOf('<button'), 'before the language button');
+  assert.doesNotMatch(html, /theme/i);
+});
+
+test('shell bell: nothing without a source, an indicator with one, the same count as the stat card', () => {
+  const { NotificationBell } = loadHome('components/NotificationBell.tsx');
+  assert.match(render(h(NotificationBell, { unreadCount: 2 })), /role="img"/);
+  const withCount = render(h(NotificationBell, { unreadCount: 2 }));
+  assert.match(withCount, /aria-label="2 unread notifications"/);
+  assert.match(withCount, /data-bell-dot/);
+  const none = render(h(NotificationBell, { unreadCount: 0 }));
+  assert.match(none, /aria-label="No unread notifications"/);
+  assert.doesNotMatch(none, /data-bell-dot/);
+  assert.doesNotMatch(render(h(NotificationBell, { unreadCount: null })), /data-bell-dot/);
+  assert.match(render(h(NotificationBell, { unreadCount: 2 }), { locale: 'ar' }), /إشعاران غير مقروءان/);
+  assert.doesNotMatch(withCount, /<button\b|<a\b|href=/, 'no destination exists, so it is not a control');
+
+  const { HomeNotificationBell } = loadHome('components/HomeNotificationBell.tsx');
+  const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+  const bell = (mockSections, nodeEnv) =>
+    withEnv({ NODE_ENV: nodeEnv }, () => {
+      const client = new QueryClient();
+      const html = render(h(QueryClientProvider, { client }, h(HomeNotificationBell, { mockSections })));
+      client.clear();
+      return html;
+    });
+  assert.equal(bell([], 'development'), '', 'unavailable source: renders nothing at all');
+  assert.equal(bell(['notifications'], 'production'), '', 'production ignores the demo list');
+  assert.match(bell(['notifications'], 'development'), /role="img"/);
+
+  // Same source query as the stat card, so both always show one number.
+  const bellSource = read(path.join(homePath, 'components/HomeNotificationBell.tsx'));
+  const pageSource = read(path.join(homePath, 'components/StudentHomePage.tsx'));
+  assert.match(bellSource, /useHomeSourceQuery\(\s*'notifications'/);
+  assert.match(pageSource, /useHomeSourceQuery\(\s*'notifications'/);
+});
+
+test('shell layout: the route layout wires the flag and the bell without Home data in the shell', () => {
+  const layout = read(path.join(srcPath, 'app/[locale]/student/layout.tsx'));
+  assert.doesNotMatch(layout, /^['"]use client['"]/m);
+  assert.match(layout, /featureFlags\.studentHomeEnabled/);
+  assert.match(layout, /resolveHomeMockSections\(process\.env\)/);
+  assert.match(layout, /<HomeNotificationBell/);
+  assert.match(layout, /homeEnabled/);
+  assert.match(layout, /headerActions:/);
+  assert.match(layout, /<StudentShell {...shellProps}>/);
+  // The shared shell stays generic.
+  const shell = read(path.join(srcPath, 'features/student/layout/StudentShell.tsx'));
+  assert.doesNotMatch(shell, /HomeNotificationBell|features\/student\/home/);
+});
+
+test('shell i18n: the bell label and the Home nav label exist in both locales', () => {
+  for (const locale of ['en', 'ar']) {
+    assert.equal(typeof messages[locale].StudentLayout.nav.home, 'string');
+    assert.equal(typeof messages[locale].StudentHome.bell.label, 'string');
   }
 });
