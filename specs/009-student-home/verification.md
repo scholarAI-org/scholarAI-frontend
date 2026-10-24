@@ -1,0 +1,81 @@
+# Verification: 009 Student Home
+
+**Status**: planned (nothing implemented yet). Filled in during `/speckit.implement` and Gate 2.
+
+## Gates
+
+| Gate                      | Meaning                         | Exit criteria                                                                                                                                        |
+| ------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gate 1: frontend complete | Built and tested locally        | All automated checks green except the baseline failures below; quickstart S1–S14 pass locally; pre-launch checklist §3 ticked for the "hidden" path. |
+| Gate 2: live verification | Staging backend, Preview deploy | Quickstart S1–S9, S12–S13 pass against staging in ar and en; `/api/scholarships/tracked` confirmed deployed; completion scale confirmed 0–100.       |
+| Launch                    | Production                      | `STUDENT_HOME_ENABLED=true` set in Production (Q3-A) only after Gate 2 and §3 sign-off.                                                              |
+
+## 1. Automated test matrix (`tests/student-home.test.mjs`)
+
+| Area                        | Cases                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Spec           |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| **Counts**                  | in-progress counts only `preparing_documents`/`ready_to_apply`/`applied`; empty → 0; an unknown status → contract error                                                                                                                                                                                                                                                                                                                               | FR-015         |
+| **Deadline window**         | 0 (today), 1, 30 included; 31 and past excluded; `no_deadline` excluded; null/invalid date excluded; a date-time string normalized                                                                                                                                                                                                                                                                                                                    | FR-021, FR-022 |
+| **Urgency**                 | 0, 7 → urgent; 8, 14 → soon; 15, 30 → comfortable                                                                                                                                                                                                                                                                                                                                                                                                     | FR-024         |
+| **Ordering**                | ascending by days; ties by id; top 3 of 5; fewer than 3 → no padding                                                                                                                                                                                                                                                                                                                                                                                  | FR-025         |
+| **Duplicates**              | saved+tracked same id counts once, `origin: 'both'`; saved fields win                                                                                                                                                                                                                                                                                                                                                                                 | FR-020         |
+| **Terminal tracked** (Q5-A) | accepted/rejected/closed tracked items excluded unless also saved                                                                                                                                                                                                                                                                                                                                                                                     | FR-020         |
+| **Timezone**                | same `now` instant evaluated with `TZ=UTC` and `TZ=Asia/Gaza` around local midnight → each counts against its own local day; a deadline string is never shifted                                                                                                                                                                                                                                                                                       | Edge cases     |
+| **Today/midnight**          | `msUntilNextLocalMidnight` across DST and month/year ends                                                                                                                                                                                                                                                                                                                                                                                             | FR-010         |
+| **Relative time**           | each bucket; future timestamp → "just now"; ar output has Latin digits                                                                                                                                                                                                                                                                                                                                                                                | FR-028         |
+| **Identity**                | `firstName` for "Ahmad Hajjar", " أحمد الحجار ", "", null                                                                                                                                                                                                                                                                                                                                                                                             | FR-009         |
+| **Completion**              | 69.6 locked, 70 unlocked, 100, missing → 0, 404 → 0, `"80"` → contract error, 120 → display 100                                                                                                                                                                                                                                                                                                                                                       | FR-012, FR-031 |
+| **Schemas = mocks**         | every mock payload parses with its schema; schemas reject documented bad shapes; unknown activity `type` skipped                                                                                                                                                                                                                                                                                                                                      | FR-038         |
+| **Mock guard (FR-040)**     | resolver returns `[]` for: `NODE_ENV=production`; `VERCEL_ENV=production`; `VERCEL_ENV=preview`; flag unset; flag blank; drops unknown names. The factory under `NODE_ENV=production` yields no `mock` kind even with all sections listed. **Static scan**: only `sources/create-home-sources.ts` references `home/mocks`, only via `import()`; `resolve-mock-sections.ts` is imported only by `app/**` server files; no `NEXT_PUBLIC_HOME` anywhere. | FR-038, FR-040 |
+| **Flag** (Q3-A)             | `STUDENT_HOME_ENABLED` default off, only literal `"true"`, no `NEXT_PUBLIC_`                                                                                                                                                                                                                                                                                                                                                                          | FR-003         |
+| **Rendering: empty**        | deadlines empty state with a search link; activity empty state; saved/in-progress show `0`                                                                                                                                                                                                                                                                                                                                                            | FR-027, FR-030 |
+| **Rendering: error**        | a section error shows `role="alert"` + Retry; Retry calls refetch only on failed queries (spy); a contract error renders error, not empty                                                                                                                                                                                                                                                                                                             | FR-035, FR-037 |
+| **Rendering: hidden**       | sources `unavailable` → no notifications card, no activity section, no bell, no "Demo data" text                                                                                                                                                                                                                                                                                                                                                      | FR-017, FR-030 |
+| **Rendering: demo**         | source `mock` → "Demo data" badge in that section only                                                                                                                                                                                                                                                                                                                                                                                                | FR-039         |
+| **i18n parity**             | `StudentHome` + new `StudentLayout` keys identical in ar/en; every message valid ICU; Arabic plurals have every category; no `#`                                                                                                                                                                                                                                                                                                                      | FR-041         |
+| **Navigation** (Q2-A)       | `home` active only on `/student`; exactly one active item on every student route; page key `home`                                                                                                                                                                                                                                                                                                                                                     | FR-004         |
+| **Import guard**            | `src/` does not import `tests/`, `scripts/` or fixtures (existing guard still passes)                                                                                                                                                                                                                                                                                                                                                                 | project rule   |
+
+## 2. Manual checks
+
+Quickstart S1–S14 in **ar and en** at 1024, 1280 and 1440 px: no horizontal scroll, RTL mirroring, keyboard focus order (header → welcome → stats → recommendations → deadlines → activity in reading order), screen-reader names for the bell, the progress bar and the badges.
+
+## 3. Pre-launch checklist: mocked sections (must be complete before Production)
+
+Each section on demo data must be either **wired to its real API** or **confirmed hidden** in the build being launched.
+
+| Section                                        | Real API wired? (`HOME_API_AVAILABILITY` = true, contract verified live) | Or confirmed hidden in Production build | Verified by / date |
+| ---------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------- | ------------------ |
+| Unread notifications (stat card + header bell) | ☐ BE-09 shipped                                                          | ☐ hidden                                |                    |
+| Recent activity                                | ☐ BE-09 shipped                                                          | ☐ hidden                                |                    |
+| Recommendations, unlocked (Q1-B only)          | ☐ BL-04 shipped                                                          | ☐ hidden / n/a under Q1-A or C          |                    |
+
+Also confirm, for the Production deployment:
+
+- ☐ `HOME_MOCK_SECTIONS` is **not set** in Vercel Production **and** Preview (Project → Settings → Environment Variables).
+- ☐ No committed `.env*` file sets `HOME_MOCK_SECTIONS`.
+- ☐ `pnpm build` output: no chunk contains mock fixture strings (grep the `.next/static` folder for a unique mock marker, e.g. `__HOME_MOCK__`).
+- ☐ The production build manually opened with the flag set shows no "Demo data" badge (quickstart S11).
+- ☐ `node --test tests/student-home.test.mjs` passes, including the mock guard tests.
+
+## 4. Follow-ups (outside this feature)
+
+- Make Home the students' post-login landing (`ROLE_HOME.student`), which needs an auth change and approval.
+- Replace `home/schemas/tracked-application.schema.ts` and `studentHomeKeys.tracked()` with the Tracking feature's type and key after it merges.
+- Mobile layout (separate feature).
+- Remove the Q1-A "Latest scholarships" fallback when BL-04 ships.
+
+## Baseline (pre-existing, not fixed here)
+
+Measured 2026-10-24 on this branch before any code change (code identical to `main` `18c1453`), Node 24.22.1:
+
+| File                                           | Pass/Total | Failure                                                                                |
+| ---------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
+| `tests/google-auth.test.mjs`                   | 0/1        | `Cannot find module src/lib/auth-storage.ts`                                           |
+| `tests/profile-personal-information.test.mjs`  | 1/8        | 7 failures (ZodError / assertion) in personal-information normalization and completion |
+| `tests/student-scholarship-discovery.test.mjs` | 91/92      | "the image fallback is a local asset and the img exception exists exactly once"        |
+| 17 other test files                            | all pass   | —                                                                                      |
+
+`tsc --noEmit`: 0 errors · `eslint`: 0 errors, 3 warnings · `build`: not run at baseline.
+
+Any failure outside this list after implementation is a regression from this feature.

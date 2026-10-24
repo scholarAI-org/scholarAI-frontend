@@ -1,0 +1,158 @@
+# REQUESTED backend contract for Feature 009 (Student Home).
+# Not implemented by the backend yet. Proposed by frontend for ClickUp BE-09 and BL-04.
+# Home's zod schemas and mock payloads follow this file exactly.
+openapi: 3.1.0
+info:
+  title: Scholar AI API - Student Home requests (proposal)
+  version: 0.1.0-proposal
+paths:
+  /api/notifications/unread-count:
+    get:
+      tags: [Notifications]
+      summary: Unread notifications count for the authenticated student (BE-09)
+      description: >
+        Same shape as GET /admin/notifications/unread-count, scoped to the current
+        user (student or admin). Drives the Home stat card and the header bell dot.
+      security: [{ HTTPBearer: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentUnreadCountResponse' }
+              example: { unread_count: 2 }
+        '401': { description: Missing or invalid authentication }
+        '403': { description: Account disabled }
+  /api/activity:
+    get:
+      tags: [Activity]
+      summary: Recent activity of the authenticated student (BE-09)
+      description: >
+        Newest first. Returns structured events only (no pre-rendered sentences), so
+        the frontend localizes them in Arabic and English. Includes events produced by
+        the student (saved, status changed) and by the system (new recommendation,
+        deadline reminder).
+      security: [{ HTTPBearer: [] }]
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 20, default: 4 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentActivityResponse' }
+              example:
+                items:
+                  - id: 981
+                    type: new_recommendation
+                    occurred_at: '2026-10-24T09:12:00Z'
+                    scholarship: { id: 42, title: Fulbright Foreign Student Program, title_ar: منحة فولبرايت, title_en: Fulbright Foreign Student Program }
+                    data: {}
+                  - id: 977
+                    type: deadline_reminder
+                    occurred_at: '2026-10-23T08:00:00Z'
+                    scholarship: { id: 17, title: Türkiye Scholarships, title_ar: منحة الحكومة التركية, title_en: Türkiye Scholarships }
+                    data: { days_left: 7 }
+        '401': { description: Missing or invalid authentication }
+        '403': { description: Account disabled }
+        '422': { description: Invalid limit }
+  /api/scholarships/recommended:
+    get:
+      tags: [Scholarships]
+      summary: Personalized recommendations for the authenticated student (BL-04)
+      description: >
+        Published, student-visible scholarships (same visibility rules as
+        GET /api/scholarships/) ranked by profile match. Reuses ScholarshipDiscoveryCard
+        plus an optional match score. If the student's profile is below the backend's
+        completion threshold, respond 200 with an empty items array and locked=true
+        (the frontend also locks below 70% using GET /profile).
+        Distinct from the existing GET /api/scholarships/recommendations feed, which is
+        unfiltered and not personalized.
+      security: [{ HTTPBearer: [] }]
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 20, default: 3 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentRecommendationsResponse' }
+        '401': { description: Missing or invalid authentication }
+        '403': { description: Account disabled }
+        '422': { description: Invalid limit }
+components:
+  schemas:
+    StudentUnreadCountResponse:
+      type: object
+      required: [unread_count]
+      properties:
+        unread_count: { type: integer, minimum: 0 }
+    ApplicationTrackingStatus:
+      type: string
+      enum: [preparing_documents, ready_to_apply, applied, accepted, rejected, closed]
+    ActivityType:
+      type: string
+      enum: [new_recommendation, deadline_reminder, scholarship_saved, application_status_changed]
+    ActivityScholarshipRef:
+      type: object
+      required: [id, title]
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        title_ar: { type: [string, 'null'] }
+        title_en: { type: [string, 'null'] }
+    StudentActivityItem:
+      type: object
+      required: [id, type, occurred_at, scholarship, data]
+      properties:
+        id: { type: integer }
+        type: { $ref: '#/components/schemas/ActivityType' }
+        occurred_at: { type: string, format: date-time, description: UTC with offset }
+        scholarship:
+          oneOf:
+            - $ref: '#/components/schemas/ActivityScholarshipRef'
+            - type: 'null'
+        data:
+          type: object
+          description: >
+            deadline_reminder requires days_left. application_status_changed requires
+            new_status. Other types send {}.
+          properties:
+            days_left: { type: integer, minimum: 0 }
+            new_status: { $ref: '#/components/schemas/ApplicationTrackingStatus' }
+    StudentActivityResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/StudentActivityItem' }
+    RecommendationMatch:
+      type: object
+      required: [score]
+      properties:
+        score: { type: integer, minimum: 0, maximum: 100 }
+    StudentRecommendationCard:
+      description: ScholarshipDiscoveryCard (see docs/api/openapi.json) plus match.
+      allOf:
+        - $ref: 'https://scholarai.invalid/openapi.json#/components/schemas/ScholarshipDiscoveryCard'
+        - type: object
+          properties:
+            match:
+              oneOf:
+                - $ref: '#/components/schemas/RecommendationMatch'
+                - type: 'null'
+    StudentRecommendationsResponse:
+      type: object
+      required: [items, locked]
+      properties:
+        locked: { type: boolean }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/StudentRecommendationCard' }
