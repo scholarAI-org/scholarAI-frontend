@@ -142,16 +142,16 @@ Commit: `feat(student-home): add recommendations panel (us3)`.
 
 ### Tests first
 
-- [ ] T038 [P] [US3] Section "US3 locked": `LatestRecommendations` with completion 10 renders the lock icon, "Smart recommendations are locked", the 70% text, and a "Complete profile" link to `/student/profile`; no "View all" link; completion unknown (`null`) and completion in error also render locked (never unlocked); an unlocked-only query is **not enabled** while locked (assert `isRecommendationsUnlocked` drives `enabled`).
-- [ ] T039 [P] [US3] Section "US3 unlocked": completion 70 with 3 scholarship cards renders heading "Latest scholarships" (not "recommendations"), exactly 3 `ScholarshipGridCard`s, no match badge even if the card has `match`, a "View all" link to `/student/scholarships`; more than 3 results render 3; 0 results renders the empty state; discovery error renders `SectionError` with Retry that refetches only the discovery query; loading renders skeleton cards.
-- [ ] T040 [P] [US3] Section "US3 data source": the Latest scholarships query uses `discoveryQueryOptions(defaultDiscoveryQuery)` (same key as `studentScholarshipKeys.discovery(defaultDiscoveryQuery)`), and the static guard from T008(c) still passes (no recommendations path).
+- [x] T038 [P] [US3] Section "US3 locked": `LatestRecommendations` with completion 10 renders the lock icon, "Smart recommendations are locked", the 70% text, and a "Complete profile" link to `/student/profile`; no "View all" link; completion unknown (`null`) and completion in error also render locked (never unlocked); an unlocked-only query is **not enabled** while locked (assert `isRecommendationsUnlocked` drives `enabled`).
+- [x] T039 [P] [US3] Section "US3 unlocked": completion 70 with 3 scholarship cards renders heading "Latest scholarships" (not "recommendations"), exactly 3 `ScholarshipGridCard`s, no match badge even if the card has `match`, a "View all" link to `/student/scholarships`; more than 3 results render 3; 0 results renders the empty state; discovery error renders `SectionError` with Retry that refetches only the discovery query; loading renders skeleton cards.
+- [x] T040 [P] [US3] Section "US3 data source": the Latest scholarships query uses `discoveryQueryOptions(defaultDiscoveryQuery)` (same key as `studentScholarshipKeys.discovery(defaultDiscoveryQuery)`), and the static guard from T008(c) still passes (no recommendations path).
 
 ### Implementation
 
-- [ ] T041 [P] [US3] Extend messages (en + ar): `StudentHome.recommendations.{latestTitle: "Latest scholarships", viewAll, locked.{title, text: "…at least 70%…", cta}, empty.{title}}`.
-- [ ] T042 [P] [US3] Create `home/components/RecommendationsLocked.tsx` per Figma `2354:6598` (icon chip, title, text, primary `Button`/`buttonStyles` link to `/student/profile`) and `home/components/LatestRecommendations.tsx` (heading + "View all" with a mirrored chevron via `rtl:rotate-180`, state switch locked/loading/error/empty/ready, `ScholarshipGridCard` + `ScholarshipBookmark` + `toScholarshipCard` + `ScholarshipDeadline`, 3 items; omit match badge).
-- [ ] T043 [US3] Add `useLatestScholarshipsQuery(unlocked)` to `home/hooks/useHomeQueries.ts` (`useQuery({ ...discoveryQueryOptions(defaultDiscoveryQuery), enabled: unlocked, select: (r) => r.items.slice(0, 3) })`), and mount `LatestRecommendations` in `StudentHomePage.tsx` in the Figma position (end-side column). Makes T038–T040 pass.
-- [ ] T044 [US3] Run tests, `tsc`, `lint`; commit the phase.
+- [x] T041 [P] [US3] Extend messages (en + ar): `StudentHome.recommendations.{latestTitle: "Latest scholarships", viewAll, locked.{title, text: "…at least 70%…", cta}, empty.{title}}`.
+- [x] T042 [P] [US3] Create `home/components/RecommendationsLocked.tsx` per Figma `2354:6598` (icon chip, title, text, primary `Button`/`buttonStyles` link to `/student/profile`) and `home/components/LatestRecommendations.tsx` (heading + "View all" with a mirrored chevron via `rtl:rotate-180`, state switch locked/loading/error/empty/ready, `ScholarshipGridCard` + `ScholarshipBookmark` + `toScholarshipCard` + `ScholarshipDeadline`, 3 items; omit match badge).
+- [x] T043 [US3] Add `useLatestScholarshipsQuery(unlocked)` to `home/hooks/useHomeQueries.ts` (`useQuery({ ...discoveryQueryOptions(defaultDiscoveryQuery), enabled: unlocked, select: (r) => r.items.slice(0, 3) })`), and mount `LatestRecommendations` in `StudentHomePage.tsx` in the Figma position (end-side column). Makes T038–T040 pass.
+- [x] T044 [US3] Run tests, `tsc`, `lint`; commit the phase.
 
 ---
 

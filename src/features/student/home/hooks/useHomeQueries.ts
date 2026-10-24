@@ -2,8 +2,11 @@
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { defaultDiscoveryQuery } from '@/features/student/scholarship-discovery/constants';
+import { discoveryQueryOptions } from '@/features/student/scholarship-discovery/lib/queries';
 import { shouldRetryScholarshipQuery } from '@/features/student/scholarship-discovery/lib/query-retry';
 import { useSavedScholarshipsQuery } from '@/features/student/saved-scholarships/hooks/useSavedScholarshipsQuery';
+import { RECOMMENDATIONS_LIST_LIMIT } from '../constants';
 import { getProfileCompletion } from '../api/profile-completion';
 import { getTrackedApplications } from '../api/tracked-applications';
 import { buildHomeSummary } from '../lib/home-summary';
@@ -22,6 +25,15 @@ export const useTrackedQuery = () =>
     queryKey: studentHomeKeys.tracked(),
     queryFn: ({ signal }) => getTrackedApplications(signal),
     retry: shouldRetryScholarshipQuery,
+  });
+
+// The newest published scholarships: the Discovery default view (same cache entry),
+// fetched only once the recommendations panel is unlocked.
+export const useLatestScholarshipsQuery = (enabled: boolean) =>
+  useQuery({
+    ...discoveryQueryOptions(defaultDiscoveryQuery),
+    enabled,
+    select: (response) => response.items.slice(0, RECOMMENDATIONS_LIST_LIMIT),
   });
 
 // Saved list is shared with the Saved page (same key), tracked is Home's own.

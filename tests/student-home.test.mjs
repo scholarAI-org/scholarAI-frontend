@@ -1139,3 +1139,125 @@ test('US2 i18n: stats and deadlines messages exist in both locales and plurals a
     }
   }
 });
+
+// ----------------------------- Phase 5: US3 recommendations ------------------
+
+function renderRecommendations(view, { locale = 'en', detailsEnabled = false, today = NOW } = {}) {
+  const { LatestRecommendations } = loadHome('components/LatestRecommendations.tsx');
+  const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const html = render(
+    h(QueryClientProvider, { client }, h(LatestRecommendations, { view, detailsEnabled, today })),
+    { locale }
+  );
+  client.clear();
+  return html;
+}
+const discoveryCard = (id, overrides = {}) => card(id, { is_saved: false, deadline: dateIn(20), ...overrides });
+
+test('US3 locked: icon, title, 70% text and a Complete profile link; no View all', () => {
+  const html = renderRecommendations({ state: 'locked' });
+  assert.match(html, /Smart recommendations are locked/);
+  assert.match(html, /Complete at least 70% of your profile/);
+  assert.match(html, /<a\b[^>]*href="\/student\/profile"[^>]*>\s*Complete profile\s*<\/a>/);
+  assert.match(html, /<svg\b/);
+  assert.doesNotMatch(html, /View all/);
+  assert.doesNotMatch(html, /<article\b/);
+  assert.match(html, /<h2[^>]*>Latest recommendations<\/h2>/);
+  const ar = renderRecommendations({ state: 'locked' }, { locale: 'ar' });
+  assert.match(ar, /التوصيات الذكية مقفلة/);
+  assert.match(ar, /إكمال الملف الشخصي/);
+  assert.match(ar, /70%/);
+});
+
+test('US3 view: locked below 70, on unknown or failed completion; loading while it loads', () => {
+  const { buildRecommendationsView } = loadHome('lib/recommendations-view.ts');
+  const { ApiError } = loadSrc('lib/api-client.ts');
+  const ok = (data) => ({ status: 'success', error: null, data });
+  const failed = (error) => ({ status: 'error', error, data: undefined });
+  const pending = { status: 'pending', error: null, data: undefined };
+  const cards = (n) => Array.from({ length: n }, (_, i) => discoveryCard(i + 1));
+  const view = (profile, latest = pending) => buildRecommendationsView({ profile, latest });
+
+  assert.equal(view(ok(10), ok(cards(3))).state, 'locked');
+  assert.equal(view(ok(69.6), ok(cards(3))).state, 'locked');
+  assert.equal(view(ok(NaN), ok(cards(3))).state, 'locked');
+  assert.equal(view(failed(new ApiError('x', [], 500)), ok(cards(3))).state, 'locked');
+  assert.equal(view(pending).state, 'loading');
+  assert.equal(view(failed(new ApiError('x', [], 401))).state, 'loading');
+
+  const unlocked = view(ok(70), ok(cards(3)));
+  assert.equal(unlocked.state, 'ready');
+  assert.equal(unlocked.items.length, 3);
+  assert.equal(view(ok(100), ok(cards(5))).items.length, 3, 'capped at 3');
+  assert.equal(view(ok(70), ok([])).state, 'empty');
+  assert.equal(view(ok(70), pending).state, 'loading');
+  assert.equal(view(ok(70), failed(new ApiError('x', [], 500))).state, 'error');
+});
+
+test('US3 unlocked: three existing scholarship cards titled Latest scholarships, no match score', () => {
+  const items = [1, 2, 3].map((id) =>
+    discoveryCard(id, { match: { score: 87, level: 'high' }, country: 'Germany' })
+  );
+  const html = renderRecommendations({ state: 'ready', items });
+  assert.match(html, /<h2[^>]*>Latest scholarships<\/h2>/);
+  assert.doesNotMatch(html, /Latest recommendations/);
+  assert.equal((html.match(/<article\b/g) ?? []).length, 3);
+  assert.match(html, /Scholarship 1/);
+  assert.doesNotMatch(html, /87/);
+  assert.doesNotMatch(html, /Smart recommendations are locked/);
+  assert.match(html, /<a\b[^>]*href="\/student\/scholarships"[^>]*>[\s\S]*?View all/);
+  const arabic = renderRecommendations({ state: 'ready', items }, { locale: 'ar' });
+  assert.match(arabic, /أحدث المنح/);
+  assert.match(arabic, /عرض الكل/);
+});
+
+test('US3 unlocked: details links follow the flag, and the grid adapts to the column width', () => {
+  const items = [discoveryCard(7)];
+  assert.doesNotMatch(renderRecommendations({ state: 'ready', items }), /href="\/student\/scholarships\/7"/);
+  assert.match(
+    renderRecommendations({ state: 'ready', items }, { detailsEnabled: true }),
+    /href="\/student\/scholarships\/7"/
+  );
+  const html = renderRecommendations({ state: 'ready', items });
+  assert.match(html, /@container/);
+  assert.match(html, /@3xl:grid-cols-3/);
+  assert.match(html, /rtl:rotate-180/, 'the View all chevron mirrors in RTL');
+});
+
+test('US3 unlocked: loading, empty and error states keep the heading', () => {
+  const loading = renderRecommendations({ state: 'loading' });
+  assert.equal((loading.match(/data-skeleton="recommendation"/g) ?? []).length, 3);
+  assert.doesNotMatch(loading, /Smart recommendations are locked/);
+
+  const empty = renderRecommendations({ state: 'empty' });
+  assert.match(empty, /There are no scholarships to show yet/);
+  assert.match(empty, /Latest scholarships/);
+
+  const error = renderRecommendations({ state: 'error', onRetry: noop });
+  assert.match(error, /role="alert"/);
+  assert.match(error, /Try again/);
+  assert.match(error, /Latest scholarships/);
+});
+
+test('US3 data source: the query is the Discovery default view and runs only when unlocked', () => {
+  const source = read(path.join(homePath, 'hooks/useHomeQueries.ts'));
+  assert.match(source, /discoveryQueryOptions\(defaultDiscoveryQuery\)/);
+  assert.match(source, /enabled/);
+  const { defaultDiscoveryQuery } = loadSrc('features/student/scholarship-discovery/constants.ts');
+  assert.equal(defaultDiscoveryQuery.sort, 'newest');
+  assert.equal(defaultDiscoveryQuery.page, 1);
+  assert.deepEqual(
+    [defaultDiscoveryQuery.academicLevels, defaultDiscoveryQuery.fundingTypes, defaultDiscoveryQuery.countries],
+    [[], [], []]
+  );
+});
+
+test('US3 i18n: recommendations messages exist in both locales', () => {
+  for (const locale of ['en', 'ar']) {
+    const home = messages[locale].StudentHome.recommendations;
+    for (const key of ['title', 'latestTitle', 'viewAll', 'locked.title', 'locked.text', 'locked.cta', 'empty', 'error']) {
+      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+    }
+  }
+});
