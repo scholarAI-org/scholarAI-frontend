@@ -108,7 +108,7 @@ Also confirm, for the Production deployment:
 - Replace `home/schemas/tracked-application.schema.ts` and `studentHomeKeys.tracked()` with the Tracking feature's type and key after it merges.
 - Mobile layout (separate feature).
 - When "Personalized scholarship recommendations" ships, switch the unlocked panel to personalized recommendations with match scores, and revisit the section heading and the locked-panel copy together.
-- Fix the sidebar's `rtl:` icon flip on English pages (Observation 1).
+- Not fixed here, written up as issue notes in [follow-ups.md](./follow-ups.md): the `rtl:` icon flip on English pages (Observation 1) and the 9 failing tests that already fail on `main`.
 - Backend security ask (public recommendations feed) tracked in `contract-notes.md` §2; Home never calls that endpoint.
 
 ## Baseline (pre-existing, not fixed here)
