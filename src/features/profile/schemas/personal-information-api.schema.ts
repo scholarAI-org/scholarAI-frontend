@@ -6,8 +6,8 @@ export const financialStatusValues = ['LIMITED', 'MODERATE', 'STABLE'] as const;
 // The backend represents unset optional fields as null.
 // Transport contract. Form-specific validation lives in personal-information.schema.ts.
 export const personalInformationApiSchema = z.object({
-  first_name: z.string(),
-  last_name: z.string(),
+  full_name_ar: z.string(),
+  full_name_en: z.string(),
   email: z.string(),
   birth_date: z.string(),
   gender: z.enum(genderValues),
@@ -23,8 +23,8 @@ export const personalInformationApiSchema = z.object({
 export type PersonalInformation = z.infer<typeof personalInformationApiSchema>;
 
 export const emptyPersonalInformation: Partial<PersonalInformation> = {
-  first_name: '',
-  last_name: '',
+  full_name_ar: '',
+  full_name_en: '',
   email: '',
   birth_date: '',
   gender: undefined,

@@ -33,8 +33,8 @@ const { composeInternationalPhone, findCallingCodeForPhone } = loadModule(
   path.join(feature, 'lib/phone-number.ts')
 );
 const resource = {
-  first_name: 'Sara',
-  last_name: 'Ahmad',
+  full_name_ar: 'سارة أحمد محمد علي',
+  full_name_en: 'Sara Ahmad Mohammad Ali',
   email: 'sara@example.com',
   birth_date: '2000-01-15',
   gender: 'FEMALE',
@@ -55,25 +55,25 @@ test('round-trips every backend field without sending camelCase or extra form fi
   assert.deepEqual(Object.keys(personalInformationFieldMap).sort(), Object.keys(resource).sort());
 });
 
-test('omits blank optional fields without inventing nulls or unsupported financial values', () => {
+test('omits blank optional fields without inventing nulls', () => {
   const payload = jsonPayload({
     ...form,
     phone: '',
     city: ' ',
     nationalId: '',
     passportNumber: '',
-    financialSituation: '',
   });
   assert.deepEqual(
     Object.keys(payload).sort(),
     [
-      'first_name',
-      'last_name',
+      'full_name_ar',
+      'full_name_en',
       'email',
       'birth_date',
       'gender',
       'nationality',
       'country_of_residence',
+      'financial_status',
     ].sort()
   );
   assert.equal(payload.gender, 'FEMALE');
@@ -81,7 +81,7 @@ test('omits blank optional fields without inventing nulls or unsupported financi
 
 test('accepts the backend gender and financial enums', () => {
   for (const gender of ['MALE', 'FEMALE']) {
-    for (const financialSituation of ['LIMITED', 'MODERATE', 'STABLE', '']) {
+    for (const financialSituation of ['LIMITED', 'MODERATE', 'STABLE']) {
       assert.equal(schema.safeParse({ ...form, gender, financialSituation }).success, true);
     }
   }
@@ -95,6 +95,7 @@ test('rejects missing required values, obsolete enums, invalid country codes and
     ['email', 'invalid'],
     ['gender', 'male'],
     ['gender', ''],
+    ['financialSituation', ''],
     ['financialSituation', 'excellent'],
     ['nationalityCode', 'PAL'],
     ['residenceCountryCode', 'p'],
@@ -119,11 +120,11 @@ test('normalizes dates, country codes, names and document identifiers', () => {
   assert.equal(loaded.nationalityCode, 'PS');
   const payload = jsonPayload({
     ...form,
-    firstName: '  Sara  ',
+    firstName: '  سارة أحمد محمد علي  ',
     nationalId: '123 456 789',
     passportNumber: 'ab 123456',
   });
-  assert.equal(payload.first_name, 'Sara');
+  assert.equal(payload.full_name_ar, 'سارة أحمد محمد علي');
   assert.equal(payload.id_number, '123456789');
   assert.equal(payload.passport_number, 'AB123456');
 });
@@ -131,9 +132,9 @@ test('normalizes dates, country codes, names and document identifiers', () => {
 test('completion reflects valid required personal fields, not other sections or optional data', () => {
   assert.equal(getPersonalInformationCompletion(emptyPersonalInformation), 0);
   assert.equal(getPersonalInformationCompletion(form), 100);
-  assert.equal(getPersonalInformationCompletion({ ...form, email: '' }), 86);
+  assert.equal(getPersonalInformationCompletion({ ...form, email: '' }), 88);
   assert.equal(
-    getPersonalInformationCompletion({ ...form, financialSituation: '', city: '' }),
+    getPersonalInformationCompletion({ ...form, city: '' }),
     100
   );
 });
@@ -157,7 +158,9 @@ test('accepts live backend null optional fields and hydrates editable empty valu
   for (const field of optionalFields) {
     assert.equal(loaded[personalInformationFieldMap[field]], '');
   }
-  assert.equal(schema.safeParse(loaded).success, true);
+  // financial_status is required to save, so a null one must be chosen by the student.
+  assert.equal(schema.safeParse(loaded).success, false);
+  assert.equal(schema.safeParse({ ...loaded, financialSituation: 'MODERATE' }).success, true);
   assert.equal(
     personalInformationApiSchema.safeParse({ ...resource, gender: null }).success,
     false
