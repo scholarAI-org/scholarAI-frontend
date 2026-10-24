@@ -1297,11 +1297,16 @@
       "personal": "شخصي"
     },
     "nav": {
+      "home": "الرئيسية",
       "profile": "الملف الشخصي",
       "scholarships": "البحث عن منح",
       "saved": "المحفوظات"
     },
     "pages": {
+      "home": {
+        "title": "مرحباً، {name}",
+        "description": "هذه نظرة سريعة على فرصك ومواعيدك القادمة."
+      },
       "profile": {
         "title": "الملف الشخصي",
         "description": "كلما اكتمل ملفك، كانت التوصيات ونسب التوافق أدق."
@@ -1510,6 +1515,70 @@
     },
     "unsave": {
       "failed": "تعذر إزالة هذه المنحة. حاول مرة أخرى."
+    }
+  },
+  "StudentHome": {
+    "states": {
+      "retry": "إعادة المحاولة"
+    },
+    "welcome": {
+      "title": "أهلًا بعودتك، {name} 👋",
+      "titleNoName": "أهلًا بعودتك 👋",
+      "today": "اليوم: {date}",
+      "completion": "نسبة اكتمال الملف",
+      "completionValue": "{percent, number, integer}%",
+      "completionError": "تعذّر تحميل نسبة اكتمال الملف."
+    },
+    "stats": {
+      "saved": "منح محفوظة",
+      "inProgress": "طلبات قيد المتابعة",
+      "upcoming": "مواعيد قريبة",
+      "notifications": "إشعارات غير مقروءة",
+      "error": "تعذّر تحميل هذا الرقم."
+    },
+    "deadlines": {
+      "title": "المواعيد النهائية القادمة",
+      "daysLeft": "{count, plural, =0 {ينتهي اليوم} one {باقي يوم واحد} two {باقي يومان} few {باقي {count, number, integer} أيام} many {باقي {count, number, integer} يومًا} other {باقي {count, number, integer} يوم}}",
+      "empty": {
+        "title": "لا توجد مواعيد نهائية خلال الـ {days, number, integer} يومًا القادمة",
+        "action": "ابحث عن منح"
+      },
+      "error": "تعذّر تحميل المواعيد النهائية القادمة."
+    },
+    "recommendations": {
+      "latestTitle": "أحدث المنح",
+      "viewAll": "عرض الكل",
+      "locked": {
+        "title": "هذا القسم مقفل",
+        "text": "أكمل {percent, number, integer}% من ملفك الشخصي على الأقل لعرض أحدث المنح هنا.",
+        "cta": "إكمال الملف الشخصي"
+      },
+      "empty": "لا توجد منح لعرضها حالياً.",
+      "error": "تعذّر تحميل أحدث المنح."
+    },
+    "demoBadge": "بيانات تجريبية",
+    "activity": {
+      "title": "آخر النشاطات",
+      "empty": "لا توجد نشاطات بعد.",
+      "error": "تعذّر تحميل آخر النشاطات.",
+      "justNow": "الآن",
+      "types": {
+        "new_recommendation": "توصية جديدة: {title}",
+        "deadline_reminder": "{days, plural, =0 {موعد {title} اليوم} one {تبقّى يوم واحد على موعد {title}} two {تبقّى يومان على موعد {title}} few {تبقّى {days, number, integer} أيام على موعد {title}} many {تبقّى {days, number, integer} يومًا على موعد {title}} other {تبقّى {days, number, integer} يوم على موعد {title}}}",
+        "scholarship_saved": "حفظت منحة {title}",
+        "application_status_changed": "حدّثت حالة {title} إلى \"{status}\""
+      },
+      "status": {
+        "preparing_documents": "تجهيز المستندات",
+        "ready_to_apply": "جاهز للتقديم",
+        "applied": "تم التقديم",
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "closed": "مغلق"
+      }
+    },
+    "bell": {
+      "label": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءان} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعارًا غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
     }
   }
 }

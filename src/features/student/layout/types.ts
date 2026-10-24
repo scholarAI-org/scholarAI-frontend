@@ -1,4 +1,4 @@
-export type StudentNavigationItemId = 'profile' | 'scholarships' | 'saved';
+export type StudentNavigationItemId = 'home' | 'profile' | 'scholarships' | 'saved';
 export type StudentNavigationGroupId = 'discover' | 'personal';
 
 export interface StudentNavigationItem {
@@ -7,6 +7,9 @@ export interface StudentNavigationItem {
   href: string;
   enabled: boolean;
   group: StudentNavigationGroupId;
+  // How a pathname activates the item. Default 'prefix' (the item and its sub-routes);
+  // 'exact' is for an index route such as /student, which prefixes every other page.
+  match?: 'prefix' | 'exact';
 }
 
 export interface StudentNavigationSection {
@@ -15,4 +18,4 @@ export interface StudentNavigationSection {
   items: StudentNavigationItem[];
 }
 
-export type StudentPageKey = 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved';
+export type StudentPageKey = 'home' | 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved';

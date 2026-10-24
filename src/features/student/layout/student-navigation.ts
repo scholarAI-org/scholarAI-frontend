@@ -8,6 +8,14 @@ import type {
 // Only implemented destinations appear; never link to a missing route.
 export const studentNavigation: StudentNavigationItem[] = [
   {
+    id: 'home',
+    labelKey: 'nav.home',
+    href: '/student',
+    enabled: false,
+    group: 'discover',
+    match: 'exact',
+  },
+  {
     id: 'scholarships',
     labelKey: 'nav.scholarships',
     href: '/student/scholarships',
@@ -36,6 +44,12 @@ export const withSavedEnabled = (
 ): StudentNavigationItem[] =>
   items.map((item) => (item.id === 'saved' ? { ...item, enabled: savedEnabled } : item));
 
+export const withHomeEnabled = (
+  items: readonly StudentNavigationItem[],
+  homeEnabled: boolean
+): StudentNavigationItem[] =>
+  items.map((item) => (item.id === 'home' ? { ...item, enabled: homeEnabled } : item));
+
 // Figma sidebar (2979:9150) section order. A label shows only above real items.
 export const studentNavigationGroups: StudentNavigationGroupId[] = ['discover', 'personal'];
 
@@ -54,7 +68,9 @@ export const getVisibleStudentNavigation = (items: readonly StudentNavigationIte
   items.filter((item) => item.enabled);
 
 export const isStudentNavigationItemActive = (item: StudentNavigationItem, pathname: string) =>
-  pathname === item.href || pathname.startsWith(`${item.href}/`);
+  item.match === 'exact'
+    ? pathname === item.href
+    : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
 export const getActiveStudentNavigationItem = (
   pathname: string,
@@ -62,6 +78,7 @@ export const getActiveStudentNavigationItem = (
 ) => items.find((item) => isStudentNavigationItemActive(item, pathname))?.id ?? null;
 
 export function getStudentPageKey(pathname: string): StudentPageKey | null {
+  if (pathname === '/student') return 'home';
   if (pathname === '/student/saved' || pathname.startsWith('/student/saved/')) {
     return 'saved';
   }

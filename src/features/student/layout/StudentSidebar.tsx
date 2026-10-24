@@ -1,6 +1,14 @@
 'use client';
 
-import { Bookmark, GraduationCap, LogOut, Search, UserRound, type LucideIcon } from 'lucide-react';
+import {
+  Bookmark,
+  GraduationCap,
+  LayoutGrid,
+  LogOut,
+  Search,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
@@ -16,6 +24,7 @@ import { getStudentDisplayName, getStudentInitial } from './student-identity';
 import type { StudentNavigationItem, StudentNavigationItemId } from './types';
 
 const navigationIcons: Record<StudentNavigationItemId, LucideIcon> = {
+  home: LayoutGrid,
   profile: UserRound,
   scholarships: Search,
   saved: Bookmark,

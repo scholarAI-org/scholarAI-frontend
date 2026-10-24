@@ -1310,11 +1310,16 @@
       "personal": "Personal"
     },
     "nav": {
+      "home": "Home",
       "profile": "Profile",
       "scholarships": "Search scholarships",
       "saved": "Saved"
     },
     "pages": {
+      "home": {
+        "title": "Hello, {name}",
+        "description": "Here is a quick look at your opportunities and upcoming deadlines."
+      },
       "profile": {
         "title": "Profile",
         "description": "The more complete your profile, the more accurate your recommendations and match rates."
@@ -1523,6 +1528,70 @@
     },
     "unsave": {
       "failed": "We could not remove this scholarship. Please try again."
+    }
+  },
+  "StudentHome": {
+    "states": {
+      "retry": "Try again"
+    },
+    "welcome": {
+      "title": "Welcome back, {name} 👋",
+      "titleNoName": "Welcome back 👋",
+      "today": "Today: {date}",
+      "completion": "Profile completion",
+      "completionValue": "{percent, number, integer}%",
+      "completionError": "We could not load your profile completion."
+    },
+    "stats": {
+      "saved": "Saved scholarships",
+      "inProgress": "Applications in progress",
+      "upcoming": "Upcoming deadlines",
+      "notifications": "Unread notifications",
+      "error": "We could not load this number."
+    },
+    "deadlines": {
+      "title": "Upcoming deadlines",
+      "daysLeft": "{count, plural, =0 {Due today} one {{count, number, integer} day left} other {{count, number, integer} days left}}",
+      "empty": {
+        "title": "No deadlines in the next {days, number, integer} days",
+        "action": "Search scholarships"
+      },
+      "error": "We could not load your upcoming deadlines."
+    },
+    "recommendations": {
+      "latestTitle": "Latest scholarships",
+      "viewAll": "View all",
+      "locked": {
+        "title": "This section is locked",
+        "text": "Complete at least {percent, number, integer}% of your profile to see the latest scholarships here.",
+        "cta": "Complete profile"
+      },
+      "empty": "There are no scholarships to show yet.",
+      "error": "We could not load the latest scholarships."
+    },
+    "demoBadge": "Demo data",
+    "activity": {
+      "title": "Recent activity",
+      "empty": "No activity yet.",
+      "error": "We could not load your recent activity.",
+      "justNow": "Just now",
+      "types": {
+        "new_recommendation": "New recommendation: {title}",
+        "deadline_reminder": "{days, plural, =0 {The deadline of {title} is today} one {{days, number, integer} day left until the deadline of {title}} other {{days, number, integer} days left until the deadline of {title}}}",
+        "scholarship_saved": "You saved {title}",
+        "application_status_changed": "Status of {title} updated to \"{status}\""
+      },
+      "status": {
+        "preparing_documents": "Preparing documents",
+        "ready_to_apply": "Ready to apply",
+        "applied": "Applied",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "closed": "Closed"
+      }
+    },
+    "bell": {
+      "label": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
     }
   }
 }

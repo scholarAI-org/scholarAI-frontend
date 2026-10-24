@@ -5,19 +5,28 @@ import { StudentHeader } from './StudentHeader';
 import { StudentMobileNavigation } from './StudentMobileNavigation';
 import { StudentSidebar } from './StudentSidebar';
 
-import { studentNavigation, withSavedEnabled } from './student-navigation';
+import { studentNavigation, withHomeEnabled, withSavedEnabled } from './student-navigation';
 
 interface StudentShellProps {
   children: ReactNode;
   savedEnabled?: boolean;
+  homeEnabled?: boolean;
+  // Optional controls for the desktop header, supplied by the route layout so the shell
+  // stays free of page-specific data.
+  headerActions?: ReactNode;
 }
 
 // Shared student frame, mounted once by src/app/[locale]/student/layout.tsx.
-export function StudentShell({ children, savedEnabled = false }: StudentShellProps) {
+export function StudentShell({
+  children,
+  savedEnabled = false,
+  homeEnabled = false,
+  headerActions,
+}: StudentShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeNavigation = useCallback(() => setIsNavigationOpen(false), []);
-  const items = withSavedEnabled(studentNavigation, savedEnabled);
+  const items = withHomeEnabled(withSavedEnabled(studentNavigation, savedEnabled), homeEnabled);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-start text-[#434343]">
@@ -27,6 +36,7 @@ export function StudentShell({ children, savedEnabled = false }: StudentShellPro
             isNavigationOpen={isNavigationOpen}
             onNavigationToggle={() => setIsNavigationOpen((open) => !open)}
             menuButtonRef={menuButtonRef}
+            headerActions={headerActions}
           />
           <main className="px-4 pt-4 pb-6 sm:px-6 lg:pt-6 lg:pb-0">{children}</main>
         </div>
