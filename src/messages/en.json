@@ -1315,6 +1315,10 @@
       "saved": "Saved"
     },
     "pages": {
+      "home": {
+        "title": "Hello, {name}",
+        "description": "Here is a quick look at your opportunities and upcoming deadlines."
+      },
       "profile": {
         "title": "Profile",
         "description": "The more complete your profile, the more accurate your recommendations and match rates."
@@ -1523,6 +1527,19 @@
     },
     "unsave": {
       "failed": "We could not remove this scholarship. Please try again."
+    }
+  },
+  "StudentHome": {
+    "states": {
+      "retry": "Try again"
+    },
+    "welcome": {
+      "title": "Welcome back, {name} 👋",
+      "titleNoName": "Welcome back 👋",
+      "today": "Today: {date}",
+      "completion": "Profile completion",
+      "completionValue": "{percent, number, integer}%",
+      "completionError": "We could not load your profile completion."
     }
   }
 }

@@ -95,7 +95,7 @@ export function StudentHeader({
           {pageKey && (
             <>
               <h1 className="text-lg font-bold leading-[1.2] text-[#434343]">
-                {t(`pages.${pageKey}.title`)}
+                {t(`pages.${pageKey}.title`, { name })}
               </h1>
               <p className="mt-2 text-sm leading-6 text-[#b5b5b5] sm:text-base">
                 {t(`pages.${pageKey}.description`)}

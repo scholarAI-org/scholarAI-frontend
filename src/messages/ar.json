@@ -1302,6 +1302,10 @@
       "saved": "المحفوظات"
     },
     "pages": {
+      "home": {
+        "title": "مرحباً، {name}",
+        "description": "هذه نظرة سريعة على فرصك ومواعيدك القادمة."
+      },
       "profile": {
         "title": "الملف الشخصي",
         "description": "كلما اكتمل ملفك، كانت التوصيات ونسب التوافق أدق."
@@ -1510,6 +1514,19 @@
     },
     "unsave": {
       "failed": "تعذر إزالة هذه المنحة. حاول مرة أخرى."
+    }
+  },
+  "StudentHome": {
+    "states": {
+      "retry": "إعادة المحاولة"
+    },
+    "welcome": {
+      "title": "أهلًا بعودتك، {name} 👋",
+      "titleNoName": "أهلًا بعودتك 👋",
+      "today": "اليوم: {date}",
+      "completion": "نسبة اكتمال الملف",
+      "completionValue": "{percent, number, integer}%",
+      "completionError": "تعذّر تحميل نسبة اكتمال الملف."
     }
   }
 }

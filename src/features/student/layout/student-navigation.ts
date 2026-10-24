@@ -62,6 +62,7 @@ export const getActiveStudentNavigationItem = (
 ) => items.find((item) => isStudentNavigationItemActive(item, pathname))?.id ?? null;
 
 export function getStudentPageKey(pathname: string): StudentPageKey | null {
+  if (pathname === '/student') return 'home';
   if (pathname === '/student/saved' || pathname.startsWith('/student/saved/')) {
     return 'saved';
   }

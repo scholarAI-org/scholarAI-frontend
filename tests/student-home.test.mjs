@@ -51,7 +51,7 @@ const { renderToStaticMarkup } = loadModule('react-dom/server');
 const { intlFormats } = loadModule(path.join(srcPath, 'i18n/formatting.ts'));
 
 // Mutable view of the "request": tests set locale/pathname before rendering.
-const env = { locale: 'en', pathname: '/student' };
+const env = { locale: 'en', pathname: '/student', user: null };
 
 const lookup = (namespace, key) =>
   `${namespace}.${key}`
@@ -74,10 +74,19 @@ const navigationStub = {
   useRouter: () => ({ replace() {}, push() {}, prefetch() {} }),
 };
 
+const imageStub = {
+  __esModule: true,
+  default: ({ src, alt, width, height, className }) =>
+    React.createElement('img', { src: typeof src === 'string' ? src : '', alt, width, height, className }),
+};
+const authStub = { useAuth: () => ({ user: env.user }) };
+
 const originalLoad = Module._load;
 Module._load = function (request, parent, ...rest) {
   if (request === 'next-intl') return nextIntlStub;
   if (request === '@/i18n/navigation') return navigationStub;
+  if (request === 'next/image') return imageStub;
+  if (request === '@/features/auth/providers/AuthProvider') return authStub;
   return originalLoad.call(this, request, parent, ...rest);
 };
 
@@ -732,4 +741,155 @@ test('section state: retry refetches only the failed queries', async () => {
     query('x', 'pending'),
   ]);
   assert.deepEqual(calls.sort(), ['profile', 'saved']);
+});
+
+// ----------------------------- Phase 3: US1 welcome + header -----------------
+
+const flatten = (object, prefix = '') =>
+  Object.entries(object).flatMap(([key, value]) =>
+    value && typeof value === 'object' ? flatten(value, `${prefix}${key}.`) : [[`${prefix}${key}`, value]]
+  );
+
+const h = React.createElement;
+const noop = () => {};
+
+function renderWelcome(props, locale = 'en') {
+  const { WelcomeCard } = loadHome('components/WelcomeCard.tsx');
+  return render(
+    h(WelcomeCard, {
+      displayName: 'Ahmad Hajjar',
+      firstName: 'Ahmad',
+      today: NOW,
+      completion: { state: 'ready', percent: 40 },
+      ...props,
+    }),
+    { locale }
+  );
+}
+
+test('US1 welcome: greeting, today, initial and a real progress bar (en)', () => {
+  const html = renderWelcome({});
+  assert.match(html, /Welcome back, Ahmad/);
+  assert.match(html, /Today: October 24, 2026/);
+  assert.match(html, />A</, 'one-letter avatar');
+  assert.match(html, /role="progressbar"/);
+  assert.match(html, /aria-valuenow="40"/);
+  assert.match(html, /aria-valuemin="0"/);
+  assert.match(html, /aria-valuemax="100"/);
+  assert.match(html, /width:\s*40%/);
+  assert.match(html, />40%</);
+  assert.match(html, /Profile completion/);
+});
+
+test('US1 welcome: Arabic copy with a Latin-digit date', () => {
+  const html = renderWelcome({ displayName: 'أحمد الحجار', firstName: 'أحمد' }, 'ar');
+  assert.match(html, /أهلًا بعودتك، أحمد/);
+  assert.match(html, /اليوم:/);
+  assert.match(html, /نسبة اكتمال الملف/);
+  assert.match(html, />أ</);
+  assert.doesNotMatch(html, /[٠-٩۰-۹]/);
+  assert.match(html, /2026/);
+});
+
+test('US1 welcome: no name falls back without stray punctuation', () => {
+  const html = renderWelcome({ displayName: 'Student', firstName: null });
+  assert.match(html, /Welcome back 👋/);
+  assert.doesNotMatch(html, /Welcome back,/);
+});
+
+test('US1 welcome: before mount the date is a skeleton, never a guessed date', () => {
+  const html = renderWelcome({ today: null });
+  assert.doesNotMatch(html, /Today:/);
+  assert.doesNotMatch(html, /October/);
+  assert.match(html, /data-skeleton="date"/);
+});
+
+test('US1 welcome: a completion failure shows an alert with retry and keeps the greeting', () => {
+  const html = renderWelcome({ completion: { state: 'error', onRetry: noop } });
+  assert.match(html, /role="alert"/);
+  assert.match(html, /Try again/);
+  assert.match(html, /Welcome back, Ahmad/);
+  assert.match(html, /Today: October 24, 2026/);
+  assert.doesNotMatch(html, /role="progressbar"/);
+});
+
+test('US1 welcome: completion loading shows a skeleton, out-of-range values are clamped', () => {
+  const loading = renderWelcome({ completion: { state: 'loading' } });
+  assert.match(loading, /data-skeleton="completion"/);
+  assert.doesNotMatch(loading, /role="progressbar"/);
+  const clamped = renderWelcome({ completion: { state: 'ready', percent: 120 } });
+  assert.match(clamped, /aria-valuenow="100"/);
+  assert.match(clamped, />100%</);
+  assert.match(renderWelcome({ completion: { state: 'ready', percent: 41.6 } }), />42%</);
+  assert.match(renderWelcome({ completion: { state: 'ready', percent: 0 } }), /aria-valuenow="0"/);
+});
+
+test('US1 header: the home route has a page key and a greeting with the full name', () => {
+  const { getStudentPageKey } = loadSrc('features/student/layout/student-navigation.ts');
+  assert.equal(getStudentPageKey('/student'), 'home');
+  assert.equal(getStudentPageKey('/student/profile'), 'profile');
+  assert.equal(getStudentPageKey('/student/scholarships'), 'scholarships');
+  assert.equal(getStudentPageKey('/student/scholarships/12'), 'scholarshipDetails');
+  assert.equal(getStudentPageKey('/student/saved'), 'saved');
+  assert.equal(getStudentPageKey('/student/unknown'), null);
+
+  const { StudentHeader } = loadSrc('features/student/layout/StudentHeader.tsx');
+  const header = (pathname, user, locale = 'en') => {
+    env.pathname = pathname;
+    env.user = user;
+    return render(
+      h(StudentHeader, { isNavigationOpen: false, onNavigationToggle: noop, menuButtonRef: { current: null } }),
+      { locale }
+    );
+  };
+  const home = header('/student', { name: 'Ahmad Hajjar', email: 'a@x.test' });
+  assert.match(home, /<h1[^>]*>Hello, Ahmad Hajjar<\/h1>/);
+  assert.match(home, /quick look at your opportunities and upcoming deadlines/);
+  assert.match(header('/student', { name: 'أحمد الحجار', email: 'a@x.test' }, 'ar'), /مرحباً، أحمد الحجار/);
+  assert.match(header('/student/profile', { name: 'Ahmad Hajjar' }), /<h1[^>]*>Profile<\/h1>/);
+  assert.match(header('/student/scholarships', { name: 'Ahmad Hajjar' }), /Explore scholarships and opportunities/);
+  env.pathname = '/student';
+});
+
+test('US1 route: /student is a flag-gated Server Component', () => {
+  const file = path.join(srcPath, 'app/[locale]/student/page.tsx');
+  const source = read(file);
+  assert.doesNotMatch(source, /^['"]use client['"]/m);
+  assert.match(source, /featureFlags\.studentHomeEnabled/);
+  const gate = source.indexOf('notFound()');
+  const render = source.indexOf('<StudentHomePage');
+  assert.ok(gate > -1 && render > -1 && gate < render, 'notFound() must run before the page renders');
+  assert.match(source, /from\s+['"]next\/navigation['"]/);
+});
+
+test('US1 page: renders identity and loading states without crashing, and handles 401 via the session re-check', () => {
+  const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+  const { StudentHomePage } = loadHome('components/StudentHomePage.tsx');
+  env.user = { name: 'Ahmad Hajjar', email: 'a@x.test' };
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const html = render(h(QueryClientProvider, { client }, h(StudentHomePage, {})), { locale: 'en' });
+  client.clear();
+  assert.match(html, /Welcome back, Ahmad/);
+  assert.match(html, /data-skeleton="completion"/);
+  assert.match(html, /data-skeleton="date"/);
+  const source = read(path.join(homePath, 'components/StudentHomePage.tsx'));
+  assert.match(source, /useUnauthorizedRedirect/);
+});
+
+test('US1 i18n: StudentHome and the home page copy exist in both locales with identical keys', () => {
+  for (const namespace of ['StudentHome']) {
+    const en = flatten(messages.en[namespace] ?? {}).map(([key]) => key).sort();
+    const ar = flatten(messages.ar[namespace] ?? {}).map(([key]) => key).sort();
+    assert.ok(en.length > 0, `${namespace} exists in en`);
+    assert.deepEqual(ar, en, namespace);
+  }
+  for (const locale of ['en', 'ar']) {
+    const page = messages[locale].StudentLayout.pages.home;
+    assert.ok(page?.title && page?.description, `${locale} StudentLayout.pages.home`);
+    for (const [key, value] of [...flatten(messages[locale].StudentHome), ...flatten(page)]) {
+      assert.equal(typeof value, 'string');
+      assert.ok(value.trim().length > 0, `${locale} ${key} is empty`);
+      assert.doesNotThrow(() => new IntlMessageFormat(value, locale, intlFormats), `${locale} ${key}`);
+    }
+  }
 });

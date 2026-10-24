@@ -15,4 +15,4 @@ export interface StudentNavigationSection {
   items: StudentNavigationItem[];
 }
 
-export type StudentPageKey = 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved';
+export type StudentPageKey = 'home' | 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved';

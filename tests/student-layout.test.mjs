@@ -73,7 +73,15 @@ test('the three student namespaces exist in both locales with identical keys', (
 });
 
 test('every student message is non-empty, valid ICU and formats in its locale', () => {
-  const values = { count: 3, title: 'T', date: '2026-12-31', page: 2, score: 87, requested: 9 };
+  const values = {
+    count: 3,
+    title: 'T',
+    date: '2026-12-31',
+    page: 2,
+    score: 87,
+    requested: 9,
+    name: 'Lina',
+  };
   for (const locale of ['ar', 'en']) {
     for (const namespace of namespaces) {
       for (const [key, message] of flatten(messages[locale][namespace])) {
@@ -206,8 +214,9 @@ test('page titles resolve per route and exist in both locales', () => {
   assert.equal(getStudentPageKey('/student/scholarships'), 'scholarships');
   assert.equal(getStudentPageKey('/student/scholarships/12'), 'scholarshipDetails');
   assert.equal(getStudentPageKey('/student/scholarships/12/extra'), null);
-  assert.equal(getStudentPageKey('/student'), null);
-  for (const key of ['profile', 'scholarships', 'scholarshipDetails']) {
+  assert.equal(getStudentPageKey('/student'), 'home');
+  assert.equal(getStudentPageKey('/student/unknown'), null);
+  for (const key of ['home', 'profile', 'scholarships', 'scholarshipDetails']) {
     for (const locale of ['ar', 'en']) {
       const page = messages[locale].StudentLayout.pages[key];
       assert.ok(page?.title && page?.description, `${locale} pages.${key}`);
