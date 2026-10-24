@@ -893,3 +893,249 @@ test('US1 i18n: StudentHome and the home page copy exist in both locales with id
     }
   }
 });
+
+// ----------------------------- Phase 4: US2 counts + deadlines ---------------
+
+const ready = (value, extra = {}) => ({ state: 'ready', value, ...extra });
+
+function renderStats(props, locale = 'en') {
+  const { StatCards } = loadHome('components/StatCards.tsx');
+  return render(
+    h(StatCards, { saved: ready(3), inProgress: ready(2), upcoming: ready(4), ...props }),
+    { locale }
+  );
+}
+const statOrder = (html) => [...html.matchAll(/data-stat="(\w+)"/g)].map((match) => match[1]);
+
+test('US2 stat row (FR-013): 3 cards fill a 3-column row, 4 cards a 4-column row, no empty slot', () => {
+  const three = renderStats({});
+  assert.deepEqual(statOrder(three), ['saved', 'inProgress', 'upcoming']);
+  assert.match(three, /lg:grid-cols-3/);
+  assert.doesNotMatch(three, /lg:grid-cols-4/);
+
+  const four = renderStats({ notifications: ready(10) });
+  assert.deepEqual(statOrder(four), ['notifications', 'saved', 'inProgress', 'upcoming']);
+  assert.match(four, /lg:grid-cols-4/);
+  assert.doesNotMatch(four, /lg:grid-cols-3/);
+
+  // Never an empty list item: every <li> is a card.
+  for (const html of [three, four]) {
+    assert.equal((html.match(/<li\b/g) ?? []).length, (html.match(/data-stat="/g) ?? []).length);
+  }
+  // Grid classes come from a static map so Tailwind can see them.
+  const source = read(path.join(homePath, 'components/StatCards.tsx'));
+  assert.doesNotMatch(source, /grid-cols-\$\{/);
+});
+
+test('US2 stat cards: labels, zero is shown, large counts are not clipped, Arabic labels', () => {
+  const en = renderStats({ saved: ready(0), inProgress: ready(120), notifications: ready(10) });
+  for (const label of ['Saved scholarships', 'Applications in progress', 'Upcoming deadlines', 'Unread notifications']) {
+    assert.match(en, new RegExp(label));
+  }
+  assert.match(en, />0</);
+  assert.match(en, />120</);
+  const ar = renderStats({ notifications: ready(10) }, 'ar');
+  for (const label of ['منح محفوظة', 'طلبات قيد المتابعة', 'مواعيد قريبة', 'إشعارات غير مقروءة']) {
+    assert.match(ar, new RegExp(label));
+  }
+  assert.doesNotMatch(ar, /[٠-٩۰-۹]/);
+});
+
+test('US2 stat cards: a card is a link only when its destination is provided', () => {
+  const plain = renderStats({});
+  assert.doesNotMatch(plain, /<a\b/);
+  const linked = renderStats({ saved: ready(3, { href: '/student/saved' }) });
+  const anchor = linked.match(/<a\b[^>]*href="\/student\/saved"[^>]*>[\s\S]*?<\/a>/);
+  assert.ok(anchor, 'saved card links to /student/saved');
+  assert.match(anchor[0], /Saved scholarships/);
+  assert.match(anchor[0], />3</);
+});
+
+test('US2 stat cards: loading shows a skeleton, an error shows an alert with retry in that card only', () => {
+  const html = renderStats({
+    saved: { state: 'loading' },
+    inProgress: { state: 'error', onRetry: noop },
+  });
+  assert.match(html, /data-skeleton="stat"/);
+  assert.equal((html.match(/role="alert"/g) ?? []).length, 1);
+  assert.match(html, /Try again/);
+  assert.match(html, /Upcoming deadlines/);
+  assert.match(html, />4</, 'the healthy card still shows its number');
+});
+
+const deadline = (id, daysLeft, overrides = {}) => ({
+  id,
+  title: { default: `Scholarship ${id}`, ar: null, en: null },
+  deadline: { year: 2026, month: 11, day: 1 },
+  daysLeft,
+  urgency: daysLeft <= 7 ? 'urgent' : daysLeft <= 14 ? 'soon' : 'comfortable',
+  fundingType: null,
+  studyLevel: null,
+  origin: 'saved',
+  ...overrides,
+});
+
+function renderDeadlines(view, { locale = 'en', detailsEnabled = false } = {}) {
+  const { UpcomingDeadlines } = loadHome('components/UpcomingDeadlines.tsx');
+  return render(h(UpcomingDeadlines, { view, detailsEnabled }), { locale });
+}
+
+test('US2 deadlines: ordered rows with red, amber and green badges and days-left text', () => {
+  const html = renderDeadlines({
+    state: 'ready',
+    items: [deadline(10, 2), deadline(11, 9), deadline(12, 20)],
+  });
+  assert.match(html, /<ol\b/);
+  assert.ok(html.indexOf('Scholarship 10') < html.indexOf('Scholarship 11'));
+  assert.ok(html.indexOf('Scholarship 11') < html.indexOf('Scholarship 12'));
+  assert.deepEqual(
+    [...html.matchAll(/data-urgency="(\w+)"/g)].map((match) => match[1]),
+    ['urgent', 'soon', 'comfortable']
+  );
+  assert.match(html, /bg-red-50[^"]*text-red-600|text-red-600[^"]*bg-red-50/);
+  assert.match(html, /bg-amber-50[^"]*text-amber-600|text-amber-600[^"]*bg-amber-50/);
+  assert.match(html, /bg-green-50[^"]*text-green-600|text-green-600[^"]*bg-green-50/);
+  assert.match(html, /2 days left/);
+  assert.match(html, /9 days left/);
+  assert.match(html, /20 days left/);
+  assert.match(html, /Upcoming deadlines/);
+  assert.equal((html.match(/data-skeleton/g) ?? []).length, 0, 'no placeholder rows');
+});
+
+test('US2 deadlines: today, singular day, and Arabic plural forms', () => {
+  const today = renderDeadlines({ state: 'ready', items: [deadline(1, 0), deadline(2, 1)] });
+  assert.match(today, /Due today/);
+  assert.match(today, /1 day left/);
+  const ar = renderDeadlines(
+    { state: 'ready', items: [0, 1, 2, 3, 11, 25].map((days, i) => deadline(i + 1, days)) },
+    { locale: 'ar' }
+  );
+  for (const text of ['ينتهي اليوم', 'باقي يوم واحد', 'باقي يومان', 'باقي 3 أيام', 'باقي 11 يومًا', 'باقي 25 يومًا']) {
+    assert.ok(ar.includes(text), `missing "${text}"`);
+  }
+  assert.doesNotMatch(ar, /[٠-٩۰-۹]/);
+});
+
+test('US2 deadlines: secondary line joins funding and level; missing parts are omitted', () => {
+  const both = renderDeadlines({
+    state: 'ready',
+    items: [deadline(1, 3, { fundingType: 'full', studyLevel: 'master' })],
+  });
+  assert.match(both, /Fully funded\s*•\s*Master/);
+  const fundingOnly = renderDeadlines({
+    state: 'ready',
+    items: [deadline(1, 3, { fundingType: 'partial' })],
+  });
+  assert.match(fundingOnly, /Partially funded/);
+  assert.doesNotMatch(fundingOnly, /•/);
+  const none = renderDeadlines({ state: 'ready', items: [deadline(1, 3)] });
+  assert.doesNotMatch(none, /•/);
+  assert.doesNotMatch(none, /data-row-meta/);
+  const arabic = renderDeadlines(
+    { state: 'ready', items: [deadline(1, 3, { fundingType: 'full', studyLevel: 'phd, master' })] },
+    { locale: 'ar' }
+  );
+  assert.match(arabic, /تمويل كامل/);
+});
+
+test('US2 deadlines: the title follows the language and long titles are clamped', () => {
+  const items = [deadline(1, 3, { title: { default: 'Default title', ar: 'عنوان عربي', en: 'English title' } })];
+  assert.match(renderDeadlines({ state: 'ready', items }), /English title/);
+  assert.match(renderDeadlines({ state: 'ready', items }, { locale: 'ar' }), /عنوان عربي/);
+  const fallback = [deadline(1, 3, { title: { default: 'Default title', ar: null, en: null } })];
+  assert.match(renderDeadlines({ state: 'ready', items: fallback }, { locale: 'ar' }), /Default title/);
+  const html = renderDeadlines({ state: 'ready', items });
+  assert.match(html, /line-clamp-2/);
+  assert.match(html, /min-w-0/);
+});
+
+test('US2 deadlines: rows link to details only when the details page is enabled', () => {
+  const view = { state: 'ready', items: [deadline(10, 2)] };
+  assert.doesNotMatch(renderDeadlines(view, { detailsEnabled: false }), /<a\b/);
+  assert.match(renderDeadlines(view, { detailsEnabled: true }), /<a\b[^>]*href="\/student\/scholarships\/10"/);
+});
+
+test('US2 deadlines: empty, loading and error states', () => {
+  const empty = renderDeadlines({ state: 'empty' });
+  assert.match(empty, /No deadlines in the next 30 days/);
+  assert.match(empty, /<a\b[^>]*href="\/student\/scholarships"/);
+  assert.match(empty, /Search scholarships/);
+  assert.doesNotMatch(empty, /<ol\b/);
+
+  const loading = renderDeadlines({ state: 'loading' });
+  assert.equal((loading.match(/data-skeleton="deadline"/g) ?? []).length, 3);
+
+  const error = renderDeadlines({ state: 'error', onRetry: noop });
+  assert.match(error, /role="alert"/);
+  assert.match(error, /Try again/);
+  assert.match(error, /Upcoming deadlines/, 'the section keeps its heading');
+});
+
+test('US2 independence: one failing source affects only the sections that need it', () => {
+  const { buildHomeSummary } = loadHome('lib/home-summary.ts');
+  const { ApiError } = loadSrc('lib/api-client.ts');
+  const { HomeContractError } = loadHome('schemas/contract-error.ts');
+  const savedCards = [card(1, { deadline: dateIn(3) }), card(2, { deadline: dateIn(40) })];
+  const trackedItems = [
+    tracked(3, 'applied', card(3, { deadline: dateIn(5) })),
+    tracked(4, 'preparing_documents', card(4)),
+    tracked(5, 'accepted', card(5)),
+  ];
+  const ok = (data) => ({ status: 'success', error: null, data });
+  const failed = (error) => ({ status: 'error', error, data: undefined });
+  const pending = { status: 'pending', error: null, data: undefined };
+  const summary = (saved, trackedQuery, now = NOW) => buildHomeSummary({ saved, tracked: trackedQuery, now });
+
+  const healthy = summary(ok(savedCards), ok(trackedItems));
+  assert.deepEqual(healthy.saved, { state: 'ready', value: 2 });
+  assert.deepEqual(healthy.inProgress, { state: 'ready', value: 2 });
+  assert.deepEqual(healthy.upcoming, { state: 'ready', value: 2 });
+  assert.equal(healthy.deadlines.state, 'ready');
+  assert.deepEqual(healthy.deadlines.items.map((item) => item.id), [1, 3]);
+
+  const savedFailed = summary(failed(new ApiError('x', [], 500)), ok(trackedItems));
+  assert.equal(savedFailed.saved.state, 'error');
+  assert.equal(savedFailed.inProgress.state, 'ready');
+  assert.equal(savedFailed.inProgress.value, 2);
+  assert.equal(savedFailed.upcoming.state, 'error');
+  assert.equal(savedFailed.deadlines.state, 'error');
+
+  const trackedFailed = summary(ok(savedCards), failed(new HomeContractError('tracked', [])));
+  assert.equal(trackedFailed.saved.state, 'ready');
+  assert.equal(trackedFailed.saved.value, 2);
+  assert.equal(trackedFailed.inProgress.state, 'error', 'a contract error is an error, not 0');
+  assert.equal(trackedFailed.upcoming.state, 'error');
+  assert.equal(trackedFailed.deadlines.state, 'error');
+
+  const loading = summary(pending, pending);
+  assert.deepEqual([loading.saved.state, loading.inProgress.state, loading.upcoming.state, loading.deadlines.state], [
+    'loading',
+    'loading',
+    'loading',
+    'loading',
+  ]);
+
+  const none = summary(ok([]), ok([]));
+  assert.deepEqual(none.saved, { state: 'ready', value: 0 });
+  assert.equal(none.deadlines.state, 'empty');
+  assert.equal(none.upcoming.value, 0);
+
+  // The local date is only known after mount: days-left sections wait for it.
+  const beforeMount = summary(ok(savedCards), ok(trackedItems), null);
+  assert.equal(beforeMount.saved.state, 'ready');
+  assert.equal(beforeMount.upcoming.state, 'loading');
+  assert.equal(beforeMount.deadlines.state, 'loading');
+
+  // A 401 keeps the sections loading while the session re-check redirects.
+  const unauthorized = summary(failed(new ApiError('x', [], 401)), ok(trackedItems));
+  assert.equal(unauthorized.saved.state, 'loading');
+});
+
+test('US2 i18n: stats and deadlines messages exist in both locales and plurals are complete', () => {
+  for (const locale of ['en', 'ar']) {
+    const home = messages[locale].StudentHome;
+    for (const key of ['stats.saved', 'stats.inProgress', 'stats.upcoming', 'stats.error', 'deadlines.title', 'deadlines.daysLeft', 'deadlines.empty.title', 'deadlines.empty.action', 'deadlines.error']) {
+      assert.equal(typeof key.split('.').reduce((value, part) => value?.[part], home), 'string', `${locale} ${key}`);
+    }
+  }
+});

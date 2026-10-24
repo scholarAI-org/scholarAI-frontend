@@ -23,7 +23,18 @@ const trackedApplicationSchema = z.looseObject({
 });
 
 export type TrackedApplication = z.output<typeof trackedApplicationSchema>;
-export type HomeScholarshipCard = TrackedApplication['scholarship'];
+// What Home reads from a scholarship card. Saved cards (ScholarshipDiscoveryCard) and
+// tracked cards both satisfy it.
+export interface HomeScholarshipCard {
+  id: number;
+  title: string;
+  title_ar?: string | null;
+  title_en?: string | null;
+  deadline?: string | null;
+  no_deadline?: boolean | null;
+  funding_type?: string | null;
+  study_level?: string | string[] | null;
+}
 
 export const parseTrackedApplications = (raw: unknown): TrackedApplication[] =>
   parseWith('tracked', z.array(trackedApplicationSchema), raw);

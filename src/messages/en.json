@@ -1540,6 +1540,22 @@
       "completion": "Profile completion",
       "completionValue": "{percent, number, integer}%",
       "completionError": "We could not load your profile completion."
+    },
+    "stats": {
+      "saved": "Saved scholarships",
+      "inProgress": "Applications in progress",
+      "upcoming": "Upcoming deadlines",
+      "notifications": "Unread notifications",
+      "error": "We could not load this number."
+    },
+    "deadlines": {
+      "title": "Upcoming deadlines",
+      "daysLeft": "{count, plural, =0 {Due today} one {{count, number, integer} day left} other {{count, number, integer} days left}}",
+      "empty": {
+        "title": "No deadlines in the next {days, number, integer} days",
+        "action": "Search scholarships"
+      },
+      "error": "We could not load your upcoming deadlines."
     }
   }
 }

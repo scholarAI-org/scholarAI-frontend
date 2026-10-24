@@ -1527,6 +1527,22 @@
       "completion": "نسبة اكتمال الملف",
       "completionValue": "{percent, number, integer}%",
       "completionError": "تعذّر تحميل نسبة اكتمال الملف."
+    },
+    "stats": {
+      "saved": "منح محفوظة",
+      "inProgress": "طلبات قيد المتابعة",
+      "upcoming": "مواعيد قريبة",
+      "notifications": "إشعارات غير مقروءة",
+      "error": "تعذّر تحميل هذا الرقم."
+    },
+    "deadlines": {
+      "title": "المواعيد النهائية القادمة",
+      "daysLeft": "{count, plural, =0 {ينتهي اليوم} one {باقي يوم واحد} two {باقي يومان} few {باقي {count, number, integer} أيام} many {باقي {count, number, integer} يومًا} other {باقي {count, number, integer} يوم}}",
+      "empty": {
+        "title": "لا توجد مواعيد نهائية خلال الـ {days, number, integer} يومًا القادمة",
+        "action": "ابحث عن منح"
+      },
+      "error": "تعذّر تحميل المواعيد النهائية القادمة."
     }
   }
 }
