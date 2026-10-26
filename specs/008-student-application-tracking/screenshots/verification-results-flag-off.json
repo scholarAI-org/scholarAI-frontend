@@ -1,0 +1,92 @@
+[
+  {
+    "name": "ar /student/scholarships: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "ar /student/scholarships: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=1073"
+  },
+  {
+    "name": "ar /student/scholarships/15: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "ar /student/scholarships/15: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=529"
+  },
+  {
+    "name": "ar /student/saved: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "ar /student/saved: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=364"
+  },
+  {
+    "name": "ar: sidebar has no Application tracking link",
+    "pass": true,
+    "detail": "links=0"
+  },
+  {
+    "name": "ar /student/tracking: not found, no tracking page",
+    "pass": true,
+    "detail": "tracking-page=0"
+  },
+  {
+    "name": "en /student/scholarships: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "en /student/scholarships: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=1130"
+  },
+  {
+    "name": "en /student/scholarships/15: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "en /student/scholarships/15: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=564"
+  },
+  {
+    "name": "en /student/saved: no tracking control",
+    "pass": true,
+    "detail": "controls=0"
+  },
+  {
+    "name": "en /student/saved: scholarship content rendered",
+    "pass": true,
+    "detail": "chars=395"
+  },
+  {
+    "name": "en: sidebar has no Application tracking link",
+    "pass": true,
+    "detail": "links=0"
+  },
+  {
+    "name": "en /student/tracking: not found, no tracking page",
+    "pass": true,
+    "detail": "tracking-page=0"
+  },
+  {
+    "name": "backend received no /tracked request",
+    "pass": true,
+    "detail": "n=0"
+  },
+  {
+    "name": "backend received no /tracking request (PUT or GET)",
+    "pass": true,
+    "detail": "n=0"
+  }
+]
