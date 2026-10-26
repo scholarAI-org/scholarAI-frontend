@@ -1308,6 +1308,7 @@
     },
     "navGroups": {
       "discover": "Discover",
+      "manage": "Manage",
       "personal": "Personal"
     },
     "nav": {
