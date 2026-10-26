@@ -707,6 +707,7 @@
       "gender": "Select gender",
       "birthDate": "Date of birth is required",
       "minimumAge": "Date of birth cannot be in the future",
+      "ageRange": "Applicants must be between 15 and 80 years old",
       "nationality": "Select a nationality with a two-letter country code",
       "residence": "Select a residence country with a two-letter country code",
       "nationalId": "ID number must contain 9 digits",

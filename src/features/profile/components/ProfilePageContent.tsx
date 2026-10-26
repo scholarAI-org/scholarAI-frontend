@@ -49,7 +49,7 @@ export function ProfilePageContent() {
   const personal = profileQuery.data.personal;
   const academic = profileQuery.data.academic;
   const progress = useProfileProgress();
-  const fullName = joinPresent([personal?.first_name, personal?.last_name], ' ');
+  const fullName = joinPresent([personal?.full_name_ar, personal?.full_name_en], ' ');
   const profileName = fullName || personal?.email || 'الملف الشخصي';
   const personalCompletion = personal
     ? getPersonalInformationCompletion(toPersonalInformationForm(personal))
@@ -66,7 +66,7 @@ export function ProfilePageContent() {
   const location = personal?.city;
   const profileUser: ProfileUser = {
     name: profileName,
-    initials: getInitials(personal?.first_name || profileName),
+    initials: getInitials(personal?.full_name_ar || profileName),
     avatarUrl: profileQuery.data.avatar_url,
     headline: joinPresent(
       [fieldOfStudy, joinPresent([academic?.institution, location], ' - ')],

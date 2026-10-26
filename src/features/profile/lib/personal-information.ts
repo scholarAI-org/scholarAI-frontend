@@ -23,8 +23,8 @@ export const emptyPersonalInformation: PersonalInformationFormData = {
 };
 
 export const personalInformationFieldMap = {
-  first_name: 'firstName',
-  last_name: 'lastName',
+  full_name_ar: 'firstName',
+  full_name_en: 'lastName',
   email: 'email',
   birth_date: 'birthDate',
   gender: 'gender',
@@ -42,8 +42,8 @@ export function toPersonalInformationForm(
 ): PersonalInformationFormData {
   if (!data) return emptyPersonalInformation;
   return {
-    firstName: data.first_name ?? '',
-    lastName: data.last_name ?? '',
+    firstName: data.full_name_ar ?? '',
+    lastName: data.full_name_en ?? '',
     email: data.email ?? '',
     birthDate: data.birth_date ? data.birth_date.slice(0, 10) : '',
     gender: data.gender ?? '',
@@ -61,8 +61,8 @@ export function toPersonalInformationPayload(
   data: PersonalInformationFormData
 ): PersonalInformation {
   return personalInformationApiSchema.parse({
-    first_name: data.firstName.trim(),
-    last_name: data.lastName.trim(),
+    full_name_ar: data.firstName.trim(),
+    full_name_en: data.lastName.trim(),
     email: data.email.trim(),
     birth_date: data.birthDate,
     gender: data.gender,
