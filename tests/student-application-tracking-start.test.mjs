@@ -496,3 +496,142 @@ test('entry points: the discovery feature only reaches tracking through the page
     );
   }
 });
+
+// Behavioural check on top of the source guards above: each page-level component is
+// rendered with the flag off and on. The tracked list is seeded (loaded, empty), so
+// with the flag on every card has what it needs to show "Track application".
+
+const TRACK_IDS = ['track-slot', 'track-control', 'track-start', 'track-tracked'];
+const trackMarkers = (markup) => TRACK_IDS.filter((id) => markup.includes(`data-testid="${id}"`));
+const countMarker = (markup, id) =>
+  (markup.match(new RegExp(`data-testid="${id}"`, 'g')) ?? []).length;
+const wireCard = (id) => ({ id, title: `Scholarship ${id}`, is_saved: false, no_deadline: true });
+
+function renderPage(element, seed) {
+  const { client } = setup([]);
+  seed?.(client);
+  const markup = renderToStaticMarkup(h(QueryClientProvider, { client }, element));
+  client.clear();
+  return markup;
+}
+
+// Swap hook modules for canned ones while `run` executes, then put the cache back.
+function withStubbedModules(stubs, pageRel, run) {
+  const resolve = (rel) => loadModule.resolve(path.join(srcPath, rel));
+  const pageKey = resolve(pageRel);
+  const keys = [...Object.keys(stubs).map(resolve), pageKey];
+  const before = new Map(keys.map((key) => [key, loadModule.cache[key]]));
+  for (const [rel, exports] of Object.entries(stubs)) {
+    const key = resolve(rel);
+    loadModule.cache[key] = { id: key, filename: key, loaded: true, exports };
+  }
+  delete loadModule.cache[pageKey];
+  try {
+    return run(loadModule(pageKey));
+  } finally {
+    for (const [key, entry] of before) {
+      if (entry) loadModule.cache[key] = entry;
+      else delete loadModule.cache[key];
+    }
+  }
+}
+
+const flagLabel = (name, on) => `${name}, flag ${on ? 'on' : 'off'}`;
+
+test('flag off: the discovery grid and list render no tracking control; with it on, one per card', () => {
+  const discovery = (rel) =>
+    loadModule(path.join(srcPath, 'features/student/scholarship-discovery', rel));
+  const { ScholarshipResults } = discovery('components/ScholarshipResults.tsx');
+  const { discoveryQueryOptions } = discovery('lib/queries.ts');
+  const { defaultDiscoveryQuery: query } = discovery('constants.ts');
+  const response = { items: [wireCard(11), wireCard(12)], total: 2, page: 1, total_pages: 1 };
+  for (const view of ['grid', 'list']) {
+    for (const trackingEnabled of [false, true]) {
+      const label = flagLabel(view, trackingEnabled);
+      const markup = renderPage(
+        h(ScholarshipResults, {
+          query,
+          view,
+          onPageChange() {},
+          onReconcilePage() {},
+          onClearFilters() {},
+          detailsEnabled: false,
+          trackingEnabled,
+        }),
+        (client) => client.setQueryData(discoveryQueryOptions(query).queryKey, response)
+      );
+      assert.ok(
+        markup.includes('Scholarship 11') && markup.includes('Scholarship 12'),
+        `${label}: the cards rendered`
+      );
+      if (trackingEnabled) assert.equal(countMarker(markup, 'track-start'), 2, label);
+      else assert.deepEqual(trackMarkers(markup), [], label);
+    }
+  }
+});
+
+test('flag off: the details page renders no tracking control; with it on, one', () => {
+  const details = {
+    id: 42,
+    title: 'Chevening Scholarship 2026',
+    is_saved: false,
+    ingestion_type: 'manual',
+    source: 'official',
+  };
+  withStubbedModules(
+    {
+      'features/student/scholarship-details/hooks/useScholarshipDetailsQuery.ts': {
+        useScholarshipDetailsQuery: () => ({
+          isLoading: false,
+          isFetching: false,
+          isError: false,
+          data: details,
+          error: null,
+          refetch: () => Promise.resolve(),
+        }),
+      },
+    },
+    'features/student/scholarship-details/components/ScholarshipDetailsPage.tsx',
+    ({ ScholarshipDetailsPage }) => {
+      for (const trackingEnabled of [false, true]) {
+        const label = flagLabel('details', trackingEnabled);
+        const markup = renderPage(h(ScholarshipDetailsPage, { rawId: '42', trackingEnabled }));
+        assert.ok(markup.includes('Chevening Scholarship 2026'), `${label}: the page rendered`);
+        if (trackingEnabled) assert.equal(countMarker(markup, 'track-start'), 1, label);
+        else assert.deepEqual(trackMarkers(markup), [], label);
+      }
+    }
+  );
+});
+
+test('flag off: the saved page renders no tracking control; with it on, one per card', () => {
+  const items = [wireCard(11), wireCard(12)];
+  withStubbedModules(
+    {
+      'features/student/saved-scholarships/hooks/useSavedScholarshipsQuery.ts': {
+        useSavedScholarshipsQuery: () => ({
+          isLoading: false,
+          isError: false,
+          data: items,
+          error: null,
+          refetch: () => Promise.resolve(),
+        }),
+      },
+    },
+    'features/student/saved-scholarships/components/SavedScholarshipsPage.tsx',
+    ({ SavedScholarshipsPage }) => {
+      for (const trackingEnabled of [false, true]) {
+        const label = flagLabel('saved', trackingEnabled);
+        const markup = renderPage(
+          h(SavedScholarshipsPage, { detailsEnabled: false, trackingEnabled })
+        );
+        assert.ok(
+          markup.includes('Scholarship 11') && markup.includes('Scholarship 12'),
+          `${label}: the cards rendered`
+        );
+        if (trackingEnabled) assert.equal(countMarker(markup, 'track-start'), 2, label);
+        else assert.deepEqual(trackMarkers(markup), [], label);
+      }
+    }
+  );
+});
