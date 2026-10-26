@@ -2,6 +2,38 @@
   "Common": {
     "siteName": "ScholarAI"
   },
+  "Metadata": {
+    "siteName": "ScholarAI",
+    "title": "ScholarAI — find study scholarships",
+    "titleTemplate": "%s · ScholarAI",
+    "description": "Discover study funding opportunities around the world and keep your academic profile and documents in one place.",
+    "pages": {
+      "login": {
+        "title": "Login",
+        "description": "Sign in to your ScholarAI account."
+      },
+      "register": {
+        "title": "Create an account",
+        "description": "Create a ScholarAI account to browse scholarships and build your academic profile."
+      },
+      "forgotPassword": {
+        "title": "Forgot your password?",
+        "description": "Ask for a link to reset your ScholarAI password."
+      },
+      "resetPassword": {
+        "title": "Reset password",
+        "description": "Choose a new password for your ScholarAI account."
+      },
+      "verifyEmail": {
+        "title": "Verify your email",
+        "description": "Enter the verification code sent to your email address."
+      },
+      "verifyEmailSuccess": {
+        "title": "Email verified",
+        "description": "Your email address is verified."
+      }
+    }
+  },
   "Nav": {
     "login": "Login",
     "register": "Sign Up",

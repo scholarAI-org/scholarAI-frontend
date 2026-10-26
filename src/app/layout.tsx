@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Almarai } from 'next/font/google';
+import { resolveSiteUrl } from '@/lib/site-url';
 import './globals.css';
 
 const almarai = Almarai({
@@ -10,9 +11,13 @@ const almarai = Almarai({
   display: 'swap',
 });
 
+// Fallback for anything rendered outside /[locale] (global-error). Localized
+// pages override this from src/app/[locale]/layout.tsx.
 export const metadata: Metadata = {
+  metadataBase: new URL(resolveSiteUrl()),
   title: 'ScholarAI',
-  description: 'ScholarAI Platform',
+  description:
+    'Discover study funding opportunities around the world and keep your academic profile and documents in one place.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
