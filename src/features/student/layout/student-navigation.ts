@@ -27,14 +27,14 @@ export const studentNavigation: StudentNavigationItem[] = [
     labelKey: 'nav.saved',
     href: '/student/saved',
     enabled: false,
-    group: 'discover',
+    group: 'manage',
   },
   {
     id: 'tracking',
     labelKey: 'nav.tracking',
     href: '/student/tracking',
     enabled: false,
-    group: 'discover',
+    group: 'manage',
   },
   {
     id: 'profile',
@@ -63,8 +63,13 @@ export const withHomeEnabled = (
 ): StudentNavigationItem[] =>
   items.map((item) => (item.id === 'home' ? { ...item, enabled: homeEnabled } : item));
 
-// Figma sidebar (2979:9150) section order. A label shows only above real items.
-export const studentNavigationGroups: StudentNavigationGroupId[] = ['discover', 'personal'];
+// Figma sidebar (2979:9150 and 2415:4656) section order: Discover, Manage (Saved,
+// Application tracking), Personal. A label shows only above real items.
+export const studentNavigationGroups: StudentNavigationGroupId[] = [
+  'discover',
+  'manage',
+  'personal',
+];
 
 export const getStudentNavigationSections = (
   items: readonly StudentNavigationItem[]
