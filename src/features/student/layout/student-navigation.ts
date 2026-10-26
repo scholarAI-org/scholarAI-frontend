@@ -30,6 +30,13 @@ export const studentNavigation: StudentNavigationItem[] = [
     group: 'discover',
   },
   {
+    id: 'tracking',
+    labelKey: 'nav.tracking',
+    href: '/student/tracking',
+    enabled: false,
+    group: 'discover',
+  },
+  {
     id: 'profile',
     labelKey: 'nav.profile',
     href: '/student/profile',
@@ -43,6 +50,12 @@ export const withSavedEnabled = (
   savedEnabled: boolean
 ): StudentNavigationItem[] =>
   items.map((item) => (item.id === 'saved' ? { ...item, enabled: savedEnabled } : item));
+
+export const withTrackingEnabled = (
+  items: readonly StudentNavigationItem[],
+  trackingEnabled: boolean
+): StudentNavigationItem[] =>
+  items.map((item) => (item.id === 'tracking' ? { ...item, enabled: trackingEnabled } : item));
 
 export const withHomeEnabled = (
   items: readonly StudentNavigationItem[],
@@ -81,6 +94,9 @@ export function getStudentPageKey(pathname: string): StudentPageKey | null {
   if (pathname === '/student') return 'home';
   if (pathname === '/student/saved' || pathname.startsWith('/student/saved/')) {
     return 'saved';
+  }
+  if (pathname === '/student/tracking' || pathname.startsWith('/student/tracking/')) {
+    return 'tracking';
   }
   if (pathname === '/student/profile' || pathname.startsWith('/student/profile/')) {
     return 'profile';

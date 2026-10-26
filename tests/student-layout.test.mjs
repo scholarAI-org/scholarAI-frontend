@@ -137,13 +137,14 @@ test('Arabic plurals render the expected forms', () => {
 
 // --- Navigation --------------------------------------------------------------
 
-test('navigation config has Home, Profile, Search Scholarships, and Saved', () => {
+test('navigation config has Home, Profile, Search Scholarships, Saved, and Tracking', () => {
   assert.deepEqual(
     studentNavigation.map(({ id, href, group }) => [id, href, group]),
     [
       ['home', '/student', 'discover'],
       ['scholarships', '/student/scholarships', 'discover'],
       ['saved', '/student/saved', 'discover'],
+      ['tracking', '/student/tracking', 'discover'],
       ['profile', '/student/profile', 'personal'],
     ]
   );

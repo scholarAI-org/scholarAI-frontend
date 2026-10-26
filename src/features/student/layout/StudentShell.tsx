@@ -5,12 +5,18 @@ import { StudentHeader } from './StudentHeader';
 import { StudentMobileNavigation } from './StudentMobileNavigation';
 import { StudentSidebar } from './StudentSidebar';
 
-import { studentNavigation, withHomeEnabled, withSavedEnabled } from './student-navigation';
+import {
+  studentNavigation,
+  withHomeEnabled,
+  withSavedEnabled,
+  withTrackingEnabled,
+} from './student-navigation';
 
 interface StudentShellProps {
   children: ReactNode;
   savedEnabled?: boolean;
   homeEnabled?: boolean;
+  trackingEnabled?: boolean;
   // Optional controls for the desktop header, supplied by the route layout so the shell
   // stays free of page-specific data.
   headerActions?: ReactNode;
@@ -21,12 +27,16 @@ export function StudentShell({
   children,
   savedEnabled = false,
   homeEnabled = false,
+  trackingEnabled = false,
   headerActions,
 }: StudentShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeNavigation = useCallback(() => setIsNavigationOpen(false), []);
-  const items = withHomeEnabled(withSavedEnabled(studentNavigation, savedEnabled), homeEnabled);
+  const items = withTrackingEnabled(
+    withHomeEnabled(withSavedEnabled(studentNavigation, savedEnabled), homeEnabled),
+    trackingEnabled
+  );
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-start text-[#434343]">
