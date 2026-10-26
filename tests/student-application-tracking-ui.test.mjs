@@ -69,10 +69,27 @@ const navigationStub = {
   useRouter: () => ({ replace() {}, push() {}, prefetch() {} }),
 };
 
+const imageStub = {
+  __esModule: true,
+  default: ({ src, alt, width, height, className }) =>
+    React.createElement('img', {
+      src: typeof src === 'string' ? src : '',
+      alt,
+      width,
+      height,
+      className,
+    }),
+};
+const authStub = { useAuth: () => ({ user: null }) };
+const logoutStub = { useLogout: () => ({ mutate() {}, isPending: false }) };
+
 const originalLoad = Module._load;
 Module._load = function (request, parent, ...rest) {
   if (request === 'next-intl') return nextIntlStub;
   if (request === '@/i18n/navigation') return navigationStub;
+  if (request === 'next/image') return imageStub;
+  if (request === '@/features/auth/providers/AuthProvider') return authStub;
+  if (request === '@/features/auth/hooks/useLogout') return logoutStub;
   return originalLoad.call(this, request, parent, ...rest);
 };
 
@@ -592,4 +609,30 @@ test('page: Arabic renders the Figma wording and keeps counts as Latin digits', 
   assert.match(html, /تم التقديم/);
   assert.match(html.split('tracking-card-applied"')[1].split('</li>')[0], />1</);
   assert.doesNotMatch(html, /[٠-٩]/);
+});
+
+// -------------------- sidebar gating (rendered through the real shell) --------
+
+const renderShell = (props) => {
+  const { StudentShell } = loadModule(
+    path.join(srcPath, 'features/student/layout/StudentShell.tsx')
+  );
+  return render(h(StudentShell, props, h('div', null, 'page')));
+};
+
+test('shell: the tracking item is not rendered when TRACKING_ENABLED is off', () => {
+  for (const props of [{}, { trackingEnabled: false }, { savedEnabled: true, homeEnabled: true }]) {
+    const html = renderShell(props);
+    assert.equal(html.includes('href="/student/tracking"'), false);
+  }
+});
+
+test('shell: the tracking item appears only when the flag is on', () => {
+  const html = renderShell({ trackingEnabled: true });
+  assert.equal(html.includes('href="/student/tracking"'), true);
+});
+
+test('layout: the student layout passes the server flag, not a constant, to the shell', () => {
+  const source = fs.readFileSync(path.join(srcPath, 'app/[locale]/student/layout.tsx'), 'utf8');
+  assert.ok(source.includes('trackingEnabled: featureFlags.trackingEnabled'));
 });
