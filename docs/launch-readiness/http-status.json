@@ -1,0 +1,7 @@
+{
+  "/en/this-page-does-not-exist": 404,
+  "/ar/this-page-does-not-exist": 404,
+  "/en/boom-test": 500,
+  "/ar/boom-test": 500,
+  "/en/student": 200
+}

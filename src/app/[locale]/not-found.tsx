@@ -4,8 +4,9 @@ import { buttonStyles } from '@/components/ui/Button';
 import { Link } from '@/i18n/navigation';
 
 /**
- * The 404 page for everything under /[locale]. It is also what a visitor sees
- * when a feature flag is off and the route gate calls notFound().
+ * The 404 page for everything under /[locale]: unknown paths (via the catch-all
+ * beside this file) and the routes whose feature flag is off and that call
+ * notFound().
  */
 export default async function LocaleNotFound() {
   const t = await getTranslations('NotFound');
