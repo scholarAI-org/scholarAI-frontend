@@ -13,7 +13,8 @@ are gone with them.
 
 Measured per capture (all six passed): no horizontal scroll (`scrollWidth == clientWidth`); no
 banned en or ar string in the rendered text; no clipped text, including the English hero search
-placeholder, which used to be cut off in the 1024 hero column; four feature cards laid out 4 / 2+2 /
+placeholder (at 1024 the hero leaves the input 212px and the old string needed 220px; the
+new one needs 162px); four feature cards laid out 4 / 2+2 /
 1 per row at 1440 / 1024 / 390 and three steps laid out 3 / 3 / 1, so no row ends with a lone card;
 no console or page errors. Interactions checked in both locales: the three nav anchors scroll their
 section to the top of the viewport, every footer link resolves to a real route (200), and the hero
