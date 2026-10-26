@@ -36,7 +36,7 @@
     },
     "updated": {
       "hero": {
-        "badge": "An intelligent AI-powered platform",
+        "badge": "Scholarships for Palestinian students",
         "title": "Find the scholarship",
         "accent": "that fits your future",
         "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and keep your academic profile and documents in one place.",
@@ -60,16 +60,8 @@
         "heading": "Everything you need, together in one platform",
         "items": [
           {
-            "title": "AI recommendations",
-            "description": "Analyzes your profile to suggest scholarships that fit your experience, subject, and academic goals."
-          },
-          {
             "title": "Advanced filters",
             "description": "Browse by country, study level, subject, funding type, and study duration."
-          },
-          {
-            "title": "Deadline reminders",
-            "description": "Get reminded ahead of application deadlines for the scholarships you track."
           },
           {
             "title": "Verified scholarships",
@@ -78,10 +70,6 @@
           {
             "title": "Save & track applications",
             "description": "Save your favorites and update application status from interest to acceptance."
-          },
-          {
-            "title": "Instant notifications",
-            "description": "Get notified when new scholarships match your profile."
           },
           {
             "title": "Multiple countries",
@@ -98,39 +86,21 @@
             "description": "Enter your grades, subject, languages, and preferred countries."
           },
           {
-            "title": "Get recommendations",
-            "description": "AI analyzes your profile and suggests scholarships that fit it."
-          },
-          {
             "title": "Apply with confidence",
             "description": "Prepare your documents and review each scholarship’s requirements."
           },
           {
             "title": "Track your application",
-            "description": "Update each application and get deadline reminders until acceptance."
+            "description": "Follow each application and update its status until acceptance."
           }
         ]
-      },
-      "matching": {
-        "badge": "Artificial intelligence",
-        "heading": "Smart recommendations for your academic profile",
-        "description": "No more searching through scholarship listings by hand. Scholar AI analyzes your profile to suggest scholarships that fit you.",
-        "bullets": [
-          "Instant analysis of your grades, nationality, and subject",
-          "Alerts for new scholarships that match your profile"
-        ],
-        "cta": "Try recommendations now",
-        "imageAlt": "Illustration of an academic profile being matched to scholarships"
       },
       "cta": {
         "badge": "Start your journey",
         "heading": "Everything a student needs",
         "headingEnd": "in one place",
         "description": "Start your search for scholarships around the world with PS Scholar.",
-        "bullets": [
-          "Instant free access, no credit card required",
-          "An AI assistant specializing in scholarships"
-        ],
+        "bullets": ["Instant free access, no credit card required"],
         "login": "Log in",
         "start": "Start your journey"
       },
@@ -154,11 +124,11 @@
         "columns": [
           {
             "title": "Discover",
-            "links": ["Browse scholarships", "Smart recommendations"]
+            "links": ["Browse scholarships"]
           },
           {
             "title": "Tools",
-            "links": ["Your profile", "Notifications"]
+            "links": ["Your profile"]
           },
           {
             "title": "Platform",
