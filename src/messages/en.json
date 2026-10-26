@@ -39,7 +39,7 @@
         "badge": "An intelligent AI-powered platform",
         "title": "Find the scholarship",
         "accent": "that fits your future",
-        "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and prepare your academic documents with intelligent assistance.",
+        "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and keep your academic profile and documents in one place.",
         "start": "Start now",
         "how": "How it works",
         "search": "Search",
@@ -66,14 +66,6 @@
           {
             "title": "Advanced filters",
             "description": "Browse by country, study level, subject, funding type, and study duration."
-          },
-          {
-            "title": "Eligibility & matching",
-            "description": "See your match with each scholarship, which criteria you meet, and what needs improvement."
-          },
-          {
-            "title": "AI document improvement",
-            "description": "Upload your CV and motivation letter for suggestions tailored to each scholarship."
           },
           {
             "title": "Deadline reminders",
@@ -107,11 +99,11 @@
           },
           {
             "title": "Get recommendations",
-            "description": "AI analyzes your profile and ranks scholarships automatically."
+            "description": "AI analyzes your profile and suggests scholarships that fit it."
           },
           {
             "title": "Apply with confidence",
-            "description": "Prepare documents with AI and review scholarship requirements."
+            "description": "Prepare your documents and review each scholarship’s requirements."
           },
           {
             "title": "Track your application",
@@ -122,28 +114,13 @@
       "matching": {
         "badge": "Artificial intelligence",
         "heading": "Smart recommendations for your academic profile",
-        "description": "No more searching through scholarship listings by hand. Scholar AI analyzes your profile and ranks opportunities by match, explaining your strengths and areas to improve.",
+        "description": "No more searching through scholarship listings by hand. Scholar AI analyzes your profile to suggest scholarships that fit you.",
         "bullets": [
           "Instant analysis of your grades, nationality, and subject",
-          "A precise match score with explanations for each criterion",
-          "Alerts for new scholarships that match your profile",
-          "Compare scholarships side by side to make your decision"
+          "Alerts for new scholarships that match your profile"
         ],
         "cta": "Try recommendations now",
         "imageAlt": "Illustration of an academic profile being matched to scholarships"
-      },
-      "documents": {
-        "badge": "Document improvement",
-        "heading": "Improve your documents and strengthen your chances",
-        "description": "Upload your CV and motivation letter for specific suggestions tailored to each scholarship. Nothing changes without your approval.",
-        "bullets": [
-          "Language and structure suggestions for your documents",
-          "Suggestions tailored to each scholarship’s requirements",
-          "Accept or reject each suggestion — you stay in control",
-          "Supports CVs, motivation letters, and recommendation letters"
-        ],
-        "cta": "Explore document improvement",
-        "imageAlt": "Original document compared with AI suggestions"
       },
       "cta": {
         "badge": "Start your journey",
@@ -181,7 +158,7 @@
           },
           {
             "title": "Tools",
-            "links": ["Improve documents", "Your profile", "Notifications"]
+            "links": ["Your profile", "Notifications"]
           },
           {
             "title": "Platform",

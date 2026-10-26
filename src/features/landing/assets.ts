@@ -1,9 +1,4 @@
 export const landingAssets = {
-  '2075-608-imgCheck': '/images/landing/2075-608-imgCheck.svg',
-  '2075-608-imgCheck1': '/images/landing/2075-608-imgCheck1.svg',
-  '2075-608-imgCheck2': '/images/landing/2075-608-imgCheck2.svg',
-  '2075-608-imgCheck3': '/images/landing/2075-608-imgCheck3.svg',
-  '2075-608-imgDocEnhance1': '/images/landing/2075-608-imgDocEnhance1.svg',
   '2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11':
     '/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png',
   '2100-736-imgCheckIcon': '/images/landing/2100-736-imgCheckIcon.svg',
@@ -16,7 +11,6 @@ export const landingAssets = {
   '2054-2795-imgIcon2': '/images/landing/2054-2795-imgIcon2.svg',
   '2054-2795-imgIcon3': '/images/landing/2054-2795-imgIcon3.svg',
   '2054-2795-imgIcon4': '/images/landing/2054-2795-imgIcon4.svg',
-  '2054-2795-imgIcon5': '/images/landing/2054-2795-imgIcon5.svg',
   '2054-2795-imgIcon6': '/images/landing/2054-2795-imgIcon6.svg',
   '2054-2795-imgIcon7': '/images/landing/2054-2795-imgIcon7.svg',
   '2054-2795-imgIcon8': '/images/landing/2054-2795-imgIcon8.svg',

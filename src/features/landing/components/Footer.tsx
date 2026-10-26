@@ -4,9 +4,10 @@ import { Container } from '@/components/shared/Container';
 import { LandingLogo } from './LandingLogo';
 import { DesignAsset } from './DesignAsset';
 
+// A null destination renders the label as disabled text: no route exists for it yet.
 const DESTINATIONS = [
   ['/student/scholarships', '#matching'],
-  ['#documents', '/student/profile', '/student/profile'],
+  ['/student/profile', null],
   ['/admin/dashboard', '/register'],
 ] as const;
 export function Footer() {
@@ -23,17 +24,18 @@ export function Footer() {
           {columns.map((column, i) => (
             <div key={column.title}>
               <h3>{column.title}</h3>
-              {column.links.map((label, j) =>
-                i === 1 && j === 2 ? (
+              {column.links.map((label, j) => {
+                const href = DESTINATIONS[i][j];
+                return href ? (
+                  <Link key={label} href={href}>
+                    {label}
+                  </Link>
+                ) : (
                   <span key={label} aria-disabled="true">
                     {label}
                   </span>
-                ) : (
-                  <Link key={label} href={DESTINATIONS[i][j]}>
-                    {label}
-                  </Link>
-                )
-              )}
+                );
+              })}
             </div>
           ))}
         </div>

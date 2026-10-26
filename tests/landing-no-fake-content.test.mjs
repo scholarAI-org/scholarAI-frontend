@@ -45,6 +45,42 @@ const FAKE_STRINGS = [
   '48 ساعة',
 ];
 
+// Product claims with no backing in the app today: ScholarshipMatchBadge never receives
+// match data, the profile "Improve AI" button is disabled ("Coming soon"), and nothing
+// compares scholarships. Compared case-insensitively, en + ar.
+const UNBACKED_CLAIMS = [
+  // match scores
+  'match score',
+  'ranks opportunities',
+  'ranks scholarships',
+  'eligibility & matching',
+  'see your match',
+  'نسبة توافق',
+  'يرتب المنح',
+  'تقييم الأهلية',
+  // side-by-side compare
+  'side by side',
+  'side-by-side',
+  'جنبًا إلى جنب',
+  // AI document enhancement
+  'document improvement',
+  'improve documents',
+  'improve your documents',
+  'documents with ai',
+  'with intelligent assistance',
+  'suggestions tailored',
+  'ai suggestions',
+  'تحسين الوثائق',
+  'تحسين المستندات',
+  'حسّن مستنداتك',
+  'بمساعدة ai',
+  'تقنيات الذكاء',
+  'اقتراحات مخصصة',
+  'تحسينات الذكاء الاصطناعي',
+];
+const BANNED = [...FAKE_STRINGS, ...UNBACKED_CLAIMS].map((banned) => banned.toLowerCase());
+const findBanned = (text) => BANNED.find((banned) => text.toLowerCase().includes(banned));
+
 // Walk the import graph from the landing route so only code that can render is checked.
 function reachableSources(entry) {
   const seen = new Map();
@@ -74,11 +110,6 @@ function usedNamespaces() {
   const namespaces = new Set();
   for (const [, source] of landingSources) {
     for (const [, ns] of source.matchAll(/useTranslations\('([^']+)'\)/g)) namespaces.add(ns);
-    // FeatureSpotlight builds its namespace from the `kind` prop.
-    if (source.includes('useTranslations(`Landing.updated.${kind}`)')) {
-      namespaces.add('Landing.updated.matching');
-      namespaces.add('Landing.updated.documents');
-    }
   }
   return namespaces;
 }
@@ -87,16 +118,14 @@ const resolve = (messages, ns) => ns.split('.').reduce((node, key) => node?.[key
 const strings = (node) =>
   typeof node === 'string' ? [node] : node ? Object.values(node).flatMap(strings) : [];
 
-test('rendered landing sources contain no known fake strings', () => {
+test('rendered landing sources contain no known fake or unbacked strings', () => {
   assert.ok(landingSources.length > 5, 'import graph walk found the landing components');
   for (const [file, source] of landingSources) {
-    for (const fake of FAKE_STRINGS) {
-      assert.ok(!source.includes(fake), `${file} contains fake string "${fake}"`);
-    }
+    assert.equal(findBanned(source), undefined, `${file} contains a banned string`);
   }
 });
 
-test('rendered landing translations contain no known fake strings in ar or en', () => {
+test('rendered landing translations contain no known fake or unbacked strings in ar or en', () => {
   const namespaces = usedNamespaces();
   assert.ok(namespaces.size > 5, 'found the translation namespaces the page renders');
   for (const locale of ['ar', 'en']) {
@@ -105,9 +134,7 @@ test('rendered landing translations contain no known fake strings in ar or en', 
       const node = resolve(messages, ns);
       assert.ok(node, `${locale}: namespace ${ns} exists`);
       for (const text of strings(node)) {
-        for (const fake of FAKE_STRINGS) {
-          assert.ok(!text.includes(fake), `${locale} ${ns} contains fake string "${fake}"`);
-        }
+        assert.equal(findBanned(text), undefined, `${locale} ${ns}: "${text}"`);
       }
     }
   }
@@ -145,8 +172,6 @@ test('landing message files carry no unused Landing namespaces', () => {
 test('every in-page anchor link on the landing resolves to a rendered section id', () => {
   const all = landingSources.map(([, source]) => source).join('\n');
   const ids = new Set([...all.matchAll(/\bid="([\w-]+)"/g)].map((m) => m[1]));
-  // FeatureSpotlight uses id={kind}
-  if (all.includes('id={kind}')) ['matching', 'documents'].forEach((id) => ids.add(id));
   // Hex colors such as '#e2e8f0' are not anchors.
   const targets = [...all.matchAll(/(?:href="|'|")#([\w-]+)/g)]
     .map((m) => m[1])
@@ -154,5 +179,19 @@ test('every in-page anchor link on the landing resolves to a rendered section id
   assert.ok(targets.length > 0);
   for (const target of targets) {
     assert.ok(ids.has(target), `#${target} has no matching section id`);
+  }
+});
+
+test('AiFeatures has exactly one icon and one tone per feature card in ar and en', () => {
+  const source = read('src/features/landing/components/AiFeatures.tsx');
+  const count = (name) => {
+    const start = source.indexOf(`const ${name} = [`);
+    assert.notEqual(start, -1, `${name} is declared`);
+    return source.slice(start, source.indexOf(']', start)).match(/'[^']+'/g).length;
+  };
+  for (const locale of ['ar', 'en']) {
+    const { items } = JSON.parse(read(`src/messages/${locale}.json`)).Landing.updated.features;
+    assert.equal(count('ICONS'), items.length, `${locale}: ICONS vs cards`);
+    assert.equal(count('TONES'), items.length, `${locale}: TONES vs cards`);
   }
 });
