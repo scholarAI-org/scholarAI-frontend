@@ -4,6 +4,8 @@ import { Container } from '@/components/shared/Container';
 import { LandingLogo } from './LandingLogo';
 import { DesignAsset } from './DesignAsset';
 
+const GITHUB_URL = 'https://github.com/scholarAI-org';
+
 // A null destination renders the label as disabled text: no route exists for it yet.
 const DESTINATIONS = [
   ['/student/scholarships', '#matching'],
@@ -45,20 +47,7 @@ export function Footer() {
         <div className="footer-bottom">
           <p>{t('copyright')}</p>
           <div className="footer-social">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-            >
-              <DesignAsset name="2075-770-imgLinkedin" />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-            >
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
               <DesignAsset name="2075-770-imgGithub" />
             </a>
           </div>

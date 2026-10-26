@@ -17,7 +17,6 @@ export const landingAssets = {
   '2104-2444-imgSun1': '/images/landing/2104-2444-imgSun1.svg',
   '2104-2444-imgPhoto202609151629301': '/images/landing/2104-2444-imgPhoto202609151629301.png',
   '2075-770-imgFooterLine': '/images/landing/2075-770-imgFooterLine.svg',
-  '2075-770-imgLinkedin': '/images/landing/2075-770-imgLinkedin.svg',
   '2075-770-imgGithub': '/images/landing/2075-770-imgGithub.svg',
   '2075-494-imgCheck': '/images/landing/2075-494-imgCheck.svg',
   'ai-match': '/images/landing/ai-match.svg',

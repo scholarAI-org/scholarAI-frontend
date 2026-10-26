@@ -202,6 +202,18 @@ test('AiFeatures has exactly one icon and one tone per feature card in ar and en
   }
 });
 
+// The only real ScholarAI account found in the repo config is the GitHub organisation (the
+// `origin` remote). No LinkedIn or other social URL exists anywhere, so none may be linked.
+const ALLOWED_EXTERNAL_LINKS = new Set(['https://github.com/scholarAI-org']);
+
+test('external landing links point only to the real ScholarAI GitHub organisation', () => {
+  const all = landingSources.map(([, source]) => source).join('\n');
+  const external = [...new Set(all.match(/https?:\/\/[^\s'"`<>)]+/g) ?? [])];
+  for (const url of external) {
+    assert.ok(ALLOWED_EXTERNAL_LINKS.has(url), `${url} is not a known ScholarAI account`);
+  }
+});
+
 test('the public landing links to no admin route', () => {
   for (const [file, source] of landingSources) {
     assert.doesNotMatch(source, /\/admin\b/, `${file} links to an admin route`);
