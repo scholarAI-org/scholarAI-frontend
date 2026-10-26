@@ -14,7 +14,7 @@ A student page, **Application tracking** (`متابعة التقديم`), where 
 
 ## What the Figma shows
 
-1. Page title `متابعة التقديم` and subtitle `سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة` (header row, owned by the shell).
+1. Page title `متابعة التقديم` and a subtitle (header row, owned by the shell). The Figma subtitle promised "important dates", which the backend cannot store, so the shipped copy drops that promise: `تابع حالة كل منحة وسجّل ملاحظاتك الخاصة` / "Track the status of each scholarship and keep your own notes."
 2. A row of **7 status cards** (icon, count, label). Order in RTL reading order, starting at the right:
    `saved / interested` (UI-only), `preparing_documents`, `ready_to_apply`, `applied`, `accepted`, `rejected`, `closed`.
 3. A **vertical list of tracking cards**. Each card has:
