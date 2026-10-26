@@ -18,4 +18,9 @@ export const featureFlags = Object.freeze({
   get studentHomeEnabled(): boolean {
     return process.env.STUDENT_HOME_ENABLED === 'true';
   },
+  // Feature 008: Student Application Tracking page and its sidebar item.
+  // Default: false. The literal string "true" is the only enabling value.
+  get trackingEnabled(): boolean {
+    return process.env.TRACKING_ENABLED === 'true';
+  },
 });
