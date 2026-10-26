@@ -194,7 +194,7 @@ test('messages: nav and header copy exist and match the Figma wording', () => {
   assert.equal(messages.ar.StudentLayout.pages.tracking.title, 'متابعة التقديم');
   assert.equal(
     messages.ar.StudentLayout.pages.tracking.description,
-    'سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة'
+    'تابع حالة كل منحة وسجّل ملاحظاتك الخاصة'
   );
   assert.ok(messages.en.StudentLayout.nav.tracking);
   assert.ok(messages.en.StudentLayout.pages.tracking.title);
