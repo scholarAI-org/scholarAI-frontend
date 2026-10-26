@@ -1629,7 +1629,8 @@
         "noDeadline": "No deadline",
         "updated": "Last updated {date}"
       },
-      "statusFailed": "We could not change the status. It was restored."
+      "statusFailed": "We could not change the status. It was restored.",
+      "gone": "This application is no longer in your list."
     },
     "note": {
       "label": "My notes",
@@ -1651,13 +1652,13 @@
       "body": "Your status and note for “{title}” will be deleted. The scholarship and your saved items stay as they are.",
       "confirm": "Stop tracking",
       "cancel": "Keep it",
-      "removing": "Removing…",
-      "failed": "We could not stop tracking this scholarship. Please try again."
+      "failed": "We could not stop tracking this scholarship. It was restored to your list."
     },
     "page": {
       "loading": "Loading your applications…",
       "skipped": "{count, plural, one {One application could not be displayed.} other {{count, number, integer} applications could not be displayed.}}",
-      "sectionLabel": "Your tracked scholarships"
+      "sectionLabel": "Your tracked scholarships",
+      "dismiss": "Dismiss"
     },
     "empty": {
       "heading": "You are not tracking any scholarships yet",
@@ -1668,7 +1669,8 @@
       "generic": "We could not load your applications. Please try again.",
       "unauthorized": "Please sign in again to see your applications.",
       "forbidden": "This section is not available for your account right now.",
-      "retry": "Try again"
+      "retry": "Try again",
+      "refresh": "We could not refresh your applications. Showing the last loaded list."
     }
   }
 }

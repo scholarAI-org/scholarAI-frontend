@@ -1,39 +1,26 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { removeTracking, saveTrackingNote, updateTrackingStatus } from '../api/tracking';
-import { trackingKeys } from '../query-keys';
-import type { TrackingStatus } from '../types';
+import {
+  noteMutationOptions,
+  removeMutationOptions,
+  statusMutationOptions,
+} from '../lib/mutations';
 
-// Row actions. Each refetches the list when it settles so the cache converges on
-// the backend. Optimistic updates and rollback are layered on in the page phase.
-function useInvalidateList() {
-  const client = useQueryClient();
-  return () => client.invalidateQueries({ queryKey: trackingKeys.list() });
-}
+// Row actions with optimistic updates and rollback. The logic lives in
+// lib/mutations so it is testable without React.
 
 export function useUpdateTrackingStatus() {
-  const invalidate = useInvalidateList();
-  return useMutation({
-    mutationFn: (vars: { trackingId: number; status: TrackingStatus }) =>
-      updateTrackingStatus(vars.trackingId, vars.status),
-    onSettled: invalidate,
-  });
+  const client = useQueryClient();
+  return useMutation(statusMutationOptions(client));
 }
 
 export function useSaveTrackingNote() {
-  const invalidate = useInvalidateList();
-  return useMutation({
-    mutationFn: (vars: { trackingId: number; notes: string }) =>
-      saveTrackingNote(vars.trackingId, vars.notes),
-    onSettled: invalidate,
-  });
+  const client = useQueryClient();
+  return useMutation(noteMutationOptions(client));
 }
 
 export function useRemoveTracking() {
-  const invalidate = useInvalidateList();
-  return useMutation({
-    mutationFn: (vars: { trackingId: number }) => removeTracking(vars.trackingId),
-    onSettled: invalidate,
-  });
+  const client = useQueryClient();
+  return useMutation(removeMutationOptions(client));
 }

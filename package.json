@@ -21,7 +21,7 @@
     "test:scholarship-discovery": "node --test tests/student-scholarship-discovery.test.mjs",
     "test:student-layout": "node --test tests/student-layout.test.mjs",
     "test:student-home": "node --test tests/student-home.test.mjs",
-    "test:tracking": "node --test tests/student-application-tracking.test.mjs tests/student-application-tracking-ui.test.mjs",
+    "test:tracking": "node --test tests/student-application-tracking.test.mjs tests/student-application-tracking-ui.test.mjs tests/student-application-tracking-optimistic.test.mjs",
     "test:i18n": "node --test tests/i18n-numerals.test.mjs",
     "test:public-landing-page": "node --test tests/public-landing-page.test.mjs"
   },

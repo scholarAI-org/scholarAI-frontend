@@ -8,21 +8,14 @@ import { Button } from '@/components/ui/Button';
 interface ConfirmRemoveDialogProps {
   // The scholarship title being removed, or null when the dialog is closed.
   title: string | null;
-  pending: boolean;
-  failed: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
 // Confirm before DELETE. A native modal <dialog> gives the focus trap, Escape
-// handling and inert background; Escape does nothing while the request is pending.
-export function ConfirmRemoveDialog({
-  title,
-  pending,
-  failed,
-  onConfirm,
-  onCancel,
-}: ConfirmRemoveDialogProps) {
+// handling and inert background. The removal itself is optimistic, so the dialog
+// closes on confirm and a failure is reported by the page notice.
+export function ConfirmRemoveDialog({ title, onConfirm, onCancel }: ConfirmRemoveDialogProps) {
   const t = useTranslations('StudentTracking');
   const ref = useRef<HTMLDialogElement>(null);
   const headingId = useId();
@@ -43,7 +36,7 @@ export function ConfirmRemoveDialog({
       aria-describedby={bodyId}
       onCancel={(event) => {
         event.preventDefault();
-        if (!pending) onCancel();
+        onCancel();
       }}
       data-testid="tracking-remove-dialog"
       className="m-auto w-[calc(100%-2rem)] max-w-[420px] rounded-3xl bg-white p-6 text-start shadow-2xl backdrop:bg-[#0a2243]/30"
@@ -59,17 +52,11 @@ export function ConfirmRemoveDialog({
           <p id={bodyId} className="text-sm leading-relaxed text-[#64748b]">
             {t('remove.body', { title })}
           </p>
-          {failed ? (
-            <p role="alert" className="text-sm text-[var(--color-text-error)]">
-              {t('remove.failed')}
-            </p>
-          ) : null}
           <div className="flex items-center gap-3">
             <Button
               type="button"
               variant="secondary"
               className="h-11 flex-1 rounded-full"
-              disabled={pending}
               onClick={onCancel}
             >
               {t('remove.cancel')}
@@ -77,12 +64,10 @@ export function ConfirmRemoveDialog({
             <Button
               type="button"
               className="h-11 flex-1 rounded-full bg-[#dc2626] hover:bg-[#b91c1c]"
-              isLoading={pending}
-              disabled={pending}
               onClick={onConfirm}
               data-testid="tracking-remove-confirm"
             >
-              {pending ? t('remove.removing') : t('remove.confirm')}
+              {t('remove.confirm')}
             </Button>
           </div>
         </div>

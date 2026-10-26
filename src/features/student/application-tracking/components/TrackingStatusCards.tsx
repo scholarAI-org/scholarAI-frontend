@@ -3,9 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { TRACKING_CARD_ORDER } from '../constants';
 import { statusPresentation } from '../lib/presentation';
+import type { SectionState } from '../lib/view-state';
 import type { TrackingCardKey, TrackingCounts } from '../types';
-
-export type SectionState = 'loading' | 'error' | 'ready';
 
 interface TrackingStatusCardsProps {
   // From the tracked list. Ignored unless trackedState is 'ready'.

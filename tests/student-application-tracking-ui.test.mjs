@@ -464,12 +464,132 @@ test('states: empty and loading render their own markers', () => {
 
 test('dialog: renders closed with no scholarship and names the scholarship when open', () => {
   const { ConfirmRemoveDialog } = feature('components/ConfirmRemoveDialog.tsx');
-  const props = { pending: false, failed: false, onConfirm: noop, onCancel: noop };
+  const props = { onConfirm: noop, onCancel: noop };
   const closed = render(h(ConfirmRemoveDialog, { ...props, title: null }));
   assert.match(closed, /<dialog/);
   assert.doesNotMatch(closed, /“/);
+  assert.doesNotMatch(closed, /tracking-remove-confirm/);
   const open = render(h(ConfirmRemoveDialog, { ...props, title: 'Erasmus' }));
   assert.match(open, /“Erasmus”/);
-  const failed = render(h(ConfirmRemoveDialog, { ...props, title: 'Erasmus', failed: true }));
-  assert.match(failed, /role="alert"/);
+  assert.match(open, /tracking-remove-confirm/);
+});
+
+// -------------------- page (server-rendered from a seeded cache) -------------
+
+const { QueryClient, QueryClientProvider } = loadModule('@tanstack/react-query');
+const { trackingKeys } = feature('query-keys.ts');
+const savedKey = ['student-scholarships', 'saved', 'list'];
+
+const wire = (id, status, scholarship = {}) => ({
+  id,
+  status,
+  notes: null,
+  statusChangedAt: '2025-10-02T09:15:00',
+  createdAt: '2025-09-30T08:00:00',
+  updatedAt: '2025-10-02T09:15:00',
+  officialUrl: null,
+  scholarship: { id: 100 + id, title: `Scholarship ${id}`, is_saved: false, ...scholarship },
+});
+
+async function renderPage({ tracked, saved, detailsEnabled = false, locale = 'en' }) {
+  const { TrackingPage } = feature('components/TrackingPage.tsx');
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const seed = async (key, outcome) => {
+    if (outcome === undefined) return;
+    if (outcome instanceof Error) {
+      client.setQueryDefaults(key, { retryOnMount: false });
+      await client
+        .fetchQuery({
+          queryKey: key,
+          queryFn: () => {
+            throw outcome;
+          },
+        })
+        .catch(() => {});
+    } else client.setQueryData(key, outcome);
+  };
+  await seed(trackingKeys.list(), tracked);
+  await seed(savedKey, saved);
+  return render(h(QueryClientProvider, { client }, h(TrackingPage, { detailsEnabled })), locale);
+}
+
+test('page: loading shows placeholders in every section and no zero', async () => {
+  const html = await renderPage({});
+  assert.match(html, /tracking-loading/);
+  assert.equal((html.match(/tracking-card-[a-z_]+-loading"/g) ?? []).length, 7);
+  assert.doesNotMatch(html, /tracking-empty/);
+  assert.doesNotMatch(html, />0</);
+});
+
+test('page: a loaded list renders one card per item, in backend order, with real counts', async () => {
+  const html = await renderPage({
+    tracked: {
+      items: [wire(9, 'applied'), wire(5, 'applied'), wire(7, 'closed')],
+      skipped: 0,
+    },
+    saved: [
+      { id: 1, title: 'a', is_saved: true },
+      { id: 2, title: 'b', is_saved: true },
+    ],
+  });
+  const order = [...html.matchAll(/data-tracking-id="(\d+)"/g)].map((m) => Number(m[1]));
+  assert.deepEqual(order, [9, 5, 7]);
+  assert.match(html.split('tracking-card-applied"')[1].split('</li>')[0], />2</);
+  assert.match(html.split('tracking-card-closed"')[1].split('</li>')[0], />1</);
+  assert.match(html.split('tracking-card-saved"')[1].split('</li>')[0], />2</);
+  assert.doesNotMatch(html, /tracking-empty|tracking-error"/);
+});
+
+test('page: a confirmed empty list shows the empty state with real zeros', async () => {
+  const html = await renderPage({ tracked: { items: [], skipped: 0 }, saved: [] });
+  assert.match(html, /tracking-empty/);
+  assert.match(html.split('tracking-card-applied"')[1].split('</li>')[0], />0</);
+});
+
+test('page: rows the backend sent but we could not read are an error, not an empty state', async () => {
+  const html = await renderPage({ tracked: { items: [], skipped: 2 }, saved: [] });
+  assert.match(html, /tracking-error/);
+  assert.doesNotMatch(html, /tracking-empty/);
+});
+
+test('page: some unreadable rows keep the list and report how many were skipped', async () => {
+  const html = await renderPage({
+    tracked: { items: [wire(1, 'applied')], skipped: 1 },
+    saved: [],
+  });
+  assert.match(html, /data-tracking-id="1"/);
+  assert.match(html, /One application could not be displayed\./);
+});
+
+test('page: a tracked-list failure leaves the saved card intact (per-section error)', async () => {
+  const { ApiError } = loadModule(path.join(srcPath, 'lib/api-client.ts'));
+  const html = await renderPage({
+    tracked: new ApiError('x', [], 500),
+    saved: [{ id: 1, title: 'a', is_saved: true }],
+  });
+  assert.match(html, /tracking-error/);
+  assert.equal((html.match(/-unavailable"/g) ?? []).length, 6);
+  assert.match(html.split('tracking-card-saved"')[1].split('</li>')[0], />1</);
+});
+
+test('page: a saved-list failure leaves the tracked list and counts intact', async () => {
+  const { ApiError } = loadModule(path.join(srcPath, 'lib/api-client.ts'));
+  const html = await renderPage({
+    tracked: { items: [wire(1, 'accepted')], skipped: 0 },
+    saved: new ApiError('x', [], 500),
+  });
+  assert.match(html, /data-tracking-id="1"/);
+  assert.equal((html.match(/-unavailable"/g) ?? []).length, 1);
+  assert.match(html.split('tracking-card-accepted"')[1].split('</li>')[0], />1</);
+});
+
+test('page: Arabic renders the Figma wording and keeps counts as Latin digits', async () => {
+  const html = await renderPage({
+    tracked: { items: [wire(1, 'applied')], skipped: 0 },
+    saved: [],
+    locale: 'ar',
+  });
+  assert.match(html, /تم التقديم/);
+  assert.match(html.split('tracking-card-applied"')[1].split('</li>')[0], />1</);
+  assert.doesNotMatch(html, /[٠-٩]/);
 });
