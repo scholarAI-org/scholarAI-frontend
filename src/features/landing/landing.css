@@ -319,7 +319,7 @@
   margin-top: 32px;
 }
 .landing-features-grid > .landing-feature-card {
-  flex: 0 0 calc((100% - 48px) / 3);
+  flex: 0 0 calc((100% - 72px) / 4);
   min-width: 0;
 }
 .landing-feature-card {
@@ -361,7 +361,7 @@
 }
 .landing-steps ol {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 19px;
   margin-top: 32px;
 }
@@ -802,7 +802,6 @@
     zoom: 1;
   }
   .landing-steps ol {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 32px 24px;
   }
   .footer-columns {
