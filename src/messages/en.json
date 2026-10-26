@@ -1661,6 +1661,11 @@
       "sectionLabel": "Your tracked scholarships",
       "dismiss": "Dismiss"
     },
+    "filter": {
+      "showing": "Showing only “{status}”",
+      "clear": "Show all",
+      "empty": "No applications have this status."
+    },
     "empty": {
       "heading": "You are not tracking any scholarships yet",
       "body": "Start tracking a scholarship to follow your application status and keep notes.",

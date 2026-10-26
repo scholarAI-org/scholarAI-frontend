@@ -247,7 +247,7 @@ const counts = {
 test('cards: seven cards in Figma order, saved first, with the real counts', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, {
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
       counts,
       trackedState: 'ready',
       savedCount: 4,
@@ -270,7 +270,7 @@ test('cards: seven cards in Figma order, saved first, with the real counts', () 
 test('cards: the saved card takes its number from the saved list, not from tracking', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, { counts, trackedState: 'ready', savedCount: 9, savedState: 'ready' })
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: 9, savedState: 'ready' })
   );
   const saved = html.split('data-testid="tracking-card-saved"')[1].split('</li>')[0];
   assert.match(saved, />9</);
@@ -279,7 +279,7 @@ test('cards: the saved card takes its number from the saved list, not from track
 test('cards: a loading or failed section shows a placeholder, never a zero', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const loading = render(
-    h(TrackingStatusCards, {
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
       counts: null,
       trackedState: 'loading',
       savedCount: null,
@@ -290,7 +290,7 @@ test('cards: a loading or failed section shows a placeholder, never a zero', () 
   assert.doesNotMatch(loading, />0</);
 
   const failed = render(
-    h(TrackingStatusCards, {
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
       counts: null,
       trackedState: 'error',
       savedCount: null,
@@ -304,7 +304,7 @@ test('cards: a loading or failed section shows a placeholder, never a zero', () 
 test('cards: sections fail independently (saved ready while tracking failed, and the reverse)', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const trackedDown = render(
-    h(TrackingStatusCards, {
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
       counts: null,
       trackedState: 'error',
       savedCount: 3,
@@ -315,7 +315,7 @@ test('cards: sections fail independently (saved ready while tracking failed, and
   assert.equal((trackedDown.match(/-unavailable"/g) ?? []).length, 6);
 
   const savedDown = render(
-    h(TrackingStatusCards, { counts, trackedState: 'ready', savedCount: null, savedState: 'error' })
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: null, savedState: 'error' })
   );
   assert.equal((savedDown.match(/-unavailable"/g) ?? []).length, 1);
   assert.match(savedDown.split('tracking-card-applied"')[1].split('</li>')[0], />1</);
@@ -324,7 +324,7 @@ test('cards: sections fail independently (saved ready while tracking failed, and
 test('cards: labels follow the locale and are the Figma Arabic wording', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, { counts, trackedState: 'ready', savedCount: 0, savedState: 'ready' }),
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: 0, savedState: 'ready' }),
     'ar'
   );
   for (const label of [
@@ -508,7 +508,7 @@ const wire = (id, status, scholarship = {}) => ({
   scholarship: { id: 100 + id, title: `Scholarship ${id}`, is_saved: false, ...scholarship },
 });
 
-async function renderPage({ tracked, saved, detailsEnabled = false, locale = 'en' }) {
+async function renderPage({ tracked, saved, detailsEnabled = false, savedEnabled = false, locale = 'en' }) {
   const { TrackingPage } = feature('components/TrackingPage.tsx');
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const seed = async (key, outcome) => {
@@ -527,7 +527,7 @@ async function renderPage({ tracked, saved, detailsEnabled = false, locale = 'en
   };
   await seed(trackingKeys.list(), tracked);
   await seed(savedKey, saved);
-  return render(h(QueryClientProvider, { client }, h(TrackingPage, { detailsEnabled })), locale);
+  return render(h(QueryClientProvider, { client }, h(TrackingPage, { detailsEnabled, savedEnabled })), locale);
 }
 
 test('page: loading shows placeholders in every section and no zero', async () => {
@@ -635,4 +635,81 @@ test('shell: the tracking item appears only when the flag is on', () => {
 test('layout: the student layout passes the server flag, not a constant, to the shell', () => {
   const source = fs.readFileSync(path.join(srcPath, 'app/[locale]/student/layout.tsx'), 'utf8');
   assert.ok(source.includes('trackingEnabled: featureFlags.trackingEnabled'));
+});
+
+// -------------------- status filter and saved link ---------------------------
+
+test('filter: a null filter shows everything and a status shows only that status', () => {
+  const { filterByStatus, toggleFilter } = feature('lib/filter.ts');
+  const items = [wire(1, 'applied'), wire(2, 'closed'), wire(3, 'applied')];
+  assert.deepEqual(
+    filterByStatus(items, null).map((item) => item.id),
+    [1, 2, 3]
+  );
+  assert.deepEqual(
+    filterByStatus(items, 'applied').map((item) => item.id),
+    [1, 3]
+  );
+  assert.deepEqual(filterByStatus(items, 'rejected'), []);
+  assert.equal(filterByStatus(items, null), items, 'no copy when nothing is filtered');
+  // Tapping the active card clears the filter; tapping another switches to it.
+  assert.equal(toggleFilter(null, 'applied'), 'applied');
+  assert.equal(toggleFilter('applied', 'applied'), null);
+  assert.equal(toggleFilter('applied', 'closed'), 'closed');
+});
+
+const cardsFor = (extra = {}) => {
+  const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
+  return render(
+    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+      counts,
+      trackedState: 'ready',
+      savedCount: 4,
+      savedState: 'ready',
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
+      ...extra,
+    })
+  );
+};
+const cardHtml = (html, key) => html.split('data-testid="tracking-card-' + key + '"')[1].split('</li>')[0];
+
+test('filter: the six status cards are real buttons with aria-pressed, the active one is pressed', () => {
+  const html = cardsFor({ activeFilter: 'applied' });
+  for (const key of ['preparing_documents', 'ready_to_apply', 'applied', 'accepted', 'rejected', 'closed']) {
+    const card = cardHtml(html, key);
+    assert.ok(card.includes('<button'), key + ' is a button');
+    assert.ok(card.includes('type="button"'), key);
+    assert.ok(card.includes(key === 'applied' ? 'aria-pressed="true"' : 'aria-pressed="false"'), key);
+  }
+});
+
+test('filter: the saved card is never a filter button', () => {
+  const html = cardsFor({ activeFilter: 'applied' });
+  assert.equal(cardHtml(html, 'saved').includes('aria-pressed'), false);
+  assert.equal(cardHtml(html, 'saved').includes('<button'), false);
+});
+
+test('filter: the saved card links to the Saved page only when that page is enabled', () => {
+  const off = cardsFor({ savedHref: null });
+  assert.equal(cardHtml(off, 'saved').includes('<a'), false);
+  const on = cardsFor({ savedHref: '/student/saved' });
+  assert.ok(cardHtml(on, 'saved').includes('<a href="/student/saved"'));
+});
+
+test('filter: loading and failed sections are not interactive', () => {
+  const loading = cardsFor({ counts: null, trackedState: 'loading', savedCount: null, savedState: 'loading', savedHref: '/student/saved' });
+  assert.equal(loading.includes('<button'), false);
+  assert.equal(cardHtml(loading, 'saved').includes('<a'), false, 'no link while the saved count is unknown');
+  const failed = cardsFor({ counts: null, trackedState: 'error', savedCount: null, savedState: 'error' });
+  assert.equal(failed.includes('<button'), false);
+});
+
+test('filter: Arabic and English copy for the filter bar and the empty filter exist', () => {
+  for (const locale of ['ar', 'en']) {
+    const f = messages[locale].StudentTracking.filter;
+    assert.ok(f.showing.includes('{status}'), locale);
+    assert.ok(f.clear && f.empty, locale);
+  }
 });
