@@ -5,9 +5,9 @@ import { LandingLogo } from './LandingLogo';
 import { DesignAsset } from './DesignAsset';
 
 const DESTINATIONS = [
-  ['#scholarships', '#matching', '#scholarships'],
+  ['/student/scholarships', '#matching'],
   ['#documents', '/student/profile', '/student/profile'],
-  ['#about', '/admin/dashboard', '/register'],
+  ['/admin/dashboard', '/register'],
 ] as const;
 export function Footer() {
   const t = useTranslations('Landing.updated.footer');

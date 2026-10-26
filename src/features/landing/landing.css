@@ -296,328 +296,9 @@
   top: -2.29%;
   left: -22.6%;
 }
-.hero-accepted {
-  position: absolute;
-  left: 82.005px;
-  top: 339px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 12px 16px;
-  border: 1px solid #f3f4f6;
-  border-radius: 16px;
-  background: #fff;
-  filter: drop-shadow(0 20px 12.5px rgb(0 0 0 / 10%));
-}
-.hero-accepted > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 16px;
-  background: #f0fdf4;
-}
-.hero-accepted > div {
-  width: 122.359px;
-}
-.hero-accepted small {
-  font-size: 10px;
-  line-height: 12px;
-  color: #99a1af;
-  display: block;
-}
-.hero-accepted p {
-  color: #1b2f5e;
-  font-size: 14px;
-  line-height: 22px;
-}
-.hero-stat {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  padding: 8.465px;
-  gap: 8.465px;
-  border-radius: 16.93px;
-  background: white;
-  height: 62px;
-  width: 129.5px;
-}
-.hero-stat > div {
-  width: 68.777px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-}
-.hero-stat strong {
-  color: #000;
-  font-weight: 500;
-  font-size: 19.046px;
-  line-height: 23px;
-}
-.hero-stat small {
-  font-size: 10.581px;
-  line-height: 13px;
-  color: #b5b5b5;
-  white-space: nowrap;
-}
-.hero-stat > span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 33.859px;
-  height: 29.627px;
-  border-radius: 6.349px;
-}
-.hero-universities {
-  left: 4px;
-  top: 198px;
-  transform: rotate(10.46deg) skewX(3.04deg);
-}
-.hero-universities > span {
-  background: rgb(255 141 40 / 4%);
-}
-.hero-students {
-  left: 436.087px;
-  top: 332.836px;
-}
-.hero-students > span {
-  background: rgb(0 136 255 / 10%);
-}
-.hero-scholarships {
-  left: 405px;
-  top: 22px;
-  transform: rotate(-9.65deg) skewX(-2.81deg);
-}
-.hero-scholarships > span {
-  background: rgb(22 193 114 / 6%);
-}
-.hero-notice {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 4.232px;
-  padding: 4.232px 8.465px;
-  border-radius: 16.93px;
-  background: white;
-  height: 27.91px;
-  font-size: 10.581px;
-  font-weight: 500;
-  line-height: 13px;
-  white-space: nowrap;
-}
-.hero-notification {
-  left: 27.61px;
-  top: 36.792px;
-  color: rgb(220 38 38 / 60%);
-}
-.hero-recommendation {
-  left: 455.4px;
-  top: 275.746px;
-  color: #3b82f6;
-}
-.hero-recommendation-green {
-  left: 26.462px;
-  top: 276.568px;
-  height: 25.373px;
-  color: #16c172;
-}
-.landing-featured {
-  padding-block: 64px;
-}
-.landing-featured .landing-heading > span {
-  padding: 6px 12px;
-}
-.landing-scholarships-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 24px;
-}
-.landing-scholarship-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: white;
-  position: relative;
-  min-width: 0;
-  overflow: hidden;
-  color: #000;
-}
-.scholarship-image {
-  height: 184px;
-  position: relative;
-  overflow: hidden;
-}
-.scholarship-image > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.scholarship-crop > img {
-  height: 109.84%;
-  position: absolute;
-  top: -9.92%;
-}
-.scholarship-image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgb(0 0 0 / 5%), rgb(0 0 0 / 50%));
-}
-.scholarship-save {
-  position: absolute;
-  top: 15px;
-  left: 22px;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 99px;
-}
-.scholarship-save[aria-pressed='true'] {
-  background: #ffedd5;
-  box-shadow: 0 0 0 2px #f97316;
-}
-.scholarship-content {
-  padding: 16px;
-}
-.scholarship-badges {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.scholarship-badges span {
-  border-radius: 99px;
-  font-size: 10px;
-  line-height: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 24px;
-}
-.scholarship-badges span:first-child {
-  background: rgb(22 193 114 / 6%);
-  color: #16c172;
-  width: 87px;
-}
-.scholarship-badges span:last-child {
-  background: rgb(139 92 246 / 10%);
-  color: #8b5cf6;
-  width: 103px;
-  height: 23px;
-}
-.scholarship-content h3 {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 19px;
-  margin-top: 16px;
-}
-.scholarship-crop ~ .scholarship-content h3 {
-  font-weight: 700;
-}
-.scholarship-metadata {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-}
-.scholarship-metadata p {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  line-height: 22px;
-  color: #394d68;
-}
-.scholarship-rule {
-  margin-top: 16px;
-  height: 0;
-}
-.scholarship-rule {
-  overflow: hidden;
-}
-.scholarship-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  margin-top: 16px;
-}
-.scholarship-bottom > p {
-  color: #b5b5b5;
-  font-size: 12px;
-  line-height: 20px;
-}
-.landing-page .scholarship-details {
-  width: 120px;
-  height: 40px;
-  font-weight: 500;
-  padding: 10px;
-  flex-shrink: 0;
-}
-.landing-browse {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-}
 .landing-empty {
   text-align: center;
   padding: 64px 16px;
-}
-.landing-overview {
-  background: var(--landing-page-bg);
-  padding-block: 64px;
-}
-.landing-overview .landing-heading h2 {
-  width: min(720px, 100%);
-}
-.landing-overview-grid {
-  margin-top: 32px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-.landing-overview-grid article {
-  height: 246px;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 28px;
-  background: white;
-  text-align: center;
-}
-.overview-icon {
-  margin-inline: auto;
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-}
-.overview-icon-0 {
-  background: #3b82f6;
-}
-.overview-icon-1 {
-  background: #f97316;
-}
-.overview-icon-2 {
-  background: #8b5cf6;
-}
-.landing-overview-grid h3 {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 32px;
-  margin-top: 24px;
-}
-.landing-overview-grid p {
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--landing-muted);
-  margin-top: 16px;
-}
-.landing-overview-grid article:first-child p {
-  margin-top: 8px;
 }
 .landing-features {
   padding-block: 64px;
@@ -1166,16 +847,6 @@
   .landing-features-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .landing-overview-grid article {
-    height: auto;
-  }
-  .scholarship-bottom {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .scholarship-content h3 {
-    min-height: 38px;
-  }
   .spotlight-copy h2 {
     font-size: 24px;
     line-height: 32px;
@@ -1243,9 +914,6 @@
   }
   .hero-artwork {
     zoom: 1;
-  }
-  .landing-scholarships-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .landing-steps ol {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1323,19 +991,8 @@
   .landing-hero-inner {
     padding-block: 0;
   }
-  .landing-overview-grid,
-  .landing-features-grid,
-  .landing-scholarships-grid {
+  .landing-features-grid {
     grid-template-columns: minmax(0, 1fr);
-  }
-  .landing-overview-grid article {
-    min-height: 246px;
-  }
-  .scholarship-bottom {
-    flex-wrap: nowrap;
-  }
-  .scholarship-content h3 {
-    min-height: 0;
   }
   .landing-steps ol {
     grid-template-columns: minmax(0, 1fr);
@@ -1399,9 +1056,6 @@
 @media (max-width: 360px) {
   .hero-artwork {
     zoom: 0.47;
-  }
-  .scholarship-bottom {
-    flex-wrap: wrap;
   }
 }
 
@@ -1494,21 +1148,6 @@
 /* Motion is scoped to this page and never conceals server-rendered content. */
 .landing-page
   :is(
-    .landing-button,
-    .hero-search button,
-    .hero-quick button,
-    .scholarship-save,
-    .landing-nav-circle,
-    .landing-menu-toggle
-  ) {
-  transition:
-    background-color var(--landing-motion-feedback) ease-out,
-    color var(--landing-motion-feedback) ease-out,
-    box-shadow var(--landing-motion-feedback) ease-out,
-    translate var(--landing-motion-feedback) ease-out;
-}
-.landing-page
-  :is(
     .landing-desktop-nav a,
     .landing-login,
     .landing-mobile-nav a,
@@ -1523,43 +1162,19 @@
 .landing-desktop-nav a::after {
   transition: opacity var(--landing-motion-feedback) ease-out;
 }
-.landing-scholarship-card {
-  transition:
-    translate var(--landing-motion-feedback) ease-out,
-    box-shadow var(--landing-motion-feedback) ease-out;
-}
 .faq-item button img {
   transition: transform var(--landing-motion-feedback) var(--landing-motion-ease);
 }
 .faq-answer {
   overflow: hidden;
 }
-.landing-page
-  :is(
-    .landing-button,
-    .hero-search button,
-    .hero-quick button,
-    .scholarship-save,
-    .landing-nav-circle,
-    .landing-menu-toggle
-  ):not(:disabled):active {
-  translate: 0 1px;
-}
-.landing-scholarship-card:focus-within {
-  box-shadow: 0 6px 18px rgb(39 67 131 / 10%);
-}
 @media (hover: hover) and (pointer: fine) {
   .landing-page :is(.landing-button, .hero-search button):hover {
     translate: 0 -1px;
     box-shadow: 0 4px 10px rgb(39 67 131 / 12%);
   }
-  .hero-quick button:hover,
-  .scholarship-save:hover {
+  .hero-quick button:hover {
     background-color: #fff7ed;
-  }
-  .landing-scholarship-card:hover {
-    translate: 0 -3px;
-    box-shadow: 0 8px 22px rgb(39 67 131 / 10%);
   }
   .landing-desktop-nav a:hover,
   .landing-login:hover,
@@ -1585,17 +1200,5 @@
   .landing-page [data-landing-entrance] {
     transform: none !important;
     opacity: 1 !important;
-  }
-  .landing-page
-    :is(
-      .landing-button,
-      .hero-search button,
-      .hero-quick button,
-      .scholarship-save,
-      .landing-nav-circle,
-      .landing-menu-toggle,
-      .landing-scholarship-card
-    ) {
-    translate: none !important;
   }
 }

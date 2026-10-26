@@ -2,7 +2,6 @@
 
 import { useRouter } from '@/i18n/navigation';
 import { Hero } from './Hero';
-import { FeaturedScholarships } from './FeaturedScholarships';
 
 export function LandingDiscovery() {
   const router = useRouter();
@@ -12,10 +11,5 @@ export function LandingDiscovery() {
       query ? `/student/scholarships?search=${encodeURIComponent(query)}` : '/student/scholarships'
     );
   }
-  return (
-    <>
-      <Hero onSearch={search} />
-      <FeaturedScholarships />
-    </>
-  );
+  return <Hero onSearch={search} />;
 }
