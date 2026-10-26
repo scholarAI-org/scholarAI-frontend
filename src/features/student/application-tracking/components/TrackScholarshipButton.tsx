@@ -81,7 +81,9 @@ export function TrackScholarshipButton({
 
   return (
     <div
-      className={variant === 'details' ? 'flex w-full flex-col gap-1' : 'flex flex-col gap-1'}
+      className={
+        variant === 'details' ? 'flex w-full flex-col gap-1' : 'flex flex-col items-start gap-1'
+      }
       data-testid="track-control"
     >
       <button
