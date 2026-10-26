@@ -23,7 +23,7 @@ interface TrackingStatusCardsProps {
 }
 
 const cardClass =
-  'flex min-w-0 flex-col items-center justify-center gap-2.5 rounded-2xl border bg-white p-4 shadow-[0px_8px_16px_0px_rgba(0,0,0,0.01)]';
+  'flex min-w-0 flex-col items-center justify-start gap-2.5 rounded-2xl border bg-white p-4 shadow-[0px_8px_16px_0px_rgba(0,0,0,0.01)]';
 const focusClass =
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500';
 
@@ -44,7 +44,7 @@ export function TrackingStatusCards({
   return (
     <ul
       aria-label={t('summary.label')}
-      className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7"
+      className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7 [&>li:last-child]:col-span-2 sm:[&>li:last-child]:col-span-1"
       data-testid="tracking-status-cards"
     >
       {TRACKING_CARD_ORDER.map((key) => {
@@ -74,7 +74,7 @@ export function TrackingStatusCards({
                 />
               ) : (
                 <span
-                  className="text-2xl font-bold text-[rgba(30,27,51,0.7)]"
+                  className="text-2xl leading-7 font-bold text-[rgba(30,27,51,0.7)]"
                   title={t('summary.unavailable')}
                   data-testid={`tracking-card-${key}-unavailable`}
                 >
@@ -83,7 +83,9 @@ export function TrackingStatusCards({
                 </span>
               )
             ) : (
-              <span className="text-2xl font-bold text-[rgba(30,27,51,0.7)]">{value}</span>
+              <span className="text-2xl leading-7 font-bold text-[rgba(30,27,51,0.7)]">
+                {value}
+              </span>
             )}
             <span className={`text-center text-xs leading-5 ${textClass}`}>
               {t(`status.${key}`)}
@@ -104,7 +106,7 @@ export function TrackingStatusCards({
                 {content}
               </Link>
             ) : (
-              <div className={`${cardClass} h-full border-[#e2e8f0]`}>{content}</div>
+              <div className={`${cardClass} h-full w-full border-[#e2e8f0]`}>{content}</div>
             );
         } else if (value !== null) {
           inner = (
@@ -122,7 +124,7 @@ export function TrackingStatusCards({
             </button>
           );
         } else {
-          inner = <div className={`${cardClass} h-full border-[#e2e8f0]`}>{content}</div>;
+          inner = <div className={`${cardClass} h-full w-full border-[#e2e8f0]`}>{content}</div>;
         }
 
         return (

@@ -66,6 +66,3 @@ export function trackingMetaParts(meta: TrackingMeta) {
   if (meta.updatedDate) parts.push({ kind: 'updated', value: meta.updatedDate });
   return parts;
 }
-
-// 'a' / 'b' / 'c' -> 'a — b — c', the Figma separator.
-export const joinMeta = (parts: readonly string[]) => parts.join(' — ');

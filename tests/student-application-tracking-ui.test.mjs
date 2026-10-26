@@ -123,6 +123,7 @@ const makeItem = (overrides = {}, scholarship = {}) => ({
 });
 
 const noop = () => {};
+const plain = (html) => html.replace(/<[^>]*>/g, '');
 const renderCard = (item, { detailsEnabled = false, locale = 'en' } = {}) => {
   const { TrackingCard } = feature('components/TrackingCard.tsx');
   return render(
@@ -345,10 +346,15 @@ test('cards: labels follow the locale and are the Figma Arabic wording', () => {
 test('card: title follows the locale and the meta line has organization, deadline, update', () => {
   const en = renderCard(makeItem(), { locale: 'en' });
   assert.match(en, /Erasmus Mundus Joint Master/);
-  assert.match(en, /European Union — Deadline 2026-01-15 — Last updated 2025-10-02/);
+  assert.match(plain(en), /European Union — Deadline 2026-01-15 — Last updated 2025-10-02/);
+  // Dates and the organization are isolated so Arabic bidi cannot reorder them.
+  assert.ok(en.includes('<bdi dir="ltr">2026-01-15</bdi>'));
+  assert.ok(en.includes('<bdi dir="ltr">2025-10-02</bdi>'));
   const ar = renderCard(makeItem(), { locale: 'ar' });
   assert.match(ar, /إيراسموس موندوس للماجستير المشترك/);
-  assert.match(ar, /European Union — آخر موعد 2026-01-15 — آخر تحديث 2025-10-02/);
+  assert.match(plain(ar), /European Union — آخر موعد 2026-01-15 — آخر تحديث 2025-10-02/);
+  assert.ok(ar.includes('<bdi dir="ltr">2026-01-15</bdi>'));
+  assert.ok(ar.includes('<bdi>European Union</bdi>'));
 });
 
 test('card: the status select offers exactly the six backend statuses and never saved', () => {
