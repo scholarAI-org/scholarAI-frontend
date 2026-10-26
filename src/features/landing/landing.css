@@ -620,6 +620,8 @@
   flex: 1;
   position: relative;
   min-width: 0;
+  /* The photo is oversized to crop it; clip it here so it cannot paint over the copy. */
+  overflow: hidden;
 }
 .cta-image img {
   position: absolute;
