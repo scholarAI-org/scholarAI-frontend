@@ -574,6 +574,8 @@
   font-weight: 900;
   color: white;
   max-width: 414px;
+  /* Avoid a lone word on its own line when the heading wraps on narrow screens. */
+  text-wrap: balance;
 }
 .cta-copy > p {
   color: #bedbff;
