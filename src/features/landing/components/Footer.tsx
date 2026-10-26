@@ -4,10 +4,13 @@ import { Container } from '@/components/shared/Container';
 import { LandingLogo } from './LandingLogo';
 import { DesignAsset } from './DesignAsset';
 
+const GITHUB_URL = 'https://github.com/scholarAI-org';
+
+// A null destination renders the label as disabled text: no route exists for it yet.
 const DESTINATIONS = [
-  ['#scholarships', '#matching', '#scholarships'],
-  ['#documents', '/student/profile', '/student/profile'],
-  ['#about', '/admin/dashboard', '/register'],
+  ['/student/scholarships', '#matching'],
+  ['/student/profile', null],
+  ['/register'],
 ] as const;
 export function Footer() {
   const t = useTranslations('Landing.updated.footer');
@@ -23,17 +26,18 @@ export function Footer() {
           {columns.map((column, i) => (
             <div key={column.title}>
               <h3>{column.title}</h3>
-              {column.links.map((label, j) =>
-                i === 1 && j === 2 ? (
+              {column.links.map((label, j) => {
+                const href = DESTINATIONS[i][j];
+                return href ? (
+                  <Link key={label} href={href}>
+                    {label}
+                  </Link>
+                ) : (
                   <span key={label} aria-disabled="true">
                     {label}
                   </span>
-                ) : (
-                  <Link key={label} href={DESTINATIONS[i][j]}>
-                    {label}
-                  </Link>
-                )
-              )}
+                );
+              })}
             </div>
           ))}
         </div>
@@ -43,20 +47,7 @@ export function Footer() {
         <div className="footer-bottom">
           <p>{t('copyright')}</p>
           <div className="footer-social">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-            >
-              <DesignAsset name="2075-770-imgLinkedin" />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-            >
+            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
               <DesignAsset name="2075-770-imgGithub" />
             </a>
           </div>

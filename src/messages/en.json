@@ -12,45 +12,6 @@
       "name": "PsScholar",
       "tagline": "Palestinian Scholarship Platform"
     },
-    "nav": {
-      "home": "Home",
-      "howItWorks": "How It Works",
-      "features": "Features",
-      "about": "About",
-      "contact": "Contact",
-      "login": "Login",
-      "start": "Get Started",
-      "menuToggle": "Open menu"
-    },
-    "trust": {
-      "badge": "Why PsScholar?",
-      "heading": "One platform for your academic journey",
-      "discover": "Discover verified opportunities",
-      "guidance": "Organize your academic details",
-      "tracking": "Track your next step"
-    },
-    "platformFeatures": {
-      "badge": "Platform features",
-      "heading": "Everything you need in one place",
-      "items": [
-        {
-          "title": "Start your profile",
-          "description": "Keep your academic information and preferences in one place."
-        },
-        {
-          "title": "An organized academic profile",
-          "description": "Keep your academic information and preferences in one place."
-        },
-        {
-          "title": "Document management",
-          "description": "Upload the documents you need for your academic journey."
-        },
-        {
-          "title": "Clear steps",
-          "description": "Complete your profile through clear, easy-to-follow stages."
-        }
-      ]
-    },
     "faq": {
       "badge": "Frequently asked questions",
       "heading": "Common questions",
@@ -73,199 +34,12 @@
         }
       ]
     },
-    "hero": {
-      "badge": "A platform for academic opportunities",
-      "title": "Find the study opportunity that fits your future",
-      "subtitle": "Keep your academic profile, documents, and study preferences in one place for a clearer academic journey.",
-      "filters": {
-        "all": "All",
-        "bachelor": "Bachelor's",
-        "master": "Master's",
-        "phd": "PhD",
-        "exchange": "Exchange"
-      },
-      "searchPlaceholder": "Scholarship name, university, or major",
-      "searchCount": "+100",
-      "searchButton": "Search",
-      "start": "Get started",
-      "howItWorks": "How it works",
-      "searchUnavailable": "Public scholarship search is coming soon"
-    },
-    "stats": {
-      "scholarships": {
-        "value": "+4200",
-        "label": "Available scholarships"
-      },
-      "students": {
-        "value": "+1500",
-        "label": "Students helped"
-      },
-      "countries": {
-        "value": "+50",
-        "label": "Countries"
-      },
-      "satisfaction": {
-        "value": "98%",
-        "label": "User satisfaction"
-      }
-    },
-    "featured": {
-      "badge": "Featured scholarships",
-      "heading": "Latest opportunities",
-      "cta": "View details",
-      "browseAll": "Browse all scholarships",
-      "items": [
-        {
-          "fundingLabel": "Full funding",
-          "title": "Chevening Scholarship",
-          "institution": "UK Government · Master's",
-          "deadline": "Deadline: Nov 5, 2026"
-        },
-        {
-          "fundingLabel": "Full funding",
-          "title": "Fulbright Scholarship",
-          "institution": "U.S. Government · Master's & PhD",
-          "deadline": "Deadline: Oct 12, 2026"
-        },
-        {
-          "fundingLabel": "Partial funding",
-          "title": "DAAD Scholarships",
-          "institution": "German Academic Exchange Service · Bachelor's & Master's",
-          "deadline": "Deadline: Dec 20, 2026"
-        },
-        {
-          "fundingLabel": "Full funding",
-          "title": "Erasmus Mundus",
-          "institution": "European Union · Master's",
-          "deadline": "Deadline: Jan 15, 2027"
-        },
-        {
-          "fundingLabel": "Full funding",
-          "title": "Türkiye Scholarships",
-          "institution": "Turkish Government · Bachelor's, Master's & PhD",
-          "deadline": "Deadline: Feb 20, 2027"
-        },
-        {
-          "fundingLabel": "Full funding",
-          "title": "MBZUAI Scholarship",
-          "institution": "Mohamed bin Zayed University of AI · Master's & PhD",
-          "deadline": "Deadline: Mar 1, 2027"
-        }
-      ]
-    },
-    "howItWorks": {
-      "badge": "How it works",
-      "heading": "From account creation to profile completion",
-      "steps": [
-        {
-          "number": "1",
-          "title": "Create your profile",
-          "description": "Sign up and complete your academic and personal details along with your study preferences."
-        },
-        {
-          "number": "2",
-          "title": "Complete your details",
-          "description": "Add your academic information and study preferences to your profile."
-        },
-        {
-          "number": "3",
-          "title": "Add your documents",
-          "description": "Manage important documents in your personal profile."
-        },
-        {
-          "number": "4",
-          "title": "Review your progress",
-          "description": "Complete the remaining sections of your profile with ease."
-        }
-      ]
-    },
-    "aiFeatures": {
-      "badge": "AI features",
-      "heading": "Powered by smart matching",
-      "cards": {
-        "matching": {
-          "title": "Smart scholarship matching",
-          "description": "Our AI analyzes your academic profile and matches you with scholarships based on eligibility, major, GPA, and preferences — ranked by compatibility."
-        },
-        "documents": {
-          "title": "AI document enhancement",
-          "description": "Upload your CV or motivation letter. Our AI suggests improvements to grammar, structure, and scholarship fit."
-        },
-        "reminders": {
-          "title": "Deadline reminders",
-          "description": "Never miss a deadline. Get notified 7 days and 48 hours before your saved scholarships' deadlines."
-        }
-      }
-    },
-    "testimonials": {
-      "badge": "Success stories",
-      "heading": "Students who found their scholarship",
-      "items": [
-        {
-          "quote": "The profile completion system guided me step by step. Once I reached 70%, the AI started showing matching scholarships and I found a great one.",
-          "name": "Omar Khalil",
-          "subtitle": "Environmental Science, Nablus",
-          "initial": "O"
-        },
-        {
-          "quote": "The document enhancement feature helped me rewrite my motivation letter. The suggestions were genuinely useful and I stayed in full control.",
-          "name": "Sara Hamdan",
-          "subtitle": "Public Health, Ramallah",
-          "initial": "S"
-        },
-        {
-          "quote": "ScholarAI matched me with the Turkish government scholarship in minutes. I applied and got accepted! The AI matching saved me weeks of searching.",
-          "name": "Ahmad Al-Najjar",
-          "subtitle": "Computer Engineering, Gaza",
-          "initial": "A"
-        }
-      ]
-    },
-    "contact": {
-      "heading": "Contact Us",
-      "subtitle": "Thank you for your interest in PsScholar.",
-      "nameLabel": "Full name",
-      "namePlaceholder": "Enter your full name here",
-      "emailLabel": "Email address",
-      "emailPlaceholder": "example@std.najah.edu",
-      "subjectLabel": "Subject",
-      "subjectPlaceholder": "What is your message about?",
-      "messageLabel": "Message",
-      "messagePlaceholder": "Write your message details here...",
-      "submit": "Send message",
-      "sent": "Your message has been sent",
-      "unavailable": "The contact form is not available for submission yet."
-    },
-    "cta": {
-      "heading": "Ready to find your scholarship?",
-      "subtitle": "Create an account to discover scholarship opportunities and organize your next step.",
-      "register": "Create account",
-      "login": "Login"
-    },
-    "footer": {
-      "brandDescription": "A smart platform for discovering scholarships for Palestinian students, graduates, and researchers",
-      "copyright": "© 2026 PsScholar Platform · All rights reserved",
-      "columns": {
-        "platform": {
-          "title": "Platform",
-          "links": ["About & Privacy", "Admin Dashboard", "Create Account"]
-        },
-        "tools": {
-          "title": "Tools",
-          "links": ["Document Enhancement", "Profile", "Notifications"]
-        },
-        "discover": {
-          "title": "Discover",
-          "links": ["Browse Scholarships", "Smart Recommendations", "Grants & Programs"]
-        }
-      }
-    },
     "updated": {
       "hero": {
         "badge": "An intelligent AI-powered platform",
         "title": "Find the scholarship",
         "accent": "that fits your future",
-        "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and prepare your academic documents with intelligent assistance.",
+        "subtitle": "Discover study funding opportunities around the world. Find scholarships that fit you and keep your academic profile and documents in one place.",
         "start": "Start now",
         "how": "How it works",
         "search": "Search",
@@ -279,64 +53,7 @@
           "United Kingdom",
           "Türkiye"
         ],
-        "imageAlt": "Students celebrating graduation outside a university",
-        "accepted": "You were accepted for",
-        "award": "Fulbright Scholarship 2025",
-        "universities": "Universities & countries",
-        "students": "Students & researchers",
-        "scholarships": "Scholarships",
-        "notification": "New notification",
-        "recommendations": "New recommendations"
-      },
-      "featured": {
-        "badge": "Featured scholarships",
-        "heading": "The latest opportunities",
-        "browse": "Find scholarships",
-        "details": "Details",
-        "funding": "Full funding",
-        "match": "High match",
-        "save": "Save scholarship",
-        "saved": "Unsave scholarship",
-        "empty": "No featured scholarships match your search.",
-        "items": [
-          {
-            "title": "Türkiye Government Scholarship (YTB)",
-            "country": "Türkiye",
-            "level": "Master’s",
-            "deadline": "30 September 2026 · 43 days left"
-          },
-          {
-            "title": "Türkiye Government Scholarship (YTB)",
-            "country": "Türkiye",
-            "level": "Master’s",
-            "deadline": "30 September 2026 · 43 days left"
-          },
-          {
-            "title": "Japanese Government Scholarship (MEXT)",
-            "country": "Japan",
-            "level": "PhD",
-            "deadline": "15 November 2026 · 128 days left"
-          }
-        ]
-      },
-      "overview": {
-        "badge": "Why PsScholar?",
-        "heading": "One platform for your academic journey",
-        "subtitle": "From discovering scholarships to applying and tracking progress, every step in one place designed for Palestinian students.",
-        "items": [
-          {
-            "title": "Search & discover",
-            "description": "Browse hundreds of scholarships by country, level, and subject, and search easily with keywords."
-          },
-          {
-            "title": "Apply smarter",
-            "description": "Get the required document checklist for each scholarship and improve your documents with AI before applying."
-          },
-          {
-            "title": "Track applications",
-            "description": "Track every application from interested to accepted with automatic deadline reminders."
-          }
-        ]
+        "imageAlt": "Students celebrating graduation outside a university"
       },
       "features": {
         "badge": "Platform features",
@@ -351,16 +68,8 @@
             "description": "Browse by country, study level, subject, funding type, and study duration."
           },
           {
-            "title": "Eligibility & matching",
-            "description": "See your match with each scholarship, which criteria you meet, and what needs improvement."
-          },
-          {
-            "title": "AI document improvement",
-            "description": "Upload your CV and motivation letter for suggestions tailored to each scholarship."
-          },
-          {
             "title": "Deadline reminders",
-            "description": "Automatic reminders seven days and 48 hours before applications close."
+            "description": "Get reminded ahead of application deadlines for the scholarships you track."
           },
           {
             "title": "Verified scholarships",
@@ -376,7 +85,7 @@
           },
           {
             "title": "Multiple countries",
-            "description": "Scholarships from Türkiye, Germany, the UK, Canada, Saudi Arabia, and more, in one place."
+            "description": "Scholarships from many countries, together in one place."
           }
         ]
       },
@@ -390,11 +99,11 @@
           },
           {
             "title": "Get recommendations",
-            "description": "AI analyzes your profile and ranks scholarships automatically."
+            "description": "AI analyzes your profile and suggests scholarships that fit it."
           },
           {
             "title": "Apply with confidence",
-            "description": "Prepare documents with AI and review scholarship requirements."
+            "description": "Prepare your documents and review each scholarship’s requirements."
           },
           {
             "title": "Track your application",
@@ -405,55 +114,13 @@
       "matching": {
         "badge": "Artificial intelligence",
         "heading": "Smart recommendations for your academic profile",
-        "description": "No more searching through hundreds of scholarships. Scholar AI analyzes your profile and ranks opportunities by match, explaining your strengths and areas to improve.",
+        "description": "No more searching through scholarship listings by hand. Scholar AI analyzes your profile to suggest scholarships that fit you.",
         "bullets": [
           "Instant analysis of your grades, nationality, and subject",
-          "A precise match score with explanations for each criterion",
-          "Alerts for new scholarships that match your profile",
-          "Compare scholarships side by side to make your decision"
+          "Alerts for new scholarships that match your profile"
         ],
         "cta": "Try recommendations now",
-        "imageAlt": "Academic profile matched to scholarships with a 92% score"
-      },
-      "documents": {
-        "badge": "Document improvement",
-        "heading": "Improve your documents and strengthen your chances",
-        "description": "Upload your CV and motivation letter for specific suggestions tailored to each scholarship. Nothing changes without your approval.",
-        "bullets": [
-          "Language and structure suggestions for your documents",
-          "Suggestions tailored to each scholarship’s requirements",
-          "Accept or reject each suggestion — you stay in control",
-          "Supports CVs, motivation letters, and recommendation letters"
-        ],
-        "cta": "Explore document improvement",
-        "imageAlt": "Original document compared with AI suggestions"
-      },
-      "faq": {
-        "badge": "Frequently asked questions",
-        "heading": "Questions you often ask",
-        "subtitle": "Answers to common questions about PS Scholar",
-        "items": [
-          {
-            "question": "Is the service free?",
-            "answer": "Yes, the platform offers a free plan with access to the scholarship database and basic tools. Paid plans are available for advanced features such as the AI writing assistant."
-          },
-          {
-            "question": "How does AI matching work?",
-            "answer": "It compares your grades, nationality, and subject with scholarship requirements and explains your match for each criterion."
-          },
-          {
-            "question": "Can I apply directly through the platform?",
-            "answer": "The platform helps you prepare documents and track applications. Submit your application through the scholarship provider’s official website."
-          },
-          {
-            "question": "How accurate is the scholarship data?",
-            "answer": "Scholarships are reviewed manually for accurate information and valid links. Check the official source before applying."
-          },
-          {
-            "question": "Is the platform only available in Arabic?",
-            "answer": "The platform supports Arabic and English. Switch languages in the navigation bar."
-          }
-        ]
+        "imageAlt": "Illustration of an academic profile being matched to scholarships"
       },
       "cta": {
         "badge": "Start your journey",
@@ -462,7 +129,6 @@
         "description": "Start your search for scholarships around the world with PS Scholar.",
         "bullets": [
           "Instant free access, no credit card required",
-          "Over 12,000 continuously updated scholarships",
           "An AI assistant specializing in scholarships"
         ],
         "login": "Log in",
@@ -488,15 +154,15 @@
         "columns": [
           {
             "title": "Discover",
-            "links": ["Browse scholarships", "Smart recommendations", "Scholarships & programs"]
+            "links": ["Browse scholarships", "Smart recommendations"]
           },
           {
             "title": "Tools",
-            "links": ["Improve documents", "Your profile", "Notifications"]
+            "links": ["Your profile", "Notifications"]
           },
           {
             "title": "Platform",
-            "links": ["About & privacy", "Admin dashboard", "Create an account"]
+            "links": ["Create an account"]
           }
         ]
       },
@@ -504,7 +170,6 @@
         "home": "Home",
         "howItWorks": "How it works",
         "features": "Features",
-        "about": "About",
         "contact": "Contact us",
         "login": "Log in",
         "start": "Start now",

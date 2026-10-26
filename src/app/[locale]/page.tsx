@@ -1,10 +1,9 @@
 import { Rubik, Cairo } from 'next/font/google';
 import { Navbar } from '@/features/landing/components/Navbar';
 import { LandingDiscovery } from '@/features/landing/components/LandingDiscovery';
-import { PlatformOverview } from '@/features/landing/components/PlatformOverview';
 import { HowItWorks } from '@/features/landing/components/HowItWorks';
 import { AiFeatures } from '@/features/landing/components/AiFeatures';
-import { FeatureSpotlight } from '@/features/landing/components/FeatureSpotlight';
+import { MatchingSpotlight } from '@/features/landing/components/MatchingSpotlight';
 import { Faq } from '@/features/landing/components/Faq';
 import { ContactSection } from '@/features/landing/components/ContactSection';
 import { CtaBand } from '@/features/landing/components/CtaBand';
@@ -31,11 +30,9 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <LandingDiscovery />
-        <PlatformOverview />
         <AiFeatures />
         <HowItWorks />
-        <FeatureSpotlight kind="matching" />
-        <FeatureSpotlight kind="documents" />
+        <MatchingSpotlight />
         <Faq />
         <CtaBand />
         <ContactSection />
