@@ -248,7 +248,10 @@ const counts = {
 test('cards: seven cards in Figma order, saved first, with the real counts', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
       counts,
       trackedState: 'ready',
       savedCount: 4,
@@ -271,7 +274,15 @@ test('cards: seven cards in Figma order, saved first, with the real counts', () 
 test('cards: the saved card takes its number from the saved list, not from tracking', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: 9, savedState: 'ready' })
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
+      counts,
+      trackedState: 'ready',
+      savedCount: 9,
+      savedState: 'ready',
+    })
   );
   const saved = html.split('data-testid="tracking-card-saved"')[1].split('</li>')[0];
   assert.match(saved, />9</);
@@ -280,7 +291,10 @@ test('cards: the saved card takes its number from the saved list, not from track
 test('cards: a loading or failed section shows a placeholder, never a zero', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const loading = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
       counts: null,
       trackedState: 'loading',
       savedCount: null,
@@ -291,7 +305,10 @@ test('cards: a loading or failed section shows a placeholder, never a zero', () 
   assert.doesNotMatch(loading, />0</);
 
   const failed = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
       counts: null,
       trackedState: 'error',
       savedCount: null,
@@ -305,7 +322,10 @@ test('cards: a loading or failed section shows a placeholder, never a zero', () 
 test('cards: sections fail independently (saved ready while tracking failed, and the reverse)', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const trackedDown = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
       counts: null,
       trackedState: 'error',
       savedCount: 3,
@@ -316,7 +336,15 @@ test('cards: sections fail independently (saved ready while tracking failed, and
   assert.equal((trackedDown.match(/-unavailable"/g) ?? []).length, 6);
 
   const savedDown = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: null, savedState: 'error' })
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
+      counts,
+      trackedState: 'ready',
+      savedCount: null,
+      savedState: 'error',
+    })
   );
   assert.equal((savedDown.match(/-unavailable"/g) ?? []).length, 1);
   assert.match(savedDown.split('tracking-card-applied"')[1].split('</li>')[0], />1</);
@@ -325,7 +353,15 @@ test('cards: sections fail independently (saved ready while tracking failed, and
 test('cards: labels follow the locale and are the Figma Arabic wording', () => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   const html = render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null, counts, trackedState: 'ready', savedCount: 0, savedState: 'ready' }),
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
+      counts,
+      trackedState: 'ready',
+      savedCount: 0,
+      savedState: 'ready',
+    }),
     'ar'
   );
   for (const label of [
@@ -514,7 +550,13 @@ const wire = (id, status, scholarship = {}) => ({
   scholarship: { id: 100 + id, title: `Scholarship ${id}`, is_saved: false, ...scholarship },
 });
 
-async function renderPage({ tracked, saved, detailsEnabled = false, savedEnabled = false, locale = 'en' }) {
+async function renderPage({
+  tracked,
+  saved,
+  detailsEnabled = false,
+  savedEnabled = false,
+  locale = 'en',
+}) {
   const { TrackingPage } = feature('components/TrackingPage.tsx');
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const seed = async (key, outcome) => {
@@ -533,7 +575,10 @@ async function renderPage({ tracked, saved, detailsEnabled = false, savedEnabled
   };
   await seed(trackingKeys.list(), tracked);
   await seed(savedKey, saved);
-  return render(h(QueryClientProvider, { client }, h(TrackingPage, { detailsEnabled, savedEnabled })), locale);
+  return render(
+    h(QueryClientProvider, { client }, h(TrackingPage, { detailsEnabled, savedEnabled })),
+    locale
+  );
 }
 
 test('page: loading shows placeholders in every section and no zero', async () => {
@@ -667,7 +712,10 @@ test('filter: a null filter shows everything and a status shows only that status
 const cardsFor = (extra = {}) => {
   const { TrackingStatusCards } = feature('components/TrackingStatusCards.tsx');
   return render(
-    h(TrackingStatusCards, { activeFilter: null, onToggleFilter: noop, savedHref: null,
+    h(TrackingStatusCards, {
+      activeFilter: null,
+      onToggleFilter: noop,
+      savedHref: null,
       counts,
       trackedState: 'ready',
       savedCount: 4,
@@ -679,15 +727,26 @@ const cardsFor = (extra = {}) => {
     })
   );
 };
-const cardHtml = (html, key) => html.split('data-testid="tracking-card-' + key + '"')[1].split('</li>')[0];
+const cardHtml = (html, key) =>
+  html.split('data-testid="tracking-card-' + key + '"')[1].split('</li>')[0];
 
 test('filter: the six status cards are real buttons with aria-pressed, the active one is pressed', () => {
   const html = cardsFor({ activeFilter: 'applied' });
-  for (const key of ['preparing_documents', 'ready_to_apply', 'applied', 'accepted', 'rejected', 'closed']) {
+  for (const key of [
+    'preparing_documents',
+    'ready_to_apply',
+    'applied',
+    'accepted',
+    'rejected',
+    'closed',
+  ]) {
     const card = cardHtml(html, key);
     assert.ok(card.includes('<button'), key + ' is a button');
     assert.ok(card.includes('type="button"'), key);
-    assert.ok(card.includes(key === 'applied' ? 'aria-pressed="true"' : 'aria-pressed="false"'), key);
+    assert.ok(
+      card.includes(key === 'applied' ? 'aria-pressed="true"' : 'aria-pressed="false"'),
+      key
+    );
   }
 });
 
@@ -705,10 +764,25 @@ test('filter: the saved card links to the Saved page only when that page is enab
 });
 
 test('filter: loading and failed sections are not interactive', () => {
-  const loading = cardsFor({ counts: null, trackedState: 'loading', savedCount: null, savedState: 'loading', savedHref: '/student/saved' });
+  const loading = cardsFor({
+    counts: null,
+    trackedState: 'loading',
+    savedCount: null,
+    savedState: 'loading',
+    savedHref: '/student/saved',
+  });
   assert.equal(loading.includes('<button'), false);
-  assert.equal(cardHtml(loading, 'saved').includes('<a'), false, 'no link while the saved count is unknown');
-  const failed = cardsFor({ counts: null, trackedState: 'error', savedCount: null, savedState: 'error' });
+  assert.equal(
+    cardHtml(loading, 'saved').includes('<a'),
+    false,
+    'no link while the saved count is unknown'
+  );
+  const failed = cardsFor({
+    counts: null,
+    trackedState: 'error',
+    savedCount: null,
+    savedState: 'error',
+  });
   assert.equal(failed.includes('<button'), false);
 });
 
