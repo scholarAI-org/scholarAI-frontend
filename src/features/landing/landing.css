@@ -310,12 +310,17 @@
   margin-top: 12px;
   line-height: 40px;
 }
+/* Flex rather than grid so a short last row is centered at any card count. */
 .landing-features-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 16px 24px;
-  grid-template-rows: 110px 111px 110px;
   margin-top: 32px;
+}
+.landing-features-grid > .landing-feature-card {
+  flex: 0 0 calc((100% - 48px) / 3);
+  min-width: 0;
 }
 .landing-feature-card {
   display: flex;
@@ -821,8 +826,8 @@
     font-size: 32px;
     line-height: 46px;
   }
-  .landing-features-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .landing-features-grid > .landing-feature-card {
+    flex-basis: calc((100% - 24px) / 2);
   }
   .spotlight-copy h2 {
     font-size: 24px;
@@ -962,8 +967,8 @@
   .landing-hero-inner {
     padding-block: 0;
   }
-  .landing-features-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .landing-features-grid > .landing-feature-card {
+    flex-basis: 100%;
   }
   .landing-steps ol {
     grid-template-columns: minmax(0, 1fr);
@@ -1042,11 +1047,6 @@
 @media (max-width: 1350px) and (min-width: 1101px) {
   .landing-spotlight-matching .spotlight-art {
     zoom: 0.85;
-  }
-}
-@media (max-width: 1100px) {
-  .landing-features-grid {
-    grid-template-rows: none;
   }
 }
 @media (max-width: 600px) {
