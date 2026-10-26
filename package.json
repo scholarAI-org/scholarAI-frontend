@@ -23,7 +23,7 @@
     "test:student-home": "node --test tests/student-home.test.mjs",
     "test:tracking": "node --test tests/student-application-tracking.test.mjs tests/student-application-tracking-ui.test.mjs tests/student-application-tracking-optimistic.test.mjs",
     "test:i18n": "node --test tests/i18n-numerals.test.mjs",
-    "test:public-landing-page": "node --test tests/public-landing-page.test.mjs"
+    "test:public-landing-page": "node --test tests/public-landing-page.test.mjs tests/landing-no-fake-content.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
