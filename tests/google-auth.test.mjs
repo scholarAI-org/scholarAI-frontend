@@ -26,31 +26,14 @@ loadModule.extensions['.ts'] = (module, filename) => {
   module._compile(outputText, filename);
 };
 
+// Google sign-in runs in the browser, so the api-client resolves the
+// same-origin `/backend` proxy rather than an absolute backend URL.
+globalThis.window = {};
+
 const { googleAuth } = loadModule(path.join(rootDir, 'features/auth/api/google-auth.ts'));
-const { setToken, getToken, clearToken } = loadModule(path.join(rootDir, 'lib/auth-storage.ts'));
+const { BACKEND_PREFIX } = loadModule(path.join(rootDir, 'lib/backend-proxy.ts'));
 
-// Mock window and global storage objects for Node.js test runner
-const mockSessionStorage = new Map();
-const mockLocalStorage = new Map();
-
-const storageMock = {
-  sessionStorage: {
-    getItem: (key) => mockSessionStorage.get(key) ?? null,
-    setItem: (key, value) => mockSessionStorage.set(key, value),
-    removeItem: (key) => mockSessionStorage.delete(key),
-  },
-  localStorage: {
-    getItem: (key) => mockLocalStorage.get(key) ?? null,
-    setItem: (key, value) => mockLocalStorage.set(key, value),
-    removeItem: (key) => mockLocalStorage.delete(key),
-  },
-};
-
-globalThis.window = storageMock;
-globalThis.sessionStorage = storageMock.sessionStorage;
-globalThis.localStorage = storageMock.localStorage;
-
-test('googleAuth function formats request body with credential key', async () => {
+test('googleAuth posts the credential through the same-origin proxy with the session cookie', async () => {
   let capturedUrl = '';
   let capturedOptions = null;
 
@@ -60,36 +43,53 @@ test('googleAuth function formats request body with credential key', async () =>
     return {
       ok: true,
       status: 200,
-      json: async () => ({
-        access_token: 'mock-app-jwt-token-123',
-        token_type: 'bearer',
-      }),
+      json: async () => ({ role: 'student' }),
     };
   };
 
-  const result = await googleAuth('mock-google-id-token-xyz');
+  await googleAuth('mock-google-id-token-xyz');
 
-  assert.ok(capturedUrl.endsWith('/auth/google'), 'Calls POST /auth/google endpoint');
+  assert.equal(
+    capturedUrl,
+    `${BACKEND_PREFIX}/auth/google`,
+    'Calls POST /auth/google via /backend'
+  );
   assert.equal(capturedOptions.method, 'POST');
+  assert.equal(
+    capturedOptions.credentials,
+    'include',
+    'Sends and accepts the first-party session cookie'
+  );
+  assert.equal(capturedOptions.headers['Content-Type'], 'application/json');
 
   const body = JSON.parse(capturedOptions.body);
   assert.equal(body.credential, 'mock-google-id-token-xyz', 'Sends Google credential in body');
-
-  assert.equal(result.access_token, 'mock-app-jwt-token-123');
-  assert.equal(result.token_type, 'bearer');
+  assert.deepEqual(Object.keys(body), ['credential'], 'Sends nothing but the credential');
 });
 
-test('stores returned application JWT without saving Google credential as app token', () => {
-  mockSessionStorage.clear();
-  mockLocalStorage.clear();
+test('the session lives in the backend cookie: no auth token is persisted in the browser', () => {
+  // The cookie-auth migration deleted src/lib/auth-storage.ts. Nothing in the auth
+  // feature may reintroduce token storage, or the session stops being HttpOnly.
+  const walk = (dir) =>
+    fs
+      .readdirSync(dir, { withFileTypes: true })
+      .flatMap((entry) =>
+        entry.isDirectory() ? walk(path.join(dir, entry.name)) : [path.join(dir, entry.name)]
+      );
 
-  const appJwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.app-token';
-  setToken(appJwtToken, false);
+  assert.equal(fs.existsSync(path.join(rootDir, 'lib/auth-storage.ts')), false);
 
-  assert.equal(getToken(), appJwtToken, 'getToken returns application JWT from storage');
-
-  clearToken();
-  assert.equal(getToken(), null, 'clearToken clears storage');
+  const offenders = walk(path.join(rootDir, 'features/auth')).filter(
+    (file) =>
+      /\.(t|j)sx?$/.test(file) &&
+      /(localStorage|sessionStorage|document\.cookie|auth-storage)/.test(
+        fs.readFileSync(file, 'utf8')
+      )
+  );
+  assert.deepEqual(
+    offenders.map((file) => path.relative(rootDir, file).split(path.sep).join('/')),
+    []
+  );
 });
 
 test('translation files en.json and ar.json contain required Google Auth strings', () => {
