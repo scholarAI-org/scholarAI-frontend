@@ -78,7 +78,13 @@ const UNBACKED_CLAIMS = [
   'اقتراحات مخصصة',
   'تحسينات الذكاء الاصطناعي',
 ];
-const BANNED = [...FAKE_STRINGS, ...UNBACKED_CLAIMS].map((banned) => banned.toLowerCase());
+
+// Internal-only destinations that must not be advertised on the public page.
+const INTERNAL_LINKS = ['admin dashboard', 'لوحة الإدارة'];
+
+const BANNED = [...FAKE_STRINGS, ...UNBACKED_CLAIMS, ...INTERNAL_LINKS].map((banned) =>
+  banned.toLowerCase()
+);
 const findBanned = (text) => BANNED.find((banned) => text.toLowerCase().includes(banned));
 
 // Walk the import graph from the landing route so only code that can render is checked.
@@ -193,5 +199,11 @@ test('AiFeatures has exactly one icon and one tone per feature card in ar and en
     const { items } = JSON.parse(read(`src/messages/${locale}.json`)).Landing.updated.features;
     assert.equal(count('ICONS'), items.length, `${locale}: ICONS vs cards`);
     assert.equal(count('TONES'), items.length, `${locale}: TONES vs cards`);
+  }
+});
+
+test('the public landing links to no admin route', () => {
+  for (const [file, source] of landingSources) {
+    assert.doesNotMatch(source, /\/admin\b/, `${file} links to an admin route`);
   }
 });

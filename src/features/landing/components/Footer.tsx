@@ -8,7 +8,7 @@ import { DesignAsset } from './DesignAsset';
 const DESTINATIONS = [
   ['/student/scholarships', '#matching'],
   ['/student/profile', null],
-  ['/admin/dashboard', '/register'],
+  ['/register'],
 ] as const;
 export function Footer() {
   const t = useTranslations('Landing.updated.footer');
