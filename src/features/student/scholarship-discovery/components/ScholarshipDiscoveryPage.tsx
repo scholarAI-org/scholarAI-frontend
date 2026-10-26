@@ -17,7 +17,13 @@ import type { DiscoveryView } from '../types';
 // panel sits on the inline-end side. Below lg the panel is replaced by quick chips
 // and the filters dialog (T048); cards use one column below 640px and two above.
 // DOM order (toolbar, filters, results) is the tab order.
-export function ScholarshipDiscoveryPage({ detailsEnabled }: { detailsEnabled: boolean }) {
+export function ScholarshipDiscoveryPage({
+  detailsEnabled,
+  trackingEnabled = false,
+}: {
+  detailsEnabled: boolean;
+  trackingEnabled?: boolean;
+}) {
   const { query, setSearch, setSort, setFilters, setPage, clearFilters, reconcilePage } =
     useDiscoveryQueryState();
   // In-memory presentation state: not in the URL, query keys or storage.
@@ -63,6 +69,7 @@ export function ScholarshipDiscoveryPage({ detailsEnabled }: { detailsEnabled: b
           onReconcilePage={reconcilePage}
           onClearFilters={clearFilters}
           detailsEnabled={detailsEnabled}
+          trackingEnabled={trackingEnabled}
         />
       </div>
     </div>

@@ -19,6 +19,8 @@ interface ScholarshipGridCardProps {
   // Deadline line; filled by the deadline helpers (T041).
   footer?: ReactNode;
   detailsEnabled: boolean;
+  // Optional "Track application" control, supplied by the page when tracking is on.
+  trackingSlot?: ReactNode;
 }
 
 // Figma "scholarship card" (2358:9963): image with a top-end action slot, badges,
@@ -28,6 +30,7 @@ export function ScholarshipGridCard({
   bookmarkSlot,
   footer,
   detailsEnabled,
+  trackingSlot,
 }: ScholarshipGridCardProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();
@@ -64,6 +67,7 @@ export function ScholarshipGridCard({
               {footer}
             </div>
           </div>
+          {trackingSlot ? <div data-testid="track-slot">{trackingSlot}</div> : null}
         </div>
       </div>
     </article>

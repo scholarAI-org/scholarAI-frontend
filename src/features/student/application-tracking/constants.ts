@@ -12,5 +12,9 @@ export const TRACKING_STATUSES = [
 // list, never tracking, so it is not a TrackingStatus and cannot be sent to the API.
 export const TRACKING_CARD_ORDER = ['saved', ...TRACKING_STATUSES] as const;
 
+// Status a newly tracked scholarship starts in (product decision, 2026-10-26).
+export const DEFAULT_START_STATUS =
+  'preparing_documents' satisfies (typeof TRACKING_STATUSES)[number];
+
 // ApplicationNoteUpdate.notes maxLength, counted in code points like the backend.
 export const NOTE_MAX_LENGTH = 2000;

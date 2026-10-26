@@ -6,6 +6,7 @@ import { toScholarshipCard } from '@/features/student/scholarship-discovery/adap
 import { ScholarshipBookmark } from '@/features/student/scholarship-discovery/components/ScholarshipBookmark';
 import { ScholarshipDeadline } from '@/features/student/scholarship-discovery/components/ScholarshipDeadline';
 import { ScholarshipGridCard } from '@/features/student/scholarship-discovery/components/ScholarshipGridCard';
+import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
 import { useSavedScholarshipsQuery } from '../hooks/useSavedScholarshipsQuery';
 import { SavedScholarshipsEmpty } from './SavedScholarshipsEmpty';
 import { SavedScholarshipsErrorState } from './SavedScholarshipsErrorState';
@@ -16,7 +17,13 @@ import { SavedScholarshipsLoading } from './SavedScholarshipsLoading';
 // student layout). `cards.length` is the single source of truth for both the
 // count and the empty-vs-populated branch; loading and error are never
 // rendered as "zero".
-export function SavedScholarshipsPage({ detailsEnabled }: { detailsEnabled: boolean }) {
+export function SavedScholarshipsPage({
+  detailsEnabled,
+  trackingEnabled = false,
+}: {
+  detailsEnabled: boolean;
+  trackingEnabled?: boolean;
+}) {
   const query = useSavedScholarshipsQuery();
   const locale = useLocale();
   // One "today" per mounted page so all deadlines agree.
@@ -63,6 +70,15 @@ export function SavedScholarshipsPage({ detailsEnabled }: { detailsEnabled: bool
                 bookmarkSlot={<ScholarshipBookmark card={card} variant="overlay" />}
                 footer={<ScholarshipDeadline card={card} now={now} />}
                 detailsEnabled={detailsEnabled}
+                trackingSlot={
+                  trackingEnabled ? (
+                    <TrackScholarshipButton
+                      scholarshipId={card.id}
+                      title={card.title}
+                      variant="card"
+                    />
+                  ) : undefined
+                }
               />
             </li>
           );

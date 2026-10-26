@@ -20,5 +20,5 @@ export default async function StudentScholarshipDetailsRoute({
     notFound();
   }
 
-  return <ScholarshipDetailsPage rawId={id} />;
+  return <ScholarshipDetailsPage rawId={id} trackingEnabled={featureFlags.trackingEnabled} />;
 }

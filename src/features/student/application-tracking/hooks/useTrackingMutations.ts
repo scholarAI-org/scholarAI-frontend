@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   noteMutationOptions,
   removeMutationOptions,
+  startMutationOptions,
   statusMutationOptions,
 } from '../lib/mutations';
 
@@ -23,4 +24,9 @@ export function useSaveTrackingNote() {
 export function useRemoveTracking() {
   const client = useQueryClient();
   return useMutation(removeMutationOptions(client));
+}
+
+export function useStartTracking() {
+  const client = useQueryClient();
+  return useMutation(startMutationOptions(client));
 }

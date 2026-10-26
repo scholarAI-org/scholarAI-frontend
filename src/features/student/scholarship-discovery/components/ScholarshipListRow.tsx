@@ -17,6 +17,7 @@ interface ScholarshipListRowProps {
   bookmarkSlot?: ReactNode;
   footer?: ReactNode;
   detailsEnabled: boolean;
+  trackingSlot?: ReactNode;
 }
 
 // No List View exists in Figma; this compact row reuses the grid card's model,
@@ -26,6 +27,7 @@ export function ScholarshipListRow({
   bookmarkSlot,
   footer,
   detailsEnabled,
+  trackingSlot,
 }: ScholarshipListRowProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const titleId = useId();
@@ -52,6 +54,7 @@ export function ScholarshipListRow({
         <ScholarshipMeta card={card} withProvider />
         <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-300 pt-3">
           <ScholarshipDetailsAction card={card} detailsEnabled={detailsEnabled} />
+          {trackingSlot ? <div data-testid="track-slot">{trackingSlot}</div> : null}
           <div className="min-w-0 flex-1 text-xs leading-5 text-[#b5b5b5]">{footer}</div>
         </div>
       </div>
