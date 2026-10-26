@@ -1301,7 +1301,8 @@
       "home": "الرئيسية",
       "profile": "الملف الشخصي",
       "scholarships": "البحث عن منح",
-      "saved": "المحفوظات"
+      "saved": "المحفوظات",
+      "tracking": "تتبع الطلبات"
     },
     "pages": {
       "home": {
@@ -1323,6 +1324,10 @@
       "saved": {
         "title": "المنح المحفوظة",
         "description": "المنح التي حفظتها لمراجعتها لاحقاً."
+      },
+      "tracking": {
+        "title": "متابعة التقديم",
+        "description": "سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة"
       }
     }
   },
@@ -1580,6 +1585,77 @@
     },
     "bell": {
       "label": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءان} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعارًا غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
+    }
+  },
+  "StudentTracking": {
+    "status": {
+      "saved": "محفوظة / مهتم",
+      "preparing_documents": "تجهيز المستندات",
+      "ready_to_apply": "جاهز للتقديم",
+      "applied": "تم التقديم",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "closed": "مغلق"
+    },
+    "summary": {
+      "label": "ملخص حالات التقديم",
+      "unavailable": "غير متاح"
+    },
+    "card": {
+      "statusLabel": "حالة التقديم",
+      "scholarshipLink": "المنحة",
+      "scholarshipLinkLabel": "فتح المنحة: {title}",
+      "officialLink": "صفحة التقديم الرسمية",
+      "officialLinkLabel": "صفحة التقديم الرسمية لـ {title}",
+      "remove": "إيقاف التتبع",
+      "removeLabel": "إيقاف تتبع {title}",
+      "newTab": "(يفتح في تبويب جديد)",
+      "untitled": "منحة بدون عنوان",
+      "meta": {
+        "deadline": "آخر موعد {date}",
+        "noDeadline": "بدون موعد نهائي",
+        "updated": "آخر تحديث {date}"
+      },
+      "statusFailed": "تعذّر تغيير الحالة، وتمت إعادتها كما كانت."
+    },
+    "note": {
+      "label": "ملاحظاتي",
+      "empty": "لا توجد ملاحظات بعد.",
+      "add": "إضافة ملاحظة",
+      "edit": "تعديل الملاحظة",
+      "editLabel": "تعديل ملاحظتك على {title}",
+      "inputLabel": "ملاحظاتي",
+      "placeholder": "اكتب ما تريد تذكّره عن هذا الطلب…",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…",
+      "cancel": "إلغاء",
+      "counter": "{count, number, integer} / {max, number, integer}",
+      "tooLong": "الملاحظة طويلة جداً، يرجى اختصارها.",
+      "saveFailed": "تعذّر حفظ ملاحظتك، يرجى المحاولة مرة أخرى."
+    },
+    "remove": {
+      "title": "إيقاف تتبع هذه المنحة؟",
+      "body": "سيتم حذف حالتك وملاحظتك على «{title}». تبقى المنحة ومحفوظاتك كما هي.",
+      "confirm": "إيقاف التتبع",
+      "cancel": "الإبقاء عليها",
+      "removing": "جارٍ الإزالة…",
+      "failed": "تعذّر إيقاف تتبع هذه المنحة، يرجى المحاولة مرة أخرى."
+    },
+    "page": {
+      "loading": "جارٍ تحميل طلباتك…",
+      "skipped": "{count, plural, =0 {} one {تعذّر عرض طلب واحد.} two {تعذّر عرض طلبين.} few {تعذّر عرض {count, number, integer} طلبات.} many {تعذّر عرض {count, number, integer} طلباً.} other {تعذّر عرض {count, number, integer} طلب.}}",
+      "sectionLabel": "المنح التي تتابعها"
+    },
+    "empty": {
+      "heading": "لا تتابع أي منحة بعد",
+      "body": "ابدأ بتتبع منحة لمتابعة حالة تقديمك وتدوين ملاحظاتك.",
+      "cta": "استكشف المنح"
+    },
+    "errors": {
+      "generic": "تعذّر تحميل طلباتك، يرجى المحاولة مرة أخرى.",
+      "unauthorized": "يرجى تسجيل الدخول مرة أخرى لعرض طلباتك.",
+      "forbidden": "هذا القسم غير متاح لحسابك حالياً.",
+      "retry": "حاول مرة أخرى"
     }
   }
 }

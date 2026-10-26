@@ -1314,7 +1314,8 @@
       "home": "Home",
       "profile": "Profile",
       "scholarships": "Search scholarships",
-      "saved": "Saved"
+      "saved": "Saved",
+      "tracking": "Application tracking"
     },
     "pages": {
       "home": {
@@ -1336,6 +1337,10 @@
       "saved": {
         "title": "Saved Scholarships",
         "description": "Scholarships you have saved for later."
+      },
+      "tracking": {
+        "title": "Application tracking",
+        "description": "Record each scholarship’s status and add your notes and important dates."
       }
     }
   },
@@ -1593,6 +1598,77 @@
     },
     "bell": {
       "label": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
+    }
+  },
+  "StudentTracking": {
+    "status": {
+      "saved": "Saved / interested",
+      "preparing_documents": "Preparing documents",
+      "ready_to_apply": "Ready to apply",
+      "applied": "Applied",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "closed": "Closed"
+    },
+    "summary": {
+      "label": "Application status summary",
+      "unavailable": "Unavailable"
+    },
+    "card": {
+      "statusLabel": "Application status",
+      "scholarshipLink": "Scholarship",
+      "scholarshipLinkLabel": "Open the scholarship: {title}",
+      "officialLink": "Official application page",
+      "officialLinkLabel": "Official application page for {title}",
+      "remove": "Stop tracking",
+      "removeLabel": "Stop tracking {title}",
+      "newTab": "(opens in a new tab)",
+      "untitled": "Untitled scholarship",
+      "meta": {
+        "deadline": "Deadline {date}",
+        "noDeadline": "No deadline",
+        "updated": "Last updated {date}"
+      },
+      "statusFailed": "We could not change the status. It was restored."
+    },
+    "note": {
+      "label": "My notes",
+      "empty": "No notes yet.",
+      "add": "Add a note",
+      "edit": "Edit note",
+      "editLabel": "Edit your note for {title}",
+      "inputLabel": "My notes",
+      "placeholder": "Write something to remember about this application…",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "counter": "{count, number, integer} / {max, number, integer}",
+      "tooLong": "The note is too long. Please shorten it.",
+      "saveFailed": "We could not save your note. Please try again."
+    },
+    "remove": {
+      "title": "Stop tracking this scholarship?",
+      "body": "Your status and note for “{title}” will be deleted. The scholarship and your saved items stay as they are.",
+      "confirm": "Stop tracking",
+      "cancel": "Keep it",
+      "removing": "Removing…",
+      "failed": "We could not stop tracking this scholarship. Please try again."
+    },
+    "page": {
+      "loading": "Loading your applications…",
+      "skipped": "{count, plural, one {One application could not be displayed.} other {{count, number, integer} applications could not be displayed.}}",
+      "sectionLabel": "Your tracked scholarships"
+    },
+    "empty": {
+      "heading": "You are not tracking any scholarships yet",
+      "body": "Start tracking a scholarship to follow your application status and keep notes.",
+      "cta": "Explore scholarships"
+    },
+    "errors": {
+      "generic": "We could not load your applications. Please try again.",
+      "unauthorized": "Please sign in again to see your applications.",
+      "forbidden": "This section is not available for your account right now.",
+      "retry": "Try again"
     }
   }
 }

@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   LogOut,
   Search,
+  SquarePen,
   UserRound,
   type LucideIcon,
 } from 'lucide-react';
@@ -28,6 +29,7 @@ const navigationIcons: Record<StudentNavigationItemId, LucideIcon> = {
   profile: UserRound,
   scholarships: Search,
   saved: Bookmark,
+  tracking: SquarePen,
 };
 
 // Figma sidebar (2979:9136): brand, user pill and grouped navigation at the top,
