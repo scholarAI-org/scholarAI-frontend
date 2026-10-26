@@ -8,6 +8,7 @@ import { toScholarshipCard } from '@/features/student/scholarship-discovery/adap
 import { useSavedScholarshipsQuery } from '@/features/student/saved-scholarships/hooks/useSavedScholarshipsQuery';
 import { countByStatus } from '../lib/counts';
 import { classifyTrackingError, TrackingContractError } from '../lib/errors';
+import { filterByStatus, toggleFilter } from '../lib/filter';
 import { getListView, getSectionState } from '../lib/view-state';
 import { useTrackedQuery } from '../hooks/useTrackedQuery';
 import {
@@ -31,7 +32,13 @@ const noticeFor = (error: unknown, failed: NoticeKey): NoticeKey =>
 // Composes the page under the Student Shell (mounted by the student layout).
 // Two independent sections: the status cards and the list read the tracked list,
 // and the `saved` card reads the saved list. One failing never blanks the other.
-export function TrackingPage({ detailsEnabled }: { detailsEnabled: boolean }) {
+export function TrackingPage({
+  detailsEnabled,
+  savedEnabled,
+}: {
+  detailsEnabled: boolean;
+  savedEnabled: boolean;
+}) {
   const t = useTranslations('StudentTracking');
   const locale = useLocale();
   const tracked = useTrackedQuery();
@@ -41,12 +48,14 @@ export function TrackingPage({ detailsEnabled }: { detailsEnabled: boolean }) {
   const remove = useRemoveTracking();
   const [removing, setRemoving] = useState<TrackedItem | null>(null);
   const [notice, setNotice] = useState<NoticeKey | null>(null);
+  const [filter, setFilter] = useState<TrackingStatus | null>(null);
 
   const trackedState = getSectionState(tracked);
   const savedState = getSectionState(saved);
   const view = getListView(trackedState, tracked.data);
   const items = tracked.data?.items ?? [];
   const skipped = tracked.data?.skipped ?? 0;
+  const visibleItems = filterByStatus(items, filter);
 
   function changeStatus(item: TrackedItem, status: TrackingStatus) {
     if (status === item.status) return;
@@ -84,6 +93,9 @@ export function TrackingPage({ detailsEnabled }: { detailsEnabled: boolean }) {
         trackedState={trackedState}
         savedCount={savedState === 'ready' ? (saved.data?.length ?? 0) : null}
         savedState={savedState}
+        activeFilter={filter}
+        onToggleFilter={(status) => setFilter((current) => toggleFilter(current, status))}
+        savedHref={savedEnabled ? '/student/saved' : null}
       />
 
       {notice ? (
@@ -139,8 +151,34 @@ export function TrackingPage({ detailsEnabled }: { detailsEnabled: boolean }) {
                 {t('page.skipped', { count: skipped })}
               </p>
             ) : null}
+            {filter ? (
+              <div
+                className="flex flex-wrap items-center justify-between gap-3 text-sm text-[#434343]"
+                data-testid="tracking-filter-bar"
+              >
+                <span role="status">{t('filter.showing', { status: t(`status.${filter}`) })}</span>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-full"
+                  onClick={() => setFilter(null)}
+                  data-testid="tracking-filter-clear"
+                >
+                  {t('filter.clear')}
+                </Button>
+              </div>
+            ) : null}
+            {visibleItems.length === 0 ? (
+              <p
+                className="rounded-2xl border border-[#e2e8f0] bg-white px-4 py-10 text-center text-sm text-[#979797]"
+                data-testid="tracking-filter-empty"
+              >
+                {t('filter.empty')}
+              </p>
+            ) : null}
             <div className="flex flex-col gap-7" data-testid="tracking-list">
-              {items.map((item) => (
+              {visibleItems.map((item) => (
                 <TrackingCard
                   key={item.id}
                   item={item}
