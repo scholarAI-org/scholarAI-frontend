@@ -6,8 +6,9 @@ import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { useAuth } from '@/features/auth/providers/AuthProvider';
-import { getStudentPageKey } from './student-navigation';
+import { getStudentCompactTitleKey, getStudentPageKey } from './student-navigation';
 import { getStudentDisplayName, getStudentInitial } from './student-identity';
+import { StudentUserMenu } from './StudentUserMenu';
 
 export const STUDENT_MOBILE_NAVIGATION_ID = 'student-mobile-navigation';
 
@@ -31,6 +32,7 @@ export function StudentHeader({
   const router = useRouter();
   const { user } = useAuth();
   const pageKey = getStudentPageKey(pathname);
+  const compactTitleKey = getStudentCompactTitleKey(pathname);
   const name = getStudentDisplayName(user, t('identity.fallbackName'));
   const nextLocale = locale === 'ar' ? 'en' : 'ar';
 
@@ -42,24 +44,29 @@ export function StudentHeader({
   }
 
   const initial = getStudentInitial(name);
-  const languageButton = (
+  // Below sm the switch has to clear 44x44; from sm up it keeps the 32px circle the
+  // existing header and the desktop design use.
+  const renderLanguageButton = (sizeClass: string) => (
     <button
       type="button"
       onClick={switchLanguage}
       aria-label={t('languageSwitch.label')}
       lang={nextLocale}
-      className="flex size-8 shrink-0 items-center justify-center rounded-full border-[0.8px] border-gray-300 bg-white text-xs text-black transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+      className={`flex ${sizeClass} shrink-0 items-center justify-center rounded-full border-[0.8px] border-gray-300 bg-white text-xs text-black transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500`}
     >
       <span aria-hidden>{t('languageSwitch.short')}</span>
     </button>
   );
+  const languageButton = renderLanguageButton('size-8');
 
   return (
     <header>
       {/* Below lg: Figma mobile header (3606:11257) - menu and brand at the start,
           language and avatar at the end. */}
       <div className="flex items-center justify-between gap-3 border-b border-gray-300 bg-white px-4 pt-2.5 pb-3 sm:px-6 lg:hidden">
-        <div className="flex items-center gap-3.5">
+        <div className="flex min-w-0 items-center gap-3.5">
+          {/* Below sm the drawer is gone — the tab bar carries the destinations — so the
+              menu button only exists from sm up, where the drawer still does. */}
           <button
             ref={menuButtonRef}
             type="button"
@@ -67,7 +74,7 @@ export function StudentHeader({
             aria-expanded={isNavigationOpen}
             aria-controls={STUDENT_MOBILE_NAVIGATION_ID}
             aria-label={isNavigationOpen ? t('closeNavigation') : t('openNavigation')}
-            className="flex size-10 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+            className="hidden size-10 items-center justify-center rounded-xl bg-[#f1f5f9] text-[#274383] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 sm:flex"
           >
             <Menu aria-hidden className="size-5" />
           </button>
@@ -80,16 +87,23 @@ export function StudentHeader({
               className="size-[55px] max-w-none"
             />
           </div>
+          {/* The compact bar names the page; the full heading still follows below it. */}
+          {compactTitleKey && (
+            <span className="min-w-0 truncate text-sm font-bold text-[#434343] sm:hidden">
+              {t(compactTitleKey)}
+            </span>
+          )}
         </div>
-        <div className="flex items-center gap-2.5">
-          {languageButton}
+        <div className="flex shrink-0 items-center gap-2.5">
+          {renderLanguageButton('size-11 sm:size-8')}
           <span
             role="img"
             aria-label={name}
-            className="flex size-[34px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-[15px] text-white"
+            className="hidden size-[34px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-[15px] text-white sm:flex"
           >
             {initial}
           </span>
+          <StudentUserMenu className="sm:hidden" />
         </div>
       </div>
 

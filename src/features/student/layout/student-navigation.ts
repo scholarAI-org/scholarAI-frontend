@@ -99,6 +99,10 @@ export const getStudentTabBarItems = (
     .filter((item): item is StudentNavigationItem => Boolean(item?.enabled))
     .slice(0, STUDENT_TAB_BAR_MAX_ITEMS);
 
+// Short bar labels live beside the sidebar labels, not instead of them: "Search" fits a
+// five-up bar at 390px where "Search scholarships" would not.
+export const studentTabLabelKey = (id: StudentNavigationItemId) => `tabs.${id}` as const;
+
 export const getVisibleStudentNavigation = (items: readonly StudentNavigationItem[]) =>
   items.filter((item) => item.enabled);
 
@@ -125,6 +129,17 @@ export const getActiveStudentTabId = (
       (best, item) => (best && best.href.length >= item.href.length ? best : item),
       null
     )?.id ?? null;
+
+// Title for the compact mobile top bar. A page that owns a tab reuses the tab's own short
+// label; a page without one (scholarship details) falls back to its page title. Both are
+// placeholder-free, unlike pages.home.title, which greets the student by name.
+export const getStudentCompactTitleKey = (pathname: string) => {
+  const pageKey = getStudentPageKey(pathname);
+  if (!pageKey) return null;
+  return studentTabBarOrder.some((id) => id === pageKey)
+    ? (`nav.${pageKey as StudentNavigationItemId}` as const)
+    : (`pages.${pageKey}.title` as const);
+};
 
 export function getStudentPageKey(pathname: string): StudentPageKey | null {
   if (pathname === '/student') return 'home';

@@ -32,11 +32,13 @@ export function StudentMobileNavigation({
     closeButtonRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    const desktop = window.matchMedia('(min-width: 1024px)');
-    const closeOnDesktop = () => {
-      if (desktop.matches) onClose();
+    // The drawer only exists between sm and lg: above it the sidebar is permanent,
+    // below it the bottom tab bar replaces it. Leaving either range closes it.
+    const outsideDrawerRange = window.matchMedia('(min-width: 1024px), (max-width: 639.98px)');
+    const closeOutsideRange = () => {
+      if (outsideDrawerRange.matches) onClose();
     };
-    desktop.addEventListener('change', closeOnDesktop);
+    outsideDrawerRange.addEventListener('change', closeOutsideRange);
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -59,7 +61,7 @@ export function StudentMobileNavigation({
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      desktop.removeEventListener('change', closeOnDesktop);
+      outsideDrawerRange.removeEventListener('change', closeOutsideRange);
       document.body.style.overflow = previousOverflow;
       returnTarget?.focus();
     };
@@ -68,7 +70,7 @@ export function StudentMobileNavigation({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 lg:hidden">
+    <div className="fixed inset-0 z-50 max-sm:hidden lg:hidden">
       <div aria-hidden className="absolute inset-0 bg-[#1e1b33]/30" onClick={onClose} />
       <div
         ref={panelRef}

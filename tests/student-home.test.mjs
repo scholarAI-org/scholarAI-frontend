@@ -1373,12 +1373,20 @@ test('US3 locked: icon, title, 70% text and a Complete profile link; no View all
   assert.doesNotMatch(html, /View all/);
   assert.doesNotMatch(html, /<article\b/);
   assert.match(html, /<h2[^>]*>Latest scholarships<\/h2>/);
-  assert.doesNotMatch(html, /recommend|personali[sz]ed|smart|match/i, 'no promise of personalization');
+  assert.doesNotMatch(
+    html,
+    /recommend|personali[sz]ed|smart|match/i,
+    'no promise of personalization'
+  );
   const ar = renderRecommendations({ state: 'locked' }, { locale: 'ar' });
   assert.match(ar, /هذا القسم مقفل/);
   assert.match(ar, /لعرض أحدث المنح هنا/);
   assert.match(ar, /<h2[^>]*>أحدث المنح<\/h2>/);
-  assert.doesNotMatch(ar, /توصية|توصيات|التوصيات|المخصصة|الذكية|التوافق/, 'no promise of personalization');
+  assert.doesNotMatch(
+    ar,
+    /توصية|توصيات|التوصيات|المخصصة|الذكية|التوافق/,
+    'no promise of personalization'
+  );
   assert.match(ar, /إكمال الملف الشخصي/);
   assert.match(ar, /70%/);
 });
@@ -1446,7 +1454,11 @@ test('US3 unlocked: loading, empty and error states keep the heading', () => {
   const loading = renderRecommendations({ state: 'loading' });
   assert.equal((loading.match(/data-skeleton="recommendation"/g) ?? []).length, 3);
   assert.doesNotMatch(loading, /This section is locked/);
-  assert.match(loading, /<h2[^>]*>Latest scholarships<\/h2>/, 'the heading does not flip while loading');
+  assert.match(
+    loading,
+    /<h2[^>]*>Latest scholarships<\/h2>/,
+    'the heading does not flip while loading'
+  );
 
   const empty = renderRecommendations({ state: 'empty' });
   assert.match(empty, /There are no scholarships to show yet/);
@@ -1816,8 +1828,9 @@ test('shell header: with no actions the header is unchanged and has no placehold
   const plain = renderHeader(undefined);
   assert.equal(renderHeader(null), plain);
   assert.equal(renderHeader(false), plain);
-  // Menu button + the language button in the mobile and the desktop bar.
-  assert.equal((plain.match(/<button\b/g) ?? []).length, 3);
+  // Menu button (sm and up) + the language button in the mobile and the desktop bar +
+  // the mobile account menu trigger (below sm).
+  assert.equal((plain.match(/<button\b/g) ?? []).length, 4);
   assert.doesNotMatch(plain, /aria-disabled/);
   assert.doesNotMatch(plain, /\bdisabled\b/);
   assert.doesNotMatch(plain, /theme/i);
