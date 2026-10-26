@@ -1648,6 +1648,16 @@
       "sectionLabel": "المنح التي تتابعها",
       "dismiss": "إغلاق"
     },
+    "track": {
+      "start": "تتبع الطلب",
+      "startFor": "تتبع طلب التقديم: {title}",
+      "tracking": "قيد التتبع",
+      "trackingStatus": "قيد التتبع: {status}",
+      "trackingFor": "فتح متابعة التقديم: {title}",
+      "failed": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى.",
+      "notFound": "هذه المنحة لم تعد متاحة.",
+      "forbidden": "التتبع متاح لحسابات الطلاب فقط."
+    },
     "filter": {
       "showing": "عرض «{status}» فقط",
       "clear": "عرض الكل",

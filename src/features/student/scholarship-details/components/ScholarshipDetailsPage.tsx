@@ -16,6 +16,7 @@ import {
   getDiscoveryReturnHref,
   getRememberedDiscoverySearch,
 } from '@/features/student/scholarship-discovery/lib/discovery-return';
+import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
 import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
 import { ScholarshipDetailsView } from './ScholarshipDetailsView';
 
@@ -61,7 +62,13 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
   );
 }
 
-export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
+export function ScholarshipDetailsPage({
+  rawId,
+  trackingEnabled = false,
+}: {
+  rawId: string;
+  trackingEnabled?: boolean;
+}) {
   const t = useTranslations('StudentScholarshipDetails');
   const tLayout = useTranslations('StudentLayout');
   const locale = useLocale();
@@ -129,7 +136,20 @@ export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
         <DetailsMessage title={t(`errors.${state.reason}`)} />
       );
   } else if (details) {
-    content = <ScholarshipDetailsView details={details} />;
+    content = (
+      <ScholarshipDetailsView
+        details={details}
+        trackingSlot={
+          trackingEnabled ? (
+            <TrackScholarshipButton
+              scholarshipId={details.id}
+              title={details.title}
+              variant="details"
+            />
+          ) : undefined
+        }
+      />
+    );
   }
 
   return (

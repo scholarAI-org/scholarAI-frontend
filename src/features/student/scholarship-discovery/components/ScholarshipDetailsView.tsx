@@ -89,7 +89,14 @@ function ListSection({ id, title, children }: { id: string; title: string; child
   );
 }
 
-export function ScholarshipDetailsView({ details }: { details: ScholarshipDetailsModel }) {
+export function ScholarshipDetailsView({
+  details,
+  trackingSlot,
+}: {
+  details: ScholarshipDetailsModel;
+  // Optional "Track application" control, supplied by the page when tracking is on.
+  trackingSlot?: ReactNode;
+}) {
   const t = useTranslations('StudentScholarshipDetails');
   const tCard = useTranslations('StudentScholarshipDiscovery');
   const locale = useLocale();
@@ -210,6 +217,7 @@ export function ScholarshipDetailsView({ details }: { details: ScholarshipDetail
             </SafeLink>
           ) : null}
           <ScholarshipBookmark card={details} variant="details" />
+          {trackingSlot}
           {contacts.length > 0 ? (
             <dl className="mt-2 flex flex-col gap-2 border-t border-[#f1f5f9] pt-3 text-sm">
               {contacts.map((link) => (

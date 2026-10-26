@@ -1661,6 +1661,16 @@
       "sectionLabel": "Your tracked scholarships",
       "dismiss": "Dismiss"
     },
+    "track": {
+      "start": "Track application",
+      "startFor": "Track application: {title}",
+      "tracking": "Tracking",
+      "trackingStatus": "Tracking: {status}",
+      "trackingFor": "Open application tracking: {title}",
+      "failed": "We could not start tracking. Please try again.",
+      "notFound": "This scholarship is no longer available.",
+      "forbidden": "Tracking is available for student accounts only."
+    },
     "filter": {
       "showing": "Showing only “{status}”",
       "clear": "Show all",
