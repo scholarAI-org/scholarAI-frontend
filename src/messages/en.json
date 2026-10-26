@@ -34,6 +34,17 @@
       }
     }
   },
+  "NotFound": {
+    "title": "This page does not exist",
+    "description": "The page you are looking for may have moved, or the link that brought you here may be out of date.",
+    "home": "Back to the home page"
+  },
+  "ErrorState": {
+    "title": "Something went wrong",
+    "description": "An unexpected error stopped this page from loading. Try again, and if it keeps happening come back a little later.",
+    "retry": "Try again",
+    "home": "Back to the home page"
+  },
   "Nav": {
     "login": "Login",
     "register": "Sign Up",

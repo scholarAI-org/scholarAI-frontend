@@ -12,7 +12,9 @@ import { PRIVATE_AREAS } from '@/lib/site-routes';
  */
 export default function robots(): MetadataRoute.Robots {
   const disallow = [
-    ...routing.locales.flatMap((locale) => PRIVATE_AREAS.map((area) => `/${locale}${area}/`)),
+    // No trailing slash: robots.txt matches by prefix, so '/ar/student' covers
+    // the area itself and every page under it.
+    ...routing.locales.flatMap((locale) => PRIVATE_AREAS.map((area) => `/${locale}${area}`)),
     `${BACKEND_PREFIX}/`,
   ];
 
