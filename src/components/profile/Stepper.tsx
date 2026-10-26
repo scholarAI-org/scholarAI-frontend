@@ -26,9 +26,11 @@ function StepSymbol({ step }: { step: ProfileStep }) {
   );
 }
 
+// Six steps do not fit 390px: below sm the strip scrolls inside itself rather than
+// pushing the whole page sideways.
 export default function Stepper({ steps, onStepClick }: StepperProps) {
   return (
-    <ol className="flex w-full min-h-24 items-center justify-between rounded-3xl border border-[#e2e8f0] bg-white px-2 sm:px-6 py-4 shadow-[0_4px_16px_rgba(15,23,42,0.02)]">
+    <ol className="flex w-full min-h-24 items-center justify-between rounded-3xl border border-[#e2e8f0] bg-white px-2 sm:px-6 py-4 shadow-[0_4px_16px_rgba(15,23,42,0.02)] max-sm:overflow-x-auto">
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
 
