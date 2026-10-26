@@ -24,13 +24,13 @@ A student page, **Application tracking** (`متابعة التقديم`), where 
    - the scholarship title, and a meta line `organization — deadline — last update`,
    - a `ملاحظاتي` (my notes) block.
 
-There are no columns and **no filter controls** in the Figma. The status cards are counters.
+There are no columns and **no filter controls** in the Figma. By product decision (2026-10-26) the status cards also work as filters: see Behaviour.
 
 ## Scope
 
-In: the 7 cards, the list, status change, note edit, remove with confirm, loading / empty / error / edge states, optimistic updates with rollback, start-tracking wiring (hidden), flag, ar/en + RTL, 390 / 1024 / 1440.
+In: the 7 cards (the 6 statuses also work as filters), the list, status change, note edit, remove with confirm, loading / empty / error / edge states, optimistic updates with rollback, start tracking from the scholarship card (discovery and saved) and the details page, flag, ar/en + RTL, 390 / 1024 / 1440.
 
-Out: tablet-specific breakpoint work, `GET /tracked/statistics`, filters, "important dates" per application (no backend field), notifications, any mock data in runtime paths.
+Out: tablet-specific breakpoint work, `GET /tracked/statistics`, "important dates" per application (no backend field), notifications, any mock data in runtime paths.
 
 ## Rules
 
@@ -40,19 +40,21 @@ Out: tablet-specific breakpoint work, `GET /tracked/statistics`, filters, "impor
 - A card whose section failed to load shows an error/unknown state, never `0`.
 - Timestamps from `/tracked` may have no timezone suffix (BE-08 pending). They are parsed defensively. See contract notes.
 - The official-link icon renders only if the tracked item carries an official URL field (BE-03 pending). Otherwise it is hidden, with no placeholder.
-- Start tracking uses `PUT /api/scholarships/{id}/tracking`, which does not exist before DEV on 28 Oct. It stays behind the flag and is not enabled until the endpoint answers.
+- Start tracking uses `PUT /api/scholarships/{id}/tracking` (BE-02, merged, deploying to DEV). The page and the Track buttons share the one flag, so enable `TRACKING_ENABLED` for an environment only where that endpoint answers (Gate 2, step 0 in [verification.md](./verification.md)).
 
 ## Behaviour
 
-| Area           | Rule                                                                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| List order     | As returned by the backend (newest first). No client re-sort.                                                                                 |
-| Status change  | `PATCH /tracked/{id}/status`. Optimistic, rolled back on error. All 6 values are selectable.                                                  |
-| Note           | `PUT /tracked/{id}/note` with `{ notes }`. Max 2000 characters, enforced in the form. Empty string clears it.                                 |
-| Remove         | Confirm dialog, then `DELETE /tracked/{id}`. Optimistic removal, restored in its exact position on error. The bookmark is untouched.          |
-| Counts         | Recomputed from the cached list, so they follow optimistic changes.                                                                           |
-| Malformed item | A list item that fails validation is skipped and counted, not rendered. A response that is not an array is a contract error (error state).    |
-| Error mapping  | By HTTP status (401/403/404/422/5xx/network), never by the Arabic `detail` text. 404 on a row action means the row is gone: refetch the list. |
+| Area           | Rule                                                                                                                                                                                                                                                                        |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| List order     | As returned by the backend (newest first). No client re-sort.                                                                                                                                                                                                               |
+| Status change  | `PATCH /tracked/{id}/status`. Optimistic, rolled back on error. All 6 values are selectable.                                                                                                                                                                                |
+| Note           | `PUT /tracked/{id}/note` with `{ notes }`. Max 2000 characters, enforced in the form. Empty string clears it.                                                                                                                                                               |
+| Remove         | Confirm dialog, then `DELETE /tracked/{id}`. Optimistic removal, restored in its exact position on error. The bookmark is untouched.                                                                                                                                        |
+| Filter         | A status card toggles a filter on its status (`aria-pressed`); a second tap or "Show all" clears it. The `saved` card is a link to the Saved page, not a filter. A status change while a filter is on removes the row from the filtered view, because it no longer matches. |
+| Start tracking | `PUT /api/scholarships/{id}/tracking` with `{ status: "preparing_documents" }`, from the scholarship card and the details page. Optimistic, rolled back on error. Skipped when a freshly read tracked list already has the scholarship. Not rendered when the flag is off.  |
+| Counts         | Recomputed from the cached list, so they follow optimistic changes.                                                                                                                                                                                                         |
+| Malformed item | A list item that fails validation is skipped and counted, not rendered. A response that is not an array is a contract error (error state).                                                                                                                                  |
+| Error mapping  | By HTTP status (401/403/404/422/5xx/network), never by the Arabic `detail` text. 404 on a row action means the row is gone: refetch the list.                                                                                                                               |
 
 ## Phases
 
@@ -62,3 +64,5 @@ Out: tablet-specific breakpoint work, `GET /tracked/statistics`, filters, "impor
 4. Loading, empty, per-section error, edge states, optimistic updates with rollback.
 5. `startTracking` wired from the scholarship card and details, hidden behind the flag.
 6. Verification doc, Gate 2 checklist, Vercel flag instructions.
+
+Phases 1–6 are implemented. Live verification against a real backend (Gate 2) is pending: see [verification.md](./verification.md).
