@@ -1,0 +1,131 @@
+===== /ar (HTTP 200) =====
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="next-size-adjust" content="">
+<title>ScholarAI — ابحث عن المنح الدراسية</title>
+<meta name="description" content="اكتشف فرص التمويل الدراسي حول العالم، ونظّم ملفك الأكاديمي ووثائقك في مكان واحد.">
+<meta name="application-name" content="ScholarAI">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="canonical" href="https://scholarai.example/ar">
+<link rel="alternate" hreflang="ar" href="https://scholarai.example/ar">
+<link rel="alternate" hreflang="en" href="https://scholarai.example/en">
+<link rel="alternate" hreflang="x-default" href="https://scholarai.example/ar">
+<meta property="og:title" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta property="og:description" content="اكتشف فرص التمويل الدراسي حول العالم، ونظّم ملفك الأكاديمي ووثائقك في مكان واحد.">
+<meta property="og:url" content="https://scholarai.example/ar">
+<meta property="og:site_name" content="ScholarAI">
+<meta property="og:locale" content="ar">
+<meta property="og:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta property="og:image:width" content="1408">
+<meta property="og:image:height" content="768">
+<meta property="og:image:alt" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta name="twitter:description" content="اكتشف فرص التمويل الدراسي حول العالم، ونظّم ملفك الأكاديمي ووثائقك في مكان واحد.">
+<meta name="twitter:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta name="twitter:image:alt" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta name="twitter:image:width" content="1408">
+<meta name="twitter:image:height" content="768">
+<link rel="icon" href="/favicon.ico?favicon.328medmd0gwa3.ico" sizes="48x48" type="image/x-icon">
+<link rel="icon" href="/icon.png?icon.251t6-2cshuak.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.3pu5cow-y0za2.png" sizes="180x180" type="image/png">
+
+===== /en (HTTP 200) =====
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="next-size-adjust" content="">
+<title>ScholarAI — find study scholarships</title>
+<meta name="description" content="Discover study funding opportunities around the world and keep your academic profile and documents in one place.">
+<meta name="application-name" content="ScholarAI">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="canonical" href="https://scholarai.example/en">
+<link rel="alternate" hreflang="ar" href="https://scholarai.example/ar">
+<link rel="alternate" hreflang="en" href="https://scholarai.example/en">
+<link rel="alternate" hreflang="x-default" href="https://scholarai.example/ar">
+<meta property="og:title" content="ScholarAI — find study scholarships">
+<meta property="og:description" content="Discover study funding opportunities around the world and keep your academic profile and documents in one place.">
+<meta property="og:url" content="https://scholarai.example/en">
+<meta property="og:site_name" content="ScholarAI">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta property="og:image:width" content="1408">
+<meta property="og:image:height" content="768">
+<meta property="og:image:alt" content="ScholarAI — find study scholarships">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ScholarAI — find study scholarships">
+<meta name="twitter:description" content="Discover study funding opportunities around the world and keep your academic profile and documents in one place.">
+<meta name="twitter:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta name="twitter:image:alt" content="ScholarAI — find study scholarships">
+<meta name="twitter:image:width" content="1408">
+<meta name="twitter:image:height" content="768">
+<link rel="icon" href="/favicon.ico?favicon.328medmd0gwa3.ico" sizes="48x48" type="image/x-icon">
+<link rel="icon" href="/icon.png?icon.251t6-2cshuak.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.3pu5cow-y0za2.png" sizes="180x180" type="image/png">
+
+===== /ar/login (HTTP 200) =====
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="next-size-adjust" content="">
+<title>تسجيل الدخول · ScholarAI</title>
+<meta name="description" content="سجّل الدخول إلى حسابك في ScholarAI.">
+<meta name="application-name" content="ScholarAI">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="canonical" href="https://scholarai.example/ar/login">
+<link rel="alternate" hreflang="ar" href="https://scholarai.example/ar/login">
+<link rel="alternate" hreflang="en" href="https://scholarai.example/en/login">
+<link rel="alternate" hreflang="x-default" href="https://scholarai.example/ar/login">
+<meta property="og:title" content="تسجيل الدخول">
+<meta property="og:description" content="سجّل الدخول إلى حسابك في ScholarAI.">
+<meta property="og:url" content="https://scholarai.example/ar/login">
+<meta property="og:site_name" content="ScholarAI">
+<meta property="og:locale" content="ar">
+<meta property="og:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta property="og:image:width" content="1408">
+<meta property="og:image:height" content="768">
+<meta property="og:image:alt" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="تسجيل الدخول">
+<meta name="twitter:description" content="سجّل الدخول إلى حسابك في ScholarAI.">
+<meta name="twitter:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta name="twitter:image:alt" content="ScholarAI — ابحث عن المنح الدراسية">
+<meta name="twitter:image:width" content="1408">
+<meta name="twitter:image:height" content="768">
+<link rel="icon" href="/favicon.ico?favicon.328medmd0gwa3.ico" sizes="48x48" type="image/x-icon">
+<link rel="icon" href="/icon.png?icon.251t6-2cshuak.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.3pu5cow-y0za2.png" sizes="180x180" type="image/png">
+
+===== /en/login (HTTP 200) =====
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="next-size-adjust" content="">
+<title>Login · ScholarAI</title>
+<meta name="description" content="Sign in to your ScholarAI account.">
+<meta name="application-name" content="ScholarAI">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="canonical" href="https://scholarai.example/en/login">
+<link rel="alternate" hreflang="ar" href="https://scholarai.example/ar/login">
+<link rel="alternate" hreflang="en" href="https://scholarai.example/en/login">
+<link rel="alternate" hreflang="x-default" href="https://scholarai.example/ar/login">
+<meta property="og:title" content="Login">
+<meta property="og:description" content="Sign in to your ScholarAI account.">
+<meta property="og:url" content="https://scholarai.example/en/login">
+<meta property="og:site_name" content="ScholarAI">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta property="og:image:width" content="1408">
+<meta property="og:image:height" content="768">
+<meta property="og:image:alt" content="ScholarAI — find study scholarships">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Login">
+<meta name="twitter:description" content="Sign in to your ScholarAI account.">
+<meta name="twitter:image" content="https://scholarai.example/images/landing/2100-736-imgGeminiGeneratedImageHkn13Ehkn13Ehkn11.png">
+<meta name="twitter:image:alt" content="ScholarAI — find study scholarships">
+<meta name="twitter:image:width" content="1408">
+<meta name="twitter:image:height" content="768">
+<link rel="icon" href="/favicon.ico?favicon.328medmd0gwa3.ico" sizes="48x48" type="image/x-icon">
+<link rel="icon" href="/icon.png?icon.251t6-2cshuak.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-icon.png?apple-icon.3pu5cow-y0za2.png" sizes="180x180" type="image/png">
