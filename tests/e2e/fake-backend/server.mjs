@@ -381,7 +381,7 @@ async function route(req, res, url, user) {
 
   // ----- profile -----
   if (pathname === '/profile' && method === 'GET') {
-    return user.personal
+    return user.personal || user.completion
       ? send(res, 200, profileResponse(user))
       : notFound(res, 'Profile not found');
   }
