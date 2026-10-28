@@ -1133,7 +1133,12 @@
     "invalidId": "رابط المنحة غير صالح.",
     "summary": "ملخص المنحة",
     "sections": {
-      "about": "عن المنحة"
+      "about": "عن المنحة",
+      "funding": "التمويل",
+      "eligibility": "شروط الأهلية",
+      "documents": "الوثائق المطلوبة",
+      "dates": "المواعيد المهمة",
+      "source": "المصدر والملفات"
     },
     "notFound": {
       "title": "المنحة غير موجودة",
@@ -1162,7 +1167,15 @@
       "applyEmail": "البريد الإلكتروني للتقديم",
       "applyPhone": "هاتف التقديم",
       "source": "المصدر",
-      "publishedAt": "تاريخ النشر"
+      "publishedAt": "تاريخ النشر",
+      "openingDate": "بداية التقديم",
+      "eligibleNationalities": "الجنسيات المؤهلة",
+      "gpaRequirement": "الحد الأدنى للمعدل",
+      "ageRequirement": "العمر",
+      "academicYear": "السنة الدراسية",
+      "applicationStatus": "حالة التقديم",
+      "pdf": "ملف PDF الرسمي",
+      "attachments": "المرفقات"
     },
     "applyNow": "تقديم الآن",
     "opensInNewTab": "(يفتح في علامة تبويب جديدة)",
@@ -1172,6 +1185,12 @@
       "remove": "إزالة المنحة من المحفوظات",
       "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
+    },
+    "attachmentItem": "المرفق {number}",
+    "applicationStatus": {
+      "open": "مفتوحة",
+      "upcoming": "قريبًا",
+      "closed": "مغلقة"
     }
   },
   "StudentSavedScholarships": {

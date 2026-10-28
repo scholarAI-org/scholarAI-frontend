@@ -1140,7 +1140,12 @@
     "invalidId": "This scholarship link isn't valid.",
     "summary": "Scholarship summary",
     "sections": {
-      "about": "About this scholarship"
+      "about": "About this scholarship",
+      "funding": "Funding",
+      "eligibility": "Eligibility requirements",
+      "documents": "Required documents",
+      "dates": "Key dates",
+      "source": "Source and files"
     },
     "notFound": {
       "title": "Scholarship not found",
@@ -1169,7 +1174,15 @@
       "applyEmail": "Application email",
       "applyPhone": "Application phone",
       "source": "Source",
-      "publishedAt": "Published"
+      "publishedAt": "Published",
+      "openingDate": "Applications open",
+      "eligibleNationalities": "Eligible nationalities",
+      "gpaRequirement": "Minimum GPA",
+      "ageRequirement": "Age",
+      "academicYear": "Academic year",
+      "applicationStatus": "Application status",
+      "pdf": "Official PDF",
+      "attachments": "Attachments"
     },
     "applyNow": "Apply now",
     "opensInNewTab": "(opens in a new tab)",
@@ -1179,6 +1192,12 @@
       "remove": "Remove saved scholarship",
       "pending": "Updating…",
       "error": "Couldn't update saved scholarships. Try again."
+    },
+    "attachmentItem": "Attachment {number}",
+    "applicationStatus": {
+      "open": "Open",
+      "upcoming": "Opens soon",
+      "closed": "Closed"
     }
   },
   "StudentSavedScholarships": {
