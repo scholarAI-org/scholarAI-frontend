@@ -1,5 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { IntlMessageFormat } from 'intl-messageformat';
+import { intlFormats, toFormattingLocale } from '../../../src/i18n/formatting';
 
 export type Locale = 'en' | 'ar';
 export const LOCALES: Locale[] = ['en', 'ar'];
@@ -18,9 +20,9 @@ function load(locale: Locale): Tree {
 }
 
 /**
- * Looks a UI string up in the app's own message files ('Namespace.path.to.key'), so the
- * tests follow copy changes instead of hard-coding English and Arabic text. Only plain
- * {placeholder} values are filled in; ICU plurals are not supported.
+ * Looks a UI string up in the app's own message files ('Namespace.path.to.key') and formats
+ * it the way the app does (ICU plurals, Latin digits in Arabic), so the tests follow copy
+ * changes instead of hard-coding English and Arabic text.
  */
 export function t(locale: Locale, key: string, params: Record<string, string | number> = {}) {
   let node: string | Tree | undefined = load(locale);
@@ -28,5 +30,7 @@ export function t(locale: Locale, key: string, params: Record<string, string | n
     node = typeof node === 'object' ? node[part] : undefined;
   }
   if (typeof node !== 'string') throw new Error(`No ${locale} message for "${key}"`);
-  return node.replace(/\{(\w+)\}/g, (_, name: string) => String(params[name] ?? `{${name}}`));
+  return String(
+    new IntlMessageFormat(node, toFormattingLocale(locale), intlFormats).format(params)
+  );
 }

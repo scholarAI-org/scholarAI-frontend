@@ -45,6 +45,25 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
+export interface CatalogScholarship {
+  id: number;
+  title: string;
+  title_ar: string;
+  title_en: string;
+  country: string;
+  study_level: string[];
+  funding_type: string;
+  opportunity_type: string;
+  deadline: string | null;
+}
+
+/** The scholarships the fake serves. Tests derive their expected results from this list. */
+export const fetchCatalog = () => call<CatalogScholarship[]>('/__e2e/catalog');
+
+/** The title the UI shows for a scholarship in the given language. */
+export const titleIn = (locale: 'en' | 'ar', scholarship: CatalogScholarship) =>
+  locale === 'ar' ? scholarship.title_ar : scholarship.title_en;
+
 let counter = 0;
 export const uniqueEmail = (label = 'student') =>
   `${label}-${process.pid}-${Date.now().toString(36)}-${counter++}@e2e.test`;

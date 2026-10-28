@@ -542,6 +542,9 @@ async function control(req, res, url, method) {
     return send(res, 200, entries);
   }
 
+  // The published scholarships, so tests can work out what a filter should return themselves.
+  if (pathname === '/__e2e/catalog' && method === 'GET') return send(res, 200, CATALOG);
+
   if (pathname === '/__e2e/reset' && method === 'POST') {
     users.clear();
     sessions.clear();
