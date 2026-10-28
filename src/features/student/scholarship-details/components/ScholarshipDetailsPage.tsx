@@ -11,6 +11,7 @@ import {
   getDiscoveryReturnHref,
   getRememberedDiscoverySearch,
 } from '@/features/student/scholarship-discovery/lib/discovery-return';
+import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
 import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
 import { toDetailsView } from '../lib/adapter';
 import { getDetailsViewState, parseRouteId } from '../lib/view-state';
@@ -68,11 +69,13 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
 
 export function ScholarshipDetailsPage({
   rawId,
+  trackingEnabled = false,
   reportEnabled = false,
   eligibilityEnabled = false,
 }: {
   rawId: string;
   // Server-side feature flags, passed down by the route.
+  trackingEnabled?: boolean;
   reportEnabled?: boolean;
   eligibilityEnabled?: boolean;
 }) {
@@ -151,6 +154,15 @@ export function ScholarshipDetailsPage({
             {eligibilityEnabled ? <EligibilityIndicator id={details.id} /> : null}
             {reportEnabled ? <ReportProblemCard id={details.id} /> : null}
           </>
+        }
+        trackingSlot={
+          trackingEnabled ? (
+            <TrackScholarshipButton
+              scholarshipId={details.id}
+              title={details.title}
+              variant="details"
+            />
+          ) : undefined
         }
       />
     );

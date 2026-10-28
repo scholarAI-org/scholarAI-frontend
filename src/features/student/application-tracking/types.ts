@@ -20,6 +20,12 @@ export interface TrackedItem {
   officialUrl: string | null;
 }
 
+// PUT /api/scholarships/{id}/tracking (BE-02) answers { status, updated_at }.
+export interface StartTrackingResult {
+  status: TrackingStatus;
+  updatedAt: string;
+}
+
 export interface TrackedList {
   items: TrackedItem[];
   // Items that failed validation and were not rendered.

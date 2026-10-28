@@ -1,0 +1,1087 @@
+[
+  {
+    "name": "ar-390 loading: list placeholder shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 loading: no zero counts while loading",
+    "pass": true,
+    "detail": "placeholders=8"
+  },
+  {
+    "name": "ar-390 loading: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 empty: empty state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 empty: CTA goes to discovery",
+    "pass": true,
+    "detail": "/ar/student/scholarships"
+  },
+  {
+    "name": "ar-390 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 error: error state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 error: six tracked cards unavailable, saved card keeps its number",
+    "pass": true,
+    "detail": "unavailable=6"
+  },
+  {
+    "name": "ar-390 error: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 error: retry recovers the list",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 saved error: list still renders",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 saved error: only the saved card unavailable",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 loading: list placeholder shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 loading: no zero counts while loading",
+    "pass": true,
+    "detail": "placeholders=8"
+  },
+  {
+    "name": "ar-1440 loading: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 empty: empty state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 empty: CTA goes to discovery",
+    "pass": true,
+    "detail": "/ar/student/scholarships"
+  },
+  {
+    "name": "ar-1440 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 error: error state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 error: six tracked cards unavailable, saved card keeps its number",
+    "pass": true,
+    "detail": "unavailable=6"
+  },
+  {
+    "name": "ar-1440 error: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 error: retry recovers the list",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 saved error: list still renders",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 saved error: only the saved card unavailable",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar all unreadable: error, not the empty state",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar some unreadable: list kept and notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: starts unpressed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: click presses it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: only that status is listed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: filter bar shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: second click clears it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: Enter toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: Space toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: another card switches the filter",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: empty filter message",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 filter: Show all clears",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 saved card links to Saved",
+    "pass": true,
+    "detail": "/ar/student/saved"
+  },
+  {
+    "name": "ar-390 filter: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-1440 filter: starts unpressed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: click presses it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: only that status is listed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: filter bar shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: second click clears it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: Enter toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: Space toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: another card switches the filter",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: empty filter message",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 filter: Show all clears",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 saved card links to Saved",
+    "pass": true,
+    "detail": "/ar/student/saved"
+  },
+  {
+    "name": "ar-1440 filter: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-390 loading: list placeholder shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 loading: no zero counts while loading",
+    "pass": true,
+    "detail": "placeholders=8"
+  },
+  {
+    "name": "en-390 loading: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 empty: empty state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 empty: CTA goes to discovery",
+    "pass": true,
+    "detail": "/en/student/scholarships"
+  },
+  {
+    "name": "en-390 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 error: error state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 error: six tracked cards unavailable, saved card keeps its number",
+    "pass": true,
+    "detail": "unavailable=6"
+  },
+  {
+    "name": "en-390 error: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 error: retry recovers the list",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 saved error: list still renders",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 saved error: only the saved card unavailable",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 loading: list placeholder shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 loading: no zero counts while loading",
+    "pass": true,
+    "detail": "placeholders=8"
+  },
+  {
+    "name": "en-1440 loading: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 empty: empty state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 empty: CTA goes to discovery",
+    "pass": true,
+    "detail": "/en/student/scholarships"
+  },
+  {
+    "name": "en-1440 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 error: error state shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 error: six tracked cards unavailable, saved card keeps its number",
+    "pass": true,
+    "detail": "unavailable=6"
+  },
+  {
+    "name": "en-1440 error: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 error: retry recovers the list",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 saved error: list still renders",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 saved error: only the saved card unavailable",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en all unreadable: error, not the empty state",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en some unreadable: list kept and notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: starts unpressed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: click presses it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: only that status is listed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: filter bar shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: second click clears it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: Enter toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: Space toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: another card switches the filter",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: empty filter message",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 filter: Show all clears",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 saved card links to Saved",
+    "pass": true,
+    "detail": "/en/student/saved"
+  },
+  {
+    "name": "en-390 filter: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-1440 filter: starts unpressed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: click presses it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: only that status is listed",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: filter bar shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: second click clears it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: Enter toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: Space toggles",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: another card switches the filter",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: empty filter message",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 filter: Show all clears",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 saved card links to Saved",
+    "pass": true,
+    "detail": "/en/student/saved"
+  },
+  {
+    "name": "en-1440 filter: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 note: edit opens a textarea",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 note: over 2000 disables Save and shows an alert",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 note editor: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 note: saved and read state returns",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 note: backend has the note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 note: failed save keeps the draft and shows an error",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 note: cancel leaves the old note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 status: card status and counts update at once",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 status: backend updated",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 status: failure rolls back",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 status: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 status: 404 drops the row and says so",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 dialog: opens as modal",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 dialog: focus moves inside",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 dialog: Tab stays inside (focus trapped)",
+    "pass": true,
+    "detail": "إيقاف التتبع | الإبقاء عليها | إيقاف التتبع | الإبقاء عليها | إيقاف التتبع"
+  },
+  {
+    "name": "ar-1440 dialog: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 dialog: Escape closes it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 dialog: focus returns to the trash button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 dialog: nothing was deleted by Escape",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 remove: failure restores the row at the same position",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 remove: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 remove: success removes the row and the backend row",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 remove: the saved list was not touched by remove",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 official link: shown when the backend sends official_url",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 official link: opens safely in a new tab",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 official link: hidden without the field",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note: edit opens a textarea",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note: over 2000 disables Save and shows an alert",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note editor: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 note: saved and read state returns",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note: backend has the note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note: failed save keeps the draft and shows an error",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 note: cancel leaves the old note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 status: card status and counts update at once",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 status: backend updated",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 status: failure rolls back",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 status: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 status: 404 drops the row and says so",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 dialog: opens as modal",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 dialog: focus moves inside",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 dialog: Tab stays inside (focus trapped)",
+    "pass": true,
+    "detail": "إيقاف التتبع | الإبقاء عليها | إيقاف التتبع | الإبقاء عليها | إيقاف التتبع"
+  },
+  {
+    "name": "ar-390 dialog: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 dialog: Escape closes it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 dialog: focus returns to the trash button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 dialog: nothing was deleted by Escape",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 remove: failure restores the row at the same position",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 remove: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 remove: success removes the row and the backend row",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 remove: the saved list was not touched by remove",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 official link: shown when the backend sends official_url",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 official link: opens safely in a new tab",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 official link: hidden without the field",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar keyboard: every status card, select, trash and note button is reachable",
+    "pass": true,
+    "detail": "first stops: Switch to Engli h <button> → 3محفوظة / مهتم <a> → 1تجهيز المستندات <button pressed=false> → 1جاهز للتقديم <button pressed=false> → 1تم التقديم <button pressed=false> → 0مقبول <button pressed=false> → 0مرفوض <button pressed=false> → 1مغلق <button pressed=false> → حالة التقديم: منحة إيراسموس موند <select> → فتح المنحة: منحة إيراسموس موندوس <a> → إيقاف تتبع منحة إيراسموس موندوس  <button> → تعديل ملاحظتك على منحة إيراسموس  <button> → حالة التقديم: منحة تشيفنينغ <select> → فتح المنحة: منحة تشيفنينغ <a>"
+  },
+  {
+    "name": "ar RTL: title sits on the right, controls on the left",
+    "pass": true,
+    "detail": "{\"titleX\":791.265625,\"titleRight\":1155,\"selectX\":159.734375,\"trashX\":49,\"pillX\":93,\"savedX\":1025.15625,\"closedX\":24}"
+  },
+  {
+    "name": "ar RTL: saved card is the rightmost, closed the leftmost",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar RTL: order right-to-left is select, pill, trash (Figma: trash, pill, select left-to-right)",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note: edit opens a textarea",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note: over 2000 disables Save and shows an alert",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note editor: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 note: saved and read state returns",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note: backend has the note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note: failed save keeps the draft and shows an error",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 note: cancel leaves the old note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 status: card status and counts update at once",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 status: backend updated",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 status: failure rolls back",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 status: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 status: 404 drops the row and says so",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 dialog: opens as modal",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 dialog: focus moves inside",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 dialog: Tab stays inside (focus trapped)",
+    "pass": true,
+    "detail": "Stop tracking | Keep it | Stop tracking | Keep it | Stop tracking"
+  },
+  {
+    "name": "en-1440 dialog: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 dialog: Escape closes it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 dialog: focus returns to the trash button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 dialog: nothing was deleted by Escape",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 remove: failure restores the row at the same position",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 remove: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 remove: success removes the row and the backend row",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 remove: the saved list was not touched by remove",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 official link: shown when the backend sends official_url",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 official link: opens safely in a new tab",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 official link: hidden without the field",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note: edit opens a textarea",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note: over 2000 disables Save and shows an alert",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note editor: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 note: saved and read state returns",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note: backend has the note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note: failed save keeps the draft and shows an error",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 note: cancel leaves the old note",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 status: card status and counts update at once",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 status: backend updated",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 status: failure rolls back",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 status: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 status: 404 drops the row and says so",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 dialog: opens as modal",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 dialog: focus moves inside",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 dialog: Tab stays inside (focus trapped)",
+    "pass": true,
+    "detail": "Stop tracking | Keep it | Stop tracking | Keep it | Stop tracking"
+  },
+  {
+    "name": "en-390 dialog: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 dialog: Escape closes it",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 dialog: focus returns to the trash button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 dialog: nothing was deleted by Escape",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 remove: failure restores the row at the same position",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 remove: failure notice shown",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 remove: success removes the row and the backend row",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 remove: the saved list was not touched by remove",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 official link: shown when the backend sends official_url",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 official link: opens safely in a new tab",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 official link: hidden without the field",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en keyboard: every status card, select, trash and note button is reachable",
+    "pass": true,
+    "detail": "first stops: التبديل إلى العربية <button> → 3Saved / intere ted <a> → 1Preparing document  <button pressed=false> → 1Ready to apply <button pressed=false> → 1Applied <button pressed=false> → 0Accepted <button pressed=false> → 0Rejected <button pressed=false> → 1Clo ed <button pressed=false> → Application  tatu : Era mu  Mund <select> → Open the  cholar hip: Era mu  Mu <a> → Stop tracking Era mu  Mundu  Joi <button> → Edit your note for Era mu  Mundu <button> → Application  tatu : Chevening Sc <select> → Open the  cholar hip: Chevening  <a>"
+  },
+  {
+    "name": "en LTR: title on the left, controls on the right",
+    "pass": true,
+    "detail": "{\"titleX\":285,\"titleRight\":625.4375,\"selectX\":1054.4375,\"trashX\":1359,\"pillX\":1261.4375,\"savedX\":260,\"closedX\":1261.140625}"
+  },
+  {
+    "name": "en LTR: saved card is the leftmost",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1024 list: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  },
+  {
+    "name": "ar-1024 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  },
+  {
+    "name": "ar-1024 error: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  },
+  {
+    "name": "en-1024 list: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  },
+  {
+    "name": "en-1024 empty: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  },
+  {
+    "name": "en-1024 error: no horizontal scroll",
+    "pass": true,
+    "detail": "1024/1024"
+  }
+]

@@ -2,6 +2,7 @@
 
 import { ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 import { ScholarshipBookmark } from '@/features/student/scholarship-discovery/components/ScholarshipBookmark';
 import type { ScholarshipDetailsViewModel } from '../types';
 import { SafeLink, cardClasses, ctaFocusRing, focusRing } from './DetailsParts';
@@ -10,7 +11,13 @@ const isExternal = (href: string) => /^https?:/i.test(href);
 
 // Apply and save, plus the application email and phone when the scholarship
 // has them (Figma 2481:4537, top of the side column). Each part is optional.
-export function DetailsActions({ details }: { details: ScholarshipDetailsViewModel }) {
+export function DetailsActions({
+  details,
+  trackingSlot,
+}: {
+  details: ScholarshipDetailsViewModel;
+  trackingSlot?: ReactNode;
+}) {
   const t = useTranslations('StudentScholarshipDetails');
   const { link, email, phone } = details.apply;
   const contacts = [
@@ -45,6 +52,7 @@ export function DetailsActions({ details }: { details: ScholarshipDetailsViewMod
         }}
         variant="details"
       />
+      {trackingSlot}
       {contacts.length > 0 ? (
         <dl className="mt-2 flex flex-col gap-2 border-t border-[#f1f5f9] pt-3 text-sm">
           {contacts.map((contact) => (

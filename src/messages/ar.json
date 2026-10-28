@@ -966,6 +966,7 @@
     },
     "navGroups": {
       "discover": "اكتشاف",
+      "manage": "الإدارة",
       "personal": "شخصي"
     },
     "nav": {
@@ -998,7 +999,7 @@
       },
       "tracking": {
         "title": "متابعة التقديم",
-        "description": "سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة"
+        "description": "تابع حالة كل منحة وسجّل ملاحظاتك الخاصة"
       }
     }
   },
@@ -1419,6 +1420,21 @@
       "skipped": "{count, plural, =0 {} one {تعذّر عرض طلب واحد.} two {تعذّر عرض طلبين.} few {تعذّر عرض {count, number, integer} طلبات.} many {تعذّر عرض {count, number, integer} طلباً.} other {تعذّر عرض {count, number, integer} طلب.}}",
       "sectionLabel": "المنح التي تتابعها",
       "dismiss": "إغلاق"
+    },
+    "track": {
+      "start": "تتبع الطلب",
+      "startFor": "تتبع طلب التقديم: {title}",
+      "tracking": "قيد التتبع",
+      "trackingStatus": "قيد التتبع: {status}",
+      "trackingFor": "فتح متابعة التقديم: {title}",
+      "failed": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى.",
+      "notFound": "هذه المنحة لم تعد متاحة.",
+      "forbidden": "التتبع متاح لحسابات الطلاب فقط."
+    },
+    "filter": {
+      "showing": "عرض «{status}» فقط",
+      "clear": "عرض الكل",
+      "empty": "لا توجد طلبات بهذه الحالة."
     },
     "empty": {
       "heading": "لا تتابع أي منحة بعد",

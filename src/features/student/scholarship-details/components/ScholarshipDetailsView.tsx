@@ -5,7 +5,6 @@ import type { ScholarshipDetailsViewModel } from '../types';
 import { DetailsActions } from './DetailsActions';
 import { DetailsHero } from './DetailsHero';
 import { DetailsSections } from './DetailsSections';
-import { DetailsTracking } from './DetailsTracking';
 
 // Layout per Figma 2481:4537 (desktop): the header across the top, then the
 // section cards in the main column and the actions in the side column (the
@@ -14,9 +13,12 @@ import { DetailsTracking } from './DetailsTracking';
 export function ScholarshipDetailsView({
   details,
   sideExtras,
+  trackingSlot,
 }: {
   details: ScholarshipDetailsViewModel;
   sideExtras?: ReactNode;
+  // The shared "Track application" control, supplied by the page when tracking is on.
+  trackingSlot?: ReactNode;
 }) {
   const titleId = useId();
   // One "today" for every deadline on the page.
@@ -27,8 +29,7 @@ export function ScholarshipDetailsView({
       <DetailsHero details={details} titleId={titleId} now={now} />
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6">
         <div className="flex min-w-0 flex-col gap-5 lg:col-start-2 lg:row-start-1 lg:gap-6">
-          <DetailsActions details={details} />
-          <DetailsTracking id={details.id} />
+          <DetailsActions details={details} trackingSlot={trackingSlot} />
           {sideExtras}
         </div>
         <div className="min-w-0 lg:col-start-1 lg:row-start-1">

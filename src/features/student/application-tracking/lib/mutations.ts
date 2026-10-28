@@ -1,6 +1,13 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { currentUserQueryKey } from '@/features/auth/hooks/useCurrentUser';
-import { removeTracking, saveTrackingNote, updateTrackingStatus } from '../api/tracking';
+import {
+  getTrackedList,
+  removeTracking,
+  saveTrackingNote,
+  startTracking,
+  updateTrackingStatus,
+} from '../api/tracking';
+import { DEFAULT_START_STATUS } from '../constants';
 import { trackingKeys } from '../query-keys';
 import type { RemoveTrackingResult, TrackedList, TrackingStatus } from '../types';
 import {
@@ -14,6 +21,7 @@ import {
   type RemovedItem,
 } from './cache';
 import { classifyTrackingError } from './errors';
+import { markStarted, unmarkStarted, type StartedMap } from './start-state';
 
 // Mutation options for the row actions, as plain objects so the optimistic and
 // rollback logic can be tested without React. Every action:
@@ -131,4 +139,47 @@ export const removeMutationOptions = (client: QueryClient) => ({
     handleSession(client, error);
   },
   onSettled: () => settle(client),
+});
+
+// ---- Start tracking (BE-02) ----------------------------------------------------
+
+const readStarted = (client: QueryClient) =>
+  client.getQueryData<StartedMap>(trackingKeys.started()) ?? {};
+const writeStarted = (client: QueryClient, change: (started: StartedMap) => StartedMap) =>
+  client.setQueryData<StartedMap>(trackingKeys.started(), change(readStarted(client)));
+
+// PUT creates the row, and on an existing one it would reset its status. This tab's
+// list can be stale (another tab or device), so re-read the list first and never
+// send the PUT for a scholarship that is already tracked. A failing re-read fails
+// the start instead of risking an overwrite.
+async function startIfNew(client: QueryClient, scholarshipId: number) {
+  const list = await client.fetchQuery({
+    queryKey: trackingKeys.list(),
+    queryFn: ({ signal }) => getTrackedList(signal),
+    staleTime: 0,
+  });
+  const existing = list.items.find((item) => item.scholarship.id === scholarshipId);
+  if (existing) return { status: existing.status, updatedAt: existing.updatedAt };
+  return startTracking(scholarshipId, DEFAULT_START_STATUS);
+}
+
+// Optimistic: the control flips to "Tracking" at once (overlay), a failure removes
+// only this scholarship's overlay, and a success refetches the list and then drops
+// the overlay so the real row (with its tracking id) takes over.
+export const startMutationOptions = (client: QueryClient) => ({
+  mutationKey: [...trackingMutationKey, 'start'] as const,
+  mutationFn: (vars: { scholarshipId: number }) => startIfNew(client, vars.scholarshipId),
+  onMutate: async (vars: { scholarshipId: number }) => {
+    writeStarted(client, (started) =>
+      markStarted(started, vars.scholarshipId, DEFAULT_START_STATUS)
+    );
+  },
+  onError: (error: unknown, vars: { scholarshipId: number }) => {
+    writeStarted(client, (started) => unmarkStarted(started, vars.scholarshipId));
+    handleSession(client, error);
+  },
+  onSuccess: async (_result: unknown, vars: { scholarshipId: number }) => {
+    await client.invalidateQueries({ queryKey: trackingKeys.list() });
+    writeStarted(client, (started) => unmarkStarted(started, vars.scholarshipId));
+  },
 });

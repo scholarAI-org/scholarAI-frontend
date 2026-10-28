@@ -973,6 +973,7 @@
     },
     "navGroups": {
       "discover": "Discover",
+      "manage": "Manage",
       "personal": "Personal"
     },
     "nav": {
@@ -1005,7 +1006,7 @@
       },
       "tracking": {
         "title": "Application tracking",
-        "description": "Record each scholarship’s status and add your notes and important dates."
+        "description": "Track the status of each scholarship and keep your own notes."
       }
     }
   },
@@ -1426,6 +1427,21 @@
       "skipped": "{count, plural, one {One application could not be displayed.} other {{count, number, integer} applications could not be displayed.}}",
       "sectionLabel": "Your tracked scholarships",
       "dismiss": "Dismiss"
+    },
+    "track": {
+      "start": "Track application",
+      "startFor": "Track application: {title}",
+      "tracking": "Tracking",
+      "trackingStatus": "Tracking: {status}",
+      "trackingFor": "Open application tracking: {title}",
+      "failed": "We could not start tracking. Please try again.",
+      "notFound": "This scholarship is no longer available.",
+      "forbidden": "Tracking is available for student accounts only."
+    },
+    "filter": {
+      "showing": "Showing only “{status}”",
+      "clear": "Show all",
+      "empty": "No applications have this status."
     },
     "empty": {
       "heading": "You are not tracking any scholarships yet",

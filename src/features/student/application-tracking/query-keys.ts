@@ -3,4 +3,6 @@
 export const trackingKeys = {
   all: ['student-application-tracking'] as const,
   list: () => [...trackingKeys.all, 'list'] as const,
+  // Optimistic overlay of scholarships whose start is in flight (id -> status).
+  started: () => [...trackingKeys.all, 'started'] as const,
 };
