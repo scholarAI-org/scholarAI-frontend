@@ -143,8 +143,8 @@ test('navigation config has Home, Profile, Search Scholarships, Saved, and Track
     [
       ['home', '/student', 'discover'],
       ['scholarships', '/student/scholarships', 'discover'],
-      ['saved', '/student/saved', 'discover'],
-      ['tracking', '/student/tracking', 'discover'],
+      ['saved', '/student/saved', 'manage'],
+      ['tracking', '/student/tracking', 'manage'],
       ['profile', '/student/profile', 'personal'],
     ]
   );
@@ -180,6 +180,22 @@ test('navigation sections follow Figma and label only real items', () => {
   }
   assert.equal(messages.ar.StudentLayout.navGroups.discover, 'اكتشاف');
   assert.equal(messages.ar.StudentLayout.navGroups.personal, 'شخصي');
+  // With every flag on, Saved and Application tracking sit together in the
+  // middle group, between Discover and Personal (Figma 2979:9150 / 2415:4656).
+  const everything = studentNavigation.map((item) => ({ ...item, enabled: true }));
+  assert.deepEqual(
+    getStudentNavigationSections(everything).map((section) => [
+      section.id,
+      section.items.map((item) => item.id),
+    ]),
+    [
+      ['discover', ['home', 'scholarships']],
+      ['manage', ['saved', 'tracking']],
+      ['personal', ['profile']],
+    ]
+  );
+  assert.equal(messages.ar.StudentLayout.navGroups.manage, 'الإدارة');
+  assert.equal(messages.en.StudentLayout.navGroups.manage, 'Manage');
   // A section without enabled items gets no label.
   const onlyProfile = studentNavigation.map((item) =>
     item.id === 'scholarships' ? { ...item, enabled: false } : item

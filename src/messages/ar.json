@@ -966,6 +966,7 @@
     },
     "navGroups": {
       "discover": "اكتشاف",
+      "manage": "الإدارة",
       "personal": "شخصي"
     },
     "nav": {
@@ -998,7 +999,7 @@
       },
       "tracking": {
         "title": "متابعة التقديم",
-        "description": "سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة"
+        "description": "تابع حالة كل منحة وسجّل ملاحظاتك الخاصة"
       }
     }
   },
@@ -1133,7 +1134,12 @@
     "invalidId": "رابط المنحة غير صالح.",
     "summary": "ملخص المنحة",
     "sections": {
-      "about": "عن المنحة"
+      "about": "عن المنحة",
+      "funding": "التمويل",
+      "eligibility": "شروط الأهلية",
+      "documents": "الوثائق المطلوبة",
+      "dates": "المواعيد المهمة",
+      "source": "المصدر والملفات"
     },
     "notFound": {
       "title": "المنحة غير موجودة",
@@ -1162,7 +1168,15 @@
       "applyEmail": "البريد الإلكتروني للتقديم",
       "applyPhone": "هاتف التقديم",
       "source": "المصدر",
-      "publishedAt": "تاريخ النشر"
+      "publishedAt": "تاريخ النشر",
+      "openingDate": "بداية التقديم",
+      "eligibleNationalities": "الجنسيات المؤهلة",
+      "gpaRequirement": "الحد الأدنى للمعدل",
+      "ageRequirement": "العمر",
+      "academicYear": "السنة الدراسية",
+      "applicationStatus": "حالة التقديم",
+      "pdf": "ملف PDF الرسمي",
+      "attachments": "المرفقات"
     },
     "applyNow": "تقديم الآن",
     "opensInNewTab": "(يفتح في علامة تبويب جديدة)",
@@ -1172,7 +1186,85 @@
       "remove": "إزالة المنحة من المحفوظات",
       "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
+    },
+    "attachmentItem": "المرفق {count}",
+    "applicationStatus": {
+      "open": "مفتوحة",
+      "upcoming": "قريبًا",
+      "closed": "مغلقة"
     }
+  },
+  "StudentScholarshipReport": {
+    "card": {
+      "title": "هل عندك مشكلة في هذه المنحة؟",
+      "body": "إذا بدت المعلومات خاطئة أو منتهية أو مشبوهة، أخبر فريقنا.",
+      "open": "إبلاغ عن مشكلة"
+    },
+    "dialog": {
+      "title": "الإبلاغ عن منحة",
+      "intro": "ساعدنا في الحفاظ على جودة المعلومات",
+      "close": "إغلاق",
+      "reasonLegend": "ما المشكلة؟",
+      "reasons": {
+        "expired": "الرابط أو المعلومات منتهية",
+        "incorrect_information": "معلومات غير صحيحة",
+        "duplicate": "منحة مكررة",
+        "suspicious": "محتوى مشبوه",
+        "broken_link": "رابط معطّل",
+        "other": "سبب آخر"
+      },
+      "detailsLabel": "التفاصيل (اختياري)",
+      "detailsHint": "أضف أي شيء يساعدنا على مراجعة البلاغ.",
+      "counter": "{count} / 2000",
+      "cancel": "إلغاء",
+      "submit": "إرسال البلاغ",
+      "sending": "جارٍ الإرسال…",
+      "successTitle": "تم إرسال البلاغ",
+      "successBody": "شكرًا لك. سيراجعه فريقنا."
+    },
+    "errors": {
+      "reasonRequired": "اختر سببًا.",
+      "detailsTooLong": "اجعل التفاصيل 2000 حرف أو أقل.",
+      "duplicate": "لديك بلاغ مفتوح من هذا النوع عن هذه المنحة.",
+      "notFound": "هذه المنحة لم تعد متاحة.",
+      "unauthorized": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "forbidden": "لا يمكنك إرسال بلاغات من هذا الحساب.",
+      "rateLimited": "بلاغات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",
+      "invalid": "راجع بلاغك ثم حاول مرة أخرى.",
+      "generic": "تعذّر إرسال بلاغك. حاول مرة أخرى."
+    }
+  },
+  "StudentScholarshipEligibility": {
+    "title": "الأهلية بنظرة سريعة",
+    "note": "شروط المنحة نفسها. لا يتم فحص ملفك الشخصي.",
+    "loading": "جارٍ تحميل الأهلية…",
+    "loadError": "تعذّر تحميل شروط الأهلية.",
+    "retry": "إعادة المحاولة",
+    "criteria": {
+      "nationality": "الجنسيات",
+      "degreeLevel": "المستوى الدراسي",
+      "gender": "الجنس",
+      "residency": "الإقامة",
+      "fieldOfStudy": "مجالات الدراسة",
+      "language": "اللغات",
+      "minGpa": "الحد الأدنى للمعدل",
+      "maxAge": "الحد الأقصى للعمر",
+      "experience": "الخبرة",
+      "softSkills": "المهارات الشخصية"
+    },
+    "values": {
+      "noRestriction": "بلا قيود",
+      "required": "مطلوبة",
+      "notRequired": "غير مطلوبة",
+      "percent": "{count}%",
+      "years": "حتى {count} سنة"
+    },
+    "gender": {
+      "male": "ذكور",
+      "female": "إناث",
+      "any": "الجميع"
+    },
+    "unknown": "غير محدد من المصدر: {count}"
   },
   "StudentSavedScholarships": {
     "title": "المنح المحفوظة",
@@ -1317,6 +1409,21 @@
       "skipped": "{count, plural, =0 {} one {تعذّر عرض طلب واحد.} two {تعذّر عرض طلبين.} few {تعذّر عرض {count, number, integer} طلبات.} many {تعذّر عرض {count, number, integer} طلباً.} other {تعذّر عرض {count, number, integer} طلب.}}",
       "sectionLabel": "المنح التي تتابعها",
       "dismiss": "إغلاق"
+    },
+    "track": {
+      "start": "تتبع الطلب",
+      "startFor": "تتبع طلب التقديم: {title}",
+      "tracking": "قيد التتبع",
+      "trackingStatus": "قيد التتبع: {status}",
+      "trackingFor": "فتح متابعة التقديم: {title}",
+      "failed": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى.",
+      "notFound": "هذه المنحة لم تعد متاحة.",
+      "forbidden": "التتبع متاح لحسابات الطلاب فقط."
+    },
+    "filter": {
+      "showing": "عرض «{status}» فقط",
+      "clear": "عرض الكل",
+      "empty": "لا توجد طلبات بهذه الحالة."
     },
     "empty": {
       "heading": "لا تتابع أي منحة بعد",

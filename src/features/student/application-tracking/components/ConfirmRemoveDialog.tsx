@@ -4,6 +4,7 @@ import { useEffect, useId, useRef } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/Button';
+import { FOCUSABLE_SELECTOR, getFocusTrapTarget } from '@/features/student/layout/focus-trap';
 
 interface ConfirmRemoveDialogProps {
   // The scholarship title being removed, or null when the dialog is closed.
@@ -12,9 +13,9 @@ interface ConfirmRemoveDialogProps {
   onCancel: () => void;
 }
 
-// Confirm before DELETE. A native modal <dialog> gives the focus trap, Escape
-// handling and inert background. The removal itself is optimistic, so the dialog
-// closes on confirm and a failure is reported by the page notice.
+// Confirm before DELETE. A native modal <dialog> gives the inert background and
+// Escape handling. The removal itself is optimistic, so the dialog closes on
+// confirm and a failure is reported by the page notice.
 export function ConfirmRemoveDialog({ title, onConfirm, onCancel }: ConfirmRemoveDialogProps) {
   const t = useTranslations('StudentTracking');
   const ref = useRef<HTMLDialogElement>(null);
@@ -37,6 +38,20 @@ export function ConfirmRemoveDialog({ title, onConfirm, onCancel }: ConfirmRemov
       onCancel={(event) => {
         event.preventDefault();
         onCancel();
+      }}
+      // Wrap Tab inside the dialog (same helper as the mobile navigation) instead of
+      // letting focus leave for the browser UI.
+      onKeyDown={(event) => {
+        if (event.key !== 'Tab') return;
+        const focusable = Array.from(
+          event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+        );
+        const activeIndex = focusable.indexOf(document.activeElement as HTMLElement);
+        const target = getFocusTrapTarget(activeIndex, focusable.length, event.shiftKey);
+        if (target !== null) {
+          event.preventDefault();
+          focusable[target].focus();
+        }
       }}
       data-testid="tracking-remove-dialog"
       className="m-auto w-[calc(100%-2rem)] max-w-[420px] rounded-3xl bg-white p-6 text-start shadow-2xl backdrop:bg-[#0a2243]/30"

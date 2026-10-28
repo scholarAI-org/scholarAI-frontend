@@ -1764,7 +1764,7 @@ test('shell nav: the flag shows or hides Home in the list and in the sections', 
     getStudentNavigationSections(off)
       .find((section) => section.id === 'discover')
       .items.map((i) => i.id),
-    ['scholarships', 'saved']
+    ['scholarships']
   );
 
   const on = withHomeEnabled(base, true);
@@ -1772,7 +1772,7 @@ test('shell nav: the flag shows or hides Home in the list and in the sections', 
     getStudentNavigationSections(on)
       .find((section) => section.id === 'discover')
       .items.map((i) => i.id),
-    ['home', 'scholarships', 'saved']
+    ['home', 'scholarships']
   );
   assert.equal(messages.en.StudentLayout.nav.home, 'Home');
   assert.equal(messages.ar.StudentLayout.nav.home, 'الرئيسية');

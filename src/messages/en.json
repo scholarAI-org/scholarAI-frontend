@@ -973,6 +973,7 @@
     },
     "navGroups": {
       "discover": "Discover",
+      "manage": "Manage",
       "personal": "Personal"
     },
     "nav": {
@@ -1005,7 +1006,7 @@
       },
       "tracking": {
         "title": "Application tracking",
-        "description": "Record each scholarship’s status and add your notes and important dates."
+        "description": "Track the status of each scholarship and keep your own notes."
       }
     }
   },
@@ -1140,7 +1141,12 @@
     "invalidId": "This scholarship link isn't valid.",
     "summary": "Scholarship summary",
     "sections": {
-      "about": "About this scholarship"
+      "about": "About this scholarship",
+      "funding": "Funding",
+      "eligibility": "Eligibility requirements",
+      "documents": "Required documents",
+      "dates": "Key dates",
+      "source": "Source and files"
     },
     "notFound": {
       "title": "Scholarship not found",
@@ -1169,7 +1175,15 @@
       "applyEmail": "Application email",
       "applyPhone": "Application phone",
       "source": "Source",
-      "publishedAt": "Published"
+      "publishedAt": "Published",
+      "openingDate": "Applications open",
+      "eligibleNationalities": "Eligible nationalities",
+      "gpaRequirement": "Minimum GPA",
+      "ageRequirement": "Age",
+      "academicYear": "Academic year",
+      "applicationStatus": "Application status",
+      "pdf": "Official PDF",
+      "attachments": "Attachments"
     },
     "applyNow": "Apply now",
     "opensInNewTab": "(opens in a new tab)",
@@ -1179,7 +1193,85 @@
       "remove": "Remove saved scholarship",
       "pending": "Updating…",
       "error": "Couldn't update saved scholarships. Try again."
+    },
+    "attachmentItem": "Attachment {count}",
+    "applicationStatus": {
+      "open": "Open",
+      "upcoming": "Opens soon",
+      "closed": "Closed"
     }
+  },
+  "StudentScholarshipReport": {
+    "card": {
+      "title": "Have a problem with this scholarship?",
+      "body": "If something looks wrong, expired or suspicious, let our team know.",
+      "open": "Report a problem"
+    },
+    "dialog": {
+      "title": "Report a scholarship",
+      "intro": "Help us keep the information accurate",
+      "close": "Close",
+      "reasonLegend": "What's wrong?",
+      "reasons": {
+        "expired": "The link or information has expired",
+        "incorrect_information": "Incorrect information",
+        "duplicate": "Duplicate scholarship",
+        "suspicious": "Suspicious content",
+        "broken_link": "Broken link",
+        "other": "Something else"
+      },
+      "detailsLabel": "Details (optional)",
+      "detailsHint": "Add anything that helps us review it.",
+      "counter": "{count} / 2000",
+      "cancel": "Cancel",
+      "submit": "Send report",
+      "sending": "Sending…",
+      "successTitle": "Report sent",
+      "successBody": "Thank you. Our team will review it."
+    },
+    "errors": {
+      "reasonRequired": "Choose a reason.",
+      "detailsTooLong": "Keep the details to 2,000 characters or fewer.",
+      "duplicate": "You already have an open report of this type for this scholarship.",
+      "notFound": "This scholarship is no longer available.",
+      "unauthorized": "Your session has ended. Please log in again.",
+      "forbidden": "You can't send reports from this account.",
+      "rateLimited": "Too many reports. Please wait a moment and try again.",
+      "invalid": "Please check your report and try again.",
+      "generic": "We couldn't send your report. Please try again."
+    }
+  },
+  "StudentScholarshipEligibility": {
+    "title": "Eligibility at a glance",
+    "note": "The scholarship's own criteria. This doesn't check your profile.",
+    "loading": "Loading eligibility…",
+    "loadError": "We couldn't load the eligibility criteria.",
+    "retry": "Try again",
+    "criteria": {
+      "nationality": "Nationalities",
+      "degreeLevel": "Degree level",
+      "gender": "Gender",
+      "residency": "Residency",
+      "fieldOfStudy": "Fields of study",
+      "language": "Languages",
+      "minGpa": "Minimum GPA",
+      "maxAge": "Maximum age",
+      "experience": "Experience",
+      "softSkills": "Soft skills"
+    },
+    "values": {
+      "noRestriction": "No restriction",
+      "required": "Required",
+      "notRequired": "Not required",
+      "percent": "{count}%",
+      "years": "Up to {count} years old"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "any": "Any"
+    },
+    "unknown": "Not specified by the source: {count}"
   },
   "StudentSavedScholarships": {
     "title": "Saved Scholarships",
@@ -1324,6 +1416,21 @@
       "skipped": "{count, plural, one {One application could not be displayed.} other {{count, number, integer} applications could not be displayed.}}",
       "sectionLabel": "Your tracked scholarships",
       "dismiss": "Dismiss"
+    },
+    "track": {
+      "start": "Track application",
+      "startFor": "Track application: {title}",
+      "tracking": "Tracking",
+      "trackingStatus": "Tracking: {status}",
+      "trackingFor": "Open application tracking: {title}",
+      "failed": "We could not start tracking. Please try again.",
+      "notFound": "This scholarship is no longer available.",
+      "forbidden": "Tracking is available for student accounts only."
+    },
+    "filter": {
+      "showing": "Showing only “{status}”",
+      "clear": "Show all",
+      "empty": "No applications have this status."
     },
     "empty": {
       "heading": "You are not tracking any scholarships yet",

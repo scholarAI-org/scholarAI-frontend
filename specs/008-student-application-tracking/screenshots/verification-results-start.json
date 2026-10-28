@@ -1,0 +1,692 @@
+[
+  {
+    "name": "ar-390 discovery: untracked cards offer Track (3 of 7)",
+    "pass": true,
+    "detail": "starts=3"
+  },
+  {
+    "name": "ar-390 discovery: tracked cards show their status (4 of 7)",
+    "pass": true,
+    "detail": "tracked=4"
+  },
+  {
+    "name": "ar-390 discovery: tracked pill links to the tracking page",
+    "pass": true,
+    "detail": "/ar/student/tracking"
+  },
+  {
+    "name": "ar-390 discovery: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 start: flips to Tracking before the server answers",
+    "pass": true,
+    "detail": "starts now 2"
+  },
+  {
+    "name": "ar-390 start: backend row created as preparing_documents",
+    "pass": true,
+    "detail": "[[225,\"preparing_documents\",null],[101,\"preparing_documents\",\"بانتظار رسالة التوصية الثانية من د. سامي\"]]"
+  },
+  {
+    "name": "ar-390 start: exactly one PUT was sent",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start: control stays \"Tracking\" after the refetch",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 500: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 500: message shown",
+    "pass": true,
+    "detail": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى."
+  },
+  {
+    "name": "ar-390 start 500: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 500: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 404: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 404: message shown",
+    "pass": true,
+    "detail": "هذه المنحة لم تعد متاحة."
+  },
+  {
+    "name": "ar-390 start 404: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 404: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 403: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 403: message shown",
+    "pass": true,
+    "detail": "التتبع متاح لحسابات الطلاب فقط."
+  },
+  {
+    "name": "ar-390 start 403: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 403: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 422: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 422: message shown",
+    "pass": true,
+    "detail": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى."
+  },
+  {
+    "name": "ar-390 start 422: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 start 422: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 stale tab: no PUT was sent for an already tracked scholarship",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 stale tab: status was not reset",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 stale tab: control now shows the real status",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 details: Track button in the apply panel",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 details: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 details: Enter starts tracking and the pill replaces the button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 details: an already tracked scholarship shows its status, no button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 saved: tracked saved cards show status, untracked offer Track",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-390 saved: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "ar-390 list down: no Track control is offered (cannot know)",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 discovery: untracked cards offer Track (3 of 7)",
+    "pass": true,
+    "detail": "starts=3"
+  },
+  {
+    "name": "ar-1440 discovery: tracked cards show their status (4 of 7)",
+    "pass": true,
+    "detail": "tracked=4"
+  },
+  {
+    "name": "ar-1440 discovery: tracked pill links to the tracking page",
+    "pass": true,
+    "detail": "/ar/student/tracking"
+  },
+  {
+    "name": "ar-1440 discovery: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 start: flips to Tracking before the server answers",
+    "pass": true,
+    "detail": "starts now 2"
+  },
+  {
+    "name": "ar-1440 start: backend row created as preparing_documents",
+    "pass": true,
+    "detail": "[[231,\"preparing_documents\",null],[101,\"preparing_documents\",\"بانتظار رسالة التوصية الثانية من د. سامي\"]]"
+  },
+  {
+    "name": "ar-1440 start: exactly one PUT was sent",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start: control stays \"Tracking\" after the refetch",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 500: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 500: message shown",
+    "pass": true,
+    "detail": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى."
+  },
+  {
+    "name": "ar-1440 start 500: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 500: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 404: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 404: message shown",
+    "pass": true,
+    "detail": "هذه المنحة لم تعد متاحة."
+  },
+  {
+    "name": "ar-1440 start 404: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 404: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 403: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 403: message shown",
+    "pass": true,
+    "detail": "التتبع متاح لحسابات الطلاب فقط."
+  },
+  {
+    "name": "ar-1440 start 403: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 403: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 422: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 422: message shown",
+    "pass": true,
+    "detail": "تعذّر بدء التتبع، يرجى المحاولة مرة أخرى."
+  },
+  {
+    "name": "ar-1440 start 422: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 start 422: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 stale tab: no PUT was sent for an already tracked scholarship",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 stale tab: status was not reset",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 stale tab: control now shows the real status",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 details: Track button in the apply panel",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 details: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 details: Enter starts tracking and the pill replaces the button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 details: an already tracked scholarship shows its status, no button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 saved: tracked saved cards show status, untracked offer Track",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "ar-1440 saved: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "ar-1440 list down: no Track control is offered (cannot know)",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 discovery: untracked cards offer Track (3 of 7)",
+    "pass": true,
+    "detail": "starts=3"
+  },
+  {
+    "name": "en-390 discovery: tracked cards show their status (4 of 7)",
+    "pass": true,
+    "detail": "tracked=4"
+  },
+  {
+    "name": "en-390 discovery: tracked pill links to the tracking page",
+    "pass": true,
+    "detail": "/en/student/tracking"
+  },
+  {
+    "name": "en-390 discovery: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 start: flips to Tracking before the server answers",
+    "pass": true,
+    "detail": "starts now 2"
+  },
+  {
+    "name": "en-390 start: backend row created as preparing_documents",
+    "pass": true,
+    "detail": "[[237,\"preparing_documents\",null],[101,\"preparing_documents\",\"بانتظار رسالة التوصية الثانية من د. سامي\"]]"
+  },
+  {
+    "name": "en-390 start: exactly one PUT was sent",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start: control stays \"Tracking\" after the refetch",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 500: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 500: message shown",
+    "pass": true,
+    "detail": "We could not start tracking. Please try again."
+  },
+  {
+    "name": "en-390 start 500: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 500: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 404: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 404: message shown",
+    "pass": true,
+    "detail": "This scholarship is no longer available."
+  },
+  {
+    "name": "en-390 start 404: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 404: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 403: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 403: message shown",
+    "pass": true,
+    "detail": "Tracking is available for student accounts only."
+  },
+  {
+    "name": "en-390 start 403: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 403: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 422: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 422: message shown",
+    "pass": true,
+    "detail": "We could not start tracking. Please try again."
+  },
+  {
+    "name": "en-390 start 422: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 start 422: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 stale tab: no PUT was sent for an already tracked scholarship",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 stale tab: status was not reset",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 stale tab: control now shows the real status",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 details: Track button in the apply panel",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 details: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 details: Enter starts tracking and the pill replaces the button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 details: an already tracked scholarship shows its status, no button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 saved: tracked saved cards show status, untracked offer Track",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-390 saved: no horizontal scroll",
+    "pass": true,
+    "detail": "390/390"
+  },
+  {
+    "name": "en-390 list down: no Track control is offered (cannot know)",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 discovery: untracked cards offer Track (3 of 7)",
+    "pass": true,
+    "detail": "starts=3"
+  },
+  {
+    "name": "en-1440 discovery: tracked cards show their status (4 of 7)",
+    "pass": true,
+    "detail": "tracked=4"
+  },
+  {
+    "name": "en-1440 discovery: tracked pill links to the tracking page",
+    "pass": true,
+    "detail": "/en/student/tracking"
+  },
+  {
+    "name": "en-1440 discovery: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 start: flips to Tracking before the server answers",
+    "pass": true,
+    "detail": "starts now 2"
+  },
+  {
+    "name": "en-1440 start: backend row created as preparing_documents",
+    "pass": true,
+    "detail": "[[243,\"preparing_documents\",null],[101,\"preparing_documents\",\"بانتظار رسالة التوصية الثانية من د. سامي\"]]"
+  },
+  {
+    "name": "en-1440 start: exactly one PUT was sent",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start: control stays \"Tracking\" after the refetch",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 500: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 500: message shown",
+    "pass": true,
+    "detail": "We could not start tracking. Please try again."
+  },
+  {
+    "name": "en-1440 start 500: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 500: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 404: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 404: message shown",
+    "pass": true,
+    "detail": "This scholarship is no longer available."
+  },
+  {
+    "name": "en-1440 start 404: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 404: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 403: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 403: message shown",
+    "pass": true,
+    "detail": "Tracking is available for student accounts only."
+  },
+  {
+    "name": "en-1440 start 403: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 403: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 422: rolled back to the Track button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 422: message shown",
+    "pass": true,
+    "detail": "We could not start tracking. Please try again."
+  },
+  {
+    "name": "en-1440 start 422: nothing was created",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 start 422: retry succeeds after recovery",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 stale tab: no PUT was sent for an already tracked scholarship",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 stale tab: status was not reset",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 stale tab: control now shows the real status",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 details: Track button in the apply panel",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 details: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 details: Enter starts tracking and the pill replaces the button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 details: an already tracked scholarship shows its status, no button",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 saved: tracked saved cards show status, untracked offer Track",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en-1440 saved: no horizontal scroll",
+    "pass": true,
+    "detail": "1440/1440"
+  },
+  {
+    "name": "en-1440 list down: no Track control is offered (cannot know)",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "en start -> tracking page: the new row is listed (5 rows)",
+    "pass": true,
+    "detail": "cards=5"
+  },
+  {
+    "name": "en start -> tracking page: Preparing documents count is 2",
+    "pass": true,
+    "detail": "2 Preparing documents"
+  }
+]

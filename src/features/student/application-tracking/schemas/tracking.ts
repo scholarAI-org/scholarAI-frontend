@@ -65,3 +65,9 @@ export const removeResponseSchema = z.object({
   is_tracked: z.boolean().default(false),
   is_saved: z.boolean().nullable(),
 });
+
+// PUT /api/scholarships/{id}/tracking (BE-02): { status, updated_at }.
+export const startResponseSchema = z.object({
+  status: trackingStatusSchema,
+  updated_at: z.string(),
+});

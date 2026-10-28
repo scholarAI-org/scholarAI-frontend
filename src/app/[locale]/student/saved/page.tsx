@@ -8,5 +8,10 @@ export default function Page() {
   if (!featureFlags.savedScholarshipsEnabled) {
     notFound();
   }
-  return <SavedScholarshipsPage detailsEnabled={featureFlags.scholarshipDetailsEnabled} />;
+  return (
+    <SavedScholarshipsPage
+      detailsEnabled={featureFlags.scholarshipDetailsEnabled}
+      trackingEnabled={featureFlags.trackingEnabled}
+    />
+  );
 }
