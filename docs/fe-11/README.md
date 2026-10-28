@@ -6,14 +6,14 @@ of the work and not committed).
 
 ## What was built
 
-| Area                                                   | Where (`src/features/student/scholarship-details/`)                                                                                                               |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Details contract: one zod schema + one adapter         | `schemas/details.schema.ts`, `lib/adapter.ts`                                                                                                                     |
-| Tracking (`GET`/`PUT /api/scholarships/{id}/tracking`) | `schemas/tracking.schema.ts`, `lib/tracking-adapter.ts`, `api/tracking.ts`, `hooks/useScholarshipTracking.ts`                                                     |
-| Report (`POST /api/scholarships/{id}/reports`)         | `schemas/report.schema.ts`, `lib/report.ts`, `api/report.ts`, `hooks/useReportScholarship.ts`                                                                     |
-| Eligibility (`GET /api/scholarships/{id}/eligibility`) | `schemas/eligibility.schema.ts`, `lib/eligibility-adapter.ts`, `api/eligibility.ts`, `hooks/useScholarshipEligibility.ts`                                         |
-| Section visibility, page state                         | `lib/sections.ts`, `lib/view-state.ts`                                                                                                                            |
-| UI                                                     | `components/` (`DetailsHero`, `DetailsSections`, `DetailsActions`, `DetailsTracking`, `ReportDialog`, `ReportProblemCard`, `EligibilityIndicator`, page and view) |
+| Area                                                   | Where (`src/features/student/scholarship-details/`)                                                                                            |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Details contract: one zod schema + one adapter         | `schemas/details.schema.ts`, `lib/adapter.ts`                                                                                                  |
+| Start tracking (`PUT /api/scholarships/{id}/tracking`) | shared `TrackScholarshipButton` from `application-tracking` (merged from 008b), passed in through `trackingSlot`; behind `TRACKING_ENABLED`    |
+| Report (`POST /api/scholarships/{id}/reports`)         | `schemas/report.schema.ts`, `lib/report.ts`, `api/report.ts`, `hooks/useReportScholarship.ts`                                                  |
+| Eligibility (`GET /api/scholarships/{id}/eligibility`) | `schemas/eligibility.schema.ts`, `lib/eligibility-adapter.ts`, `api/eligibility.ts`, `hooks/useScholarshipEligibility.ts`                      |
+| Section visibility, page state                         | `lib/sections.ts`, `lib/view-state.ts`                                                                                                         |
+| UI                                                     | `components/` (`DetailsHero`, `DetailsSections`, `DetailsActions`, `ReportDialog`, `ReportProblemCard`, `EligibilityIndicator`, page and view) |
 
 Save/unsave reuses the existing optimistic bookmark code (`scholarship-discovery`);
 its response body is not read, so it has no schema.
@@ -34,10 +34,10 @@ Feature flags (server-only, literal `"true"` enables, default off):
    schema marks them required, but the page needs only `id`, `title` and `is_saved`,
    so the new schema fails only on those three and hides the rest when missing.
 4. The per-scholarship tracking endpoints (`GET`/`PUT /api/scholarships/{id}/tracking`,
-   `ScholarshipTrackingResponse`) are in the live schema but **not** in the committed
-   `docs/api/openapi.json`, and the frontend only used the tracked-list endpoints
-   (`/api/scholarships/tracked/...`). For details, eligibility, report and status
-   schemas the committed file is identical to the live one.
+   `ScholarshipTrackingResponse`) were in the live schema but not in the committed
+   `docs/api/openapi.json` (refreshed in a separate commit). For details, eligibility,
+   report and status schemas the committed file was identical to the live one. Start
+   tracking is now the single implementation from 008b (see "Merge with 008b").
 5. `GET /eligibility` returns the **scholarship's own criteria**, not a per-student
    match. The Figma "تقييم الأهلية" card (match level, per-criterion ✓/✗, "improve
    documents" button) has no backing endpoint, so it was not built. The live field
@@ -56,13 +56,12 @@ Feature flags (server-only, literal `"true"` enables, default off):
 - No credentials were available, so end-to-end checks ran against a fake backend
   shaped like the live schemas (`scripts/fe-11-fake-backend.mjs`, dev-only, not
   imported from `src/`).
-- "Start tracking" sends `preparing_documents` (first lifecycle status); once
-  tracked, a select changes the status with the same PUT.
+- Start tracking is the shared control from 008b (default status
+  `preparing_documents`, behind `TRACKING_ENABLED`). This branch's own tracking card
+  was removed; changing a status happens on the tracking page.
 - An invalid id and a 404 render the same not-found state.
 - The description limit counts code points (like the backend) on the raw input,
   before trimming; the body carries the trimmed text, or none when blank.
-- A tracking status outside the six known values is a contract error (hides the
-  control) rather than "not tracked".
 - `description_html` is never rendered (unchanged rule).
 - Side column is 340px at 1024 and 449px from 1280 (Figma 1440 value); tile grids
   are two columns from 1280.
@@ -74,8 +73,8 @@ Feature flags (server-only, literal `"true"` enables, default off):
 
 Verified
 
-- 60 new unit tests (contract 10, tracking 9, sections 6, state 9, report 11,
-  report UI markup 5, eligibility 10); the existing details/discovery tests were
+- 51 new unit tests (contract 10, sections 6, state 9, report 11, report UI markup
+  5, eligibility 10); the existing details/discovery tests were
   updated where the contract changed. `tsc --noEmit`, ESLint and Prettier clean on
   the touched files.
 - Playwright (Edge, headless) against the fake backend: 26 behaviour checks pass —
@@ -92,6 +91,17 @@ Not verified
 - Pixel-level comparison with Figma (compared visually: 2481:4537 and 2910:8705).
 - Existing unrelated failures on Windows: `tests/google-auth.test.mjs` (does not
   run) and the image-fallback path assertion in `student-scholarship-discovery`.
+
+## Merge with 008b
+
+`origin/main` did not yet contain `feat/008b-tracking-finish` when this was done, so
+that branch was merged into this one (a merge commit, no history rewrite) instead of
+rebasing. Two conflicts (the route page and `ScholarshipDetailsPage`) were resolved by
+keeping all three flags and passing 008b's `TrackScholarshipButton` to the new view
+through `trackingSlot`. This branch's own start-tracking card, API, adapter, hooks and
+tests were removed so there is exactly one implementation. The Playwright checks and
+the screenshots below were taken **before** this merge, so the loaded-state shots still
+show the removed "Application status" card.
 
 ## Screenshots
 

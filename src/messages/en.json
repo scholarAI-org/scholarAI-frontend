@@ -1199,17 +1199,6 @@
       "open": "Open",
       "upcoming": "Opens soon",
       "closed": "Closed"
-    },
-    "tracking": {
-      "title": "Application status",
-      "hint": "Track your progress on this scholarship.",
-      "start": "Start tracking",
-      "loading": "Loading your application status…",
-      "loadError": "We couldn't load your application status.",
-      "retry": "Try again",
-      "statusLabel": "Change status",
-      "updateError": "We couldn't update the status. Try again.",
-      "updated": "Status updated"
     }
   },
   "StudentScholarshipReport": {
