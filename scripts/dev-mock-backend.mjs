@@ -207,7 +207,30 @@ const server = createServer(async (req, res) => {
     }
   }
 
-  // ---- Current user (satisfies the existing session check) -------------
+  // ---- Tracking + discovery filters (read-only, enough for the shell) ---
+  // Both answer with their real empty shape, so the pages render their own empty
+  // state instead of an error banner. No invented records.
+  if (req.method === 'GET' && url.pathname === '/api/scholarships/tracked') {
+    return send(res, 200, []);
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/scholarships/filter-options') {
+    return send(res, 200, { countries: [...new Set(DISCOVERY.map((s) => s.country))].filter(Boolean) });
+  }
+
+  // ---- Current user -----------------------------------------------------
+  // GET /auth/me is what the app actually calls (features/auth/api/get-current-user).
+  if (req.method === 'GET' && url.pathname === '/auth/me') {
+    if (scenario === 'auth-401') return send(res, 401, { detail: 'Not authenticated' });
+    return send(res, 200, {
+      id: '1',
+      name: 'Test Student',
+      email: 'student@example.org',
+      role: 'student',
+    });
+  }
+
+  // Legacy shape kept for anything still pointed at it.
   if (req.method === 'GET' && url.pathname === '/api/me/current') {
     if (scenario === 'auth-401') return send(res, 401, { detail: 'Not authenticated' });
     return send(res, 200, {

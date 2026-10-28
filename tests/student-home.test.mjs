@@ -1816,8 +1816,9 @@ test('shell header: with no actions the header is unchanged and has no placehold
   const plain = renderHeader(undefined);
   assert.equal(renderHeader(null), plain);
   assert.equal(renderHeader(false), plain);
-  // Menu button + the language button in the mobile and the desktop bar.
-  assert.equal((plain.match(/<button\b/g) ?? []).length, 3);
+  // Menu button (sm and up) + the language button in the mobile and the desktop bar +
+  // the mobile account menu trigger (below sm).
+  assert.equal((plain.match(/<button\b/g) ?? []).length, 4);
   assert.doesNotMatch(plain, /aria-disabled/);
   assert.doesNotMatch(plain, /\bdisabled\b/);
   assert.doesNotMatch(plain, /theme/i);

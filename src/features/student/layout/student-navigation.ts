@@ -1,6 +1,7 @@
 import type {
   StudentNavigationGroupId,
   StudentNavigationItem,
+  StudentNavigationItemId,
   StudentNavigationSection,
   StudentPageKey,
 } from './types';
@@ -77,6 +78,31 @@ export const getStudentNavigationSections = (
     }))
     .filter((section) => section.items.length > 0);
 
+// Bottom tab bar (mobile) order, independent of the sidebar's group order: the five
+// primary destinations the Figma mobile notes call for. Disabled items drop out, so the
+// bar closes up instead of leaving a hole, and the list can never exceed five.
+export const studentTabBarOrder: StudentNavigationItemId[] = [
+  'home',
+  'scholarships',
+  'saved',
+  'tracking',
+  'profile',
+];
+
+export const STUDENT_TAB_BAR_MAX_ITEMS = 5;
+
+export const getStudentTabBarItems = (
+  items: readonly StudentNavigationItem[]
+): StudentNavigationItem[] =>
+  studentTabBarOrder
+    .map((id) => items.find((item) => item.id === id))
+    .filter((item): item is StudentNavigationItem => Boolean(item?.enabled))
+    .slice(0, STUDENT_TAB_BAR_MAX_ITEMS);
+
+// Short bar labels live beside the sidebar labels, not instead of them: "Search" fits a
+// five-up bar at 390px where "Search scholarships" would not.
+export const studentTabLabelKey = (id: StudentNavigationItemId) => `tabs.${id}` as const;
+
 export const getVisibleStudentNavigation = (items: readonly StudentNavigationItem[]) =>
   items.filter((item) => item.enabled);
 
@@ -89,6 +115,31 @@ export const getActiveStudentNavigationItem = (
   pathname: string,
   items: readonly StudentNavigationItem[] = studentNavigation
 ) => items.find((item) => isStudentNavigationItemActive(item, pathname))?.id ?? null;
+
+// The tab a pathname lights up. Only visible tabs can win, so a route whose flag is off
+// leaves the bar with no aria-current. The longest matching href wins, so a sub-route
+// prefers its own tab over a shorter prefix.
+export const getActiveStudentTabId = (
+  pathname: string,
+  items: readonly StudentNavigationItem[]
+): StudentNavigationItemId | null =>
+  getStudentTabBarItems(items)
+    .filter((item) => isStudentNavigationItemActive(item, pathname))
+    .reduce<StudentNavigationItem | null>(
+      (best, item) => (best && best.href.length >= item.href.length ? best : item),
+      null
+    )?.id ?? null;
+
+// Title for the compact mobile top bar. A page that owns a tab reuses the tab's own short
+// label; a page without one (scholarship details) falls back to its page title. Both are
+// placeholder-free, unlike pages.home.title, which greets the student by name.
+export const getStudentCompactTitleKey = (pathname: string) => {
+  const pageKey = getStudentPageKey(pathname);
+  if (!pageKey) return null;
+  return studentTabBarOrder.some((id) => id === pageKey)
+    ? (`nav.${pageKey as StudentNavigationItemId}` as const)
+    : (`pages.${pageKey}.title` as const);
+};
 
 export function getStudentPageKey(pathname: string): StudentPageKey | null {
   if (pathname === '/student') return 'home';
