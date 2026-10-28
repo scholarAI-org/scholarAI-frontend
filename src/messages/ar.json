@@ -1204,6 +1204,46 @@
       "updated": "تم تحديث الحالة"
     }
   },
+  "StudentScholarshipReport": {
+    "card": {
+      "title": "هل عندك مشكلة في هذه المنحة؟",
+      "body": "إذا بدت المعلومات خاطئة أو منتهية أو مشبوهة، أخبر فريقنا.",
+      "open": "إبلاغ عن مشكلة"
+    },
+    "dialog": {
+      "title": "الإبلاغ عن منحة",
+      "intro": "ساعدنا في الحفاظ على جودة المعلومات",
+      "close": "إغلاق",
+      "reasonLegend": "ما المشكلة؟",
+      "reasons": {
+        "expired": "الرابط أو المعلومات منتهية",
+        "incorrect_information": "معلومات غير صحيحة",
+        "duplicate": "منحة مكررة",
+        "suspicious": "محتوى مشبوه",
+        "broken_link": "رابط معطّل",
+        "other": "سبب آخر"
+      },
+      "detailsLabel": "التفاصيل (اختياري)",
+      "detailsHint": "أضف أي شيء يساعدنا على مراجعة البلاغ.",
+      "counter": "{count} / 2000",
+      "cancel": "إلغاء",
+      "submit": "إرسال البلاغ",
+      "sending": "جارٍ الإرسال…",
+      "successTitle": "تم إرسال البلاغ",
+      "successBody": "شكرًا لك. سيراجعه فريقنا."
+    },
+    "errors": {
+      "reasonRequired": "اختر سببًا.",
+      "detailsTooLong": "اجعل التفاصيل 2000 حرف أو أقل.",
+      "duplicate": "لديك بلاغ مفتوح من هذا النوع عن هذه المنحة.",
+      "notFound": "هذه المنحة لم تعد متاحة.",
+      "unauthorized": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "forbidden": "لا يمكنك إرسال بلاغات من هذا الحساب.",
+      "rateLimited": "بلاغات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",
+      "invalid": "راجع بلاغك ثم حاول مرة أخرى.",
+      "generic": "تعذّر إرسال بلاغك. حاول مرة أخرى."
+    }
+  },
   "StudentSavedScholarships": {
     "title": "المنح المحفوظة",
     "count": "{count, plural, =0 {لا توجد منح محفوظة} one {منحة محفوظة واحدة} two {منحتان محفوظتان} few {{count, number, integer} منح محفوظة} many {{count, number, integer} منحة محفوظة} other {{count, number, integer} منحة محفوظة}}",

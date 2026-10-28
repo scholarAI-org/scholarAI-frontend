@@ -14,6 +14,7 @@ import {
 import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
 import { toDetailsView } from '../lib/adapter';
 import { getDetailsViewState, parseRouteId } from '../lib/view-state';
+import { ReportProblemCard } from './ReportProblemCard';
 import { ScholarshipDetailsView } from './ScholarshipDetailsView';
 
 function DetailsMessage({
@@ -63,11 +64,11 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
 
 export function ScholarshipDetailsPage({
   rawId,
-  sideExtras,
+  reportEnabled = false,
 }: {
   rawId: string;
-  // Optional side cards that sit behind feature flags (eligibility, report).
-  sideExtras?: (scholarship: { id: number; title: string }) => ReactNode;
+  // Server-side feature flags, passed down by the route.
+  reportEnabled?: boolean;
 }) {
   const t = useTranslations('StudentScholarshipDetails');
   const tLayout = useTranslations('StudentLayout');
@@ -139,7 +140,7 @@ export function ScholarshipDetailsPage({
     content = (
       <ScholarshipDetailsView
         details={details}
-        sideExtras={sideExtras?.({ id: details.id, title: details.title })}
+        sideExtras={reportEnabled ? <ReportProblemCard id={details.id} /> : null}
       />
     );
   }

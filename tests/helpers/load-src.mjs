@@ -37,3 +37,7 @@ Module._resolveFilename = function (request, ...rest) {
 process.env.BACKEND_URL ??= 'https://backend.test/';
 
 export const loadSrc = (relativePath) => requireModule(path.join(srcPath, relativePath));
+
+// A package resolved exactly as the sources resolve it, so a test and the code
+// under test share one instance (React, React Query).
+export const loadPackage = (name) => requireModule(name);
