@@ -22,6 +22,8 @@ Feature flags (server-only, literal `"true"` enables, default off):
 `SCHOLARSHIP_DETAILS_ENABLED` (existing), `SCHOLARSHIP_REPORTS_ENABLED`,
 `SCHOLARSHIP_ELIGIBILITY_ENABLED` (new, documented in `.env.example`).
 
+Real-session checklist: [`manual-test.md`](./manual-test.md).
+
 ## Mismatches: old frontend vs the live schema
 
 1. `ScholarshipDetailsResponse` in `scholarship-discovery/types.ts` lacked six live
@@ -73,8 +75,8 @@ Feature flags (server-only, literal `"true"` enables, default off):
 
 Verified
 
-- 51 new unit tests (contract 10, sections 6, state 9, report 11, report UI markup
-  5, eligibility 10); the existing details/discovery tests were
+- 58 new unit tests (contract 10, sections 6, state 9, report 11, report UI markup
+  5, eligibility 10, flag defaults 7); the existing details/discovery tests were
   updated where the contract changed. `tsc --noEmit`, ESLint and Prettier clean on
   the touched files.
 - Playwright (Edge, headless) against the fake backend: 26 behaviour checks pass —
