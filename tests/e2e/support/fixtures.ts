@@ -80,3 +80,13 @@ export async function startReadonlySession(page: Page) {
 /** The student sidebar. The mobile drawer is a separate element, so this is the desktop one. */
 export const sidebar = (page: Page, locale: Locale) =>
   page.getByRole('navigation', { name: t(locale, 'StudentLayout.navigationLabel') }).first();
+
+/** Matches the current URL by exact pathname; use with expect(page).toHaveURL(...). */
+export const atPath = (pathname: string) => (url: URL) => url.pathname === pathname;
+
+/** The page title in the student header. Some pages repeat it as their own h1, so scope to the banner. */
+export const pageTitle = (page: Page, locale: Locale, key: string, params = {}) =>
+  page.getByRole('banner').getByRole('heading', {
+    level: 1,
+    name: t(locale, `StudentLayout.pages.${key}.title`, params),
+  });
