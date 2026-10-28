@@ -23,7 +23,8 @@
     "test:student-home": "node --test tests/student-home.test.mjs",
     "test:tracking": "node --test tests/student-application-tracking.test.mjs tests/student-application-tracking-ui.test.mjs tests/student-application-tracking-optimistic.test.mjs",
     "test:i18n": "node --test tests/i18n-numerals.test.mjs",
-    "test:public-landing-page": "node --test tests/public-landing-page.test.mjs tests/landing-no-fake-content.test.mjs"
+    "test:public-landing-page": "node --test tests/public-landing-page.test.mjs tests/landing-no-fake-content.test.mjs",
+    "test:e2e": "node tests/e2e/run.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.7.1",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

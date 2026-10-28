@@ -144,7 +144,7 @@ function trackedRow(user, { scholarship_id, status = 'preparing_documents', note
 }
 
 function trackedResponse(user, row) {
-  const { user_id: _userId, scholarship_id: scholarshipId, ...rest } = row;
+  const { scholarship_id: scholarshipId, ...rest } = row;
   return { ...rest, scholarship: toCard(findScholarship(scholarshipId), user) };
 }
 
