@@ -96,6 +96,8 @@ test('the optional details field has a real label and describes its limit', () =
   assert.ok(html.includes('>Details (optional)</label>'));
   assert.ok(/<textarea[^>]*aria-describedby="[^"]*-details-hint"/.test(html));
   assert.ok(html.includes('0 / 2000'));
+  // The counter keeps its order in an RTL page ("2001 / 2000", not "2000 / 2001").
+  assert.ok(/<p[^>]*dir="ltr"[^>]*>0 \/ 2000<\/p>/.test(html));
 });
 
 test('the dialog renders in Arabic with the Figma wording and logical properties only', () => {

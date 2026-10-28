@@ -25,7 +25,7 @@ export function ScholarshipDetailsView({
   return (
     <article aria-labelledby={titleId} className="flex flex-col gap-5 lg:gap-6">
       <DetailsHero details={details} titleId={titleId} now={now} />
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6">
         <div className="flex min-w-0 flex-col gap-5 lg:col-start-2 lg:row-start-1 lg:gap-6">
           <DetailsActions details={details} />
           <DetailsTracking id={details.id} />

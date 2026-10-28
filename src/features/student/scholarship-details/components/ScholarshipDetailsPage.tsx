@@ -52,7 +52,10 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
         {label}
       </p>
       <div aria-hidden className={`${block} h-[234px]`} />
-      <div aria-hidden className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6">
+      <div
+        aria-hidden
+        className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6"
+      >
         <div className="flex flex-col gap-5 lg:col-start-2 lg:row-start-1">
           <div className={`${block} h-[140px]`} />
           <div className={`${block} h-[120px]`} />

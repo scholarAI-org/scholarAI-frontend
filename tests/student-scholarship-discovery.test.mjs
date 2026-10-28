@@ -863,8 +863,11 @@ test('details-link requires explicit enabled parameter (no default bypass)', () 
   assert.equal(getScholarshipDetailsHref(-1, true), null);
   // no deprecated constant export
   const mod = load('lib/details-link.ts');
-  assert.equal('SCHOLARSHIP_DETAILS_ROUTE_ENABLED' in mod, false,
-    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED must not be exported');
+  assert.equal(
+    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED' in mod,
+    false,
+    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED must not be exported'
+  );
 });
 
 test('the match badge shows only authoritative data and nothing by default', () => {
@@ -953,7 +956,10 @@ test('canonical study_level arrays become one translated label per level', () =>
     ],
   });
   for (const empty of [[], ['  '], [null]]) {
-    const blank = toScholarshipCard({ id: 9, title: 'T', is_saved: false, study_level: empty }, 'en');
+    const blank = toScholarshipCard(
+      { id: 9, title: 'T', is_saved: false, study_level: empty },
+      'en'
+    );
     assert.equal(blank.studyLevel, undefined, JSON.stringify(empty));
   }
 });
@@ -2098,7 +2104,7 @@ test('hostile description HTML is excluded and the thin route delegates to the s
     'utf8'
   );
   assert.doesNotMatch(route, /use client|StudentShell|RoleGuard/);
-  assert.match(route, /<ScholarshipDetailsPage rawId=\{id\}/);
+  assert.match(route, /<ScholarshipDetailsPage\s+rawId=\{id\}/);
   const view = fs.readFileSync(
     path.join(featurePath, 'components/ScholarshipDetailsView.tsx'),
     'utf8'

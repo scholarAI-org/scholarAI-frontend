@@ -73,7 +73,7 @@ export function DetailsSections({
     <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
       {visible.about ? (
         <DetailsCard id={`${ids}-about`} title={t('sections.about')}>
-          <dl className="grid gap-3 sm:grid-cols-2">
+          <dl className="grid gap-3 xl:grid-cols-2">
             {details.organizationName ? (
               <FactTile label={t('fields.provider')}>
                 <bdi>{details.organizationName}</bdi>
@@ -100,7 +100,7 @@ export function DetailsSections({
 
       {visible.funding ? (
         <DetailsCard id={`${ids}-funding`} title={t('sections.funding')}>
-          <dl className="grid gap-3 sm:grid-cols-2">
+          <dl className="grid gap-3 xl:grid-cols-2">
             {funding ? (
               <FactTile label={t('fields.fundingType')}>
                 <bdi>{funding}</bdi>
@@ -118,11 +118,11 @@ export function DetailsSections({
       {visible.eligibility ? (
         <DetailsCard id={`${ids}-eligibility`} title={t('sections.eligibility')}>
           {eligibilityFacts.length > 0 ? (
-            <dl className="grid gap-3 sm:grid-cols-2">
+            <dl className="grid gap-3 xl:grid-cols-2">
               {eligibilityFacts.map((fact) => (
                 <div
                   key={fact.field}
-                  className={fact.kind === 'chips' ? 'sm:col-span-2' : undefined}
+                  className={fact.kind === 'chips' ? 'xl:col-span-2' : undefined}
                 >
                   <FactTile
                     label={t(`fields.${fact.field === 'studyLevels' ? 'studyLevel' : fact.field}`)}
@@ -172,7 +172,7 @@ export function DetailsSections({
 
       {visible.dates ? (
         <DetailsCard id={`${ids}-dates`} title={t('sections.dates')}>
-          <dl className="grid gap-3 sm:grid-cols-2">
+          <dl className="grid gap-3 xl:grid-cols-2">
             {dateFacts.map((fact) => (
               <FactTile key={fact.field} label={t(`fields.${fact.field}`)}>
                 {fact.field === 'deadline' ? (

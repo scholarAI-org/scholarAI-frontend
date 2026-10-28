@@ -129,8 +129,10 @@ function ReportForm({ id, onClose }: { id: number; onClose: () => void }) {
           <p id={`${ids}-details-hint`} className="text-[#64748b]">
             {t('dialog.detailsHint')}
           </p>
+          {/* dir="ltr": in an RTL page the numbers and the slash would reorder ("2000 / 2001"). */}
           <p
             aria-hidden
+            dir="ltr"
             className={`shrink-0 tabular-nums ${count > DESCRIPTION_MAX_LENGTH ? 'text-[var(--color-text-error)]' : 'text-[#64748b]'}`}
           >
             {t('dialog.counter', { count })}
