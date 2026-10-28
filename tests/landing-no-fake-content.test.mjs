@@ -77,6 +77,28 @@ const UNBACKED_CLAIMS = [
   'تقنيات الذكاء',
   'اقتراحات مخصصة',
   'تحسينات الذكاء الاصطناعي',
+  // AI recommendations / matching: HOME_API_AVAILABILITY.recommendations is false, so nothing
+  // analyses a profile or suggests scholarships anywhere in the app.
+  'recommendation',
+  'ai assistant',
+  'ai-powered',
+  'ai analyzes',
+  'analyzes your profile',
+  'suggest scholarships',
+  'suggests scholarships',
+  'توصيات',
+  'ذكاء اصطناعي',
+  'الذكاء الاصطناعي',
+  'يحلل ملفك',
+  'يقترح المنح',
+  // Notifications and deadline reminders: HOME_API_AVAILABILITY.notifications is false and no
+  // scheduler, subscription or reminder exists in the codebase.
+  'notification',
+  'notified',
+  'reminder',
+  'إشعار',
+  'تذكير',
+  'تنبيه',
 ];
 
 // Internal-only destinations that must not be advertised on the public page.
