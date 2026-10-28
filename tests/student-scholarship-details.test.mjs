@@ -89,12 +89,12 @@ test('Feature flag OFF -> notFound; ON -> renders route', async () => {
 });
 
 // --- 3. Response contract validation ---
-const { validateDetailsResponse } = loadModule(
-  path.join(srcPath, 'features/student/scholarship-details/lib/validateDetailsResponse.ts')
+const { parseScholarshipDetails, DetailsContractError } = loadModule(
+  path.join(srcPath, 'features/student/scholarship-details/lib/adapter.ts')
 );
 
-test('validateDetailsResponse: accepts valid payload with required fields and optional extra fields', () => {
-  const validPayload = {
+test('parseScholarshipDetails: accepts valid payload with required fields and optional extra fields', () => {
+  const data = parseScholarshipDetails({
     id: 42,
     title: 'Fulbright Scholarship',
     is_saved: true,
@@ -103,42 +103,35 @@ test('validateDetailsResponse: accepts valid payload with required fields and op
     university_name: 'Harvard University',
     funding_amount: '$50,000',
     extra_unknown_field: 'allowed',
-  };
-  const result = validateDetailsResponse(validPayload);
-  assert.equal(result.ok, true);
-  if (result.ok) {
-    assert.equal(result.data.id, 42);
-    assert.equal(result.data.title, 'Fulbright Scholarship');
-  }
+  });
+  assert.equal(data.id, 42);
+  assert.equal(data.title, 'Fulbright Scholarship');
+  assert.equal(data.university_name, 'Harvard University');
+  assert.equal('extra_unknown_field' in data, false);
 });
 
-test('validateDetailsResponse: rejects missing required fields and wrong types', () => {
-  // Non-object
-  assert.equal(validateDetailsResponse(null).ok, false);
-  assert.equal(validateDetailsResponse('string').ok, false);
-
-  // Missing or invalid ID
-  assert.equal(validateDetailsResponse({ title: 't', is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-  assert.equal(validateDetailsResponse({ id: 0, title: 't', is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-  assert.equal(validateDetailsResponse({ id: -5, title: 't', is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-  assert.equal(validateDetailsResponse({ id: '42', title: 't', is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-
-  // Missing or invalid title
-  assert.equal(validateDetailsResponse({ id: 1, is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-  assert.equal(validateDetailsResponse({ id: 1, title: 123, is_saved: true, ingestion_type: 'manual', source: 's' }).ok, false);
-
-  // Missing or invalid is_saved
-  assert.equal(validateDetailsResponse({ id: 1, title: 't', ingestion_type: 'manual', source: 's' }).ok, false);
-  assert.equal(validateDetailsResponse({ id: 1, title: 't', is_saved: 'true', ingestion_type: 'manual', source: 's' }).ok, false);
-
-  // Missing or invalid ingestion_type
-  assert.equal(validateDetailsResponse({ id: 1, title: 't', is_saved: true, source: 's' }).ok, false);
-
-  // Missing or invalid source
-  assert.equal(validateDetailsResponse({ id: 1, title: 't', is_saved: true, ingestion_type: 'manual' }).ok, false);
+test('parseScholarshipDetails: rejects a payload without a usable id, title or is_saved', () => {
+  const fails = (raw) =>
+    assert.throws(() => parseScholarshipDetails(raw), DetailsContractError, JSON.stringify(raw));
+  fails(null);
+  fails('string');
+  fails({ title: 't', is_saved: true });
+  fails({ id: 0, title: 't', is_saved: true });
+  fails({ id: -5, title: 't', is_saved: true });
+  fails({ id: '42', title: 't', is_saved: true });
+  fails({ id: 1, is_saved: true });
+  fails({ id: 1, title: 123, is_saved: true });
+  fails({ id: 1, title: 't' });
+  fails({ id: 1, title: 't', is_saved: 'true' });
 });
 
-// --- 4. i18n key parity and ICU rules ---
+test('parseScholarshipDetails: ingestion_type and source are not needed to render', () => {
+  // Required by the OpenAPI schema, but the page shows neither as a section on
+  // its own, so their absence hides a line instead of failing the page.
+  const data = parseScholarshipDetails({ id: 1, title: 't', is_saved: false });
+  assert.equal(data.source, undefined);
+});
+
 test('i18n: StudentScholarshipDetails key parity between ar.json and en.json', () => {
   const arData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/ar.json'), 'utf8'));
   const enData = JSON.parse(fs.readFileSync(path.join(srcPath, 'messages/en.json'), 'utf8'));

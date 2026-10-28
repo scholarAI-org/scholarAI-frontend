@@ -6,13 +6,6 @@ export type {
   ScholarshipDetailsData,
 } from './schemas/details.schema';
 
-// Discovery-shaped types the current page still uses; removed once the page
-// is rewired to ScholarshipDetailsViewModel.
-export type {
-  ScholarshipDetailsModel,
-  ScholarshipDetailsResponse,
-} from '@/features/student/scholarship-discovery/types';
-
 // What the page renders. Optional values are simply absent; lists are empty
 // arrays; links are already checked and safe to put in an href.
 export interface ScholarshipDetailsViewModel {

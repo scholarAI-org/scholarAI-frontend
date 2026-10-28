@@ -1186,11 +1186,22 @@
       "pending": "جارٍ التحديث…",
       "error": "تعذّر تحديث المحفوظات. حاول مرة أخرى."
     },
-    "attachmentItem": "المرفق {number}",
+    "attachmentItem": "المرفق {count}",
     "applicationStatus": {
       "open": "مفتوحة",
       "upcoming": "قريبًا",
       "closed": "مغلقة"
+    },
+    "tracking": {
+      "title": "حالة الطلب",
+      "hint": "تابع تقدّمك في هذه المنحة.",
+      "start": "ابدأ التتبّع",
+      "loading": "جارٍ تحميل حالة طلبك…",
+      "loadError": "تعذّر تحميل حالة طلبك.",
+      "retry": "إعادة المحاولة",
+      "statusLabel": "تغيير الحالة",
+      "updateError": "تعذّر تحديث الحالة. حاول مرة أخرى.",
+      "updated": "تم تحديث الحالة"
     }
   },
   "StudentSavedScholarships": {

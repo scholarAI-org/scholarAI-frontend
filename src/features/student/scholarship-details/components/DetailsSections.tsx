@@ -237,7 +237,7 @@ export function DetailsSections({
                   external
                   className={`inline-flex items-center gap-1.5 ${linkClasses}`}
                 >
-                  {t('attachmentItem', { number: index + 1 })}
+                  {t('attachmentItem', { count: index + 1 })}
                   {externalIcon}
                 </SafeLink>
               </li>

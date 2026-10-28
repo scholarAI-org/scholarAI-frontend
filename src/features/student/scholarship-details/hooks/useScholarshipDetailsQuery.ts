@@ -3,7 +3,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { studentScholarshipKeys } from '@/features/student/scholarship-discovery/query-keys';
 import { ApiError } from '@/lib/api-client';
-import { getScholarshipDetails, DetailsContractError } from '../api/scholarship-details';
+import { getScholarshipDetails } from '../api/scholarship-details';
+import { DetailsContractError } from '../lib/adapter';
 
 export function useScholarshipDetailsQuery(id: number) {
   return useQuery({

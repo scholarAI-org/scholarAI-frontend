@@ -3,5 +3,5 @@ export { ScholarshipDetailsPage } from './components/ScholarshipDetailsPage';
 export { ScholarshipDetailsView } from './components/ScholarshipDetailsView';
 export { getScholarshipDetails } from './api/scholarship-details';
 export { useScholarshipDetailsQuery } from './hooks/useScholarshipDetailsQuery';
-export { validateDetailsResponse, DetailsContractError } from './lib/validateDetailsResponse';
-export type { ScholarshipDetailsModel, ScholarshipDetailsResponse } from './types';
+export { parseScholarshipDetails, toDetailsView, DetailsContractError } from './lib/adapter';
+export type { ScholarshipDetailsData, ScholarshipDetailsViewModel } from './types';
