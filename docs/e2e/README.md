@@ -85,10 +85,12 @@ All in English **and** Arabic unless noted.
 
 ## What is not covered
 
-- **Starting to track a scholarship.** The app has no "start tracking" action or client call
-  yet (the backend's `PUT /api/scholarships/{id}/tracking` is unused), so tracked
-  applications are seeded in the fake and only status, note and remove are driven through
-  the UI. Add the flow here when the action ships.
+- **Starting to track a scholarship (pending).** This branch's app has no "start tracking"
+  action or client call (the backend's `PUT /api/scholarships/{id}/tracking` is unused), so
+  tracked applications are seeded in the fake and only status, note and remove are driven
+  through the UI. The UI exists on `feat/008b-tracking-finish`; `start-tracking.spec.ts`
+  holds the flow as `test.fixme` (listed as skipped) with the steps to enable it once that
+  branch is merged: un-fixme, and teach the fake the start endpoint.
 - Google sign-in, forgot / reset password, resend code, logout.
 - The scholarship details page (`SCHOLARSHIP_DETAILS_ENABLED` stays off), the admin area.
 - Profile steps other than personal information (academic, preferences, skills, experience,

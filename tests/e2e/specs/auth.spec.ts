@@ -86,16 +86,23 @@ test('a wrong password shows the backend message and stays on the login page', a
   await expect(page).toHaveURL(atPath('/en/login'));
 });
 
+// Both redirects below are client-side navigations that fetch a dynamic page from the server.
+// Under a full parallel run one of them took longer than the default 10 s (it passes in ~5 s
+// on its own), so these assertions wait up to 20 s for the URL and the test gets room for it.
+const REDIRECT_TIMEOUT = 20_000;
+
 test('a guest sent to a protected page returns to it after signing in', async ({ page }) => {
+  test.setTimeout(60_000);
   const user = await seedStudent();
 
   await page.goto('/en/student/saved');
   await expect(page).toHaveURL(
-    (url) => url.pathname === '/en/login' && url.searchParams.get('next') === '/student/saved'
+    (url) => url.pathname === '/en/login' && url.searchParams.get('next') === '/student/saved',
+    { timeout: REDIRECT_TIMEOUT }
   );
 
   await signInThroughTheForm(page, 'en', user);
 
-  await expect(page).toHaveURL(atPath('/en/student/saved'));
-  await expect(pageTitle(page, 'en', 'saved')).toBeVisible();
+  await expect(page).toHaveURL(atPath('/en/student/saved'), { timeout: REDIRECT_TIMEOUT });
+  await expect(pageTitle(page, 'en', 'saved')).toBeVisible({ timeout: REDIRECT_TIMEOUT });
 });
