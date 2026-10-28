@@ -1244,6 +1244,38 @@
       "generic": "تعذّر إرسال بلاغك. حاول مرة أخرى."
     }
   },
+  "StudentScholarshipEligibility": {
+    "title": "الأهلية بنظرة سريعة",
+    "note": "شروط المنحة نفسها. لا يتم فحص ملفك الشخصي.",
+    "loading": "جارٍ تحميل الأهلية…",
+    "loadError": "تعذّر تحميل شروط الأهلية.",
+    "retry": "إعادة المحاولة",
+    "criteria": {
+      "nationality": "الجنسيات",
+      "degreeLevel": "المستوى الدراسي",
+      "gender": "الجنس",
+      "residency": "الإقامة",
+      "fieldOfStudy": "مجالات الدراسة",
+      "language": "اللغات",
+      "minGpa": "الحد الأدنى للمعدل",
+      "maxAge": "الحد الأقصى للعمر",
+      "experience": "الخبرة",
+      "softSkills": "المهارات الشخصية"
+    },
+    "values": {
+      "noRestriction": "بلا قيود",
+      "required": "مطلوبة",
+      "notRequired": "غير مطلوبة",
+      "percent": "{count}%",
+      "years": "حتى {count} سنة"
+    },
+    "gender": {
+      "male": "ذكور",
+      "female": "إناث",
+      "any": "الجميع"
+    },
+    "unknown": "غير محدد من المصدر: {count}"
+  },
   "StudentSavedScholarships": {
     "title": "المنح المحفوظة",
     "count": "{count, plural, =0 {لا توجد منح محفوظة} one {منحة محفوظة واحدة} two {منحتان محفوظتان} few {{count, number, integer} منح محفوظة} many {{count, number, integer} منحة محفوظة} other {{count, number, integer} منحة محفوظة}}",

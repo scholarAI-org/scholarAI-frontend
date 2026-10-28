@@ -14,6 +14,7 @@ import {
 import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
 import { toDetailsView } from '../lib/adapter';
 import { getDetailsViewState, parseRouteId } from '../lib/view-state';
+import { EligibilityIndicator } from './EligibilityIndicator';
 import { ReportProblemCard } from './ReportProblemCard';
 import { ScholarshipDetailsView } from './ScholarshipDetailsView';
 
@@ -65,10 +66,12 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
 export function ScholarshipDetailsPage({
   rawId,
   reportEnabled = false,
+  eligibilityEnabled = false,
 }: {
   rawId: string;
   // Server-side feature flags, passed down by the route.
   reportEnabled?: boolean;
+  eligibilityEnabled?: boolean;
 }) {
   const t = useTranslations('StudentScholarshipDetails');
   const tLayout = useTranslations('StudentLayout');
@@ -140,7 +143,12 @@ export function ScholarshipDetailsPage({
     content = (
       <ScholarshipDetailsView
         details={details}
-        sideExtras={reportEnabled ? <ReportProblemCard id={details.id} /> : null}
+        sideExtras={
+          <>
+            {eligibilityEnabled ? <EligibilityIndicator id={details.id} /> : null}
+            {reportEnabled ? <ReportProblemCard id={details.id} /> : null}
+          </>
+        }
       />
     );
   }

@@ -1251,6 +1251,38 @@
       "generic": "We couldn't send your report. Please try again."
     }
   },
+  "StudentScholarshipEligibility": {
+    "title": "Eligibility at a glance",
+    "note": "The scholarship's own criteria. This doesn't check your profile.",
+    "loading": "Loading eligibility…",
+    "loadError": "We couldn't load the eligibility criteria.",
+    "retry": "Try again",
+    "criteria": {
+      "nationality": "Nationalities",
+      "degreeLevel": "Degree level",
+      "gender": "Gender",
+      "residency": "Residency",
+      "fieldOfStudy": "Fields of study",
+      "language": "Languages",
+      "minGpa": "Minimum GPA",
+      "maxAge": "Maximum age",
+      "experience": "Experience",
+      "softSkills": "Soft skills"
+    },
+    "values": {
+      "noRestriction": "No restriction",
+      "required": "Required",
+      "notRequired": "Not required",
+      "percent": "{count}%",
+      "years": "Up to {count} years old"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female",
+      "any": "Any"
+    },
+    "unknown": "Not specified by the source: {count}"
+  },
   "StudentSavedScholarships": {
     "title": "Saved Scholarships",
     "count": "{count, plural, =0 {No saved scholarships} one {{count, number, integer} saved scholarship} other {{count, number, integer} saved scholarships}}",

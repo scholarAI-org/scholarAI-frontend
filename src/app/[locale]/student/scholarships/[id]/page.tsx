@@ -21,6 +21,10 @@ export default async function StudentScholarshipDetailsRoute({
   }
 
   return (
-    <ScholarshipDetailsPage rawId={id} reportEnabled={featureFlags.scholarshipReportsEnabled} />
+    <ScholarshipDetailsPage
+      rawId={id}
+      reportEnabled={featureFlags.scholarshipReportsEnabled}
+      eligibilityEnabled={featureFlags.scholarshipEligibilityEnabled}
+    />
   );
 }
