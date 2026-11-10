@@ -43,6 +43,22 @@ declare global {
   }
 }
 
+// Google Identity Services keeps a single global configuration, so initialize()
+// runs once per client id for the whole page. The callback forwards to whichever
+// button is mounted, which lets the handler change without re-initializing.
+let initializedClientId: string | null = null;
+let activeCredentialHandler: ((credential: string | undefined) => void) | null = null;
+
+function ensureGoogleInitialized(clientId: string) {
+  if (initializedClientId === clientId || !window.google?.accounts?.id) return;
+
+  window.google.accounts.id.initialize({
+    client_id: clientId,
+    callback: (response) => activeCredentialHandler?.(response?.credential),
+  });
+  initializedClientId = clientId;
+}
+
 interface GoogleAuthButtonProps {
   mode: 'login' | 'signup';
   className?: string;
@@ -98,21 +114,7 @@ export function GoogleAuthButton({ mode, className }: GoogleAuthButtonProps) {
     }
 
     try {
-      window.google.accounts.id.initialize({
-        client_id: clientId,
-        callback: (response) => {
-          if (response?.credential) {
-            setLocalError(null);
-            googleAuthMutation.mutate(response.credential, {
-              onError: (err) => {
-                setLocalError(err.message || t('googleAuthError'));
-              },
-            });
-          } else {
-            setLocalError(t('googleAuthError'));
-          }
-        },
-      });
+      ensureGoogleInitialized(clientId);
 
       if (hiddenGoogleButtonRef.current) {
         hiddenGoogleButtonRef.current.innerHTML = '';
@@ -126,7 +128,30 @@ export function GoogleAuthButton({ mode, className }: GoogleAuthButtonProps) {
     } catch {
       // Ignore initialization error gracefully
     }
-  }, [scriptLoaded, clientId, googleAuthMutation, t]);
+  }, [scriptLoaded, clientId]);
+
+  // useMutation() and t() return new objects on every render, so the latest
+  // handler is registered here instead of re-running initialize() each time.
+  const { mutate } = googleAuthMutation;
+  useEffect(() => {
+    const handleCredential = (credential: string | undefined) => {
+      if (!credential) {
+        setLocalError(t('googleAuthError'));
+        return;
+      }
+      setLocalError(null);
+      mutate(credential, {
+        onError: (err) => {
+          setLocalError(err.message || t('googleAuthError'));
+        },
+      });
+    };
+
+    activeCredentialHandler = handleCredential;
+    return () => {
+      if (activeCredentialHandler === handleCredential) activeCredentialHandler = null;
+    };
+  }, [mutate, t]);
 
   const handleButtonClick = () => {
     setLocalError(null);
