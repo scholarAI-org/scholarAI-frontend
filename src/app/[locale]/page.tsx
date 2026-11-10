@@ -1,4 +1,6 @@
+import type { Metadata } from 'next';
 import { Rubik, Cairo } from 'next/font/google';
+import { buildPageMetadata } from '@/lib/metadata';
 import { Navbar } from '@/features/landing/components/Navbar';
 import { LandingDiscovery } from '@/features/landing/components/LandingDiscovery';
 import { HowItWorks } from '@/features/landing/components/HowItWorks';
@@ -23,6 +25,14 @@ const cairo = Cairo({
   variable: '--font-landing-cairo',
   display: 'swap',
 });
+
+export function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  return params.then(({ locale }) => buildPageMetadata({ locale, pathname: '/' }));
+}
 
 export default function LandingPage() {
   return (

@@ -842,7 +842,8 @@ test('the image fallback is a local asset and the img exception exists exactly o
     (file) => /\.(t|j)sx?$/.test(file) && fs.readFileSync(file, 'utf8').includes('no-img-element')
   );
   assert.deepEqual(
-    suppressions.map((file) => path.relative(srcPath, file)),
+    // path.sep is '\' on Windows: compare on posix-style paths everywhere.
+    suppressions.map((file) => path.relative(srcPath, file).split(path.sep).join(path.posix.sep)),
     ['features/student/scholarship-discovery/components/ScholarshipImage.tsx']
   );
   assert.equal(imageSource.match(/eslint-disable/g)?.length, 1);
@@ -863,8 +864,11 @@ test('details-link requires explicit enabled parameter (no default bypass)', () 
   assert.equal(getScholarshipDetailsHref(-1, true), null);
   // no deprecated constant export
   const mod = load('lib/details-link.ts');
-  assert.equal('SCHOLARSHIP_DETAILS_ROUTE_ENABLED' in mod, false,
-    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED must not be exported');
+  assert.equal(
+    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED' in mod,
+    false,
+    'SCHOLARSHIP_DETAILS_ROUTE_ENABLED must not be exported'
+  );
 });
 
 test('the match badge shows only authoritative data and nothing by default', () => {
@@ -953,7 +957,10 @@ test('canonical study_level arrays become one translated label per level', () =>
     ],
   });
   for (const empty of [[], ['  '], [null]]) {
-    const blank = toScholarshipCard({ id: 9, title: 'T', is_saved: false, study_level: empty }, 'en');
+    const blank = toScholarshipCard(
+      { id: 9, title: 'T', is_saved: false, study_level: empty },
+      'en'
+    );
     assert.equal(blank.studyLevel, undefined, JSON.stringify(empty));
   }
 });
