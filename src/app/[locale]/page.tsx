@@ -5,7 +5,6 @@ import { Navbar } from '@/features/landing/components/Navbar';
 import { LandingDiscovery } from '@/features/landing/components/LandingDiscovery';
 import { HowItWorks } from '@/features/landing/components/HowItWorks';
 import { AiFeatures } from '@/features/landing/components/AiFeatures';
-import { MatchingSpotlight } from '@/features/landing/components/MatchingSpotlight';
 import { Faq } from '@/features/landing/components/Faq';
 import { ContactSection } from '@/features/landing/components/ContactSection';
 import { CtaBand } from '@/features/landing/components/CtaBand';
@@ -42,7 +41,6 @@ export default function LandingPage() {
         <LandingDiscovery />
         <AiFeatures />
         <HowItWorks />
-        <MatchingSpotlight />
         <Faq />
         <CtaBand />
         <ContactSection />

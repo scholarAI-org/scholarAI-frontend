@@ -6,12 +6,7 @@ import { DesignAsset } from './DesignAsset';
 
 const GITHUB_URL = 'https://github.com/scholarAI-org';
 
-// A null destination renders the label as disabled text: no route exists for it yet.
-const DESTINATIONS = [
-  ['/student/scholarships', '#matching'],
-  ['/student/profile', null],
-  ['/register'],
-] as const;
+const DESTINATIONS = [['/student/scholarships'], ['/student/profile'], ['/register']] as const;
 export function Footer() {
   const t = useTranslations('Landing.updated.footer');
   const columns = t.raw('columns') as { title: string; links: string[] }[];
@@ -26,18 +21,11 @@ export function Footer() {
           {columns.map((column, i) => (
             <div key={column.title}>
               <h3>{column.title}</h3>
-              {column.links.map((label, j) => {
-                const href = DESTINATIONS[i][j];
-                return href ? (
-                  <Link key={label} href={href}>
-                    {label}
-                  </Link>
-                ) : (
-                  <span key={label} aria-disabled="true">
-                    {label}
-                  </span>
-                );
-              })}
+              {column.links.map((label, j) => (
+                <Link key={label} href={DESTINATIONS[i][j]}>
+                  {label}
+                </Link>
+              ))}
             </div>
           ))}
         </div>
