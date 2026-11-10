@@ -4,6 +4,7 @@ import { useCallback, useRef, useState, type ReactNode } from 'react';
 import { StudentHeader } from './StudentHeader';
 import { StudentMobileNavigation } from './StudentMobileNavigation';
 import { StudentSidebar } from './StudentSidebar';
+import { StudentTabBar } from './StudentTabBar';
 
 import {
   studentNavigation,
@@ -48,7 +49,11 @@ export function StudentShell({
             menuButtonRef={menuButtonRef}
             headerActions={headerActions}
           />
-          <main className="px-4 pt-4 pb-6 sm:px-6 lg:pt-6 lg:pb-0">{children}</main>
+          {/* Below sm the fixed tab bar covers the foot of the page, so the content
+              reserves its height plus the device's own inset. */}
+          <main className="px-4 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:px-6 sm:pb-6 lg:pt-6 lg:pb-0">
+            {children}
+          </main>
         </div>
         <aside className="hidden lg:sticky lg:top-0 lg:order-1 lg:row-span-2 lg:block lg:h-screen lg:self-start">
           <StudentSidebar items={items} />
@@ -60,6 +65,7 @@ export function StudentShell({
         returnFocusRef={menuButtonRef}
         items={items}
       />
+      <StudentTabBar items={items} />
     </div>
   );
 }

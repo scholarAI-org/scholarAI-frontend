@@ -1,15 +1,6 @@
 'use client';
 
-import {
-  Bookmark,
-  GraduationCap,
-  LayoutGrid,
-  LogOut,
-  Search,
-  SquarePen,
-  UserRound,
-  type LucideIcon,
-} from 'lucide-react';
+import { GraduationCap, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
@@ -22,15 +13,8 @@ import {
   studentNavigation,
 } from './student-navigation';
 import { getStudentDisplayName, getStudentInitial } from './student-identity';
-import type { StudentNavigationItem, StudentNavigationItemId } from './types';
-
-const navigationIcons: Record<StudentNavigationItemId, LucideIcon> = {
-  home: LayoutGrid,
-  profile: UserRound,
-  scholarships: Search,
-  saved: Bookmark,
-  tracking: SquarePen,
-};
+import { navigationIcons } from './navigation-icons';
+import type { StudentNavigationItem } from './types';
 
 // Figma sidebar (2979:9136): brand, user pill and grouped navigation at the top,
 // logout pinned to the bottom.

@@ -965,6 +965,7 @@
       "tagline": "منصة المنح الفلسطينية"
     },
     "navigationLabel": "تنقل الطالب",
+    "tabBarLabel": "أقسام الطالب",
     "openNavigation": "فتح قائمة التنقل",
     "closeNavigation": "إغلاق قائمة التنقل",
     "languageSwitch": {
@@ -987,6 +988,13 @@
       "scholarships": "البحث عن منح",
       "saved": "المحفوظات",
       "tracking": "تتبع الطلبات"
+    },
+    "tabs": {
+      "home": "الرئيسية",
+      "scholarships": "البحث",
+      "saved": "المحفوظات",
+      "tracking": "المتابعة",
+      "profile": "الملف"
     },
     "pages": {
       "home": {
@@ -1013,6 +1021,9 @@
         "title": "متابعة التقديم",
         "description": "سجّل حالة كل منحة وأضف ملاحظاتك وتواريخك المهمة"
       }
+    },
+    "userMenu": {
+      "label": "قائمة الحساب"
     }
   },
   "StudentScholarshipDiscovery": {

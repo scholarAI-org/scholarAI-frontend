@@ -972,6 +972,7 @@
       "tagline": "Palestinian scholarships platform"
     },
     "navigationLabel": "Student navigation",
+    "tabBarLabel": "Student sections",
     "openNavigation": "Open navigation menu",
     "closeNavigation": "Close navigation menu",
     "languageSwitch": {
@@ -994,6 +995,13 @@
       "scholarships": "Search scholarships",
       "saved": "Saved",
       "tracking": "Application tracking"
+    },
+    "tabs": {
+      "home": "Home",
+      "scholarships": "Search",
+      "saved": "Saved",
+      "tracking": "Tracking",
+      "profile": "Profile"
     },
     "pages": {
       "home": {
@@ -1020,6 +1028,9 @@
         "title": "Application tracking",
         "description": "Record each scholarship’s status and add your notes and important dates."
       }
+    },
+    "userMenu": {
+      "label": "Account menu"
     }
   },
   "StudentScholarshipDiscovery": {
