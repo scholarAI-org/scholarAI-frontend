@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { useAuth } from '../providers/AuthProvider';
 import { usePathname, useRouter } from '@/i18n/navigation';
@@ -14,6 +15,7 @@ type RoleGuardProps = {
 };
 
 export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
+  const t = useTranslations('Common');
   const router = useRouter();
   const pathname = usePathname();
   const redirectTargetRef = useRef<string | null>(null);
@@ -46,11 +48,11 @@ export function RoleGuard({ children, allowedRoles }: RoleGuardProps) {
   }, [user, isLoading, isUnauthenticated, allowedRoles, router, pathname]);
 
   if (isLoading) {
-    return <div>جاري التحقق من الجلسة...</div>;
+    return <div role="status">{t('checkingSession')}</div>;
   }
 
   if (error && !isUnauthenticated) {
-    return <div>حدث خطأ أثناء التحقق من الجلسة.</div>;
+    return <div role="alert">{t('sessionError')}</div>;
   }
 
   if (!user || !hasAllowedRole) {

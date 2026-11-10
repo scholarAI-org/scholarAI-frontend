@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { confirmAvatarUpload, requestAvatarUploadUrl, uploadAvatarToS3 } from '../api/avatar-api';
 import { profileKeys } from '../query-keys';
-import { validateAvatarFile } from '../schemas/avatar.schema';
+import { AvatarUploadError, validateAvatarFile } from '../schemas/avatar.schema';
 import type { FullProfileApi } from '../schemas/full-profile-api.schema';
 
 export function useUploadAvatar() {
@@ -11,7 +11,7 @@ export function useUploadAvatar() {
   return useMutation({
     mutationFn: async (file: File) => {
       const validationError = validateAvatarFile(file);
-      if (validationError) throw new Error(validationError);
+      if (validationError) throw new AvatarUploadError(validationError);
 
       const upload = await requestAvatarUploadUrl({
         file_name: file.name,

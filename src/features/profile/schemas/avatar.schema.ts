@@ -24,12 +24,22 @@ export interface AvatarConfirmResponse {
   expires_in: number;
 }
 
-export function validateAvatarFile(file: File): string | null {
-  if (!allowedAvatarTypes.has(file.type)) {
-    return 'يرجى اختيار صورة بصيغة JPEG أو PNG أو WebP.';
+// Codes, not copy: the profile page turns them into Profile.avatarErrors.* in the
+// active locale.
+export type AvatarErrorCode = 'invalidType' | 'tooLarge' | 'uploadFailed';
+
+export class AvatarUploadError extends Error {
+  readonly code: AvatarErrorCode;
+
+  constructor(code: AvatarErrorCode) {
+    super(code);
+    this.name = 'AvatarUploadError';
+    this.code = code;
   }
-  if (file.size > MAX_AVATAR_SIZE) {
-    return 'يجب ألا يتجاوز حجم الصورة 5 ميجابايت.';
-  }
+}
+
+export function validateAvatarFile(file: File): AvatarErrorCode | null {
+  if (!allowedAvatarTypes.has(file.type)) return 'invalidType';
+  if (file.size > MAX_AVATAR_SIZE) return 'tooLarge';
   return null;
 }

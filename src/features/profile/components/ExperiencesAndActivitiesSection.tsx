@@ -22,6 +22,7 @@ const emptySubscribe = () => () => undefined;
 
 export function ExperiencesAndActivitiesSection({ onSavedNext }: { onSavedNext?: () => void }) {
   const t = useTranslations('Experiences');
+  const profileT = useTranslations('Profile');
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -146,12 +147,14 @@ export function ExperiencesAndActivitiesSection({ onSavedNext }: { onSavedNext?:
 
         {authError && (
           <div className="rounded-lg bg-[var(--color-bg-error-subtle)] px-3 py-2 mb-4 text-sm text-[var(--color-text-error)]">
-            Please sign in again.
+            {profileT('signInAgain')}
           </div>
         )}
 
         {isLoading ? (
-          <div className="flex h-32 items-center justify-center text-slate-400">Loading...</div>
+          <div className="flex h-32 items-center justify-center text-slate-400">
+            {profileT('loading')}
+          </div>
         ) : experiences.length === 0 ? (
           <div
             onClick={handleOpenAdd}

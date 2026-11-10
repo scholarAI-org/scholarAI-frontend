@@ -186,9 +186,7 @@ export function formatDocumentRequirementText(
   locale?: string
 ): string {
   const rule = DOCUMENT_UPLOAD_RULES[documentType] || DOCUMENT_UPLOAD_RULES.cv;
-  const isArabic =
-    locale === 'ar' ||
-    (typeof translator === 'function' && translator('title') === 'الوثائق الرسمية');
+  const isArabic = locale === 'ar';
 
   const formatsLabel = formatAllowedExtensionsLabel(rule.extensions, isArabic);
   const maxSizeLabel = `${rule.maxSizeMB} MB`;

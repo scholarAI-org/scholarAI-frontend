@@ -15,22 +15,23 @@ import { useProfileProgress } from '@/features/profile/hooks/useProfileProgress'
 import { useProfile } from '@/features/profile/hooks/useProfile';
 import { useUploadAvatar } from '@/features/profile/hooks/useUploadAvatar';
 import { ApiError } from '@/lib/api-client';
+import { AvatarUploadError } from '@/features/profile/schemas/avatar.schema';
 import {
   getPersonalInformationCompletion,
   toPersonalInformationForm,
 } from '@/features/profile/lib/personal-information';
 
-const steps: ProfileStep[] = [
-  { id: 'personal', number: '01', label: 'المعلومات الشخصية', status: 'active' },
-  { id: 'academic', number: '02', label: 'المعلومات الأكاديمية', status: 'upcoming' },
-  { id: 'preferences', number: '03', label: 'التفضيلات', status: 'upcoming' },
-  { id: 'skills', number: '04', label: 'المهارات واللغات', status: 'upcoming' },
-  { id: 'activities', number: '05', label: 'الخبرات و الأنشطة', status: 'upcoming' },
-  { id: 'documents', number: '06', label: 'الوثائق', status: 'upcoming' },
-];
+const STEP_IDS = [
+  'personal',
+  'academic',
+  'preferences',
+  'skills',
+  'activities',
+  'documents',
+] as const;
 
-function getInitials(name: string) {
-  return name.trim().charAt(0) || '؟';
+function getInitials(name: string, fallback: string) {
+  return name.trim().charAt(0) || fallback;
 }
 
 function joinPresent(values: Array<string | null | undefined>, separator: string) {
@@ -40,9 +41,22 @@ function joinPresent(values: Array<string | null | undefined>, separator: string
     .join(separator);
 }
 
+// Validation and storage failures carry a code; backend errors keep the API's own
+// message; anything else (network) falls back to the generic upload failure.
+function getAvatarErrorMessage(
+  error: unknown,
+  t: (key: `avatarErrors.${AvatarUploadError['code']}`) => string
+): string | null {
+  if (!error) return null;
+  if (error instanceof AvatarUploadError) return t(`avatarErrors.${error.code}`);
+  if (error instanceof ApiError && error.message) return error.message;
+  return t('avatarErrors.uploadFailed');
+}
+
 // Profile content only; the student frame comes from StudentShell in the route layout.
 export function ProfilePageContent() {
   const [activeStepId, setActiveStepId] = useState<string>('personal');
+  const t = useTranslations('Profile');
   const academicT = useTranslations('AcademicInformation');
   const profileQuery = useProfile();
   const avatarUpload = useUploadAvatar();
@@ -50,12 +64,12 @@ export function ProfilePageContent() {
   const academic = profileQuery.data.academic;
   const progress = useProfileProgress();
   const fullName = joinPresent([personal?.full_name_ar, personal?.full_name_en], ' ');
-  const profileName = fullName || personal?.email || 'الملف الشخصي';
+  const profileName = fullName || personal?.email || t('fallbackName');
   const personalCompletion = personal
     ? getPersonalInformationCompletion(toPersonalInformationForm(personal))
     : 0;
   const summaryCompletion = {
-    label: 'اكتمال الملف الشخصي',
+    label: t('completionLabel'),
     value: profileQuery.data.profile_completion_percentage ?? 0,
   };
   const fieldOfStudy = academic?.field_of_study
@@ -66,14 +80,20 @@ export function ProfilePageContent() {
   const location = personal?.city;
   const profileUser: ProfileUser = {
     name: profileName,
-    initials: getInitials(personal?.full_name_ar || profileName),
+    initials: getInitials(personal?.full_name_ar || profileName, t('initialsFallback')),
     avatarUrl: profileQuery.data.avatar_url,
     headline: joinPresent(
       [fieldOfStudy, joinPresent([academic?.institution, location], ' - ')],
       ' • '
     ),
   };
-  const profileSteps = steps.map((step): ProfileStep => {
+  const profileSteps = STEP_IDS.map((id, index): ProfileStep => {
+    const step: ProfileStep = {
+      id,
+      number: String(index + 1).padStart(2, '0'),
+      label: t(`steps.${id}`),
+      status: id === 'personal' ? 'active' : 'upcoming',
+    };
     let status = step.status;
     if (step.id === 'personal' && personal && personalCompletion === 100) {
       status = 'completed';
@@ -97,11 +117,7 @@ export function ProfilePageContent() {
           await avatarUpload.mutateAsync(file);
         }}
         isAvatarUploading={avatarUpload.isPending}
-        avatarError={
-          avatarUpload.error instanceof ApiError || avatarUpload.error instanceof Error
-            ? avatarUpload.error.message
-            : null
-        }
+        avatarError={getAvatarErrorMessage(avatarUpload.error, t)}
       />
       <Stepper steps={profileSteps} onStepClick={setActiveStepId} />
       {activeStepId === 'personal' && (
@@ -153,7 +169,7 @@ export function ProfilePageContent() {
         activeStepId !== 'activities' &&
         activeStepId !== 'preferences' && (
           <div className="flex h-32 items-center justify-center rounded-2xl border border-dashed border-[#e2e8f0] bg-white/50 text-[#465668]">
-            هذا القسم قيد التطوير
+            {t('sectionUnderDevelopment')}
           </div>
         )}
     </div>

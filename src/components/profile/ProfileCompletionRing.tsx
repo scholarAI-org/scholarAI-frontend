@@ -1,12 +1,9 @@
 interface ProfileCompletionRingProps {
   percentage: number | null | undefined;
-  label?: string;
+  label: string;
 }
 
-export function ProfileCompletionRing({
-  percentage,
-  label = 'اكتمال الملف الشخصي',
-}: ProfileCompletionRingProps) {
+export function ProfileCompletionRing({ percentage, label }: ProfileCompletionRingProps) {
   const numericPercentage = Number.isFinite(percentage) ? Number(percentage) : 0;
   const value = Math.min(100, Math.max(0, numericPercentage));
   const displayValue = Math.round(value);

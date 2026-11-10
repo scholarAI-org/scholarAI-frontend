@@ -1,8 +1,9 @@
 import { apiClient } from '@/lib/api-client';
-import type {
-  AvatarConfirmResponse,
-  AvatarUploadUrlRequest,
-  AvatarUploadUrlResponse,
+import {
+  AvatarUploadError,
+  type AvatarConfirmResponse,
+  type AvatarUploadUrlRequest,
+  type AvatarUploadUrlResponse,
 } from '../schemas/avatar.schema';
 
 export function requestAvatarUploadUrl(
@@ -30,7 +31,7 @@ export async function uploadAvatarToS3(
   });
 
   if (!response.ok) {
-    throw new Error('تعذر رفع الصورة. يرجى المحاولة مرة أخرى.');
+    throw new AvatarUploadError('uploadFailed');
   }
 }
 

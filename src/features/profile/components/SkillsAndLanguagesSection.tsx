@@ -23,6 +23,7 @@ const emptySubscribe = () => () => undefined;
 
 export function SkillsAndLanguagesSection({ onSavedNext }: Props) {
   const t = useTranslations('SkillsLanguages');
+  const profileT = useTranslations('Profile');
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -360,7 +361,8 @@ export function SkillsAndLanguagesSection({ onSavedNext }: Props) {
                         onClick={() => handleRemoveLanguage(idx)}
                         disabled={authError || mutation.isPending}
                         className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-red-50 text-red-400 hover:bg-red-100 transition-colors disabled:opacity-50"
-                        title="Remove"
+                        title={profileT('remove')}
+                        aria-label={profileT('remove')}
                       >
                         <svg
                           width="14"
@@ -450,7 +452,8 @@ export function SkillsAndLanguagesSection({ onSavedNext }: Props) {
                       onClick={() => handleRemoveSkill(skill)}
                       disabled={authError || mutation.isPending}
                       className="text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-50"
-                      title="Remove"
+                      title={profileT('remove')}
+                      aria-label={profileT('remove')}
                     >
                       <svg
                         width="14"

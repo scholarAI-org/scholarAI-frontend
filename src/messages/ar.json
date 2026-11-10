@@ -1,6 +1,8 @@
 {
   "Common": {
-    "siteName": "ScholarAI"
+    "siteName": "ScholarAI",
+    "checkingSession": "جاري التحقق من الجلسة…",
+    "sessionError": "حدث خطأ أثناء التحقق من الجلسة."
   },
   "Metadata": {
     "siteName": "ScholarAI",
@@ -312,6 +314,52 @@
     "partnerUnrwa": "الأونروا",
     "partnerPlo": "منظمة التحرير",
     "supportedBy": "بدعم من"
+  },
+  "Profile": {
+    "steps": {
+      "personal": "المعلومات الشخصية",
+      "academic": "المعلومات الأكاديمية",
+      "preferences": "التفضيلات",
+      "skills": "المهارات واللغات",
+      "activities": "الخبرات والأنشطة",
+      "documents": "الوثائق"
+    },
+    "fallbackName": "الملف الشخصي",
+    "initialsFallback": "؟",
+    "completionLabel": "اكتمال الملف الشخصي",
+    "changeAvatar": "تغيير الصورة",
+    "avatarAlt": "الصورة الشخصية لـ {name}",
+    "avatarUploading": "جاري رفع الصورة",
+    "avatarErrors": {
+      "invalidType": "يرجى اختيار صورة بصيغة JPEG أو PNG أو WebP.",
+      "tooLarge": "يجب ألا يتجاوز حجم الصورة 5 ميجابايت.",
+      "uploadFailed": "تعذر رفع الصورة. يرجى المحاولة مرة أخرى."
+    },
+    "saveAndContinue": "حفظ ومتابعة",
+    "sectionUnderDevelopment": "هذا القسم قيد التطوير",
+    "remove": "إزالة",
+    "comingSoon": "قريباً",
+    "signInAgain": "يرجى تسجيل الدخول مرة أخرى.",
+    "loading": "جاري التحميل…",
+    "countriesError": "تعذر تحميل قائمة الدول.",
+    "retry": "إعادة المحاولة"
+  },
+  "DeleteConfirmation": {
+    "titles": {
+      "language": "حذف اللغة",
+      "experience": "حذف الخبرة",
+      "skill": "حذف المهارة",
+      "document": "حذف المستند"
+    },
+    "descriptions": {
+      "language": "هل أنت متأكد من حذف لغة<br></br><strong>«{name}»؟</strong>",
+      "experience": "هل أنت متأكد من حذف خبرة<br></br><strong>«{name}»؟</strong>",
+      "skill": "هل أنت متأكد من حذف مهارة<br></br><strong>«{name}»؟</strong>",
+      "document": "هل أنت متأكد من حذف مستند<br></br><strong>«{name}»؟</strong>"
+    },
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء",
+    "cancel": "إلغاء",
+    "confirm": "حذف"
   },
   "PersonalInformation": {
     "title": "المعلومات الشخصية",
@@ -670,7 +718,8 @@
     "loadingCountries": "جاري التحميل...",
     "fieldExistsError": "هذا المجال مضاف مسبقاً",
     "countryExistsError": "هذه الدولة مضافة مسبقاً",
-    "save": "إنهاء"
+    "save": "إنهاء",
+    "invalidCountryError": "يرجى اختيار دولة من القائمة."
   },
   "AdminShell": {
     "brand": {
