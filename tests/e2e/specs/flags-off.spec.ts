@@ -45,8 +45,11 @@ for (const locale of LOCALES) {
         await page.goto(`/${locale}${route}`);
 
         await expect(page).toHaveURL(atPath(`/${locale}${route}`));
-        await expect(page.getByText('This page could not be found.')).toBeVisible();
-        await expect(page.getByRole('heading', { level: 1, name: '404' })).toBeVisible();
+        // The localized 404 page (src/app/[locale]/not-found.tsx), not Next's default one.
+        await expect(
+          page.getByRole('heading', { level: 1, name: t(locale, 'NotFound.title') })
+        ).toBeVisible();
+        await expect(page.getByRole('link', { name: t(locale, 'NotFound.home') })).toBeVisible();
 
         // The gate runs before any page code: none of the feature's data was requested.
         const requested = (await backendRequests(user.email)).map((request) => request.path);

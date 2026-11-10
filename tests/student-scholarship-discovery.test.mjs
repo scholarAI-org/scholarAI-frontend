@@ -2282,3 +2282,41 @@ test('all student JSX visible/accessible copy and literal translation keys use b
   assert.ok(files.length >= 28);
   assert.ok(translatedCalls >= 50);
 });
+
+// --- Pending query (Next.js 16.4: useSearchParams lags one render behind pushState) ------
+
+test('a navigation shows its own target until the URL catches up', () => {
+  const { pendingFromHref, resolveDiscoveryQuery } = load('lib/pending-query.ts');
+  const urlQuery = parse('');
+  const pending = pendingFromHref('/en/student/scholarships?funding_type=full');
+
+  // Same render as the click: the URL has not moved yet, the target is shown.
+  assert.deepEqual(resolveDiscoveryQuery('', urlQuery, pending).fundingTypes, ['full']);
+  // The URL reports the target: it is the truth again.
+  const caughtUp = parse('funding_type=full');
+  assert.equal(resolveDiscoveryQuery('funding_type=full', caughtUp, pending), caughtUp);
+  // Nothing pending: the URL is used as is.
+  assert.equal(resolveDiscoveryQuery('', urlQuery, null), urlQuery);
+});
+
+test('a second click before the URL catches up keeps the first change', () => {
+  const { pendingFromHref, resolveDiscoveryQuery } = load('lib/pending-query.ts');
+  const path = '/en/student/scholarships';
+  const hrefs = [];
+  const router = { push: (href) => hrefs.push(href), replace: (href) => hrefs.push(href) };
+  const urlQuery = parse(''); // useSearchParams still reports the old URL
+
+  createDiscoveryNavigator(router, path, urlQuery).setFilters({ fundingTypes: ['full'] });
+  const afterFirst = resolveDiscoveryQuery('', urlQuery, pendingFromHref(hrefs[0]));
+  createDiscoveryNavigator(router, path, afterFirst).setFilters({ academicLevels: ['master'] });
+
+  const last = parse(hrefs.at(-1).split('?')[1]);
+  assert.deepEqual(last.fundingTypes, ['full']);
+  assert.deepEqual(last.academicLevels, ['master']);
+});
+
+test('the URL-state hook drops the pending query on Back/Forward', () => {
+  const source = fs.readFileSync(path.join(featurePath, 'hooks/useDiscoveryQueryState.ts'), 'utf8');
+  assert.match(source, /addEventListener\('popstate'/);
+  assert.match(source, /resolveDiscoveryQuery\(/);
+});
