@@ -25,6 +25,21 @@ import {
   useFieldText,
 } from './DetailsParts';
 
+// Plain text from the backend: a blank line separates paragraphs, a newline
+// separates the lines of a list. dir="auto" because a fallback can be in the
+// other language.
+function Description({ text }: { text: string }) {
+  return (
+    <div className="flex flex-col gap-3 text-sm leading-7 text-[#434343]">
+      {text.split(/\n{2,}/).map((paragraph, index) => (
+        <p key={index} dir="auto" className="break-words whitespace-pre-line">
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 const externalIcon = (
   <ExternalLink aria-hidden className="size-4 shrink-0 [&:dir(rtl)]:-scale-x-100" />
 );
@@ -52,6 +67,9 @@ export function DetailsSections({
     if (fact.kind === 'levels') {
       return <bdi>{fieldText(getStudyLevelLabel(fact.levels.join(', ')))}</bdi>;
     }
+    if (fact.kind === 'allFields') {
+      return t('fields.allFieldsOfStudy');
+    }
     if (fact.kind === 'chips') {
       return (
         <ul className="flex flex-wrap gap-2">
@@ -73,6 +91,7 @@ export function DetailsSections({
     <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
       {visible.about ? (
         <DetailsCard id={`${ids}-about`} title={t('sections.about')}>
+          {details.description ? <Description text={details.description} /> : null}
           <dl className="grid gap-3 xl:grid-cols-2">
             {details.organizationName ? (
               <FactTile label={t('fields.provider')}>
@@ -111,7 +130,39 @@ export function DetailsSections({
                 <bdi>{details.fundingAmount}</bdi>
               </FactTile>
             ) : null}
+            {details.fundingDuration ? (
+              <FactTile label={t('fields.fundingDuration')}>
+                {details.fundingDuration.min === details.fundingDuration.max
+                  ? t('duration.single', { count: details.fundingDuration.min })
+                  : t('duration.range', details.fundingDuration)}
+              </FactTile>
+            ) : null}
+            {details.fundingSummary ? (
+              <div className="xl:col-span-2">
+                <FactTile label={t('fields.fundingSummary')}>
+                  <span dir="auto">{details.fundingSummary}</span>
+                </FactTile>
+              </div>
+            ) : null}
           </dl>
+          {details.benefits.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              <h4 className="text-sm font-bold text-black">{t('fields.benefits')}</h4>
+              <ul className="flex flex-col gap-2">
+                {details.benefits.map((item, index) => (
+                  <li
+                    key={`${index}-${item}`}
+                    className="flex items-start gap-2 text-sm leading-6 text-[#434343]"
+                  >
+                    <CircleCheck aria-hidden className="mt-1 size-4 shrink-0 text-[#16c172]" />
+                    <span dir="auto" className="min-w-0 break-words">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </DetailsCard>
       ) : null}
 
@@ -154,7 +205,7 @@ export function DetailsSections({
           <ol className="flex flex-col gap-3">
             {details.requiredDocuments.map((item, index) => (
               <li
-                key={`${index}-${item}`}
+                key={`${index}-${item.name}`}
                 className="flex items-start gap-3 rounded-full border border-gray-300 bg-[#f8fafc] px-4 py-2.5 text-sm leading-6 text-[#434343]"
               >
                 <span
@@ -163,7 +214,20 @@ export function DetailsSections({
                 >
                   {index + 1}
                 </span>
-                <bdi className="min-w-0 break-words">{item}</bdi>
+                <span dir="auto" className="min-w-0 flex-1 break-words">
+                  {item.name}
+                </span>
+                {item.mandatory !== undefined ? (
+                  <span
+                    className={`shrink-0 self-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      item.mandatory
+                        ? 'bg-[rgba(249,115,22,0.1)] text-[#c2410c]'
+                        : 'bg-white text-[#64748b] ring-1 ring-gray-300'
+                    }`}
+                  >
+                    {t(item.mandatory ? 'document.mandatory' : 'document.optional')}
+                  </span>
+                ) : null}
               </li>
             ))}
           </ol>

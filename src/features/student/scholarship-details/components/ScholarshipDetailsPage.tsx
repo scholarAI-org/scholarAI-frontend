@@ -12,8 +12,12 @@ import {
   getRememberedDiscoverySearch,
 } from '@/features/student/scholarship-discovery/lib/discovery-return';
 import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
-import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
+import {
+  useScholarshipDetailViewQuery,
+  useScholarshipDetailsQuery,
+} from '../hooks/useScholarshipDetailsQuery';
 import { toDetailsView } from '../lib/adapter';
+import { toDetailsViewFromDetailView } from '../lib/detail-view-adapter';
 import { getDetailsViewState, parseRouteId } from '../lib/view-state';
 import { EligibilityIndicator } from './EligibilityIndicator';
 import { ReportProblemCard } from './ReportProblemCard';
@@ -69,12 +73,15 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
 
 export function ScholarshipDetailsPage({
   rawId,
+  detailViewEnabled = false,
   trackingEnabled = false,
   reportEnabled = false,
   eligibilityEnabled = false,
 }: {
   rawId: string;
   // Server-side feature flags, passed down by the route.
+  // detailViewEnabled: read GET /api/scholarships/{id}/details?lang= instead of /{id}.
+  detailViewEnabled?: boolean;
   trackingEnabled?: boolean;
   reportEnabled?: boolean;
   eligibilityEnabled?: boolean;
@@ -84,18 +91,24 @@ export function ScholarshipDetailsPage({
   const locale = useLocale();
   const queryClient = useQueryClient();
   const id = parseRouteId(rawId);
-  const detail = useScholarshipDetailsQuery(id ?? 0);
-  const state = getDetailsViewState({
+  const lang = locale === 'en' ? 'en' : 'ar';
+  // Exactly one of the two queries runs, chosen by the server-side flag.
+  const original = useScholarshipDetailsQuery(id ?? 0, { enabled: !detailViewEnabled });
+  const detailView = useScholarshipDetailViewQuery(id ?? 0, lang, { enabled: detailViewEnabled });
+  const detail = detailViewEnabled ? detailView : original;
+  const state = getDetailsViewState<{ id: number }>({
     id,
     data: detail.data,
     error: detail.error,
     isFetching: detail.isFetching,
   });
-  const readyData = state.kind === 'ready' ? state.data : null;
-  const details = useMemo(
-    () => (readyData ? toDetailsView(readyData, locale) : null),
-    [readyData, locale]
-  );
+  const readyOriginal = state.kind === 'ready' && !detailViewEnabled ? original.data : undefined;
+  const readyView = state.kind === 'ready' && detailViewEnabled ? detailView.data : undefined;
+  const details = useMemo(() => {
+    if (readyView) return toDetailsViewFromDetailView(readyView, locale);
+    if (readyOriginal) return toDetailsView(readyOriginal, locale);
+    return null;
+  }, [readyView, readyOriginal, locale]);
   // Read once: the discovery URL the student came from, if any (memory only).
   const [backHref] = useState(() => getDiscoveryReturnHref(getRememberedDiscoverySearch()));
 
