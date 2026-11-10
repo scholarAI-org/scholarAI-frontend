@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 import { Download, Trash2 } from 'lucide-react';
 import { DocumentIcon } from '@/components/icons/DocumentIcon';
@@ -42,6 +42,8 @@ export function DocumentUploadRow({
   isDeleting = false,
 }: DocumentUploadRowProps) {
   const t = useTranslations('Documents');
+  const profileT = useTranslations('Profile');
+  const locale = useLocale();
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadMutation = useUploadDocument();
   const [localError, setLocalError] = useState<string | null>(null);
@@ -51,7 +53,7 @@ export function DocumentUploadRow({
   const isUploading = uploadMutation.isPending;
 
   const acceptAttribute = getAcceptAttribute(documentType);
-  const requirementSubtitle = formatDocumentRequirementText(documentType, t);
+  const requirementSubtitle = formatDocumentRequirementText(documentType, t, locale);
   const displaySubtitle =
     subtitle && subtitle !== t('uploadMissing') ? subtitle : requirementSubtitle;
 
@@ -235,7 +237,7 @@ export function DocumentUploadRow({
             variant="outline"
             className="text-[#1d4ed8] border-[#1d4ed8]/20 hover:bg-[#1d4ed8]/5 hidden sm:flex"
             disabled
-            title="Coming soon"
+            title={profileT('comingSoon')}
           >
             {t('improveAIBtn')}
           </Button>

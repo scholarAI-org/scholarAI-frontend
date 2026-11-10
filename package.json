@@ -24,7 +24,7 @@
     "test:mobile-shell": "node --test tests/student-mobile-shell.test.mjs",
     "test:student-home": "node --test tests/student-home.test.mjs",
     "test:tracking": "node --test tests/student-application-tracking.test.mjs tests/student-application-tracking-ui.test.mjs tests/student-application-tracking-optimistic.test.mjs tests/student-application-tracking-start.test.mjs",
-    "test:i18n": "node --test tests/i18n-numerals.test.mjs",
+    "test:i18n": "node --test tests/i18n-numerals.test.mjs tests/i18n-hardcoded-copy.test.mjs",
     "test:public-landing-page": "node --test tests/public-landing-page.test.mjs tests/landing-no-fake-content.test.mjs",
     "test:e2e": "node tests/e2e/run.mjs"
   },

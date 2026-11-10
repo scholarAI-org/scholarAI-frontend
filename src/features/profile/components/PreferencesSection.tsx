@@ -29,6 +29,7 @@ const emptySubscribe = () => () => undefined;
 
 export function PreferencesSection({ onSavedNext }: Props) {
   const t = useTranslations('Preferences');
+  const profileT = useTranslations('Profile');
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -190,7 +191,7 @@ export function PreferencesSection({ onSavedNext }: Props) {
         : null;
 
     if (!codeToAdd) {
-      setCountryError(t('invalidCountryError') || 'يرجى اختيار دولة من القائمة');
+      setCountryError(t('invalidCountryError'));
       return;
     }
 
@@ -401,7 +402,8 @@ export function PreferencesSection({ onSavedNext }: Props) {
                     onClick={() => handleRemoveCountry(country)}
                     disabled={authError || isBusy}
                     className="text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-50"
-                    title="Remove"
+                    title={profileT('remove')}
+                    aria-label={profileT('remove')}
                   >
                     <svg
                       width="14"
@@ -508,13 +510,13 @@ export function PreferencesSection({ onSavedNext }: Props) {
                     </div>
                   ) : countriesQuery.isError ? (
                     <div className="p-4 text-center text-sm text-red-500">
-                      <p>Failed to load countries list.</p>
+                      <p>{profileT('countriesError')}</p>
                       <button
                         type="button"
                         onClick={() => void countriesQuery.refetch()}
                         className="mt-2 text-xs font-bold underline"
                       >
-                        Retry
+                        {profileT('retry')}
                       </button>
                     </div>
                   ) : filteredCountries.length > 0 ? (

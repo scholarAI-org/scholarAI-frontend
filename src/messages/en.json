@@ -1,6 +1,8 @@
 {
   "Common": {
-    "siteName": "ScholarAI"
+    "siteName": "ScholarAI",
+    "checkingSession": "Checking your session…",
+    "sessionError": "Something went wrong while checking your session."
   },
   "Metadata": {
     "siteName": "ScholarAI",
@@ -319,6 +321,52 @@
     "partnerUnrwa": "UNRWA",
     "partnerPlo": "PLO",
     "supportedBy": "Supported by"
+  },
+  "Profile": {
+    "steps": {
+      "personal": "Personal information",
+      "academic": "Academic information",
+      "preferences": "Preferences",
+      "skills": "Skills and languages",
+      "activities": "Experience and activities",
+      "documents": "Documents"
+    },
+    "fallbackName": "My profile",
+    "initialsFallback": "?",
+    "completionLabel": "Profile completion",
+    "changeAvatar": "Change photo",
+    "avatarAlt": "Profile photo of {name}",
+    "avatarUploading": "Uploading photo",
+    "avatarErrors": {
+      "invalidType": "Choose a JPEG, PNG or WebP image.",
+      "tooLarge": "The image must be 5 MB or smaller.",
+      "uploadFailed": "Could not upload the photo. Please try again."
+    },
+    "saveAndContinue": "Save and continue",
+    "sectionUnderDevelopment": "This section is under development",
+    "remove": "Remove",
+    "comingSoon": "Coming soon",
+    "signInAgain": "Please sign in again.",
+    "loading": "Loading…",
+    "countriesError": "Unable to load the countries list.",
+    "retry": "Retry"
+  },
+  "DeleteConfirmation": {
+    "titles": {
+      "language": "Delete language",
+      "experience": "Delete experience",
+      "skill": "Delete skill",
+      "document": "Delete document"
+    },
+    "descriptions": {
+      "language": "Are you sure you want to delete the language<br></br><strong>“{name}”?</strong>",
+      "experience": "Are you sure you want to delete the experience<br></br><strong>“{name}”?</strong>",
+      "skill": "Are you sure you want to delete the skill<br></br><strong>“{name}”?</strong>",
+      "document": "Are you sure you want to delete the document<br></br><strong>“{name}”?</strong>"
+    },
+    "irreversible": "This action cannot be undone",
+    "cancel": "Cancel",
+    "confirm": "Delete"
   },
   "PersonalInformation": {
     "title": "Personal Information",
@@ -677,7 +725,8 @@
     "loadingCountries": "Loading...",
     "fieldExistsError": "This field is already added",
     "countryExistsError": "This country is already added",
-    "save": "Finish"
+    "save": "Finish",
+    "invalidCountryError": "Choose a country from the list."
   },
   "AdminShell": {
     "brand": {
