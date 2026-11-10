@@ -1,14 +1,16 @@
 import { apiClient } from '@/lib/api-client';
-import { NOTE_MAX_LENGTH, TRACKING_STATUSES } from '../constants';
+import { DEFAULT_START_STATUS, NOTE_MAX_LENGTH, TRACKING_STATUSES } from '../constants';
 import {
   parseNoteResponse,
   parseRemoveResponse,
+  parseStartResponse,
   parseStatusResponse,
   parseTrackedList,
 } from '../lib/adapter';
 import { TrackingValidationError } from '../lib/errors';
 import type {
   RemoveTrackingResult,
+  StartTrackingResult,
   TrackedList,
   TrackingNoteResult,
   TrackingStatus,
@@ -71,4 +73,25 @@ export async function removeTracking(trackingId: number): Promise<RemoveTracking
   assertTrackingId(trackingId);
   const raw = await apiClient<unknown>(`${ROOT}/${trackingId}`, { method: 'DELETE' });
   return parseRemoveResponse(raw);
+}
+
+// PUT /api/scholarships/{id}/tracking (BE-02): starts tracking a scholarship and
+// answers { status, updated_at }. It creates the row, so it must only be sent for a
+// scholarship that is not tracked yet (the caller checks the fresh list first).
+// Errors: 404 scholarship not found, 403 non-student, 422 invalid, all read by status.
+export async function startTracking(
+  scholarshipId: number,
+  status: TrackingStatus = DEFAULT_START_STATUS
+): Promise<StartTrackingResult> {
+  if (!Number.isSafeInteger(scholarshipId) || scholarshipId <= 0) {
+    throw new TrackingValidationError('invalid-id');
+  }
+  if (!(TRACKING_STATUSES as readonly string[]).includes(status)) {
+    throw new TrackingValidationError('invalid-status');
+  }
+  const raw = await apiClient<unknown>(`/api/scholarships/${scholarshipId}/tracking`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  });
+  return parseStartResponse(raw);
 }

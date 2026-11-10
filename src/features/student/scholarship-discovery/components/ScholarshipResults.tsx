@@ -19,6 +19,7 @@ import { DiscoveryEmptyState } from './DiscoveryEmptyState';
 import { DiscoveryErrorState } from './DiscoveryErrorState';
 import { DiscoveryPagination } from './DiscoveryPagination';
 import { DISCOVERY_SEARCH_INPUT_ID } from './DiscoverySearchField';
+import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
 import { ScholarshipBookmark } from './ScholarshipBookmark';
 import { ScholarshipDeadline } from './ScholarshipDeadline';
 import { ScholarshipGridCard } from './ScholarshipGridCard';
@@ -32,6 +33,8 @@ interface ScholarshipResultsProps {
   onReconcilePage: (page: number) => void;
   onClearFilters: () => void;
   detailsEnabled: boolean;
+  // Server flag TRACKING_ENABLED: when false no tracking control is rendered.
+  trackingEnabled?: boolean;
 }
 
 export const RESULTS_HEADING_ID = 'scholarship-discovery-results-heading';
@@ -46,6 +49,7 @@ export function ScholarshipResults({
   onReconcilePage,
   onClearFilters,
   detailsEnabled,
+  trackingEnabled = false,
 }: ScholarshipResultsProps) {
   const t = useTranslations('StudentScholarshipDiscovery');
   const locale = useLocale();
@@ -54,6 +58,10 @@ export function ScholarshipResults({
   const headingRef = useRef<HTMLHeadingElement>(null);
   // One "today" per mounted list, so all deadlines agree.
   const [now] = useState(() => new Date());
+  const trackingControl = (card: { id: number; title?: string }) =>
+    trackingEnabled ? (
+      <TrackScholarshipButton scholarshipId={card.id} title={card.title} variant="card" />
+    ) : undefined;
 
   const state = getDiscoveryResultsState({
     query,
@@ -189,6 +197,7 @@ export function ScholarshipResults({
                       bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="overlay" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
                       detailsEnabled={detailsEnabled}
+                      trackingSlot={trackingControl(entry.card)}
                     />
                   ) : (
                     <ScholarshipListRow
@@ -196,6 +205,7 @@ export function ScholarshipResults({
                       bookmarkSlot={<ScholarshipBookmark card={entry.card} variant="inline" />}
                       footer={<ScholarshipDeadline card={entry.card} now={now} />}
                       detailsEnabled={detailsEnabled}
+                      trackingSlot={trackingControl(entry.card)}
                     />
                   )}
                 </li>

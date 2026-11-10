@@ -13,6 +13,18 @@ export const featureFlags = Object.freeze({
   get scholarshipDetailsEnabled(): boolean {
     return process.env.SCHOLARSHIP_DETAILS_ENABLED === 'true';
   },
+  // FE-12: "Report a problem" card and dialog on the Student Scholarship Details
+  // page (POST /api/scholarships/{id}/reports). Default: false. The literal
+  // string "true" is the only enabling value.
+  get scholarshipReportsEnabled(): boolean {
+    return process.env.SCHOLARSHIP_REPORTS_ENABLED === 'true';
+  },
+  // FE-12: eligibility requirements card on the Student Scholarship Details page
+  // (GET /api/scholarships/{id}/eligibility). Default: false. The literal string
+  // "true" is the only enabling value.
+  get scholarshipEligibilityEnabled(): boolean {
+    return process.env.SCHOLARSHIP_ELIGIBILITY_ENABLED === 'true';
+  },
   // Feature 009: Student Home page (/student) and its sidebar item.
   // Default: false. The literal string "true" is the only enabling value.
   get studentHomeEnabled(): boolean {

@@ -1,15 +1,15 @@
 import { apiClient } from '@/lib/api-client';
-import type { ScholarshipDetailsResponse } from '../types';
-import { DetailsContractError, validateDetailsResponse } from '../lib/validateDetailsResponse';
+import { DetailsContractError, parseScholarshipDetails } from '../lib/adapter';
+import type { ScholarshipDetailsData } from '../types';
 
+// GET /api/scholarships/{id}. The response goes through the schema before it
+// reaches the query cache; a malformed payload is a DetailsContractError.
 export async function getScholarshipDetails(
   id: number,
   signal?: AbortSignal
-): Promise<ScholarshipDetailsResponse> {
+): Promise<ScholarshipDetailsData> {
   const raw = await apiClient<unknown>(`/api/scholarships/${id}`, { signal });
-  const result = validateDetailsResponse(raw);
-  if (!result.ok) throw result.error;
-  return result.data;
+  return parseScholarshipDetails(raw);
 }
 
 export { DetailsContractError };

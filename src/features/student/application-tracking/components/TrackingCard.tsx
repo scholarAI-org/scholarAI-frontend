@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { toScholarshipCard } from '@/features/student/scholarship-discovery/adapters/scholarship';
 import { getScholarshipDetailsHref } from '@/features/student/scholarship-discovery/lib/details-link';
-import { buildTrackingMeta, joinMeta, trackingMetaParts } from '../lib/presentation';
+import { buildTrackingMeta, trackingMetaParts } from '../lib/presentation';
 import type { TrackedItem, TrackingStatus } from '../types';
 import { TrackingNote } from './TrackingNote';
 import { TrackingStatusSelect } from './TrackingStatusSelect';
@@ -36,15 +36,23 @@ export function TrackingCard({
   const title = card.title ?? t('card.untitled');
   const detailsHref = getScholarshipDetailsHref(item.scholarship.id, detailsEnabled);
   const meta = trackingMetaParts(buildTrackingMeta(item.scholarship, item.updatedAt));
-  const metaLine = joinMeta(
-    meta.map((part) =>
-      part.kind === 'organization'
-        ? part.value
-        : part.kind === 'noDeadline'
-          ? t('card.meta.noDeadline')
-          : t(`card.meta.${part.kind}`, { date: part.value })
-    )
-  );
+  // Each part is isolated (bdi) so an English organization or an ISO date keeps its
+  // own order inside an Arabic sentence instead of being reordered by the bidi
+  // algorithm (2026-01-15 must not become 15-01-2026).
+  const metaNodes = meta.map((part) => {
+    if (part.kind === 'organization') return <bdi key={part.kind}>{part.value}</bdi>;
+    if (part.kind === 'noDeadline') return <span key={part.kind}>{t('card.meta.noDeadline')}</span>;
+    const [before, after = ''] = t(`card.meta.${part.kind}`, { date: part.value }).split(
+      part.value
+    );
+    return (
+      <span key={part.kind}>
+        {before}
+        <bdi dir="ltr">{part.value}</bdi>
+        {after}
+      </span>
+    );
+  });
 
   return (
     <article
@@ -59,15 +67,20 @@ export function TrackingCard({
             className="text-lg font-bold break-words text-[rgba(30,27,51,0.7)]"
             data-testid="tracking-card-title"
           >
-            {title}
+            <bdi>{title}</bdi>
           </h2>
-          {metaLine ? (
+          {metaNodes.length > 0 ? (
             <p className="text-xs leading-5 break-words text-[#979797]" data-testid="tracking-meta">
-              {metaLine}
+              {metaNodes.map((node, index) => (
+                <span key={node.key}>
+                  {index > 0 ? ' — ' : null}
+                  {node}
+                </span>
+              ))}
             </p>
           ) : null}
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 sm:shrink-0 sm:flex-nowrap">
           <TrackingStatusSelect
             value={item.status}
             title={title}

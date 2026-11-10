@@ -2105,7 +2105,7 @@ test('hostile description HTML is excluded and the thin route delegates to the s
     'utf8'
   );
   assert.doesNotMatch(route, /use client|StudentShell|RoleGuard/);
-  assert.match(route, /<ScholarshipDetailsPage rawId=\{id\}/);
+  assert.match(route, /<ScholarshipDetailsPage\s+rawId=\{id\}/);
   const view = fs.readFileSync(
     path.join(featurePath, 'components/ScholarshipDetailsView.tsx'),
     'utf8'

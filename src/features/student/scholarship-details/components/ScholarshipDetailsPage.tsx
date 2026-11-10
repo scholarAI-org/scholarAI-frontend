@@ -7,16 +7,16 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
 import { currentUserQueryKey } from '@/features/auth/hooks/useCurrentUser';
 import { Link } from '@/i18n/navigation';
-import { toScholarshipDetails } from '@/features/student/scholarship-discovery/adapters/scholarship';
-import {
-  getDetailsViewState,
-  parseScholarshipId,
-} from '@/features/student/scholarship-discovery/lib/details-state';
 import {
   getDiscoveryReturnHref,
   getRememberedDiscoverySearch,
 } from '@/features/student/scholarship-discovery/lib/discovery-return';
+import { TrackScholarshipButton } from '@/features/student/application-tracking/components/TrackScholarshipButton';
 import { useScholarshipDetailsQuery } from '../hooks/useScholarshipDetailsQuery';
+import { toDetailsView } from '../lib/adapter';
+import { getDetailsViewState, parseRouteId } from '../lib/view-state';
+import { EligibilityIndicator } from './EligibilityIndicator';
+import { ReportProblemCard } from './ReportProblemCard';
 import { ScholarshipDetailsView } from './ScholarshipDetailsView';
 
 function DetailsMessage({
@@ -44,7 +44,7 @@ function DetailsMessage({
   );
 }
 
-// Same blocks as the loaded page: hero, then the apply card and the summary.
+// Same blocks as the loaded page: the header, then the side and main columns.
 function ScholarshipDetailsSkeleton({ label }: { label: string }) {
   const block = 'rounded-[18px] bg-[#e2e8f0] motion-safe:animate-pulse';
   return (
@@ -52,21 +52,38 @@ function ScholarshipDetailsSkeleton({ label }: { label: string }) {
       <p role="status" className="sr-only">
         {label}
       </p>
-      <div aria-hidden className={`${block} h-[190px] sm:h-[260px] lg:h-[234px]`} />
-      <div aria-hidden className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6">
-        <div className={`${block} h-[140px] lg:col-start-2 lg:row-start-1`} />
-        <div className={`${block} h-[280px] lg:col-start-1 lg:row-start-1`} />
+      <div aria-hidden className={`${block} h-[234px]`} />
+      <div
+        aria-hidden
+        className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(0,449px)] lg:gap-6"
+      >
+        <div className="flex flex-col gap-5 lg:col-start-2 lg:row-start-1">
+          <div className={`${block} h-[140px]`} />
+          <div className={`${block} h-[120px]`} />
+        </div>
+        <div className={`${block} h-[420px] lg:col-start-1 lg:row-start-1`} />
       </div>
     </div>
   );
 }
 
-export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
+export function ScholarshipDetailsPage({
+  rawId,
+  trackingEnabled = false,
+  reportEnabled = false,
+  eligibilityEnabled = false,
+}: {
+  rawId: string;
+  // Server-side feature flags, passed down by the route.
+  trackingEnabled?: boolean;
+  reportEnabled?: boolean;
+  eligibilityEnabled?: boolean;
+}) {
   const t = useTranslations('StudentScholarshipDetails');
   const tLayout = useTranslations('StudentLayout');
   const locale = useLocale();
   const queryClient = useQueryClient();
-  const id = parseScholarshipId(rawId);
+  const id = parseRouteId(rawId);
   const detail = useScholarshipDetailsQuery(id ?? 0);
   const state = getDetailsViewState({
     id,
@@ -76,7 +93,7 @@ export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
   });
   const readyData = state.kind === 'ready' ? state.data : null;
   const details = useMemo(
-    () => (readyData ? toScholarshipDetails(readyData, locale) : null),
+    () => (readyData ? toDetailsView(readyData, locale) : null),
     [readyData, locale]
   );
   // Read once: the discovery URL the student came from, if any (memory only).
@@ -98,19 +115,19 @@ export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
   }, [documentTitle]);
 
   let content: ReactNode = null;
-  if (state.kind === 'invalid') {
-    content = <DetailsMessage icon="missing" title={t('invalidId')} />;
+  if (state.kind === 'notFound') {
+    content = (
+      <DetailsMessage
+        icon="missing"
+        title={t('notFound.title')}
+        description={t('notFound.description')}
+      />
+    );
   } else if (state.kind === 'loading') {
     content = <ScholarshipDetailsSkeleton label={t('loading')} />;
   } else if (state.kind === 'error') {
     content =
-      state.reason === 'notFound' ? (
-        <DetailsMessage
-          icon="missing"
-          title={t('notFound.title')}
-          description={t('notFound.description')}
-        />
-      ) : state.reason === 'generic' ? (
+      state.reason === 'generic' ? (
         <DetailsMessage
           title={t('errors.generic')}
           action={
@@ -129,7 +146,26 @@ export function ScholarshipDetailsPage({ rawId }: { rawId: string }) {
         <DetailsMessage title={t(`errors.${state.reason}`)} />
       );
   } else if (details) {
-    content = <ScholarshipDetailsView details={details} />;
+    content = (
+      <ScholarshipDetailsView
+        details={details}
+        sideExtras={
+          <>
+            {eligibilityEnabled ? <EligibilityIndicator id={details.id} /> : null}
+            {reportEnabled ? <ReportProblemCard id={details.id} /> : null}
+          </>
+        }
+        trackingSlot={
+          trackingEnabled ? (
+            <TrackScholarshipButton
+              scholarshipId={details.id}
+              title={details.title}
+              variant="details"
+            />
+          ) : undefined
+        }
+      />
+    );
   }
 
   return (

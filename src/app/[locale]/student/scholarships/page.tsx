@@ -6,7 +6,10 @@ import { ScholarshipDiscoveryPage } from '@/features/student/scholarship-discove
 export default function StudentScholarshipsPage() {
   return (
     <Suspense>
-      <ScholarshipDiscoveryPage detailsEnabled={featureFlags.scholarshipDetailsEnabled} />
+      <ScholarshipDiscoveryPage
+        detailsEnabled={featureFlags.scholarshipDetailsEnabled}
+        trackingEnabled={featureFlags.trackingEnabled}
+      />
     </Suspense>
   );
 }

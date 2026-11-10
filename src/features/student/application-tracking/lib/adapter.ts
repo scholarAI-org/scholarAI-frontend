@@ -6,11 +6,13 @@ import type {
 import {
   noteResponseSchema,
   removeResponseSchema,
+  startResponseSchema,
   statusResponseSchema,
   trackedItemSchema,
 } from '../schemas/tracking';
 import type {
   RemoveTrackingResult,
+  StartTrackingResult,
   TrackedItem,
   TrackedList,
   TrackingNoteResult,
@@ -79,4 +81,9 @@ export function parseNoteResponse(raw: unknown): TrackingNoteResult {
 export function parseRemoveResponse(raw: unknown): RemoveTrackingResult {
   const data = parseOrThrow(removeResponseSchema, raw);
   return { scholarshipId: data.scholarship_id, isTracked: data.is_tracked, isSaved: data.is_saved };
+}
+
+export function parseStartResponse(raw: unknown): StartTrackingResult {
+  const data = parseOrThrow(startResponseSchema, raw);
+  return { status: data.status, updatedAt: data.updated_at };
 }

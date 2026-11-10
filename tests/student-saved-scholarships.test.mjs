@@ -572,16 +572,16 @@ test('T032 nav + flag: savedEnabled=false emits no saved item in nav sections', 
   assert.equal(discoverSection.items.some((item) => item.id === 'saved'), false);
 });
 
-test('T032 nav + flag: savedEnabled=true includes saved item under discover group', () => {
+test('T032 nav + flag: savedEnabled=true includes saved item under the manage group (Figma)', () => {
   const items = withSavedEnabled(studentNavigation, true);
   const visible = getVisibleStudentNavigation(items);
   assert.equal(visible.some((item) => item.id === 'saved'), true);
 
   const sections = getStudentNavigationSections(items);
-  const discoverSection = sections.find((sec) => sec.id === 'discover');
-  assert.ok(discoverSection, 'discover section should exist');
-  assert.equal(discoverSection.items.some((item) => item.id === 'saved'), true);
-  assert.equal(discoverSection.items.find((item) => item.id === 'saved').href, '/student/saved');
+  const manageSection = sections.find((sec) => sec.id === 'manage');
+  assert.ok(manageSection, 'manage section should exist');
+  assert.equal(manageSection.items.some((item) => item.id === 'saved'), true);
+  assert.equal(manageSection.items.find((item) => item.id === 'saved').href, '/student/saved');
 });
 
 test('T033 single-active-nav guarantee: exactly one item active per route', () => {
