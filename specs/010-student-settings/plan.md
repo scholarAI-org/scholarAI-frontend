@@ -43,7 +43,7 @@ src/app/[locale]/student/settings/page.tsx       # Server Component gate -> notF
 src/app/[locale]/student/layout.tsx              # + settingsEnabled -> StudentShell
 src/features/student/layout/StudentShell.tsx     # + settingsEnabled prop -> StudentHeader
 src/features/student/layout/StudentHeader.tsx    # + settingsEnabled prop -> StudentUserMenu
-src/features/student/layout/StudentUserMenu.tsx  # + Settings menuitem (flag on)
+src/features/student/layout/StudentUserMenu.tsx  # + Settings menuitem (flag on), + defaultOpen (lets a server render show the items)
 src/features/student/layout/types.ts             # + 'settings' in StudentPageKey
 src/features/student/layout/student-navigation.ts# + /student/settings -> 'settings' (page key only)
 src/features/student/settings/
@@ -53,6 +53,7 @@ src/features/student/settings/
 ├── components/PasswordField.tsx      # FormField + show/hide toggle
 ├── hooks/useChangePassword.ts        # useMutation
 ├── hooks/useSessionCheck.ts          # re-check GET /auth/me, expire -> login
+├── lib/session-check.ts              # pure: only a 401 means "expired"
 ├── lib/build-request.ts              # form values -> the exact body
 ├── lib/failure.ts                    # ApiError -> ChangePasswordFailure -> feedback
 ├── schemas/change-password.schema.ts # composes the shared password rules
@@ -74,8 +75,8 @@ package.json                                     # + test:student-settings
 3. **Shared rules**: the schema calls `createResetPasswordValueSchema` with an adapter for `t` that passes the minimum length as a number, so the "at least {count} characters" plural lives in the `Settings` namespace and the rules are not duplicated. A `min(1)` "required" check runs first (`pipe`) so an empty field says "required" rather than "too short".
 4. **Request shape**: one function, `buildChangePasswordRequest(values)`, builds the body from named fields, so an extra form field can never leak into the request. A test pins the exact key set.
 5. **Failure handling is pure**: `classifyChangePasswordError(error)` and `describeFailure(failure)` are plain functions with unit tests; the component maps the result onto React Hook Form (`setError`, `reset`).
-6. **Session re-check**: `useSessionCheck` refetches through `useCurrentUser().refetch`. On 401 it clears the query cache and replaces the route with `loginPathWithNext(...)` (same pair as `useLogout` and `RoleGuard`). `invalidateQueries` alone would not redirect because `AuthProvider` keeps the last good user while a refetch fails (A6).
-7. **Entry point**: a `role="menuitem"` link in `StudentUserMenu`, rendered only when the shell was given `settingsEnabled`. The flag crosses the server/client boundary as a prop, as `homeEnabled` does.
+6. **Session re-check**: `useSessionCheck` refetches through `useCurrentUser().refetch` and hands the result to the pure `confirmSession`. On 401 it clears the query cache and replaces the route with `loginPathWithNext(...)` (same pair as `useLogout` and `RoleGuard`). `invalidateQueries` alone would not redirect because `AuthProvider` keeps the last good user while a refetch fails (A6).
+7. **Entry point**: a `role="menuitem"` link in `StudentUserMenu`, rendered only when the shell was given `settingsEnabled`. The flag crosses the server/client boundary as a prop, as `homeEnabled` does. `StudentUserMenu` renders only below the `sm` breakpoint (A1).
 
 ## Risks
 
