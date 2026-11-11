@@ -12,6 +12,9 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     savedEnabled: featureFlags.savedScholarshipsEnabled,
     homeEnabled,
     trackingEnabled: featureFlags.trackingEnabled,
+    // Settings has no navigation item: the flag only decides whether the account menu
+    // links to it.
+    settingsEnabled: featureFlags.settingsEnabled,
     // The bell renders nothing unless a notifications source exists; the shell itself
     // stays generic and only receives it as a node.
     headerActions: homeEnabled ? (

@@ -58,5 +58,46 @@ for (const locale of LOCALES) {
         expect(requested).not.toContain('/profile');
       });
     }
+
+    // Settings is not a navigation item (it hangs off the account menu), so it is checked
+    // on its own rather than through FLAG_GATED.
+    test('/student/settings is not found and nothing is requested for it', async ({ page }) => {
+      const user = await startStudentSession(page);
+
+      await page.goto(`/${locale}/student/settings`);
+
+      await expect(page).toHaveURL(atPath(`/${locale}/student/settings`));
+      await expect(
+        page.getByRole('heading', { level: 1, name: t(locale, 'NotFound.title') })
+      ).toBeVisible();
+      await expect(page.getByRole('link', { name: t(locale, 'NotFound.home') })).toBeVisible();
+      // No form on the page.
+      await expect(
+        page.getByLabel(t(locale, 'Settings.changePassword.currentPassword'), { exact: true })
+      ).toHaveCount(0);
+
+      // Besides the test's own sign-in, the only request is the shell's session check; the
+      // gate ran before the page.
+      const requested = (await backendRequests(user.email)).map((request) => request.path);
+      expect(requested).not.toContain('/auth/change-password');
+      expect(requested.filter((path) => !['/auth/login', '/auth/me'].includes(path))).toEqual([]);
+    });
+
+    test('the account menu has no Settings item', async ({ page }) => {
+      await startStudentSession(page);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`/${locale}/student/profile`);
+
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.userMenu.label') }).click();
+
+      // The menu is open (Log out is in it) and Settings is not.
+      await expect(
+        page.getByRole('menuitem', { name: t(locale, 'StudentLayout.logout') })
+      ).toBeVisible();
+      await expect(
+        page.getByRole('menuitem', { name: t(locale, 'StudentLayout.userMenu.settings') })
+      ).toHaveCount(0);
+      await expect(page.locator('a[href$="/student/settings"]')).toHaveCount(0);
+    });
   });
 }

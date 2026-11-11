@@ -18,6 +18,8 @@ interface StudentShellProps {
   savedEnabled?: boolean;
   homeEnabled?: boolean;
   trackingEnabled?: boolean;
+  // Whether the account menu links to Settings. Not a navigation item.
+  settingsEnabled?: boolean;
   // Optional controls for the desktop header, supplied by the route layout so the shell
   // stays free of page-specific data.
   headerActions?: ReactNode;
@@ -29,6 +31,7 @@ export function StudentShell({
   savedEnabled = false,
   homeEnabled = false,
   trackingEnabled = false,
+  settingsEnabled = false,
   headerActions,
 }: StudentShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
@@ -47,6 +50,7 @@ export function StudentShell({
             isNavigationOpen={isNavigationOpen}
             onNavigationToggle={() => setIsNavigationOpen((open) => !open)}
             menuButtonRef={menuButtonRef}
+            settingsEnabled={settingsEnabled}
             headerActions={headerActions}
           />
           {/* Below sm the fixed tab bar covers the foot of the page, so the content

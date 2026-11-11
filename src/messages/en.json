@@ -1077,10 +1077,15 @@
       "tracking": {
         "title": "Application tracking",
         "description": "Track the status of each scholarship and keep your own notes."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Manage the security of your account."
       }
     },
     "userMenu": {
-      "label": "Account menu"
+      "label": "Account menu",
+      "settings": "Settings"
     }
   },
   "StudentScholarshipDiscovery": {
@@ -1442,6 +1447,39 @@
     },
     "bell": {
       "label": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
+    }
+  },
+  "Settings": {
+    "changePassword": {
+      "title": "Change password",
+      "description": "Choose a new password for your account. You will need your current password.",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "newPasswordHint": "{count, plural, one {Use at least {count, number, integer} character, including a digit and a special character.} other {Use at least {count, number, integer} characters, including a digit and a special character.}}",
+      "confirmPassword": "Confirm new password",
+      "signOutOtherDevices": "Sign out of other devices",
+      "signOutOtherDevicesHint": "Anyone signed in to your account on another device will be signed out.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "submit": "Change password",
+      "submitting": "Changing password…"
+    },
+    "validation": {
+      "currentRequired": "Enter your current password",
+      "newRequired": "Enter a new password",
+      "confirmRequired": "Confirm your new password",
+      "passwordMin": "{count, plural, one {Password must be at least {count, number, integer} character} other {Password must be at least {count, number, integer} characters}}",
+      "passwordDigit": "Password must contain at least one digit",
+      "passwordSpecial": "Password must contain at least one special character",
+      "passwordMismatch": "Passwords do not match",
+      "sameAsCurrent": "The new password must be different from your current password"
+    },
+    "feedback": {
+      "success": "Your password was changed.",
+      "rejected": "We couldn't change your password. Check your current password and choose a different new password.",
+      "invalid": "Your password was not accepted. Check it and try again.",
+      "sessionExpired": "Your session has ended. Please sign in again.",
+      "unavailable": "We couldn't change your password. Check your connection and try again."
     }
   },
   "StudentTracking": {

@@ -19,4 +19,11 @@ export interface StudentNavigationSection {
 }
 
 export type StudentPageKey =
-  'home' | 'profile' | 'scholarships' | 'scholarshipDetails' | 'saved' | 'tracking';
+  | 'home'
+  | 'profile'
+  | 'scholarships'
+  | 'scholarshipDetails'
+  | 'saved'
+  | 'tracking'
+  // A page with a header title but no navigation item: it is reached from the account menu.
+  | 'settings';

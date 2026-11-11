@@ -16,6 +16,8 @@ interface StudentHeaderProps {
   isNavigationOpen: boolean;
   onNavigationToggle: () => void;
   menuButtonRef: RefObject<HTMLButtonElement | null>;
+  // Whether the account menu offers a link to Settings.
+  settingsEnabled?: boolean;
   // Extra controls before the language button (desktop). Nothing renders when empty.
   headerActions?: ReactNode;
 }
@@ -24,6 +26,7 @@ export function StudentHeader({
   isNavigationOpen,
   onNavigationToggle,
   menuButtonRef,
+  settingsEnabled = false,
   headerActions,
 }: StudentHeaderProps) {
   const t = useTranslations('StudentLayout');
@@ -103,7 +106,7 @@ export function StudentHeader({
           >
             {initial}
           </span>
-          <StudentUserMenu className="sm:hidden" />
+          <StudentUserMenu className="sm:hidden" settingsEnabled={settingsEnabled} />
         </div>
       </div>
 

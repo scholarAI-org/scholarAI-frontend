@@ -13,6 +13,8 @@ export interface SeedOptions {
   /** Scholarship ids the user has saved. */
   saved?: number[];
   tracked?: { scholarship_id: number; status?: string; notes?: string | null }[];
+  /** The fake ends the signed-in session when the password changes (Settings re-checks it). */
+  revokeSessionOnPasswordChange?: boolean;
 }
 
 export interface SeededUser {
@@ -23,6 +25,8 @@ export interface SeededUser {
 
 export interface BackendState {
   verified: boolean;
+  /** Open sessions (signed-in browsers) for this user. */
+  sessionCount: number;
   personal: Record<string, string | null> | null;
   savedIds: number[];
   tracked: { id: number; scholarship_id: number; status: string; notes: string | null }[];

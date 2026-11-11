@@ -1070,10 +1070,15 @@
       "tracking": {
         "title": "متابعة التقديم",
         "description": "تابع حالة كل منحة وسجّل ملاحظاتك الخاصة"
+      },
+      "settings": {
+        "title": "الإعدادات",
+        "description": "أدِر أمان حسابك."
       }
     },
     "userMenu": {
-      "label": "قائمة الحساب"
+      "label": "قائمة الحساب",
+      "settings": "الإعدادات"
     }
   },
   "StudentScholarshipDiscovery": {
@@ -1435,6 +1440,39 @@
     },
     "bell": {
       "label": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءان} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعارًا غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
+    }
+  },
+  "Settings": {
+    "changePassword": {
+      "title": "تغيير كلمة المرور",
+      "description": "اختر كلمة مرور جديدة لحسابك. ستحتاج إلى كلمة المرور الحالية.",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "newPasswordHint": "{count, plural, =0 {أدخل كلمة مرور تحتوي على رقم ورمز خاص.} one {استخدم حرفًا واحدًا على الأقل، مع رقم ورمز خاص.} two {استخدم حرفين على الأقل، مع رقم ورمز خاص.} few {استخدم {count, number, integer} أحرف على الأقل، مع رقم ورمز خاص.} many {استخدم {count, number, integer} حرفًا على الأقل، مع رقم ورمز خاص.} other {استخدم {count, number, integer} حرف على الأقل، مع رقم ورمز خاص.}}",
+      "confirmPassword": "تأكيد كلمة المرور الجديدة",
+      "signOutOtherDevices": "تسجيل الخروج من الأجهزة الأخرى",
+      "signOutOtherDevicesHint": "سيتم تسجيل خروج أي شخص يستخدم حسابك على جهاز آخر.",
+      "showPassword": "إظهار كلمة المرور",
+      "hidePassword": "إخفاء كلمة المرور",
+      "submit": "تغيير كلمة المرور",
+      "submitting": "جارٍ تغيير كلمة المرور…"
+    },
+    "validation": {
+      "currentRequired": "أدخل كلمة المرور الحالية",
+      "newRequired": "أدخل كلمة المرور الجديدة",
+      "confirmRequired": "أكّد كلمة المرور الجديدة",
+      "passwordMin": "{count, plural, =0 {يجب ألا تكون كلمة المرور فارغة} one {يجب ألا تقل كلمة المرور عن حرف واحد} two {يجب ألا تقل كلمة المرور عن حرفين} few {يجب ألا تقل كلمة المرور عن {count, number, integer} أحرف} many {يجب ألا تقل كلمة المرور عن {count, number, integer} حرفًا} other {يجب ألا تقل كلمة المرور عن {count, number, integer} حرف}}",
+      "passwordDigit": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
+      "passwordSpecial": "يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين",
+      "sameAsCurrent": "يجب أن تختلف كلمة المرور الجديدة عن كلمة المرور الحالية"
+    },
+    "feedback": {
+      "success": "تم تغيير كلمة المرور.",
+      "rejected": "تعذر تغيير كلمة المرور. تحقق من كلمة المرور الحالية واختر كلمة مرور جديدة مختلفة.",
+      "invalid": "لم تُقبل كلمة المرور. راجعها وحاول مرة أخرى.",
+      "sessionExpired": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+      "unavailable": "تعذر تغيير كلمة المرور. تحقق من اتصالك وحاول مرة أخرى."
     }
   },
   "StudentTracking": {
