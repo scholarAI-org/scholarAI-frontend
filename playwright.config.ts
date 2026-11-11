@@ -15,6 +15,7 @@ const appEnv = (flags: boolean) => ({
   SAVED_SCHOLARSHIPS_ENABLED: flags ? 'true' : '',
   TRACKING_ENABLED: flags ? 'true' : '',
   STUDENT_HOME_ENABLED: flags ? 'true' : '',
+  SETTINGS_ENABLED: flags ? 'true' : '',
   SCHOLARSHIP_DETAILS_ENABLED: '',
   HOME_MOCK_SECTIONS: '',
 });

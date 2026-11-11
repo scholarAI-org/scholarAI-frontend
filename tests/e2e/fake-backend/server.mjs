@@ -303,6 +303,76 @@ function normalizePersonal(body) {
   };
 }
 
+// ---------------------------------------------------------------- change password
+
+// Same rule as the real backend and as POST /auth/register's schema describes it: at least
+// 8 characters, one digit, one of !@#$%^&*(),.?":{}|<>.
+const PASSWORD_RULES = [
+  [(value) => value.length >= 8, 'Password must be at least 8 characters'],
+  [(value) => /\d/.test(value), 'Password must contain at least one digit'],
+  [
+    (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
+    'Password must contain at least one special character',
+  ],
+];
+const CHANGE_PASSWORD_KEYS = new Set([
+  'current_password',
+  'old_password', // alias of current_password
+  'new_password',
+  'invalidate_other_sessions',
+  'revoke_other_sessions', // alias of invalidate_other_sessions
+]);
+
+// POST /auth/change-password (authenticated). 200 {message}; 400 for a wrong current password
+// or an unchanged one; 422 for a body that fails validation. The session check happens in route().
+function changePassword(req, res, user) {
+  const body = readBody(req);
+  if (
+    !body.ok ||
+    typeof body.value !== 'object' ||
+    body.value === null ||
+    Array.isArray(body.value)
+  ) {
+    return invalid(res, 'body', 'Invalid JSON');
+  }
+  const value = body.value;
+
+  const extra = Object.keys(value).find((key) => !CHANGE_PASSWORD_KEYS.has(key));
+  if (extra) return invalid(res, extra, 'Extra inputs are not permitted');
+
+  const current = value.current_password ?? value.old_password;
+  if (typeof current !== 'string' || !current)
+    return invalid(res, 'current_password', 'Field required');
+  if (typeof value.new_password !== 'string') return invalid(res, 'new_password', 'Field required');
+  for (const key of ['invalidate_other_sessions', 'revoke_other_sessions']) {
+    if (key in value && typeof value[key] !== 'boolean') {
+      return invalid(res, key, 'Input should be a valid boolean');
+    }
+  }
+  const broken = PASSWORD_RULES.find(([passes]) => !passes(value.new_password));
+  if (broken) return invalid(res, 'new_password', broken[1]);
+
+  if (current !== user.password) return send(res, 400, { detail: 'Current password is incorrect' });
+  if (value.new_password === current) {
+    return send(res, 400, { detail: 'New password must be different from the current password' });
+  }
+
+  user.password = value.new_password;
+
+  const currentToken = sessionToken(req);
+  const signOutOthers =
+    value.invalidate_other_sessions === true || value.revoke_other_sessions === true;
+  for (const [token, email] of sessions) {
+    if (email !== user.email) continue;
+    // Test lever (seed option revokeSessionOnPasswordChange): the backend also ends the
+    // session that made the change, so the app has to notice on its next /auth/me.
+    if (token === currentToken ? user.revokeSessionOnPasswordChange : signOutOthers) {
+      sessions.delete(token);
+    }
+  }
+  return send(res, 200, { message: 'Password changed successfully' });
+}
+
 // ---------------------------------------------------------------- routes
 
 async function route(req, res, url, user) {
@@ -377,6 +447,10 @@ async function route(req, res, url, user) {
 
   if (pathname === '/auth/me' && method === 'GET') {
     return send(res, 200, { id: user.id, email: user.email, name: user.name, role: user.role });
+  }
+
+  if (pathname === '/auth/change-password' && method === 'POST') {
+    return changePassword(req, res, user);
   }
 
   // ----- profile -----
@@ -497,7 +571,7 @@ async function control(req, res, url, method) {
   const { pathname, searchParams } = url;
 
   // Seed one verified user. Body: { email, name?, password?, personal?, completion?, saved?: number[],
-  // tracked?: [{ scholarship_id, status?, notes? }] }
+  // tracked?: [{ scholarship_id, status?, notes? }], revokeSessionOnPasswordChange?: boolean }
   if (pathname === '/__e2e/users' && method === 'POST') {
     const body = readBody(req).value ?? {};
     const email = String(body.email ?? `user-${randomBytes(4).toString('hex')}@e2e.test`);
@@ -510,6 +584,7 @@ async function control(req, res, url, method) {
     });
     user.personal = body.personal ? normalizePersonal(body.personal) : null;
     user.completion = body.completion ?? 0;
+    user.revokeSessionOnPasswordChange = body.revokeSessionOnPasswordChange === true;
     for (const id of body.saved ?? []) {
       user.saved.push({ id: nextTrackingId++, scholarship_id: id, created_at: now() });
     }
@@ -523,6 +598,7 @@ async function control(req, res, url, method) {
     if (!target) return notFound(res, 'No such user');
     return send(res, 200, {
       verified: target.verified,
+      sessionCount: [...sessions.values()].filter((email) => email === target.email).length,
       personal: target.personal,
       savedIds: target.saved.map((s) => s.scholarship_id),
       tracked: target.tracked.map((r) => ({
