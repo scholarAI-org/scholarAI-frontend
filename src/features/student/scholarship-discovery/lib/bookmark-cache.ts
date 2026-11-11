@@ -51,7 +51,8 @@ export function applyOptimisticBookmark(
 ): BookmarkSnapshot {
   const entries: [QueryKey, unknown][] = [
     ...client.getQueriesData({ queryKey: studentScholarshipKeys.discoveries() }),
-    [studentScholarshipKeys.detail(id), client.getQueryData(studentScholarshipKeys.detail(id))],
+    // Prefix match: the original detail(id) and every detailView(id, lang) under it.
+    ...client.getQueriesData({ queryKey: studentScholarshipKeys.detail(id) }),
   ];
   const snapshot: BookmarkSnapshot = [];
   for (const [queryKey, data] of entries) {

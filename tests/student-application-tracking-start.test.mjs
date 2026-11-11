@@ -589,6 +589,8 @@ test('flag off: the details page renders no tracking control; with it on, one', 
           error: null,
           refetch: () => Promise.resolve(),
         }),
+        // Flag off: the page reads the original endpoint only.
+        useScholarshipDetailViewQuery: () => ({ isFetching: false, data: undefined, error: null }),
       },
     },
     'features/student/scholarship-details/components/ScholarshipDetailsPage.tsx',

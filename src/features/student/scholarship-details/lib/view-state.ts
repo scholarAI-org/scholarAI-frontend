@@ -1,5 +1,4 @@
 import { ApiError } from '@/lib/api-client';
-import type { ScholarshipDetailsData } from '../types';
 
 // Route IDs must be canonical positive integers: "7", not "07", "7.0", "-7",
 // "0" or "abc". Anything else is the same not-found state and never reaches
@@ -12,11 +11,14 @@ export function parseRouteId(raw: unknown): number | null {
 
 export type DetailsErrorReason = 'unauthorized' | 'forbidden' | 'generic';
 
-export type DetailsViewState =
+// Works for either details endpoint: both answer with a numeric id.
+type WithId = { id: number };
+
+export type DetailsViewState<T extends WithId = WithId> =
   | { kind: 'notFound' }
   | { kind: 'loading' }
   | { kind: 'error'; reason: DetailsErrorReason }
-  | { kind: 'ready'; data: ScholarshipDetailsData };
+  | { kind: 'ready'; data: T };
 
 function errorReason(error: unknown): DetailsErrorReason {
   if (error instanceof ApiError) {
@@ -26,9 +28,9 @@ function errorReason(error: unknown): DetailsErrorReason {
   return 'generic';
 }
 
-interface DetailsStateInput {
+interface DetailsStateInput<T extends WithId> {
   id: number | null;
-  data: ScholarshipDetailsData | undefined;
+  data: T | undefined;
   error: unknown;
   isFetching: boolean;
 }
@@ -38,12 +40,12 @@ interface DetailsStateInput {
 // leaves the browser: all three are one not-found state. Cached data stays
 // visible while a background refetch fails, but revoked access and removed
 // records replace it.
-export function getDetailsViewState({
+export function getDetailsViewState<T extends WithId>({
   id,
   data,
   error,
   isFetching,
-}: DetailsStateInput): DetailsViewState {
+}: DetailsStateInput<T>): DetailsViewState<T> {
   if (id === null) return { kind: 'notFound' };
   if (!isFetching && error instanceof ApiError) {
     if (error.status === 404) return { kind: 'notFound' };

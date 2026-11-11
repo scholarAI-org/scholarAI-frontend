@@ -13,6 +13,13 @@ export const featureFlags = Object.freeze({
   get scholarshipDetailsEnabled(): boolean {
     return process.env.SCHOLARSHIP_DETAILS_ENABLED === 'true';
   },
+  // Student Scholarship Details page reads GET /api/scholarships/{id}/details?lang=
+  // (grouped, language-resolved view) instead of GET /api/scholarships/{id}.
+  // Needs SCHOLARSHIP_DETAILS_ENABLED. Default: false. The literal string "true"
+  // is the only enabling value; turn it on once the backend endpoint is deployed.
+  get scholarshipDetailViewEnabled(): boolean {
+    return process.env.SCHOLARSHIP_DETAIL_VIEW_ENABLED === 'true';
+  },
   // FE-12: "Report a problem" card and dialog on the Student Scholarship Details
   // page (POST /api/scholarships/{id}/reports). Default: false. The literal
   // string "true" is the only enabling value.

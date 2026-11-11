@@ -17,6 +17,8 @@ export interface VisibleSections {
 export type EligibilityFact =
   | { field: 'studyLevels'; kind: 'levels'; levels: string[] }
   | { field: 'majors'; kind: 'chips'; items: string[] }
+  // The backend states the scholarship is open to every field (never inferred).
+  | { field: 'majors'; kind: 'allFields' }
   | {
       field:
         | 'eligibleNationalities'
@@ -31,7 +33,8 @@ export type EligibilityFact =
 export type DateFact =
   | { field: 'openingDate'; value: string }
   | { field: 'deadline' }
-  | { field: 'publishedAt'; value: Date };
+  | { field: 'publishedAt'; value: Date }
+  | { field: 'lastUpdatedAt'; value: Date };
 
 export interface SourceItems {
   source?: { text: string; href: string | null };
@@ -46,6 +49,8 @@ export function getEligibilityFacts(details: Details): EligibilityFact[] {
   }
   if (details.majors.length > 0) {
     facts.push({ field: 'majors', kind: 'chips', items: details.majors });
+  } else if (details.fieldsOfStudyScope === 'all') {
+    facts.push({ field: 'majors', kind: 'allFields' });
   }
   const text = (
     field: Extract<EligibilityFact, { kind: 'text' }>['field'],
@@ -67,10 +72,14 @@ export function getDateFacts(details: Details): DateFact[] {
     facts.push({ field: 'openingDate', value: details.openingDate as string });
   }
   facts.push({ field: 'deadline' });
-  const published = details.publishedAt ? new Date(details.publishedAt) : null;
-  if (published && !Number.isNaN(published.getTime())) {
-    facts.push({ field: 'publishedAt', value: published });
-  }
+  const instant = (value: string | undefined) => {
+    const date = value ? new Date(value) : null;
+    return date && !Number.isNaN(date.getTime()) ? date : null;
+  };
+  const published = instant(details.publishedAt);
+  if (published) facts.push({ field: 'publishedAt', value: published });
+  const updated = instant(details.lastUpdatedAt);
+  if (updated) facts.push({ field: 'lastUpdatedAt', value: updated });
   return facts;
 }
 
@@ -85,12 +94,19 @@ export function getVisibleSections(details: Details): VisibleSections {
   const source = getSourceItems(details);
   return {
     about: Boolean(
+      details.description ||
       details.organizationName ||
       details.universityName ||
       details.country ||
       details.opportunityType
     ),
-    funding: Boolean(details.fundingType || details.fundingAmount),
+    funding: Boolean(
+      details.fundingType ||
+      details.fundingAmount ||
+      details.fundingSummary ||
+      details.fundingDuration ||
+      details.benefits.length > 0
+    ),
     eligibility: getEligibilityFacts(details).length > 0 || details.eligibilityCriteria.length > 0,
     documents: details.requiredDocuments.length > 0,
     dates: true,

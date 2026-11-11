@@ -1,0 +1,132 @@
+{
+  "id": 12,
+  "slug": "future-graduate-scholarship-2027",
+  "lang": "en",
+  "title": "Future Graduate Scholarship",
+  "image_url": "https://example.org/images/future-graduate.jpg",
+  "is_saved": true,
+  "last_updated_at": "2026-11-07T09:30:00Z",
+  "provider": {
+    "name": "Future Scholarships Foundation",
+    "university": "Example Technical University"
+  },
+  "deadline": {
+    "date": "2026-12-15",
+    "no_deadline": false,
+    "days_left": 35,
+    "status": "open",
+    "opening_date": "2026-09-01"
+  },
+  "overview": {
+    "description": "Future Scholarships Foundation offers full graduate scholarships in engineering and computer science.\n\nThe award covers tuition, housing and a monthly stipend for the whole programme.",
+    "opportunity_type": "scholarship",
+    "countries": [
+      {
+        "code": "TR",
+        "name": "Türkiye"
+      }
+    ],
+    "study_levels": ["master", "phd"],
+    "fields_of_study": [
+      {
+        "code": "ENG",
+        "name": "Engineering"
+      },
+      {
+        "code": "CS",
+        "name": "Computer Science"
+      }
+    ],
+    "fields_of_study_scope": "specific",
+    "academic_year": "2027/2028",
+    "audience": "palestinian",
+    "palestinians_eligible": true
+  },
+  "funding": {
+    "type": "full",
+    "summary": "Full tuition coverage with a monthly stipend, housing and a flight ticket.",
+    "duration_months": {
+      "min": 24,
+      "max": 36
+    },
+    "benefits": [
+      "Full tuition fees",
+      "Monthly stipend",
+      "University housing",
+      "Return flight ticket"
+    ]
+  },
+  "eligibility": {
+    "criteria": ["حاصل على شهادة البكالوريوس", "ألا يكون قد حصل على منحة دراسية أخرى"],
+    "summary": {
+      "nationalities": "حاملو الجنسية الفلسطينية",
+      "gpa": "70% فما فوق",
+      "age": "35 سنة كحد أقصى",
+      "languages": "TOEFL 80 أو IELTS 6.5"
+    },
+    "structured": {
+      "allowed_nationalities": ["PS"],
+      "allowed_gender": "any",
+      "target_residencies": ["Gaza", "West Bank"],
+      "min_gpa_percentage": 70.0,
+      "max_age": 35,
+      "required_languages": ["English"],
+      "requires_experience": false,
+      "requires_soft_skills": null
+    }
+  },
+  "application": {
+    "link": "https://example.org/apply/future-graduate-2027",
+    "email": "apply@example.org",
+    "phone": "+90 212 000 0000",
+    "pdf_url": "https://example.org/files/future-graduate-guide.pdf",
+    "attachments": ["https://example.org/files/faq.pdf"],
+    "documents": [
+      {
+        "name": "Passport",
+        "type": "passport",
+        "mandatory": true
+      },
+      {
+        "name": "Academic transcript",
+        "type": "transcript",
+        "mandatory": true
+      },
+      {
+        "name": "CV",
+        "type": "cv",
+        "mandatory": true
+      },
+      {
+        "name": "Motivation letter",
+        "type": "motivation_letter",
+        "mandatory": true
+      },
+      {
+        "name": "Language certificate",
+        "type": "language_certificate",
+        "mandatory": true
+      },
+      {
+        "name": "Two recommendation letters",
+        "type": "recommendation_letter",
+        "mandatory": false
+      },
+      {
+        "name": "شهادات الخبرة (إن وجدت)",
+        "type": "other",
+        "mandatory": false
+      }
+    ]
+  },
+  "source": {
+    "name": "for9a",
+    "url": "https://example.org/scholarships/future-graduate-2027",
+    "ingestion_type": "scraped",
+    "published_at": "2026-10-21T09:30:00Z"
+  },
+  "tracking": {
+    "status": "ready_to_apply",
+    "updated_at": "2026-11-10T13:12:50Z"
+  }
+}

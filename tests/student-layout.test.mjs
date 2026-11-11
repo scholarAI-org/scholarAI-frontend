@@ -81,6 +81,8 @@ test('every student message is non-empty, valid ICU and formats in its locale', 
     score: 87,
     requested: 9,
     name: 'Lina',
+    min: 12,
+    max: 36,
   };
   for (const locale of ['ar', 'en']) {
     for (const namespace of namespaces) {

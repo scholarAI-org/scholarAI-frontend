@@ -1,0 +1,79 @@
+{
+  "id": 12,
+  "slug": "future-graduate-scholarship-2027",
+  "lang": "ar",
+  "title": "منحة المستقبل للدراسات العليا",
+  "image_url": "https://example.org/images/future-graduate.jpg",
+  "is_saved": true,
+  "last_updated_at": "2026-11-07T09:30:00Z",
+  "provider": { "name": "مؤسسة المستقبل للمنح", "university": "Example Technical University" },
+  "deadline": {
+    "date": "2026-12-15",
+    "no_deadline": false,
+    "days_left": 35,
+    "status": "open",
+    "opening_date": "2026-09-01"
+  },
+  "overview": {
+    "description": "تقدّم مؤسسة المستقبل للمنح منحة كاملة للدراسات العليا في الهندسة وعلوم الحاسوب.\n\nتشمل المنحة الرسوم الدراسية والسكن وراتباً شهرياً طوال مدة البرنامج.",
+    "opportunity_type": "scholarship",
+    "countries": [{ "code": "TR", "name": "تركيا" }],
+    "study_levels": ["master", "phd"],
+    "fields_of_study": [
+      { "code": "ENG", "name": "الهندسة" },
+      { "code": "CS", "name": "علوم الحاسوب" }
+    ],
+    "fields_of_study_scope": "specific",
+    "academic_year": "2027/2028",
+    "audience": "palestinian",
+    "palestinians_eligible": true
+  },
+  "funding": {
+    "type": "full",
+    "summary": "تغطية كاملة للرسوم الدراسية مع راتب شهري وسكن وتذكرة سفر.",
+    "duration_months": { "min": 24, "max": 36 },
+    "benefits": ["رسوم دراسية كاملة", "راتب شهري", "سكن جامعي", "تذكرة سفر ذهاب وإياب"]
+  },
+  "eligibility": {
+    "criteria": ["حاصل على شهادة البكالوريوس", "ألا يكون قد حصل على منحة دراسية أخرى"],
+    "summary": {
+      "nationalities": "حاملو الجنسية الفلسطينية",
+      "gpa": "70% فما فوق",
+      "age": "35 سنة كحد أقصى",
+      "languages": "TOEFL 80 أو IELTS 6.5"
+    },
+    "structured": {
+      "allowed_nationalities": ["PS"],
+      "allowed_gender": "any",
+      "target_residencies": ["Gaza", "West Bank"],
+      "min_gpa_percentage": 70.0,
+      "max_age": 35,
+      "required_languages": ["English"],
+      "requires_experience": false,
+      "requires_soft_skills": null
+    }
+  },
+  "application": {
+    "link": "https://example.org/apply/future-graduate-2027",
+    "email": "apply@example.org",
+    "phone": "+90 212 000 0000",
+    "pdf_url": "https://example.org/files/future-graduate-guide.pdf",
+    "attachments": ["https://example.org/files/faq.pdf"],
+    "documents": [
+      { "name": "جواز السفر", "type": "passport", "mandatory": true },
+      { "name": "كشف العلامات", "type": "transcript", "mandatory": true },
+      { "name": "السيرة الذاتية", "type": "cv", "mandatory": true },
+      { "name": "رسالة الدافع", "type": "motivation_letter", "mandatory": true },
+      { "name": "شهادة اللغة", "type": "language_certificate", "mandatory": true },
+      { "name": "رسالتا توصية", "type": "recommendation_letter", "mandatory": false },
+      { "name": "شهادات الخبرة (إن وجدت)", "type": "other", "mandatory": false }
+    ]
+  },
+  "source": {
+    "name": "for9a",
+    "url": "https://example.org/scholarships/future-graduate-2027",
+    "ingestion_type": "scraped",
+    "published_at": "2026-10-21T09:30:00Z"
+  },
+  "tracking": { "status": "ready_to_apply", "updated_at": "2026-11-10T13:12:50Z" }
+}

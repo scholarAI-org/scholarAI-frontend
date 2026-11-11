@@ -1,0 +1,90 @@
+{
+  "id": 13,
+  "slug": null,
+  "lang": "ar",
+  "title": "منحة دراسية في ألمانيا (إعلان)",
+  "image_url": null,
+  "is_saved": false,
+  "last_updated_at": null,
+  "provider": {
+    "name": "جهة مانحة (إعلان تلغرام)",
+    "university": null
+  },
+  "deadline": {
+    "date": null,
+    "no_deadline": true,
+    "days_left": null,
+    "status": "unknown",
+    "opening_date": null
+  },
+  "overview": {
+    "description": "تفاصيل المنحة\n\nالتخصصات: الهندسة للدراسة في ألمانيا\nالموعد: نهاية الشهر القادم\n\nللتواصل راسلونا.",
+    "opportunity_type": null,
+    "countries": [
+      {
+        "code": null,
+        "name": "ألمانيا"
+      }
+    ],
+    "study_levels": [],
+    "fields_of_study": [
+      {
+        "code": null,
+        "name": "الهندسة والطب"
+      }
+    ],
+    "fields_of_study_scope": null,
+    "academic_year": null,
+    "audience": null,
+    "palestinians_eligible": null
+  },
+  "funding": {
+    "type": null,
+    "summary": null,
+    "duration_months": null,
+    "benefits": []
+  },
+  "eligibility": {
+    "criteria": ["شروط التقديم موضحة في الإعلان"],
+    "summary": {
+      "nationalities": null,
+      "gpa": null,
+      "age": null,
+      "languages": null
+    },
+    "structured": {
+      "allowed_nationalities": null,
+      "allowed_gender": null,
+      "target_residencies": null,
+      "min_gpa_percentage": null,
+      "max_age": null,
+      "required_languages": null,
+      "requires_experience": null,
+      "requires_soft_skills": null
+    }
+  },
+  "application": {
+    "link": null,
+    "email": null,
+    "phone": null,
+    "pdf_url": null,
+    "attachments": [],
+    "documents": [
+      {
+        "name": "جواز السفر",
+        "type": null,
+        "mandatory": null
+      }
+    ]
+  },
+  "source": {
+    "name": "telegram",
+    "url": null,
+    "ingestion_type": "scraped",
+    "published_at": "2026-10-30T08:00:00Z"
+  },
+  "tracking": {
+    "status": null,
+    "updated_at": null
+  }
+}

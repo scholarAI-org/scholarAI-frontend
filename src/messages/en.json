@@ -1261,7 +1261,13 @@
       "academicYear": "Academic year",
       "applicationStatus": "Application status",
       "pdf": "Official PDF",
-      "attachments": "Attachments"
+      "attachments": "Attachments",
+      "description": "Description",
+      "fundingSummary": "Coverage",
+      "fundingDuration": "Funding duration",
+      "benefits": "What the scholarship covers",
+      "lastUpdatedAt": "Last updated",
+      "allFieldsOfStudy": "All fields of study"
     },
     "applyNow": "Apply now",
     "opensInNewTab": "(opens in a new tab)",
@@ -1277,6 +1283,14 @@
       "open": "Open",
       "upcoming": "Opens soon",
       "closed": "Closed"
+    },
+    "duration": {
+      "range": "{min, number, integer}–{max, number, integer} months",
+      "single": "{count, plural, one {{count, number, integer} month} other {{count, number, integer} months}}"
+    },
+    "document": {
+      "mandatory": "Required",
+      "optional": "Optional"
     }
   },
   "StudentScholarshipReport": {

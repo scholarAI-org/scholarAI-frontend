@@ -61,7 +61,7 @@ test('a full live payload maps to the view model', () => {
   assert.equal(view.ageRequirement, 'Under 30');
   assert.equal(view.eligibleNationalities, 'All nationalities');
   assert.equal(view.academicYear, '2026/2027');
-  assert.deepEqual(view.requiredDocuments, ['Transcript', 'Passport']);
+  assert.deepEqual(view.requiredDocuments, [{ name: 'Transcript' }, { name: 'Passport' }]);
   assert.equal(view.apply.link, 'https://apply.example.org/');
   assert.equal(view.isSaved, true);
 });
@@ -136,7 +136,7 @@ test('wrongly typed optional fields are dropped, never thrown on', () => {
   assert.equal(view.noDeadline, false);
   assert.deepEqual(view.studyLevels, ['master']);
   assert.deepEqual(view.majors, ['Law']);
-  assert.deepEqual(view.requiredDocuments, ['CV', 'Passport']);
+  assert.deepEqual(view.requiredDocuments, [{ name: 'CV' }, { name: 'Passport' }]);
   assert.deepEqual(view.attachments, []);
   assert.equal(view.applicationStatus, 'unknown');
   assert.equal(view.opportunityType, undefined);
