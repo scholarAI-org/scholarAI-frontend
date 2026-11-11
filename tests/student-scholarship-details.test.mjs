@@ -215,6 +215,8 @@ test('ScholarshipDetailsPage handles 401, 403, 404, and 5xx error states', () =>
         ...injected,
         refetch: () => Promise.resolve(injected),
       }),
+      // Flag off: the page reads the original endpoint only.
+      useScholarshipDetailViewQuery: () => ({ isFetching: false, data: undefined, error: null }),
     },
   };
 

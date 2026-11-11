@@ -76,7 +76,8 @@ export function toDetailsView(
     ageRequirement: data.age_requirement,
     majors: data.majors ?? [],
     eligibilityCriteria: data.eligibility_criteria ?? [],
-    requiredDocuments: data.required_documents ?? [],
+    requiredDocuments: (data.required_documents ?? []).map((name) => ({ name })),
+    benefits: [],
     apply: {
       ...(link('link') ? { link: link('link')!.href } : {}),
       ...(link('email') ? { email: link('email')!.href } : {}),

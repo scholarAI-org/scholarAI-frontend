@@ -6,6 +6,10 @@ export const studentScholarshipKeys = {
   discovery: (query: DiscoveryQuery) => [...studentScholarshipKeys.discoveries(), query] as const,
   details: () => [...studentScholarshipKeys.all, 'details'] as const,
   detail: (id: number) => [...studentScholarshipKeys.details(), id] as const,
+  // The language-resolved details view; under detail(id), so a prefix match on
+  // detail(id) (bookmark updates, invalidation) reaches it too.
+  detailView: (id: number, lang: string) =>
+    [...studentScholarshipKeys.detail(id), 'view', lang] as const,
   savedLists: () => [...studentScholarshipKeys.all, 'saved'] as const,
   // GET /api/scholarships/saved is unpaged.
   saved: () => [...studentScholarshipKeys.savedLists(), 'list'] as const,
