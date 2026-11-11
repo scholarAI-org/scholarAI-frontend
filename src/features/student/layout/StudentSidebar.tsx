@@ -1,6 +1,6 @@
 'use client';
 
-import { GraduationCap, LogOut } from 'lucide-react';
+import { GraduationCap, LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { useId } from 'react';
 import { useTranslations } from 'next-intl';
@@ -27,12 +27,19 @@ interface StudentSidebarProps {
   variant?: keyof typeof variantClasses;
   onNavigate?: () => void;
   items?: readonly StudentNavigationItem[];
+  // Shows the "Settings" link above "Log out". It is not a navigation item: it never
+  // appears in the list above or in the tab bar. Off unless the server-only settings flag is on.
+  settingsEnabled?: boolean;
 }
+
+// Where Settings lives; matched by prefix so a sub-route keeps the link active.
+const SETTINGS_HREF = '/student/settings';
 
 export function StudentSidebar({
   variant = 'desktop',
   onNavigate,
   items = studentNavigation,
+  settingsEnabled = false,
 }: StudentSidebarProps) {
   const t = useTranslations('StudentLayout');
   const pathname = usePathname();
@@ -40,6 +47,7 @@ export function StudentSidebar({
   const { user } = useAuth();
   const { mutate: logout, isPending } = useLogout();
   const name = getStudentDisplayName(user, t('identity.fallbackName'));
+  const settingsActive = pathname === SETTINGS_HREF || pathname.startsWith(`${SETTINGS_HREF}/`);
 
   return (
     <div className={variantClasses[variant]}>
@@ -114,7 +122,25 @@ export function StudentSidebar({
         </div>
       </div>
 
-      <div className="shrink-0 border-t border-[#f1f5f9] px-3 pt-3 pb-4">
+      <div className="flex shrink-0 flex-col gap-1 border-t border-[#f1f5f9] px-3 pt-3 pb-4">
+        {settingsEnabled && (
+          // The logout row's look. The transparent start border (and ps-2) keeps the icon and
+          // label where the logout row puts them while the active state shows the orange bar.
+          <Link
+            href={SETTINGS_HREF}
+            onClick={onNavigate}
+            aria-current={settingsActive ? 'page' : undefined}
+            className={[
+              'flex w-full items-center justify-start gap-2 rounded-full border-s-4 py-2.5 ps-2 pe-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500',
+              settingsActive
+                ? 'border-orange-500 bg-[#f8fafc] font-bold text-orange-500'
+                : 'border-transparent text-text-label hover:bg-[#f8fafc]',
+            ].join(' ')}
+          >
+            <Settings aria-hidden className="size-5 shrink-0" />
+            <span>{t('settings')}</span>
+          </Link>
+        )}
         <button
           type="button"
           onClick={() => logout()}
