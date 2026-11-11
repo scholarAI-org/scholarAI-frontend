@@ -35,4 +35,10 @@ export const featureFlags = Object.freeze({
   get trackingEnabled(): boolean {
     return process.env.TRACKING_ENABLED === 'true';
   },
+  // Feature 010: Student Settings page (/student/settings, change password) and its
+  // entry in the account menu. Default: false. The literal string "true" is the only
+  // enabling value.
+  get settingsEnabled(): boolean {
+    return process.env.SETTINGS_ENABLED === 'true';
+  },
 });
