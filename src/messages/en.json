@@ -1030,6 +1030,7 @@
     },
     "logout": "Log out",
     "logoutPending": "Logging out…",
+    "settings": "Settings",
     "identity": {
       "fallbackName": "Student",
       "role": "Student"

@@ -60,7 +60,7 @@ export function StudentShell({
           </main>
         </div>
         <aside className="hidden lg:sticky lg:top-0 lg:order-1 lg:row-span-2 lg:block lg:h-screen lg:self-start">
-          <StudentSidebar items={items} />
+          <StudentSidebar items={items} settingsEnabled={settingsEnabled} />
         </aside>
       </div>
       <StudentMobileNavigation
@@ -68,6 +68,7 @@ export function StudentShell({
         onClose={closeNavigation}
         returnFocusRef={menuButtonRef}
         items={items}
+        settingsEnabled={settingsEnabled}
       />
       <StudentTabBar items={items} />
     </div>

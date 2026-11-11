@@ -1023,6 +1023,7 @@
     },
     "logout": "تسجيل الخروج",
     "logoutPending": "جارٍ تسجيل الخروج…",
+    "settings": "الإعدادات",
     "identity": {
       "fallbackName": "طالب",
       "role": "طالب"
