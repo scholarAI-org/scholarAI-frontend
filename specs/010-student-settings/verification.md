@@ -10,13 +10,13 @@
 | Gate 2: live verification | Staging backend, Preview deploy | `POST /auth/change-password` exercised with a real session: success, wrong current password (400 message), same password (400), 401, 422 shape, and the Google-only answer | **Pending** |
 | Launch                    | Production                      | Set `SETTINGS_ENABLED=true` in Vercel Production, only after Gate 2 and a decision on the desktop/tablet entry point (see A1 in spec.md)                                   | Not started |
 
-## 1. Gate 1 results (2026-11-11, Node 24, Windows)
+## 1. Gate 1 results (2026-11-11, Node 24, Windows; re-run after merging `main` at PR #43)
 
 | Check                                                | Result                                                                                                                       |
 | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `pnpm lint`                                          | 0 errors, 3 warnings (the same 3 as `main`, none in Settings)                                                                |
 | `pnpm exec tsc --noEmit`                             | 0 errors                                                                                                                     |
-| `node --test tests/*.test.mjs`                       | **653 / 653 pass**, of which `tests/student-settings.test.mjs` is 51 / 51                                                    |
+| `node --test tests/*.test.mjs`                       | **664 / 664 pass** (after merging `main` at PR #43), of which `tests/student-settings.test.mjs` is 51 / 51                   |
 | `pnpm test:i18n` (numerals and hardcoded-copy guard) | 22 / 22 pass                                                                                                                 |
 | `E2E_REBUILD=1 pnpm test:e2e`                        | **90 / 90 pass** (34 new: 30 in `settings.spec.ts`, 15 scenarios in en and ar, and 4 in `flags-off.spec.ts`, 2 in en and ar) |
 
