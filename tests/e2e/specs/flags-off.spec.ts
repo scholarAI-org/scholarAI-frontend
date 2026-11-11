@@ -83,6 +83,35 @@ for (const locale of LOCALES) {
       expect(requested.filter((path) => !['/auth/login', '/auth/me'].includes(path))).toEqual([]);
     });
 
+    test('the sidebar and the tablet drawer have no Settings link', async ({ page }) => {
+      await startStudentSession(page);
+      await page.goto(`/${locale}/student/profile`);
+
+      // Desktop: the footer holds Log out and nothing else.
+      const aside = page.locator('aside');
+      await expect(
+        aside.getByRole('button', { name: t(locale, 'StudentLayout.logout') })
+      ).toBeVisible();
+      await expect(
+        aside.getByRole('link', { name: t(locale, 'StudentLayout.settings'), exact: true })
+      ).toHaveCount(0);
+      await expect(page.locator('a[href$="/student/settings"]')).toHaveCount(0);
+
+      // Tablet: the same sidebar inside the drawer.
+      await page.setViewportSize({ width: 768, height: 1024 });
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.openNavigation') }).click();
+      const drawer = page.getByRole('dialog', {
+        name: t(locale, 'StudentLayout.navigationLabel'),
+      });
+      await expect(
+        drawer.getByRole('button', { name: t(locale, 'StudentLayout.logout') })
+      ).toBeVisible();
+      await expect(
+        drawer.getByRole('link', { name: t(locale, 'StudentLayout.settings'), exact: true })
+      ).toHaveCount(0);
+      await expect(page.locator('a[href$="/student/settings"]')).toHaveCount(0);
+    });
+
     test('the account menu has no Settings item', async ({ page }) => {
       await startStudentSession(page);
       await page.setViewportSize({ width: 390, height: 844 });
