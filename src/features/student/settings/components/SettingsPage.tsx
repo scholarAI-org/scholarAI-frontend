@@ -13,7 +13,8 @@ export function SettingsPage() {
   const headingId = useId();
 
   return (
-    <section aria-labelledby={headingId} className="flex min-w-0 flex-col gap-4">
+    // Capped so a single short form does not stretch across a 1204px desktop column.
+    <section aria-labelledby={headingId} className="flex min-w-0 max-w-xl flex-col gap-4">
       <div className="flex min-w-0 items-center gap-3">
         <span
           aria-hidden
