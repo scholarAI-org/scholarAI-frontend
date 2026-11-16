@@ -6,6 +6,7 @@ import {
   expect,
   LOCALES,
   pageTitle,
+  sidebar,
   startStudentSession,
   t,
   test,
@@ -485,6 +486,68 @@ for (const locale of LOCALES) {
         data: { email: user.email, password: OLD_PASSWORD },
       });
       expect(stillOld.ok()).toBe(true);
+    });
+
+    test('on desktop the sidebar link above Log out opens Settings and shows as active', async ({
+      page,
+    }) => {
+      await startStudentSession(page);
+      await page.goto(`/${locale}/student/profile`);
+
+      const aside = page.locator('aside');
+      const label = t(locale, 'StudentLayout.settings');
+      const link = aside.getByRole('link', { name: label, exact: true });
+      const logout = aside.getByRole('button', { name: t(locale, 'StudentLayout.logout') });
+      await expect(link).toBeVisible();
+      await expect(link).not.toHaveAttribute('aria-current', 'page');
+
+      // Directly above Log out, in the same footer, with the icon and label on the same line.
+      const linkBox = (await link.boundingBox())!;
+      const logoutBox = (await logout.boundingBox())!;
+      const gap = logoutBox.y - (linkBox.y + linkBox.height);
+      expect(gap).toBeGreaterThanOrEqual(0);
+      expect(gap).toBeLessThan(16);
+      expect(Math.abs(linkBox.x - logoutBox.x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(linkBox.width - logoutBox.width)).toBeLessThanOrEqual(1);
+      const iconX = async (row: typeof link) => (await row.locator('svg').boundingBox())!.x;
+      expect(Math.abs((await iconX(link)) - (await iconX(logout)))).toBeLessThanOrEqual(1);
+
+      // Not a navigation item.
+      await expect(
+        sidebar(page, locale).getByRole('link', { name: label, exact: true })
+      ).toHaveCount(0);
+
+      await link.click();
+      await expect(page).toHaveURL(atPath(`/${locale}/student/settings`));
+      await expect(pageTitle(page, locale, 'settings')).toBeVisible();
+      await expect(field(page, locale, 'currentPassword')).toBeVisible();
+
+      // Active, and the only active item: Settings activates nothing in the list.
+      await expect(link).toHaveAttribute('aria-current', 'page');
+      await expect(aside.locator('[aria-current="page"]')).toHaveCount(1);
+    });
+
+    test('on a tablet the drawer carries the same link and closes when it is used', async ({
+      page,
+    }) => {
+      await startStudentSession(page);
+      await page.setViewportSize({ width: 768, height: 1024 });
+      await page.goto(`/${locale}/student/profile`);
+
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.openNavigation') }).click();
+      const drawer = page.getByRole('dialog', {
+        name: t(locale, 'StudentLayout.navigationLabel'),
+      });
+      const link = drawer.getByRole('link', {
+        name: t(locale, 'StudentLayout.settings'),
+        exact: true,
+      });
+      await expect(link).toBeVisible();
+
+      await link.click();
+      await expect(page).toHaveURL(atPath(`/${locale}/student/settings`));
+      await expect(pageTitle(page, locale, 'settings')).toBeVisible();
+      await expect(drawer).toHaveCount(0);
     });
 
     test('on a 390px phone the page fits and the account menu leads to Settings', async ({

@@ -86,9 +86,22 @@ const navigationStub = {
   useRouter: () => ({ replace() {}, push() {}, prefetch() {} }),
 };
 
+const imageStub = {
+  __esModule: true,
+  default: ({ src, alt, width, height, className }) =>
+    React.createElement('img', {
+      src: typeof src === 'string' ? src : '',
+      alt,
+      width,
+      height,
+      className,
+    }),
+};
+
 const originalLoad = Module._load;
 Module._load = function (request, parent, ...rest) {
   if (request === 'next-intl') return nextIntlStub;
+  if (request === 'next/image') return imageStub;
   if (request === '@/i18n/navigation') return navigationStub;
   if (request === '@/features/auth/providers/AuthProvider')
     return { useAuth: () => ({ user: env.user }) };
@@ -288,6 +301,140 @@ test('menu: the flag reaches the menu from the server layout through the shell a
   );
   assert.match(
     read('src/features/student/layout/StudentHeader.tsx'),
+    /settingsEnabled=\{settingsEnabled\}/
+  );
+});
+
+// ----------------------------- sidebar footer link --------------------------
+
+const SETTINGS_LINK = /<a[^>]*href="\/student\/settings"[^>]*>/;
+
+function renderSidebar(props, { locale = 'en', pathname = '/student/profile' } = {}) {
+  const { StudentSidebar } = loadSrc('features/student/layout/StudentSidebar.tsx');
+  env.pathname = pathname;
+  try {
+    return render(React.createElement(StudentSidebar, props), locale);
+  } finally {
+    env.pathname = '/student/settings';
+  }
+}
+
+test('sidebar: the Settings link shows only when the flag prop is on, in both languages', () => {
+  for (const locale of ['en', 'ar']) {
+    const label = messages[locale].StudentLayout.settings;
+    assert.ok(label, `${locale}: StudentLayout.settings exists`);
+
+    const on = renderSidebar({ settingsEnabled: true }, { locale });
+    assert.match(on, SETTINGS_LINK, `${locale}: the link is rendered`);
+    assert.ok(on.includes(`<span>${label}</span>`), `${locale}: label "${label}"`);
+
+    const off = renderSidebar({ settingsEnabled: false }, { locale });
+    assert.doesNotMatch(off, /\/student\/settings/, `${locale}: no link when the flag is off`);
+    assert.ok(!off.includes(`<span>${label}</span>`), `${locale}: no label when the flag is off`);
+
+    const byDefault = renderSidebar({}, { locale });
+    assert.doesNotMatch(byDefault, /\/student\/settings/, `${locale}: the link is opt-in`);
+  }
+});
+
+test('sidebar: the link sits directly above Log out, outside the navigation list', () => {
+  const html = renderSidebar({ settingsEnabled: true });
+  const logout = messages.en.StudentLayout.logout;
+  const navStart = html.indexOf('<nav');
+  const navEnd = html.indexOf('</nav>');
+  const linkAt = html.search(SETTINGS_LINK);
+
+  assert.ok(navStart >= 0 && navEnd > navStart);
+  assert.ok(linkAt > navEnd, 'after the navigation list, not inside it');
+  assert.doesNotMatch(html.slice(navStart, navEnd), /settings/i, 'not a navigation item');
+  assert.ok(linkAt < html.indexOf(`<span>${logout}</span>`), 'above Log out');
+  // Nothing sits between the link and the Log out button: same footer, same group.
+  const between = html.slice(html.indexOf('</a>', linkAt), html.indexOf(`<span>${logout}</span>`));
+  assert.doesNotMatch(between, /<a |<nav|<ul/);
+});
+
+test('sidebar: the link is active on /student/settings and its sub-routes only', () => {
+  const active = (pathname) =>
+    renderSidebar({ settingsEnabled: true }, { pathname }).match(SETTINGS_LINK)[0];
+
+  for (const pathname of ['/student/settings', '/student/settings/']) {
+    const tag = active(pathname);
+    assert.match(tag, /aria-current="page"/, pathname);
+    assert.match(tag, /font-bold text-orange-500/, `${pathname}: active look`);
+    assert.match(tag, /border-orange-500/);
+  }
+  assert.match(active('/student/settings/security'), /aria-current="page"/);
+
+  for (const pathname of ['/student/profile', '/student', '/student/settingsx', '/student/saved']) {
+    const tag = active(pathname);
+    assert.doesNotMatch(tag, /aria-current/, pathname);
+    assert.doesNotMatch(tag, /text-orange-500/, pathname);
+    assert.match(tag, /border-transparent/, `${pathname}: the bar is there but invisible`);
+  }
+});
+
+test('sidebar: opening Settings leaves no other item active, and Settings never activates one', () => {
+  const nav = loadSrc('features/student/layout/student-navigation.ts');
+  const everything = nav.studentNavigation.map((item) => ({ ...item, enabled: true }));
+  const html = renderSidebar(
+    { settingsEnabled: true, items: everything },
+    { pathname: '/student/settings' }
+  );
+  assert.equal((html.match(/aria-current="page"/g) ?? []).length, 1, 'only the Settings link');
+  assert.match(html.match(SETTINGS_LINK)[0], /aria-current="page"/);
+});
+
+test('sidebar: the link reuses the logout row look, in logical properties only', () => {
+  const source = read('src/features/student/layout/StudentSidebar.tsx');
+  const link = source.slice(
+    source.indexOf('href={SETTINGS_HREF}'),
+    source.indexOf("{t('settings')}")
+  );
+  const logout = source.slice(source.indexOf('onClick={() => logout()}'));
+  for (const shared of [
+    'flex w-full items-center justify-start gap-2',
+    'rounded-full',
+    'py-2.5',
+    'text-sm',
+    'text-text-label',
+    'hover:bg-[#f8fafc]',
+  ]) {
+    assert.ok(link.includes(shared), `link has "${shared}"`);
+    assert.ok(logout.includes(shared), `logout row has "${shared}"`);
+  }
+  assert.doesNotMatch(
+    link,
+    /(?:^|[\s"'`])(?:-?(?:ml|mr|pl|pr|left|right)-[\w[]|text-(?:left|right)|rounded-[lr]-|border-[lr]\b|border-[lr]-)/
+  );
+  assert.match(link, /border-s-4/);
+  assert.match(link, /ps-2 pe-3/);
+  assert.match(source, /settingsEnabled && \(/, 'behind the flag prop');
+});
+
+test('sidebar: the tablet drawer carries the same link, behind the same flag', () => {
+  const { StudentMobileNavigation } = loadSrc(
+    'features/student/layout/StudentMobileNavigation.tsx'
+  );
+  const drawer = (props) =>
+    render(
+      React.createElement(StudentMobileNavigation, {
+        isOpen: true,
+        onClose() {},
+        returnFocusRef: { current: null },
+        ...props,
+      })
+    );
+  assert.match(drawer({ settingsEnabled: true }), SETTINGS_LINK);
+  assert.doesNotMatch(drawer({ settingsEnabled: false }), /\/student\/settings/);
+  assert.doesNotMatch(drawer({}), /\/student\/settings/);
+});
+
+test('sidebar: the flag reaches both sidebars from the shell', () => {
+  const shell = read('src/features/student/layout/StudentShell.tsx');
+  assert.match(shell, /<StudentSidebar items=\{items\} settingsEnabled=\{settingsEnabled\} \/>/);
+  assert.match(shell, /<StudentMobileNavigation[^>]*settingsEnabled=\{settingsEnabled\}/s);
+  assert.match(
+    read('src/features/student/layout/StudentMobileNavigation.tsx'),
     /settingsEnabled=\{settingsEnabled\}/
   );
 });
@@ -759,6 +906,7 @@ test('i18n: the Settings namespace and the shell keys have the same keys in en a
       Settings: messages[locale].Settings,
       pages: messages[locale].StudentLayout.pages.settings,
       userMenu: messages[locale].StudentLayout.userMenu,
+      sidebarLink: { settings: messages[locale].StudentLayout.settings },
     }).sort();
   assert.deepEqual(pick('en'), pick('ar'));
   assert.ok(pick('en').includes('Settings.changePassword.title'));

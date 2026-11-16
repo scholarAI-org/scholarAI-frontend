@@ -14,6 +14,7 @@ interface StudentMobileNavigationProps {
   onClose: () => void;
   returnFocusRef: RefObject<HTMLButtonElement | null>;
   items?: readonly StudentNavigationItem[];
+  settingsEnabled?: boolean;
 }
 
 export function StudentMobileNavigation({
@@ -21,6 +22,7 @@ export function StudentMobileNavigation({
   onClose,
   returnFocusRef,
   items,
+  settingsEnabled = false,
 }: StudentMobileNavigationProps) {
   const t = useTranslations('StudentLayout');
   const panelRef = useRef<HTMLDivElement>(null);
@@ -91,7 +93,12 @@ export function StudentMobileNavigation({
             <X aria-hidden className="h-5 w-5" />
           </button>
         </div>
-        <StudentSidebar variant="drawer" onNavigate={onClose} items={items} />
+        <StudentSidebar
+          variant="drawer"
+          onNavigate={onClose}
+          items={items}
+          settingsEnabled={settingsEnabled}
+        />
       </div>
     </div>
   );

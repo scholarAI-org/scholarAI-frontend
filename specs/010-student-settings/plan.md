@@ -41,9 +41,11 @@ specs/010-student-settings/
 src/lib/feature-flags.ts                         # + settingsEnabled (SETTINGS_ENABLED === 'true')
 src/app/[locale]/student/settings/page.tsx       # Server Component gate -> notFound() | <SettingsPage />
 src/app/[locale]/student/layout.tsx              # + settingsEnabled -> StudentShell
-src/features/student/layout/StudentShell.tsx     # + settingsEnabled prop -> StudentHeader
+src/features/student/layout/StudentShell.tsx     # + settingsEnabled prop -> StudentHeader, StudentSidebar, StudentMobileNavigation
 src/features/student/layout/StudentHeader.tsx    # + settingsEnabled prop -> StudentUserMenu
 src/features/student/layout/StudentUserMenu.tsx  # + Settings menuitem (flag on), + defaultOpen (lets a server render show the items)
+src/features/student/layout/StudentSidebar.tsx   # + Settings link in the footer above Log out (flag on), active on /student/settings
+src/features/student/layout/StudentMobileNavigation.tsx # + settingsEnabled -> the drawer's StudentSidebar
 src/features/student/layout/types.ts             # + 'settings' in StudentPageKey
 src/features/student/layout/student-navigation.ts# + /student/settings -> 'settings' (page key only)
 src/features/student/settings/
@@ -76,13 +78,13 @@ package.json                                     # + test:student-settings
 4. **Request shape**: one function, `buildChangePasswordRequest(values)`, builds the body from named fields, so an extra form field can never leak into the request. A test pins the exact key set.
 5. **Failure handling is pure**: `classifyChangePasswordError(error)` and `describeFailure(failure)` are plain functions with unit tests; the component maps the result onto React Hook Form (`setError`, `reset`).
 6. **Session re-check**: `useSessionCheck` refetches through `useCurrentUser().refetch` and hands the result to the pure `confirmSession`. On 401 it clears the query cache and replaces the route with `loginPathWithNext(...)` (same pair as `useLogout` and `RoleGuard`). `invalidateQueries` alone would not redirect because `AuthProvider` keeps the last good user while a refetch fails (A6).
-7. **Entry point**: a `role="menuitem"` link in `StudentUserMenu`, rendered only when the shell was given `settingsEnabled`. The flag crosses the server/client boundary as a prop, as `homeEnabled` does. `StudentUserMenu` renders only below the `sm` breakpoint (A1).
+7. **Entry points**: a `role="menuitem"` link in `StudentUserMenu` (below `sm`) and a footer link in `StudentSidebar` (desktop, and the tablet drawer, which renders the same sidebar), both rendered only when the shell was given `settingsEnabled`. The flag crosses the server/client boundary as a prop, as `homeEnabled` does. The sidebar link is not a navigation item: it sits below the navigation list, with the logout row's styling and its own active state.
 
 ## Risks
 
 | Risk                                                             | Mitigation                                                                               |
 | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Menu is phone-only (A1), so desktop has no entry                 | Recorded as an assumption and in the PR; the URL works everywhere                        |
+| Menu is phone-only (A1)                                          | Resolved in review: the sidebar footer link covers tablet and desktop                    |
 | Backend answers for Google-only accounts are unknown             | Form stays; 400 path shows `detail`; open question in the PR                             |
 | Backend 422 `loc` shape differs from the guess                   | Unknown locations fall to the form-level alert, so a wrong guess still shows the message |
 | `error happen` default text from `apiClient` leaking to students | Detected and replaced by a translated fallback; unit-tested                              |

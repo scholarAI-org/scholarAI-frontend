@@ -17,7 +17,8 @@
 Status: **resolved** by the product owner in the task brief. No question was left open; the assumptions the implementation had to make beyond the brief are in **Assumptions**.
 
 - Q1: Which route and flag? → A: `/[locale]/student/settings`, behind the new server-only `SETTINGS_ENABLED` (default off, the literal `"true"` is the only enabling value). Flag off: the localized 404 and no data fetched. (FR-001, FR-002)
-- Q2: Where does the entry point live? → A: A "Settings" item in `StudentUserMenu`, shown only when the flag is on. Not in the sidebar, not in the mobile tab bar (it already has five items). (FR-003)
+- Q2: Where does the entry point live? → A: A "Settings" item in `StudentUserMenu`, shown only when the flag is on. Not in the sidebar navigation list, not in the mobile tab bar (it already has five items). (FR-003)
+- Q9 (review, 2026-11-11): `StudentUserMenu` only renders below 640px, so how do tablet and desktop reach Settings? → A: A "Settings" link in the sidebar footer, directly above "Log out", behind the same flag, with the logout row's styling and an active state on `/student/settings`. It is not in the navigation list or the tab bar. The mobile account-menu item stays. The tablet drawer renders the same sidebar, so it carries the link too. (FR-003, FR-005)
 - Q3: Which fields? → A: current password, new password, confirm new password, and an unchecked-by-default "Sign out of other devices" checkbox that maps to `invalidate_other_sessions`. Each password field has a show/hide toggle. Existing auth form components are reused. (FR-010 to FR-013)
 - Q4: What is validated before any request? → A: every field required; new password meets the shared rules; confirmation matches; new password differs from the current one. Errors show next to the field. Nothing is sent while the form is invalid or a request is in flight. (FR-020 to FR-024)
 - Q5: How are server errors shown? → A: 400 form-level alert with the backend `detail`; 422 field errors on fields where possible, otherwise a form-level alert; 401 existing session-expired handling; network or 5xx a generic translated error. Typed values are kept except on 400, where the password fields are cleared. (FR-030 to FR-035)
@@ -78,7 +79,8 @@ When the backend refuses, the student sees why, in a form-level alert, and keeps
 **Acceptance Scenarios**:
 
 1. **Given** `SETTINGS_ENABLED` is unset or any value other than `"true"`, **When** anyone opens `/{locale}/student/settings`, **Then** the localized 404 renders and no change-password request is made.
-2. **Given** the flag is off, **When** the student opens the account menu, **Then** there is no Settings item.
+2. **Given** the flag is off, **When** the student opens the account menu, the sidebar, or the tablet drawer, **Then** there is no Settings item or link anywhere.
+3. **Given** the flag is on, **When** the student uses the sidebar footer link at desktop width (or the same link in the tablet drawer), **Then** Settings opens, and the link shows as active on the page.
 
 ### Edge Cases
 
@@ -95,7 +97,8 @@ When the backend refuses, the student sees why, in a form-level alert, and keeps
 
 - **FR-001**: The route `/[locale]/student/settings` exists and is a Server Component that reads `featureFlags.settingsEnabled` before rendering anything.
 - **FR-002**: With the flag off the route calls `notFound()` (the localized 404) before any client render or request.
-- **FR-003**: `StudentUserMenu` shows a "Settings" menu item linking to `/student/settings` only when the flag is on. The sidebar and the tab bar are unchanged (`studentNavigation`, `studentTabBarOrder` stay as they are).
+- **FR-003**: `StudentUserMenu` shows a "Settings" menu item linking to `/student/settings` only when the flag is on. The sidebar navigation list and the tab bar are unchanged (`studentNavigation`, `studentTabBarOrder` stay as they are).
+- **FR-005**: `StudentSidebar` shows a "Settings" link in its footer, directly above "Log out", only when the flag is on (the `settingsEnabled` prop, from the server layout). It uses the logout row's styling, has an active state (`aria-current="page"`, orange label and start bar) on `/student/settings` and its sub-routes, and sits outside the navigation list. The tablet drawer renders the same sidebar, so it has the link too. Below 640px the account-menu item (FR-003) is the entry point.
 - **FR-004**: The student header shows a "Settings" title and description on the route.
 - **FR-010**: The form has current password, new password and confirm new password fields, in that order, each with a visible label.
 - **FR-011**: Each password field has a show/hide toggle with an accessible, translated name that reflects the current state.
@@ -141,7 +144,7 @@ When the backend refuses, the student sees why, in a form-level alert, and keeps
 
 Made without asking, as the brief requires. Every one is repeated in the PR description.
 
-- **A1 (entry point reach)**: `StudentUserMenu` is rendered only below the `sm` breakpoint (640px) today. The brief fixes the entry point to that menu, so the Settings link is visible on phones only. Tablet and desktop widths have no in-app link until a later change; the URL works at every width. Not widened here because it would add a second entry point the brief did not ask for.
+- **A1 (entry point reach) — resolved in review**: `StudentUserMenu` is rendered only below the `sm` breakpoint (640px), so the account-menu item alone left tablet and desktop without a link. The review added the sidebar footer link (FR-005), which also appears in the tablet drawer. Every width now has an in-app entry point.
 - **A2 (header page key)**: Settings is not a navigation item, but the header needs a title for the route. `settings` is added to `StudentPageKey` and `getStudentPageKey`, and `StudentLayout.pages.settings` holds the copy. `studentNavigation`, `studentTabBarOrder` and the five-tab cap are untouched.
 - **A3 (422 text)**: the message beside a field on 422 is the backend's own `msg` (like the 400 `detail`), falling back to a translated generic message when it is empty.
 - **A4 (400 fallback)**: when a 400 has no string `detail`, `apiClient` produces the text `error happen`. That text is treated as "no detail" and replaced by a translated message.

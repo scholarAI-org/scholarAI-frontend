@@ -64,4 +64,12 @@ Run commands as `corepack pnpm …` when `pnpm` is not on PATH.
 
 - [x] T050 `pnpm lint`, `pnpm exec tsc --noEmit`, `node --test tests/*.test.mjs`, `E2E_REBUILD=1 pnpm test:e2e`.
 - [x] T051 Screenshots in en, ar and at 390px; `verification.md`. Commit: `docs(settings): record verification`.
-- [ ] T052 Push, open the PR to `main`, wait for CI and the Vercel preview. Do not merge.
+- [x] T052 Push, open the PR to `main`, wait for CI and the Vercel preview. Do not merge.
+
+## Phase 7: Review changes (2026-11-11)
+
+- [x] T060 Remove the screenshots from the repo (`git rm -r docs/student-settings`); they are attached to the PR by hand.
+- [x] T061 [US1 US4] `StudentSidebar`: a "Settings" link in the footer directly above "Log out", behind `settingsEnabled`, with the logout row's look and an active state on `/student/settings`; not in the navigation list or the tab bar. Thread the flag through `StudentShell` and `StudentMobileNavigation` (the tablet drawer renders the same sidebar). Add `StudentLayout.settings` in en and ar. The mobile account-menu item stays.
+- [x] T062 Unit tests: visible only with the flag, hidden without it, active state, above Log out and outside the list, drawer parity, logical CSS, key parity.
+- [x] T063 e2e: at desktop the sidebar link opens Settings and is active (en, ar); the tablet drawer carries it; flags-off has no link in the sidebar or the drawer.
+- [x] T064 Re-run lint, tsc, unit and `E2E_REBUILD=1 pnpm test:e2e`; push; wait for CI. Do not merge.
