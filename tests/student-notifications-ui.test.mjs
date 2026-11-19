@@ -657,3 +657,78 @@ test('US4 flag: the layout and the route read the flag on each call, never at mo
     assert.doesNotMatch(code, /^(export )?const \w+ = featureFlags\./m, file);
   }
 });
+
+// ----------------------------- US5: load more, the later-page error, the retry (FR-050 to FR-053) --
+
+const { LoadMoreButton } = loadFeature('components/LoadMoreButton.tsx');
+const { NotificationsLoadMoreError } = loadFeature('components/NotificationStates.tsx');
+
+test('US5 load more: a labelled 44px button that shows its pending state', () => {
+  const idle = render(React.createElement(LoadMoreButton, { onClick() {}, pending: false }), 'en');
+  assert.match(idle, /<button type="button"[^>]*aria-busy="false"/);
+  assert.match(idle, />Load more<\/button>/);
+  assert.match(idle, /min-h-11/);
+  assert.match(idle, /focus-visible:outline-orange-500/);
+  assert.doesNotMatch(idle, /\sdisabled(=|>)/);
+  const pending = render(
+    React.createElement(LoadMoreButton, { onClick() {}, pending: true }),
+    'en'
+  );
+  assert.match(pending, /\sdisabled=""/);
+  assert.match(pending, /aria-busy="true"/);
+  assert.match(pending, />Loading…<\/button>/);
+  assert.ok(
+    render(React.createElement(LoadMoreButton, { onClick() {}, pending: false }), 'ar').includes(
+      `>${messages.ar.StudentNotifications.loadMore.label}</button>`
+    )
+  );
+  assert.doesNotMatch(idle, /\b(rtl|ltr):|[\s"](ml|mr|pl|pr)-/);
+});
+
+test('US5 load more: a later-page failure is an inline alert with its own Retry', () => {
+  const html = render(React.createElement(NotificationsLoadMoreError, { onRetry() {} }), 'en');
+  assert.match(html, /role="alert"/);
+  assert.match(html, /data-testid="notifications-load-more-error"/);
+  assert.match(html, /We could not load more notifications\./);
+  assert.match(html, /data-testid="notifications-load-more-retry"/);
+  assert.match(html, /min-h-11/);
+  assert.ok(
+    render(React.createElement(NotificationsLoadMoreError, { onRetry() {} }), 'ar').includes(
+      messages.ar.StudentNotifications.errors.loadMoreFailed
+    )
+  );
+});
+
+test('US5 page: the wiring keeps loaded cards on a later failure and retries the count too', () => {
+  const page = stripComments(
+    read('src/features/student/notifications/components/NotificationsPage.tsx')
+  );
+  // A later page failing shows the inline error instead of the button, and keeps the list.
+  assert.match(page, /list\.isFetchNextPageError\s*\?\s*\(\s*<NotificationsLoadMoreError/);
+  assert.match(page, /<LoadMoreButton/);
+  // The first-page Retry refetches the list AND the count, so a stopped count can resume (FR-053).
+  assert.match(page, /void list\.refetch\(\);[\s\S]*void refetchCount\(\);/);
+  // The empty list is not rendered as an empty <ol>.
+  assert.match(page, /list\.items\.length > 0 \?/);
+  const recheck = stripComments(
+    read('src/features/student/notifications/hooks/useSessionRecheck.ts')
+  );
+  assert.match(recheck, /invalidateQueries\(\{ queryKey: currentUserQueryKey \}\)/);
+  assert.match(page, /useSessionRecheck\(list\.error\)/);
+});
+
+test('US5 list: pages are requested one by one with the server page size', () => {
+  const api = stripComments(read('src/features/student/notifications/adapter/api.ts'));
+  assert.match(api, /NOTIFICATIONS_PAGE_SIZE = 20/);
+  assert.match(
+    api,
+    /\/api\/notifications\?page=\$\{page\}&page_size=\$\{NOTIFICATIONS_PAGE_SIZE\}/
+  );
+  assert.doesNotMatch(api, /is_read=/, 'filters are out of scope: no is_read is sent');
+  const hook = stripComments(
+    read('src/features/student/notifications/hooks/useNotificationsList.ts')
+  );
+  assert.match(hook, /initialPageParam: 1/);
+  assert.match(hook, /gcTime: 0/);
+  assert.match(hook, /refetchOnWindowFocus: false/);
+});

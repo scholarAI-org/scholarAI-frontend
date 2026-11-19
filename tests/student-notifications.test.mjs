@@ -1189,3 +1189,84 @@ test('mark all: it works without a loaded list, and a bad answer is a failure', 
     bad.restore();
   }
 });
+
+// ----------------------------- pagination and page states (FR-050 to FR-054) -----------------
+
+const { getNextPageNumber, getListView, isUnauthorized } = loadFeature('lib/page-view.ts');
+
+test('pagination: the next page follows the server pages and stops after the last', () => {
+  assert.equal(getNextPageNumber({ page: 1, totalPages: 3 }), 2);
+  assert.equal(getNextPageNumber({ page: 2, totalPages: 3 }), 3);
+  assert.equal(getNextPageNumber({ page: 3, totalPages: 3 }), undefined);
+  assert.equal(
+    getNextPageNumber({ page: 1, totalPages: 0 }),
+    undefined,
+    'an empty list has no next'
+  );
+  assert.equal(getNextPageNumber({ page: 5, totalPages: 3 }), undefined, 'a page past the end');
+});
+
+test('page view: loading, error, empty and list never look like each other', () => {
+  const base = {
+    clockReady: true,
+    isPending: false,
+    isError: false,
+    hasData: true,
+    itemCount: 3,
+    hasNextPage: false,
+  };
+  assert.equal(getListView(base), 'list');
+  assert.equal(getListView({ ...base, isPending: true, hasData: false, itemCount: 0 }), 'loading');
+  assert.equal(
+    getListView({ ...base, clockReady: false }),
+    'loading',
+    'the student clock is not known yet'
+  );
+  // The first page failed: the error state, never an empty one.
+  assert.equal(getListView({ ...base, isError: true, hasData: false, itemCount: 0 }), 'error');
+  // A later page failed: the notifications already loaded stay.
+  assert.equal(getListView({ ...base, isError: true, hasData: true }), 'list');
+  // Empty only on the last page with nothing renderable.
+  assert.equal(getListView({ ...base, itemCount: 0, hasNextPage: false }), 'empty');
+  assert.equal(
+    getListView({ ...base, itemCount: 0, hasNextPage: true }),
+    'list',
+    'more pages may still hold renderable items, so "Load more" stays'
+  );
+});
+
+test('page view: a page whose items were all skipped keeps Load more until the last page', () => {
+  const skippedPage = (page, totalPages) =>
+    parseNotificationPage(
+      envelope(
+        [
+          { id: 1, type: 'brand_new_type', params: {} },
+          { id: 2, type: 'another_new_type', params: {} },
+        ],
+        { page, total_pages: totalPages }
+      )
+    );
+  const first = skippedPage(1, 2);
+  assert.deepEqual(first.items, []);
+  assert.deepEqual(first.skipped, { unknownType: 2, malformed: 0 });
+  assert.equal(getNextPageNumber(first), 2);
+  const state = (page) => ({
+    clockReady: true,
+    isPending: false,
+    isError: false,
+    hasData: true,
+    itemCount: 0,
+    hasNextPage: getNextPageNumber(page) !== undefined,
+  });
+  assert.equal(getListView(state(first)), 'list');
+  assert.equal(getListView(state(skippedPage(2, 2))), 'empty');
+});
+
+test('session: only a 401 asks the session to be re-checked', () => {
+  assert.equal(isUnauthorized(new ApiError('x', [], 401)), true);
+  for (const status of [400, 403, 404, 500, undefined]) {
+    assert.equal(isUnauthorized(new ApiError('x', [], status)), false, String(status));
+  }
+  assert.equal(isUnauthorized(new Error('network')), false);
+  assert.equal(isUnauthorized(null), false);
+});

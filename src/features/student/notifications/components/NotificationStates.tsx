@@ -88,3 +88,29 @@ export function NotificationsError({ error, onRetry }: { error: unknown; onRetry
     </div>
   );
 }
+
+// A later page failed: the notifications already loaded stay, and the failure is shown under them
+// with a Retry for that page only.
+export function NotificationsLoadMoreError({ onRetry }: { onRetry: () => void }) {
+  const t = useTranslations('StudentNotifications');
+  return (
+    <div
+      role="alert"
+      className="flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-[#e2e8f0] bg-white px-4 py-6 text-center text-sm"
+      data-testid="notifications-load-more-error"
+    >
+      <AlertCircle aria-hidden className="size-5 shrink-0 text-orange-500" />
+      <span className="text-[var(--color-text-error)]">{t('errors.loadMoreFailed')}</span>
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        className="min-h-11 rounded-full"
+        onClick={onRetry}
+        data-testid="notifications-load-more-retry"
+      >
+        {t('errors.retry')}
+      </Button>
+    </div>
+  );
+}

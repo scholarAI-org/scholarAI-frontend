@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { currentUserQueryKey } from '@/features/auth/hooks/useCurrentUser';
-import { ApiError } from '@/lib/api-client';
+import { isUnauthorized } from '../lib/page-view';
 
 // A 401 from a notification request re-checks the session through the existing current-user
 // query (the Home pattern): if the session is gone, AuthProvider and RoleGuard send the student
@@ -11,7 +11,7 @@ import { ApiError } from '@/lib/api-client';
 export function useSessionRecheck(error: unknown) {
   const queryClient = useQueryClient();
   const requested = useRef(false);
-  const unauthorized = error instanceof ApiError && error.status === 401;
+  const unauthorized = isUnauthorized(error);
 
   useEffect(() => {
     if (!unauthorized) {

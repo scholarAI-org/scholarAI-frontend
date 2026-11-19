@@ -9,9 +9,16 @@ import { useNotificationsList } from '../hooks/useNotificationsList';
 import { useSessionRecheck } from '../hooks/useSessionRecheck';
 import { useUnreadCount } from '../hooks/useUnreadCount';
 import { hasUnread } from '../lib/cache-updates';
+import { getListView } from '../lib/page-view';
+import { LoadMoreButton } from './LoadMoreButton';
 import { MarkAllReadButton } from './MarkAllReadButton';
 import { NotificationCard } from './NotificationCard';
-import { NotificationsEmpty, NotificationsError, NotificationsLoading } from './NotificationStates';
+import {
+  NotificationsEmpty,
+  NotificationsError,
+  NotificationsLoading,
+  NotificationsLoadMoreError,
+} from './NotificationStates';
 
 interface NotificationsPageProps {
   // SCHOLARSHIP_DETAILS_ENABLED, read in the route's Server Component.
@@ -28,7 +35,7 @@ export function NotificationsPage({ detailsEnabled = false }: NotificationsPageP
   const now = useMinuteClock();
   const list = useNotificationsList();
   // The page only exists while the flag is on, so the count is the real one.
-  const { count } = useUnreadCount({ notificationsEnabled: true });
+  const { count, refetch: refetchCount } = useUnreadCount({ notificationsEnabled: true });
   const [feedback, setFeedback] = useState<Feedback>(null);
   const markRead = useMarkRead({ onFailed: () => setFeedback('markFailed') });
   const { markAll, isPending: markingAll } = useMarkAllRead({
@@ -37,12 +44,29 @@ export function NotificationsPage({ detailsEnabled = false }: NotificationsPageP
   });
   useSessionRecheck(list.error);
 
-  // `now` is null until mount (the server clock is not the student's).
-  if (list.isPending || now === null) return <NotificationsLoading />;
-  if (list.isError && !list.data) {
-    return <NotificationsError error={list.error} onRetry={() => void list.refetch()} />;
+  const view = getListView({
+    clockReady: now !== null,
+    isPending: list.isPending,
+    isError: list.isError,
+    hasData: Boolean(list.data),
+    itemCount: list.items.length,
+    hasNextPage: list.hasNextPage,
+  });
+
+  if (view === 'loading' || now === null) return <NotificationsLoading />;
+  if (view === 'error') {
+    return (
+      <NotificationsError
+        error={list.error}
+        onRetry={() => {
+          void list.refetch();
+          // If the count had stopped (401, 403, 404), a success here resumes its polling.
+          void refetchCount();
+        }}
+      />
+    );
   }
-  if (list.items.length === 0 && !list.hasNextPage) return <NotificationsEmpty />;
+  if (view === 'empty') return <NotificationsEmpty />;
 
   // Offered while a loaded card is unread or the count says so, whether or not the count loaded.
   const showMarkAll = hasUnread(list.data) || (count ?? 0) > 0;
@@ -78,20 +102,32 @@ export function NotificationsPage({ detailsEnabled = false }: NotificationsPageP
         </p>
       ) : null}
 
-      <ol aria-label={t('page.listLabel')} className="flex min-w-0 flex-col gap-4">
-        {list.items.map((notification) => (
-          <NotificationCard
-            key={notification.id}
-            notification={notification}
-            now={now}
-            detailsEnabled={detailsEnabled}
-            onMarkRead={(id) => {
-              setFeedback(null);
-              markRead(id);
-            }}
-          />
-        ))}
-      </ol>
+      {list.items.length > 0 ? (
+        <ol aria-label={t('page.listLabel')} className="flex min-w-0 flex-col gap-4">
+          {list.items.map((notification) => (
+            <NotificationCard
+              key={notification.id}
+              notification={notification}
+              now={now}
+              detailsEnabled={detailsEnabled}
+              onMarkRead={(id) => {
+                setFeedback(null);
+                markRead(id);
+              }}
+            />
+          ))}
+        </ol>
+      ) : null}
+
+      {/* A page whose items were all skipped still leaves "Load more" until the last page. */}
+      {list.isFetchNextPageError ? (
+        <NotificationsLoadMoreError onRetry={() => void list.fetchNextPage()} />
+      ) : list.hasNextPage ? (
+        <LoadMoreButton
+          pending={list.isFetchingNextPage}
+          onClick={() => void list.fetchNextPage()}
+        />
+      ) : null}
     </div>
   );
 }

@@ -20,5 +20,10 @@ export function useUnreadCount({ notificationsEnabled, mockSections = [] }: Unre
   const source = useUnreadSource({ notificationsEnabled, mockSections });
   const query = useQuery({ ...unreadQueryOptions(source), enabled: false });
   const stopped = isTerminalStatus(query.error);
-  return { count: stopped ? null : (query.data?.unreadCount ?? null), stopped };
+  // refetch() works on a disabled query: the list's Retry uses it to resume a stopped count.
+  return {
+    count: stopped ? null : (query.data?.unreadCount ?? null),
+    stopped,
+    refetch: query.refetch,
+  };
 }

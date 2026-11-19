@@ -5,6 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { shouldRetryScholarshipQuery } from '@/features/student/scholarship-discovery/lib/query-retry';
 import { fetchNotificationPage } from '../adapter/api';
 import { mergePages } from '../lib/cache-updates';
+import { getNextPageNumber } from '../lib/page-view';
 import { studentNotificationsKeys } from '../query-keys';
 
 // The notification list, newest first as the server returns it. Every visit starts at page 1
@@ -16,7 +17,7 @@ export function useNotificationsList() {
     queryKey: studentNotificationsKeys.list(),
     queryFn: ({ pageParam, signal }) => fetchNotificationPage(pageParam, signal),
     initialPageParam: 1,
-    getNextPageParam: (last) => (last.page < last.totalPages ? last.page + 1 : undefined),
+    getNextPageParam: getNextPageNumber,
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: 'always',

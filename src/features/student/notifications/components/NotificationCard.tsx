@@ -77,6 +77,7 @@ export function NotificationCard({
 
   return (
     <li
+      data-notification-id={notification.id}
       data-notification-type={notification.type}
       data-unread={unread ? 'true' : 'false'}
       className={`min-w-0 rounded-2xl border bg-white p-4 sm:px-5 sm:py-[18px] ${
