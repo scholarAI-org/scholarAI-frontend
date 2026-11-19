@@ -1,10 +1,10 @@
 import { expect, LOCALES, sidebar, startStudentSession, t, test } from '../support/fixtures';
 
 // With the features on (project "flags-on") the sidebar lists every destination, in order.
-const ORDER = ['home', 'scholarships', 'saved', 'tracking', 'profile'] as const;
+const ORDER = ['home', 'scholarships', 'saved', 'tracking', 'notifications', 'profile'] as const;
 
 for (const locale of LOCALES) {
-  test(`the sidebar lists Home, search, Saved, tracking and profile in order (${locale})`, async ({
+  test(`the sidebar lists Home, search, Saved, tracking, notifications and profile in order (${locale})`, async ({
     page,
   }) => {
     await startStudentSession(page);

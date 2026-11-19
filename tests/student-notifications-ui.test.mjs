@@ -625,3 +625,35 @@ test('US3 tab bar: still the same five destinations, in the same order', () => {
     ['home', 'scholarships', 'saved', 'tracking', 'profile']
   );
 });
+
+// ----------------------------- US4: the flag is read on every request (FR-003, FR-005) --------
+
+test('US4 flag: the layout and the route read the flag on each call, never at module load', () => {
+  const Layout = loadSrc('app/[locale]/student/layout.tsx').default;
+  const Page = loadSrc('app/[locale]/student/notifications/page.tsx').default;
+  const drivers = () =>
+    named(elements(Layout({ children: React.createElement('p') })), 'NotificationsCountDriver')
+      .length;
+
+  for (const [value, expected] of [
+    ['true', 1],
+    [undefined, 0],
+    ['true', 1],
+    ['', 0],
+  ]) {
+    withEnv({ NOTIFICATIONS_ENABLED: value }, () => {
+      assert.equal(drivers(), expected, `layout with ${JSON.stringify(value)}`);
+      if (expected) assert.equal(Page().type.name, 'NotificationsPage');
+      else assert.throws(() => Page(), /NEXT_HTTP_ERROR_FALLBACK|404/);
+    });
+  }
+
+  // No module-level constant holds the flag.
+  for (const file of [
+    'src/app/[locale]/student/layout.tsx',
+    'src/app/[locale]/student/notifications/page.tsx',
+  ]) {
+    const code = stripComments(read(file));
+    assert.doesNotMatch(code, /^(export )?const \w+ = featureFlags\./m, file);
+  }
+});

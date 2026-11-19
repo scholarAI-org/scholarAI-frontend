@@ -171,9 +171,9 @@ Run commands as `corepack pnpm …` when `pnpm` is not on PATH.
 
 **Independent Test**: open the flags-off server (port 3101): `/en/student/notifications` and `/ar/student/notifications` are the localized 404 and the fake's request log has no `/api/notifications` entry.
 
-- [ ] T090 [P] [US4] `tests/student-notifications-ui.test.mjs`: with the flag off the layout passes no driver, no badge, no compact bell and no `notificationsEnabled`; the route returns `notFound()` before `<NotificationsPage>`; the flag is read through the getter on each render (flip `process.env` between two renders).
-- [ ] T091 [US4] `tests/e2e/specs/flags-off.spec.ts`: add (en and ar) `/student/notifications` is the localized 404; the sidebar, the tablet drawer, the 390px account menu and the compact bar show no Notifications item, bell or badge; the fake's request log has no `/api/notifications` path (only `/auth/login` and `/auth/me` besides the page); the existing sidebar assertion (only search and profile) still holds.
-- [ ] T092 [US4] Run T090 and T091; commit: `test(notifications): cover the flag-off behavior` (T090 to T092).
+- [x] T090 [P] [US4] `tests/student-notifications-ui.test.mjs`: with the flag off the layout passes no driver, no badge, no compact bell and no `notificationsEnabled`; the route returns `notFound()` before `<NotificationsPage>`; the flag is read through the getter on each render (flip `process.env` between two renders).
+- [x] T091 [US4] `tests/e2e/specs/flags-off.spec.ts`: add (en and ar) `/student/notifications` is the localized 404; the sidebar, the tablet drawer, the 390px account menu and the compact bar show no Notifications item, bell or badge; the fake's request log has no `/api/notifications` path (only `/auth/login` and `/auth/me` besides the page); the existing sidebar assertion (only search and profile) still holds.
+- [x] T092 [US4] Run T090 and T091; commit: `test(notifications): cover the flag-off behavior` (T090 to T092).
 
 **Checkpoint**: shipping the code dark is proven harmless.
 

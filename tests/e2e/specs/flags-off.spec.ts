@@ -1,4 +1,4 @@
-import { backendRequests } from '../support/backend';
+import { backendRequests, notification } from '../support/backend';
 import {
   atPath,
   expect,
@@ -127,6 +127,98 @@ for (const locale of LOCALES) {
         page.getByRole('menuitem', { name: t(locale, 'StudentLayout.userMenu.settings') })
       ).toHaveCount(0);
       await expect(page.locator('a[href$="/student/settings"]')).toHaveCount(0);
+    });
+
+    // Notifications (Feature 011): NOTIFICATIONS_ENABLED is empty on this server.
+    test('/student/notifications is not found and nothing is requested for it', async ({
+      page,
+    }) => {
+      // The student has notifications, so any request for them would show in the log.
+      const user = await startStudentSession(page, {
+        notifications: [notification('profile_incomplete'), notification('scholarship_match')],
+      });
+
+      await page.goto(`/${locale}/student/notifications`);
+
+      await expect(page).toHaveURL(atPath(`/${locale}/student/notifications`));
+      await expect(
+        page.getByRole('heading', { level: 1, name: t(locale, 'NotFound.title') })
+      ).toBeVisible();
+      await expect(page.getByRole('link', { name: t(locale, 'NotFound.home') })).toBeVisible();
+      await expect(
+        page.getByRole('main').getByRole('list', {
+          name: t(locale, 'StudentNotifications.page.listLabel'),
+        })
+      ).toHaveCount(0);
+
+      // The gate ran before the page: no notification request, and besides the test's own
+      // sign-in only the shell's session check.
+      const requested = (await backendRequests(user.email)).map((request) => request.path);
+      expect(requested.filter((path) => path.startsWith('/api/notifications'))).toEqual([]);
+      expect(requested.filter((path) => !['/auth/login', '/auth/me'].includes(path))).toEqual([]);
+    });
+
+    test('no Notifications item, bell, dot or badge anywhere, and no request, at any width', async ({
+      page,
+    }) => {
+      const user = await startStudentSession(page, {
+        notifications: [notification('profile_incomplete'), notification('scholarship_match')],
+      });
+      const everywhere = [
+        'a[href$="/student/notifications"]',
+        '[data-notifications-bell]',
+        '[data-bell-dot]',
+        '[data-testid="notifications-badge"]',
+      ].join(', ');
+
+      // Desktop: the sidebar and the header.
+      await page.goto(`/${locale}/student/profile`);
+      await expect(
+        sidebar(page, locale).getByRole('link', { name: t(locale, 'StudentLayout.nav.profile') })
+      ).toBeVisible();
+      await expect(
+        sidebar(page, locale).getByRole('link', {
+          name: t(locale, 'StudentLayout.nav.notifications'),
+        })
+      ).toHaveCount(0);
+      await expect(page.locator(everywhere)).toHaveCount(0);
+
+      // Tablet: the compact bar and the drawer (the same sidebar).
+      await page.setViewportSize({ width: 768, height: 1024 });
+      await expect(page.locator(everywhere)).toHaveCount(0);
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.openNavigation') }).click();
+      const drawer = page.getByRole('dialog', {
+        name: t(locale, 'StudentLayout.navigationLabel'),
+      });
+      await expect(
+        drawer.getByRole('button', { name: t(locale, 'StudentLayout.logout') })
+      ).toBeVisible();
+      await expect(page.locator(everywhere)).toHaveCount(0);
+      await page.keyboard.press('Escape');
+
+      // Phone: the top bar and the account menu.
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expect(page.locator(everywhere)).toHaveCount(0);
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.userMenu.label') }).click();
+      await expect(
+        page.getByRole('menuitem', { name: t(locale, 'StudentLayout.logout') })
+      ).toBeVisible();
+      await expect(
+        page.getByRole('menuitem', { name: t(locale, 'StudentLayout.userMenu.notifications') })
+      ).toHaveCount(0);
+      await expect(page.locator(everywhere)).toHaveCount(0);
+
+      // Moving around never asks for notifications.
+      await page.goto(`/${locale}/student/scholarships`);
+      await expect(
+        page.getByRole('banner').getByRole('heading', {
+          level: 1,
+          name: t(locale, 'StudentLayout.pages.scholarships.title'),
+        })
+      ).toBeVisible();
+      await page.waitForTimeout(500);
+      const requested = (await backendRequests(user.email)).map((request) => request.path);
+      expect(requested.filter((path) => path.startsWith('/api/notifications'))).toEqual([]);
     });
   });
 }
