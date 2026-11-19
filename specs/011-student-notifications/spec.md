@@ -50,6 +50,7 @@ Status: **resolved by the author.** The brief says to take no questions, so `/sp
 - Q2: How do background count polling and optimistic marking avoid flipping the number back? → A: Starting a mark cancels any count request in flight, polling ticks and focus refetches are skipped while any mark request is pending, and one reconcile request runs after the last pending mark settles. (FR-036, FR-039, FR-043)
 - Q3: What does "refetch on window focus" mean when a tab can be visible but unfocused? → A: The count is requested again when the tab becomes visible or the window fires `focus`, whichever comes first, and never while a count request is already in flight. A visible but unfocused window keeps its 60-second rhythm. (FR-043)
 - Q4: What happens to the loaded list when the student leaves the page and comes back? → A: Leaving discards the loaded pages; every visit starts with a fresh request for page 1 and a skeleton. A mark made just before navigating through an action still updates the count at once, and a failure of that mark restores the count (there is no list left to restore). (FR-035, FR-050)
+- Owner decisions, 2026-11-19 (unattended implementation run; contract per BE-13, ClickUp z8pmx9qru2): Home "Recent activity" is not fed from notifications (A18); order is guaranteed by the server and ids are integers (A7); `page_size` 1 to 100, default 20 (A6); `action.type` is the closed list `open_scholarship`, `open_profile`, `open_document_analysis` and the backend `action` decides everything (A4, FR-030, FR-031); `unread_count` counts every unread row (A19); `PATCH /{id}/read` is idempotent and a 404 means "already gone", so the card is dropped and the count refetched instead of rolled back (FR-037); `change` codes: only `language_requirement_added`, unknown codes fall back (A5).
 - Q5: How is the deadline date written in a reminder? → A: Day and long month in the active language with Latin digits (as in the design, "15 September"), plus the year only when it is not the current year on the student's device. It is a calendar date and is never shifted by the time zone. (FR-020)
 
 ## User Scenarios & Testing _(mandatory)_
@@ -175,7 +176,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 
 **Notification center page**
 
-- **FR-010**: The page lists notifications in the order the backend returns them (newest first). The frontend does not re-sort them (the order is part of the contract, see Open Questions).
+- **FR-010**: The page lists notifications in the order the backend returns them (newest first). The frontend does not re-sort them (the server guarantees the order, A7).
 - **FR-011**: The list is a semantic list with an accessible name; each notification is one list item.
 - **FR-012**: The student header shows the title "Notifications center" and the description "Follow updates about your scholarships, deadlines and profile as they happen" (`StudentLayout.pages.notifications`).
 - **FR-013**: A card, from the reading start: a 42px rounded tinted icon box with the type's icon; the text block (title 14px medium, body 12px, time line 12px); the end column with the "New" pill (unread only) and the action button (when there is one). Colors and icons per type are in FR-020 to FR-029.
@@ -193,14 +194,14 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 - **FR-024 `scholarship_archived`**: icon `Archive`, `rgba(220,38,38,0.6)` on `rgba(255,56,60,0.1)`. Params: `scholarship_id`, `scholarship_title`. Title: "Scholarship archived". Body: "«{scholarship_title}» has been archived and is no longer available." No action.
 - **FR-025 `profile_incomplete`**: icon `CircleAlert`, orange `#f97316` on `rgba(255,141,40,0.1)`. Params: `remaining_percent`, `threshold_percent` (numbers from 0 to 100). Title: "Your profile is incomplete". Body: "Complete the remaining {remaining_percent}% of your profile for more accurate recommendations. A profile that is {threshold_percent}% complete is needed for match scores." Percentages are rounded to whole numbers for display. Action: go to the profile page.
 - **FR-026 `document_analysis_ready`**: icon `FilePen`, purple `#8b5cf6` on `rgba(0,136,255,0.1)`. Params: `suggestions_count`, `target_scholarship_title` (nullable). Title: "Your document analysis is ready". Body: a plural sentence on `suggestions_count`, naming the scholarship when `target_scholarship_title` is present. **No action in this release** (the AI document page does not exist).
-- **FR-027**: Every notification type has exactly one entry in a single registry (type, params parser, icon, tone, copy keys, action rule). Adding a type means adding one entry and its messages; a test fails if a registered type lacks messages in either language or a parser.
+- **FR-027**: Every notification type has exactly one entry in a single registry (type, params parser, icon, tone, copy keys). Adding a type means adding one entry and its messages; a test fails if a registered type lacks messages in either language or a parser.
 - **FR-028**: An unknown `type` is skipped, never an error. A known type whose `params` fail validation is skipped and counted. The parse result reports how many items were skipped for each reason; the counts never include parameter values, and in non-production builds a single warning with the two numbers is logged.
-- **FR-029**: A notification missing `id`, `created_at` (unreadable) or `is_read` (not a boolean) is malformed and skipped under FR-028.
+- **FR-029**: A notification whose `id` is not a positive integer, whose `created_at` is unreadable or whose `is_read` is not a boolean is malformed and skipped under FR-028.
 
 **Actions**
 
-- **FR-030**: An action is rendered only when (a) the backend `action` field is not `null`, (b) the type has an action rule in the registry, and (c) the destination exists and is enabled. Otherwise no action is shown and the card is otherwise unchanged.
-- **FR-031**: Destinations: `deadline_reminder`, `scholarship_match`, `saved_scholarship_updated` open `/student/scholarships/{id}` through `getScholarshipDetailsHref(id, detailsEnabled)` (`detailsEnabled` is `SCHOLARSHIP_DETAILS_ENABLED`, passed from the Server Component); the id is `action.target_id`, falling back to `params.scholarship_id`, and must be a positive safe integer. `profile_incomplete` opens `/student/profile`. `scholarship_archived` and `document_analysis_ready` have none in this release.
+- **FR-030**: An action is rendered only when (a) the backend `action` field is not `null`, (b) its `type` is one of the closed list `open_scholarship`, `open_profile`, `open_document_analysis`, and (c) its destination is available. Otherwise no action is shown and the card is otherwise unchanged. The notification's own type does not decide the action; the backend's `action` does.
+- **FR-031**: Destinations by `action.type`: `open_scholarship` opens `/student/scholarships/{target_id}` through `getScholarshipDetailsHref(id, detailsEnabled)` (`detailsEnabled` is `SCHOLARSHIP_DETAILS_ENABLED`, passed from the Server Component; `target_id` must be a positive safe integer); `open_profile` opens `/student/profile`; `open_document_analysis` is always hidden in this release (the AI document page does not exist). An unknown action type shows no action.
 - **FR-032**: Action labels are translated: "View" (scholarship details) and "Complete profile". Links are built from fixed routes and integer ids only; a URL coming from the backend is never followed. An action link is a real link (keyboard and middle-click work).
 
 **Mark as read**
@@ -209,7 +210,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 - **FR-034**: Clicking an unread card, or pressing Enter or Space on it, marks it read. An unread card's text block is a button whose accessible description is "Mark as read"; the action control is a separate sibling, never nested in it. A read card has no button.
 - **FR-035**: Clicking an action marks the notification read (same as FR-034) and navigates immediately; it does not wait for the PATCH.
 - **FR-036**: Marking is optimistic: the card turns read and the unread count decreases by one (never below 0, and not at all when no count is loaded) before the server answers. One `PATCH /api/notifications/{id}/read` is sent per notification at a time; none for a read item and none while one is in flight for that id.
-- **FR-037**: On failure only that notification returns to unread, only its share of the count is restored, and a message with `role="alert"` says it could not be marked as read. Other optimistic changes stay. The message stays until the next mark attempt on the page.
+- **FR-037**: A 404 on `PATCH /api/notifications/{id}/read` means the notification is already gone (missing, or not the student's): it is not rolled back; the card is removed from the loaded list, the count is re-requested and no error message shows. On any other failure only that notification returns to unread, only its share of the count is restored, and a message with `role="alert"` says it could not be marked as read. Other optimistic changes stay. The message stays until the next mark attempt on the page.
 - **FR-038**: "Mark all as read" is optimistic: every loaded card turns read and the count becomes 0; one `PATCH /api/notifications/read-all` is sent. On success the answer `{ updated }` is validated, the count is re-requested to reconcile, and a `role="status"` message says that all notifications were marked as read (no number, because the server's `updated` can differ from the loaded cards). On failure everything the action changed is restored and an alert shows.
 - **FR-039**: Starting a mark cancels any count request in flight. After the last pending mark settles (success or failure) the unread count is re-requested once to reconcile with the server. A mark does not change the count when there is no count loaded.
 
@@ -292,10 +293,12 @@ Made without asking, as the brief requires; each is repeated in the PR descripti
 - **A1 (one count, one query)**: the sidebar badge, the bells and the Home stat read one query through the Home notifications source. Making `HOME_API_AVAILABILITY.notifications` depend on the flag is done by passing an availability override from the server flag, not by editing the static table, so Home's own tests and defaults keep their meaning.
 - **A2 (Home changes when the flag is on)**: with `NOTIFICATIONS_ENABLED=true` and Home on, Home's "Unread notifications" card appears (real count) and links to the page. This is the intended effect of reusing the source. Home's activity section is untouched.
 - **A3 (Home's demo source)**: Home's local-development demo notifications (`HOME_MOCK_SECTIONS`) keep working when this flag is off; they make no requests and never exist in production or Preview. With the flag on, real data wins (existing rule). The bell is only a link when the flag is on.
-- **A4 (action rule)**: the backend `action` field decides whether an action exists (`null` hides it); the notification type decides its destination and label. `action.type` is validated as a string but not interpreted, because its values are not yet published (BE-13). `action.target_id` is the scholarship id, with `params.scholarship_id` as the fallback.
+- **A4 (action rule)**: owner decision of 2026-11-19. The backend `action` field decides everything: `null` hides it, `action.type` is a closed list (`open_scholarship`, `open_profile`, `open_document_analysis`) that maps to a destination and a label, and `action.target_id` is the scholarship id for `open_scholarship`. `open_document_analysis` is always hidden in this release; an unknown action type shows no action.
 - **A5 (copy limited to the contract)**: sentences only use contract fields. Known `change` codes are `language_requirement_added` only; known `missing_documents` codes start with the document kinds the profile feature already knows (listed in the plan). Unknown codes get the generic sentence. The backend should publish the closed lists (Open Questions).
-- **A6 (page size 20)**: the first request uses `page_size=20`; the backend's maximum is not documented.
-- **A7 (order)**: the backend returns newest first (`created_at` descending, `id` descending as the tie-break); the frontend preserves that order.
+- **A6 (page size 20)**: owner decision of 2026-11-19: `page_size` accepts 1 to 100 with a default of 20; the frontend sends 20, and every visit starts at page 1.
+- **A7 (order)**: owner decision of 2026-11-19: the server guarantees newest first (`created_at` descending, `id` descending); the frontend does not re-sort. Ids are integers.
+- **A18 (Home activity)**: owner decision of 2026-11-19: Home's "Recent activity" is not fed from notifications. Only the bell and the unread count are shared with Home.
+- **A19 (unread count)**: owner decision: `unread_count` counts every unread row of any type, including types this version skips; "Mark all as read" clears all of it (both idempotent).
 - **A8 (list freshness)**: only the count is polled. The list is requested when the page opens (page 1, every visit) and is not refreshed in the background, so cards never move under the student's cursor. A "new notifications available" prompt is a follow-up.
 - **A9 (60 seconds, 99+)**: the cadence is a product default ("about every 60 seconds"); the badge caps at "99+".
 - **A10 (time labels)**: one deterministic relative rule replaces the design's mixed formats (Design Notes); "Yesterday" uses the language's natural form.
@@ -309,15 +312,10 @@ Made without asking, as the brief requires; each is repeated in the PR descripti
 
 ## Open Questions (for the BE-13 ticket)
 
-The frontend is built against the fake backend, and these are the points where the real backend could differ. Each is isolated in the adapter or the registry so that answering it later is a small change.
+The frontend is built against the fake backend. On 2026-11-19 the owner answered most of the contract questions (BE-13, ClickUp z8pmx9qru2); they are recorded in A4, A6, A7, A18 and A19 and in the Clarifications. Two points stay open; each is isolated in the adapter or the registry so that an answer later is a small change.
 
-- **Q-ORDER**: is the list `created_at` descending with an `id` tie-break, stable across pages?
-- **Q-ACTION**: the closed list of `action.type` values and whether `target_id` is always the scholarship id.
-- **Q-CODES**: the closed lists of `change` codes and `missing_documents` codes.
-- **Q-PAGE**: the default and the maximum `page_size`.
-- **Q-COUNT**: whether `unread_count` includes notification types the client skips (it will, by definition).
-- **Q-STATUS**: the status codes for an unknown id and for an already-read id on `PATCH /{id}/read`, and whether `403` is returned for a disabled account.
-- **Q-READALL**: whether `read-all` is limited to the current student and returns `{ updated }` as an integer.
+- **Q-DOCS**: the closed list of `missing_documents` codes. The frontend knows the profile feature's seven document keys; any other code gets a generic sentence.
+- **Q-403**: whether `403` is returned for a disabled account (handled like any other failure on the list and on PATCH; it stops count polling).
 
 ## Dependencies
 

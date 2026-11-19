@@ -12,7 +12,11 @@ paths:
       summary: Notifications of the authenticated student, newest first
       parameters:
         - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
-        - { name: page_size, in: query, schema: { type: integer, minimum: 1 } }
+        - {
+            name: page_size,
+            in: query,
+            schema: { type: integer, minimum: 1, maximum: 100, default: 20 },
+          }
         - {
             name: is_read,
             in: query,
@@ -49,7 +53,12 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/MarkReadResponse' }
         '401': { description: Missing or invalid authentication }
-        '404': { description: Unknown id, or not the student's notification }
+        '404':
+          {
+            description: Missing id,
+            or not the student's notification. The frontend treats it as already gone (drops the card,
+            refetches the count).,
+          }
   /api/notifications/read-all:
     patch:
       summary: Mark every notification of the student as read
@@ -96,7 +105,7 @@ components:
           type: object
           required: [type, target_id]
           properties:
-            type: { type: string }
+            type: { type: string, enum: [open_scholarship, open_profile, open_document_analysis] }
             target_id: { type: integer, nullable: true }
     UnreadCountResponse:
       type: object

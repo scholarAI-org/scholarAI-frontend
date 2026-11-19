@@ -55,7 +55,7 @@ Phase 0 of `/speckit.plan`. Nothing in the Technical Context was left as "NEEDS 
 
 ## R10. Fake-backend ordering, ids and faults
 
-- **Decision**: the fake sorts by `created_at` descending then `id` descending, serves ids as integers, and exposes a control API for seeding, adding items mid-test, delaying and failing the next N answers of one endpoint. The real id type is unknown, so the adapter accepts a positive integer or a non-empty string and encodes it in the path.
+- **Decision**: the fake sorts by `created_at` descending then `id` descending, serves ids as integers, and exposes a control API for seeding, adding items mid-test, delaying and failing the next N answers of one endpoint. Ids are integers (owner decision, 2026-11-19). A 404 on a single mark means "already gone": the card is dropped and the count refetched, with no rollback.
 - **Alternatives**: static JSON fixtures (cannot express delays or failures).
 
 ## R11. Time labels that do not go stale

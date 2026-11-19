@@ -6,7 +6,7 @@ All four calls are authenticated by the session cookie that the `/backend` proxy
 
 ## `GET /api/notifications?page&page_size&is_read`
 
-Sent: `page` (1-based) and `page_size` (20). `is_read` is part of the contract but **not sent** (filters are out of scope).
+Sent: `page` (1-based) and `page_size` (20; the server accepts 1 to 100, default 20). `is_read` is part of the contract but **not sent** (filters are out of scope).
 
 ```json
 {
@@ -35,7 +35,7 @@ Sent: `page` (1-based) and `page_size` (20). `is_read` is part of the contract b
 }
 ```
 
-Expected order: `created_at` descending, `id` descending as the tie-break, stable across pages. The frontend does not re-sort.
+Order: `created_at` descending, `id` descending, guaranteed by the server (owner decision, 2026-11-19). The frontend does not re-sort. Ids are integers.
 
 ### Params per type
 
@@ -60,20 +60,20 @@ Same path as the Home source's requested contract (`specs/009-student-home/contr
 
 ## `PATCH /api/notifications/{id}/read`
 
-No request body. Answer: `{ "id": 42, "is_read": true, "read_at": "2026-11-19T09:00:00Z" }`. The frontend sends one request per notification at a time, and none for an already-read item.
+No request body. Answer: `{ "id": 42, "is_read": true, "read_at": "2026-11-19T09:00:00Z" }`. Idempotent: re-marking a read row answers 200 too. 404 for a missing id or another user's id; the frontend treats it as "already gone" (drops the card, refetches the count, no rollback). The frontend sends one request per notification at a time, and none for an already-read item.
 
 ## `PATCH /api/notifications/read-all`
 
-No request body. Answer: `{ "updated": 5 }`. Sent once per press.
+No request body. Answer: `{ "updated": 5 }`. Idempotent, clears every unread row of the student (any type). Sent once per press.
 
 ## How the frontend reads status codes
 
-| Status       | List                                    | Count                                      | PATCH calls                       |
-| ------------ | --------------------------------------- | ------------------------------------------ | --------------------------------- |
-| 401          | re-check the session; "session expired" | stop polling, hide badge, re-check session | roll back, show the error message |
-| 403          | "access unavailable", no Retry          | stop polling, hide badge                   | roll back, show the error message |
-| 404          | generic error with Retry                | stop polling, hide badge                   | roll back, show the error message |
-| network, 5xx | generic error with Retry                | keep the last value, keep polling          | roll back, show the error message |
+| Status       | List                                    | Count                                      | PATCH calls                                                              |
+| ------------ | --------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------ |
+| 401          | re-check the session; "session expired" | stop polling, hide badge, re-check session | roll back, show the error message                                        |
+| 403          | "access unavailable", no Retry          | stop polling, hide badge                   | roll back, show the error message                                        |
+| 404          | generic error with Retry                | stop polling, hide badge                   | single mark: drop the card, refetch the count, no message (already gone) |
+| network, 5xx | generic error with Retry                | keep the last value, keep polling          | roll back, show the error message                                        |
 
 `apiClient` turns a non-2xx answer into `ApiError(message, details, status)`; the UI never shows `message`, only translated text.
 
@@ -84,6 +84,10 @@ No request body. Answer: `{ "updated": 5 }`. Sent once per press.
 3. Run `pnpm test:student-notifications`. The guard test fails if a backend name appears outside `adapter/`.
 4. No component, hook or message changes unless a new type or code appears (then add one registry entry and its messages).
 
-## Open questions for BE-13
+## Decided by the owner (2026-11-19, BE-13, ClickUp z8pmx9qru2)
 
-See **Open Questions** in [spec.md](./spec.md): order, `action.type` values, `change` and `missing_documents` codes, page size limits, what `unread_count` includes, status codes for unknown or already-read ids, `read-all` scope. Until they are answered the flag stays off in Production and Preview.
+Order (server-guaranteed), integer ids, `page_size` 1 to 100 default 20, `action.type` closed list (`open_scholarship`, `open_profile`, `open_document_analysis`), `unread_count` counts every unread row of any type, idempotent PATCH calls with 404 as "already gone", `change` code `language_requirement_added` only.
+
+## Still open for BE-13
+
+See **Open Questions** in [spec.md](./spec.md): the closed list of `missing_documents` codes and whether `403` is returned for a disabled account.

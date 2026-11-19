@@ -4,14 +4,14 @@ Internal model (camelCase). Backend names exist only in `src/features/student/no
 
 ## StudentNotification
 
-| Field       | Type                                 | Rule                                                                      |
-| ----------- | ------------------------------------ | ------------------------------------------------------------------------- |
-| `id`        | `number \| string`                   | Positive integer or non-empty string; opaque; unique inside a loaded list |
-| `type`      | one of the six `NotificationType`s   | Unknown types never reach the model                                       |
-| `params`    | per-type object (below)              | Validated by the type's wire schema, mapped to camelCase                  |
-| `createdAt` | ISO 8601 UTC string                  | Unreadable or missing means the item is malformed and skipped             |
-| `isRead`    | boolean                              | Anything else means malformed                                             |
-| `action`    | `null \| { type: string, targetId }` | `undefined` is read as `null`; `type` is not interpreted (assumption A4)  |
+| Field       | Type                               | Rule                                                                                                                                       |
+| ----------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`        | `number`                           | Positive integer; unique inside a loaded list                                                                                              |
+| `type`      | one of the six `NotificationType`s | Unknown types never reach the model                                                                                                        |
+| `params`    | per-type object (below)            | Validated by the type's wire schema, mapped to camelCase                                                                                   |
+| `createdAt` | ISO 8601 UTC string                | Unreadable or missing means the item is malformed and skipped                                                                              |
+| `isRead`    | boolean                            | Anything else means malformed                                                                                                              |
+| `action`    | `null \| { type, targetId }`       | `undefined` is read as `null`; `type` is one of `open_scholarship`, `open_profile`, `open_document_analysis` (other values show no action) |
 
 `StudentNotification` is a discriminated union on `type`, so `params` is precise inside each branch.
 
@@ -37,7 +37,7 @@ Internal model (camelCase). Backend names exist only in `src/features/student/no
 
 ## NotificationAction (derived, never stored)
 
-`{ href: string, labelKey: 'actions.viewScholarship' | 'actions.completeProfile' } | null`, from `resolveAction(notification, { detailsEnabled })`.
+`{ href: string, labelKey: 'actions.viewScholarship' | 'actions.completeProfile' } | null`, from `resolveAction(notification, { detailsEnabled })`, which reads only the backend `action`: `open_scholarship` (details, when the flag is on), `open_profile`; `open_document_analysis` is always `null` in this release.
 
 ## UnreadCount (Home's type, reused)
 
