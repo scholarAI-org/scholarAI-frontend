@@ -89,6 +89,11 @@ const sessions = new Map(); // token -> email
 const requestLog = [];
 let nextUserId = 1000;
 let nextTrackingId = 5000;
+let nextNotificationId = 9000;
+// Tests can slow an endpoint down or make its next answers fail. Key: "<email>|<endpoint>",
+// endpoint is one of: list, unread-count, mark-read, read-all.
+const notificationFaults = new Map();
+const notificationDelays = new Map();
 
 const STATUSES = [
   'preparing_documents',
@@ -116,6 +121,7 @@ function createUser({ name, email, password, role = 'student', verified = true }
     completion: 0,
     saved: [], // [{ scholarship_id, id, created_at }] newest first
     tracked: [], // tracking rows
+    notifications: [], // BE-13 rows, see addNotification
   };
   users.set(user.email, user);
   return user;
@@ -375,6 +381,117 @@ function changePassword(req, res, user) {
 
 // ---------------------------------------------------------------- routes
 
+// ---------------------------------------------------------------- notifications (BE-13, as consumed)
+// Shapes follow specs/011-student-notifications/contracts/notifications.openapi.yaml. The real
+// endpoints do not exist yet; the frontend is built and tested against this fake.
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function addNotification(
+  user,
+  { type, params = {}, created_at, minutes_ago = 0, is_read = false, action = null }
+) {
+  const row = {
+    id: nextNotificationId++,
+    type,
+    params,
+    created_at: created_at ?? new Date(Date.now() - minutes_ago * 60_000).toISOString(),
+    is_read,
+    read_at: is_read ? now() : null,
+    action,
+  };
+  user.notifications.push(row);
+  return row;
+}
+
+const notificationView = (row) => ({
+  id: row.id,
+  type: row.type,
+  params: row.params,
+  created_at: row.created_at,
+  is_read: row.is_read,
+  action: row.action,
+});
+
+// Newest first: created_at descending, then id descending (the server guarantees the order).
+const newestFirst = (a, b) =>
+  a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : b.id - a.id;
+
+// Applies the injected delay, then the injected failure. True when it answered.
+async function notificationFault(user, endpoint, res) {
+  const key = `${user.email}|${endpoint}`;
+  const delay = notificationDelays.get(key);
+  if (delay) await sleep(delay);
+  const fault = notificationFaults.get(key);
+  if (!fault) return false;
+  fault.times -= 1;
+  if (fault.times <= 0) notificationFaults.delete(key);
+  send(res, fault.status, { detail: fault.detail ?? 'Injected failure' });
+  return true;
+}
+
+// True when the request was a notification request and has been answered.
+async function notificationsRoute(res, url, user, method) {
+  const { pathname, searchParams } = url;
+
+  if (pathname === '/api/notifications' && method === 'GET') {
+    if (await notificationFault(user, 'list', res)) return true;
+    const page = Number(searchParams.get('page') ?? 1);
+    const pageSize = Number(searchParams.get('page_size') ?? 20);
+    if (!Number.isInteger(page) || page < 1) return invalid(res, 'page', 'must be at least 1'), true;
+    if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100) {
+      return invalid(res, 'page_size', 'must be between 1 and 100'), true;
+    }
+    const filter = searchParams.get('is_read');
+    const rows = user.notifications
+      .filter((row) => (filter === null ? true : row.is_read === (filter === 'true')))
+      .sort(newestFirst);
+    const start = (page - 1) * pageSize;
+    send(res, 200, {
+      items: rows.slice(start, start + pageSize).map(notificationView),
+      total: rows.length,
+      page,
+      page_size: pageSize,
+      total_pages: Math.ceil(rows.length / pageSize),
+    });
+    return true;
+  }
+
+  if (pathname === '/api/notifications/unread-count' && method === 'GET') {
+    if (await notificationFault(user, 'unread-count', res)) return true;
+    send(res, 200, { unread_count: user.notifications.filter((row) => !row.is_read).length });
+    return true;
+  }
+
+  if (pathname === '/api/notifications/read-all' && method === 'PATCH') {
+    if (await notificationFault(user, 'read-all', res)) return true;
+    let updated = 0;
+    for (const row of user.notifications) {
+      if (row.is_read) continue;
+      row.is_read = true;
+      row.read_at = now();
+      updated += 1;
+    }
+    send(res, 200, { updated });
+    return true;
+  }
+
+  const match = /^\/api\/notifications\/(\d+)\/read$/.exec(pathname);
+  if (match && method === 'PATCH') {
+    if (await notificationFault(user, 'mark-read', res)) return true;
+    const row = user.notifications.find((entry) => entry.id === Number(match[1]));
+    if (!row) return notFound(res, 'Notification not found'), true;
+    if (!row.is_read) {
+      row.is_read = true;
+      row.read_at = now();
+    }
+    send(res, 200, { id: row.id, is_read: true, read_at: row.read_at });
+    return true;
+  }
+
+  return false;
+}
+
 async function route(req, res, url, user) {
   const { pathname, searchParams } = url;
   const method = req.method ?? 'GET';
@@ -451,6 +568,12 @@ async function route(req, res, url, user) {
 
   if (pathname === '/auth/change-password' && method === 'POST') {
     return changePassword(req, res, user);
+  }
+
+  // ----- notifications (the admin ones are admin-only and the student app never calls them) -----
+  if (pathname.startsWith('/admin/notifications')) return send(res, 403, { detail: 'Admin only' });
+  if (pathname.startsWith('/api/notifications') && (await notificationsRoute(res, url, user, method))) {
+    return;
   }
 
   // ----- profile -----
@@ -589,7 +712,39 @@ async function control(req, res, url, method) {
       user.saved.push({ id: nextTrackingId++, scholarship_id: id, created_at: now() });
     }
     for (const entry of body.tracked ?? []) trackedRow(user, entry);
+    for (const item of body.notifications ?? []) addNotification(user, item);
     return send(res, 201, { id: user.id, email: user.email, password: user.password });
+  }
+
+  // Notifications for a user: { email, items: [{ type, params, minutes_ago?, created_at?, is_read?, action? }] }.
+  // Answers the new ids, oldest item first.
+  if (pathname === '/__e2e/notifications' && method === 'POST') {
+    const body = readBody(req).value ?? {};
+    const target = users.get(String(body.email ?? '').toLowerCase());
+    if (!target) return notFound(res, 'No such user');
+    const rows = (body.items ?? []).map((item) => addNotification(target, item));
+    return send(res, 201, { ids: rows.map((row) => row.id) });
+  }
+
+  // Make the next `times` answers of one endpoint fail: { email, endpoint, status, times?, detail? }.
+  if (pathname === '/__e2e/notifications/fault' && method === 'POST') {
+    const body = readBody(req).value ?? {};
+    const key = `${String(body.email ?? '').toLowerCase()}|${body.endpoint}`;
+    notificationFaults.set(key, {
+      status: Number(body.status ?? 500),
+      times: Number(body.times ?? 1),
+      detail: body.detail,
+    });
+    return send(res, 200, { ok: true });
+  }
+
+  // Slow one endpoint down for a user: { email, endpoint, ms } (0 removes the delay).
+  if (pathname === '/__e2e/notifications/delay' && method === 'POST') {
+    const body = readBody(req).value ?? {};
+    const key = `${String(body.email ?? '').toLowerCase()}|${body.endpoint}`;
+    if (Number(body.ms) > 0) notificationDelays.set(key, Number(body.ms));
+    else notificationDelays.delete(key);
+    return send(res, 200, { ok: true });
   }
 
   // What the backend holds for a user: lets tests assert on server-side effects.
@@ -606,6 +761,12 @@ async function control(req, res, url, method) {
         scholarship_id: r.scholarship_id,
         status: r.status,
         notes: r.notes,
+      })),
+      notifications: target.notifications.map((r) => ({
+        id: r.id,
+        type: r.type,
+        is_read: r.is_read,
+        read_at: r.read_at,
       })),
     });
   }
@@ -625,6 +786,8 @@ async function control(req, res, url, method) {
     users.clear();
     sessions.clear();
     requestLog.length = 0;
+    notificationFaults.clear();
+    notificationDelays.clear();
     return send(res, 200, { ok: true });
   }
 

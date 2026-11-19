@@ -1038,7 +1038,8 @@
       "profile": "الملف الشخصي",
       "scholarships": "البحث عن منح",
       "saved": "المحفوظات",
-      "tracking": "تتبع الطلبات"
+      "tracking": "تتبع الطلبات",
+      "notifications": "الإشعارات"
     },
     "tabs": {
       "home": "الرئيسية",
@@ -1075,11 +1076,16 @@
       "settings": {
         "title": "الإعدادات",
         "description": "أدِر أمان حسابك."
+      },
+      "notifications": {
+        "title": "مركز التنبيهات والإشعارات",
+        "description": "تابع تحديثات منحك ومواعيدك النهائية وملفك الشخصي أولاً بأول"
       }
     },
     "userMenu": {
       "label": "قائمة الحساب",
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "notifications": "الإشعارات"
     }
   },
   "StudentScholarshipDiscovery": {
@@ -1441,6 +1447,91 @@
     },
     "bell": {
       "label": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءان} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعارًا غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
+    }
+  },
+  "StudentNotifications": {
+    "page": {
+      "listLabel": "الإشعارات",
+      "loading": "جارٍ تحميل الإشعارات…"
+    },
+    "markAll": {
+      "label": "تحديد الكل كمقروء",
+      "done": "تم تحديد كل الإشعارات كمقروءة.",
+      "failed": "تعذّر تحديد كل الإشعارات كمقروءة. حاول مرة أخرى."
+    },
+    "markRead": {
+      "hint": "تحديد كمقروء",
+      "failed": "تعذّر تحديد الإشعار كمقروء. حاول مرة أخرى."
+    },
+    "new": "جديد",
+    "time": {
+      "justNow": "الآن",
+      "reminder": "تذكير {index, number, integer} من {total, number, integer}"
+    },
+    "types": {
+      "deadline_reminder": {
+        "title": "موعد نهائي يقترب — {title}",
+        "body": "{days, plural, =0 {الموعد النهائي اليوم ({date}).} one {يتبقى يوم واحد على الموعد النهائي ({date}).} two {يتبقى يومان على الموعد النهائي ({date}).} few {يتبقى {days, number, integer} أيام على الموعد النهائي ({date}).} many {يتبقى {days, number, integer} يوماً على الموعد النهائي ({date}).} other {يتبقى {days, number, integer} يوم على الموعد النهائي ({date}).}}",
+        "documents": "مستندات لم تُرفع بعد: {list}.",
+        "documentsUnknown": "بعض مستنداتك ما زالت ناقصة."
+      },
+      "scholarship_match": {
+        "title": "منحة جديدة مطابقة لملفك",
+        "body": "تمت إضافة «{title}»: تطابق {matched, number, integer} من {total, plural, =0 {0 معايير} one {معيار واحد} two {معيارين} few {{total, number, integer} معايير} many {{total, number, integer} معياراً} other {{total, number, integer} معيار}}."
+      },
+      "saved_scholarship_updated": {
+        "title": "تم تحديث منحة محفوظة",
+        "body": "تم تحديث تفاصيل «{title}».",
+        "changes": {
+          "language_requirement_added": "تم تحديث تفاصيل «{title}»: أُضيف شرط جديد للغة."
+        }
+      },
+      "scholarship_archived": {
+        "title": "منحة مؤرشفة",
+        "body": "تمت أرشفة «{title}» ولم تعد متاحة."
+      },
+      "profile_incomplete": {
+        "title": "ملفك الشخصي غير مكتمل",
+        "body": "أكمل {remaining, number, integer}% المتبقية من ملفك لرفع دقة التوصيات. يلزم أن يكتمل ملفك بنسبة {threshold, number, integer}% لظهور درجة التوافق."
+      },
+      "document_analysis_ready": {
+        "title": "اكتمل تحليل مستندك",
+        "body": "{count, plural, =0 {لم يجد التحليل أي اقتراحات.} one {وجدنا اقتراحاً واحداً لمستندك.} two {وجدنا اقتراحين لمستندك.} few {وجدنا {count, number, integer} اقتراحات لمستندك.} many {وجدنا {count, number, integer} اقتراحاً لمستندك.} other {وجدنا {count, number, integer} اقتراح لمستندك.}}",
+        "bodyForScholarship": "{count, plural, =0 {لم يجد التحليل أي اقتراحات لمستندك من أجل «{title}».} one {وجدنا اقتراحاً واحداً لمستندك من أجل «{title}».} two {وجدنا اقتراحين لمستندك من أجل «{title}».} few {وجدنا {count, number, integer} اقتراحات لمستندك من أجل «{title}».} many {وجدنا {count, number, integer} اقتراحاً لمستندك من أجل «{title}».} other {وجدنا {count, number, integer} اقتراح لمستندك من أجل «{title}».}}"
+      }
+    },
+    "documents": {
+      "cv": "السيرة الذاتية",
+      "motivation_letter": "خطاب الدوافع",
+      "graduation_certificate": "شهادة البكالوريوس",
+      "transcript": "كشف العلامات",
+      "english_test": "شهادة اللغة",
+      "university_admission_letter": "خطاب القبول الجامعي",
+      "recommendation_letters": "رسائل التوصية",
+      "passport": "جواز السفر"
+    },
+    "actions": {
+      "viewScholarship": "عرض",
+      "completeProfile": "إكمال الملف"
+    },
+    "empty": {
+      "heading": "لا توجد إشعارات بعد",
+      "body": "سنعلمك هنا بالمواعيد النهائية والمنح الجديدة المطابقة وأي تغييرات على منحك المحفوظة.",
+      "cta": "ابحث عن منح"
+    },
+    "errors": {
+      "unauthorized": "انتهت جلستك. سجّل الدخول مرة أخرى لعرض إشعاراتك.",
+      "forbidden": "الإشعارات غير متاحة لحسابك.",
+      "generic": "تعذّر تحميل إشعاراتك.",
+      "retry": "إعادة المحاولة",
+      "loadMoreFailed": "تعذّر تحميل المزيد من الإشعارات."
+    },
+    "loadMore": {
+      "label": "عرض المزيد",
+      "pending": "جارٍ التحميل…"
+    },
+    "badge": {
+      "unread": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءين} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعاراً غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
     }
   },
   "Settings": {

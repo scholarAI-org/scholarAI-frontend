@@ -1045,7 +1045,8 @@
       "profile": "Profile",
       "scholarships": "Search scholarships",
       "saved": "Saved",
-      "tracking": "Application tracking"
+      "tracking": "Application tracking",
+      "notifications": "Notifications"
     },
     "tabs": {
       "home": "Home",
@@ -1082,11 +1083,16 @@
       "settings": {
         "title": "Settings",
         "description": "Manage the security of your account."
+      },
+      "notifications": {
+        "title": "Notifications center",
+        "description": "Follow updates about your scholarships, deadlines and profile as they happen"
       }
     },
     "userMenu": {
       "label": "Account menu",
-      "settings": "Settings"
+      "settings": "Settings",
+      "notifications": "Notifications"
     }
   },
   "StudentScholarshipDiscovery": {
@@ -1448,6 +1454,91 @@
     },
     "bell": {
       "label": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
+    }
+  },
+  "StudentNotifications": {
+    "page": {
+      "listLabel": "Notifications",
+      "loading": "Loading notifications…"
+    },
+    "markAll": {
+      "label": "Mark all as read",
+      "done": "All notifications were marked as read.",
+      "failed": "Could not mark all notifications as read. Try again."
+    },
+    "markRead": {
+      "hint": "Mark as read",
+      "failed": "Could not mark the notification as read. Try again."
+    },
+    "new": "New",
+    "time": {
+      "justNow": "Just now",
+      "reminder": "Reminder {index, number, integer} of {total, number, integer}"
+    },
+    "types": {
+      "deadline_reminder": {
+        "title": "Deadline approaching: {title}",
+        "body": "{days, plural, =0 {The deadline is today ({date}).} one {1 day left until the deadline ({date}).} other {{days, number, integer} days left until the deadline ({date}).}}",
+        "documents": "Documents still to upload: {list}.",
+        "documentsUnknown": "Some of your documents are still missing."
+      },
+      "scholarship_match": {
+        "title": "A new scholarship matches your profile",
+        "body": "«{title}» was added: it matches {matched, number, integer} of {total, plural, one {1 criterion} other {{total, number, integer} criteria}}."
+      },
+      "saved_scholarship_updated": {
+        "title": "A saved scholarship was updated",
+        "body": "The details of «{title}» were updated.",
+        "changes": {
+          "language_requirement_added": "The details of «{title}» were updated: a new language requirement was added."
+        }
+      },
+      "scholarship_archived": {
+        "title": "Scholarship archived",
+        "body": "«{title}» has been archived and is no longer available."
+      },
+      "profile_incomplete": {
+        "title": "Your profile is incomplete",
+        "body": "Complete the remaining {remaining, number, integer}% of your profile for more accurate recommendations. A profile that is {threshold, number, integer}% complete is needed for match scores."
+      },
+      "document_analysis_ready": {
+        "title": "Your document analysis is ready",
+        "body": "{count, plural, =0 {The analysis found no suggestions.} one {We found 1 suggestion for your document.} other {We found {count, number, integer} suggestions for your document.}}",
+        "bodyForScholarship": "{count, plural, =0 {The analysis for «{title}» found no suggestions.} one {We found 1 suggestion for your document, for «{title}».} other {We found {count, number, integer} suggestions for your document, for «{title}».}}"
+      }
+    },
+    "documents": {
+      "cv": "CV",
+      "motivation_letter": "motivation letter",
+      "graduation_certificate": "graduation certificate",
+      "transcript": "transcript",
+      "english_test": "language certificate",
+      "university_admission_letter": "university admission letter",
+      "recommendation_letters": "recommendation letters",
+      "passport": "passport"
+    },
+    "actions": {
+      "viewScholarship": "View",
+      "completeProfile": "Complete profile"
+    },
+    "empty": {
+      "heading": "No notifications yet",
+      "body": "We will let you know here about deadlines, new matches and changes to your saved scholarships.",
+      "cta": "Search scholarships"
+    },
+    "errors": {
+      "unauthorized": "Your session has expired. Sign in again to see your notifications.",
+      "forbidden": "Notifications are not available for your account.",
+      "generic": "We could not load your notifications.",
+      "retry": "Try again",
+      "loadMoreFailed": "We could not load more notifications."
+    },
+    "loadMore": {
+      "label": "Load more",
+      "pending": "Loading…"
+    },
+    "badge": {
+      "unread": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
     }
   },
   "Settings": {
