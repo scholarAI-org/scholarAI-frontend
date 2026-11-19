@@ -1,13 +1,12 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import type { HomeSectionId } from '@/features/student/home/config/home-sections';
 import { isTerminalStatus } from '../lib/polling';
-import { unreadQueryOptions, useUnreadSource } from '../lib/unread-source';
+import { unreadQueryOptions, useUnreadSource, type MockSections } from '../lib/unread-source';
 
 interface UnreadCountInput {
   notificationsEnabled: boolean;
-  mockSections?: readonly HomeSectionId[];
+  mockSections?: MockSections;
 }
 
 // A PASSIVE reader of the unread count: it renders from the shared query and re-renders when

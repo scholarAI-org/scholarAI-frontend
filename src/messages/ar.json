@@ -1531,7 +1531,8 @@
       "pending": "جارٍ التحميل…"
     },
     "badge": {
-      "unread": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءين} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعاراً غير مقروء} other {{count, number, integer} إشعار غير مقروء}}"
+      "unread": "{count, plural, =0 {لا توجد إشعارات غير مقروءة} one {إشعار واحد غير مقروء} two {إشعاران غير مقروءين} few {{count, number, integer} إشعارات غير مقروءة} many {{count, number, integer} إشعاراً غير مقروء} other {{count, number, integer} إشعار غير مقروء}}",
+      "short": "{count, plural, =0 {لا غير مقروء} one {غير مقروء واحد} two {اثنان غير مقروءين} few {{count, number, integer} غير مقروءة} many {{count, number, integer} غير مقروء} other {{count, number, integer} غير مقروء}}"
     }
   },
   "Settings": {

@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { FOCUSABLE_SELECTOR, getFocusTrapTarget } from './focus-trap';
 import { STUDENT_MOBILE_NAVIGATION_ID } from './StudentHeader';
 import { StudentSidebar } from './StudentSidebar';
 
-import type { StudentNavigationItem } from './types';
+import type { StudentNavigationItem, StudentNavigationItemId } from './types';
 
 interface StudentMobileNavigationProps {
   isOpen: boolean;
@@ -15,6 +15,7 @@ interface StudentMobileNavigationProps {
   returnFocusRef: RefObject<HTMLButtonElement | null>;
   items?: readonly StudentNavigationItem[];
   settingsEnabled?: boolean;
+  navigationBadges?: Partial<Record<StudentNavigationItemId, ReactNode>>;
 }
 
 export function StudentMobileNavigation({
@@ -23,6 +24,7 @@ export function StudentMobileNavigation({
   returnFocusRef,
   items,
   settingsEnabled = false,
+  navigationBadges,
 }: StudentMobileNavigationProps) {
   const t = useTranslations('StudentLayout');
   const panelRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,7 @@ export function StudentMobileNavigation({
           onNavigate={onClose}
           items={items}
           settingsEnabled={settingsEnabled}
+          navigationBadges={navigationBadges}
         />
       </div>
     </div>

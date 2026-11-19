@@ -139,7 +139,7 @@ test('Arabic plurals render the expected forms', () => {
 
 // --- Navigation --------------------------------------------------------------
 
-test('navigation config has Home, Profile, Search Scholarships, Saved, and Tracking', () => {
+test('navigation config has Home, Search Scholarships, Saved, Tracking, Notifications and Profile', () => {
   assert.deepEqual(
     studentNavigation.map(({ id, href, group }) => [id, href, group]),
     [
@@ -147,6 +147,7 @@ test('navigation config has Home, Profile, Search Scholarships, Saved, and Track
       ['scholarships', '/student/scholarships', 'discover'],
       ['saved', '/student/saved', 'manage'],
       ['tracking', '/student/tracking', 'manage'],
+      ['notifications', '/student/notifications', 'personal'],
       ['profile', '/student/profile', 'personal'],
     ]
   );
@@ -193,7 +194,8 @@ test('navigation sections follow Figma and label only real items', () => {
     [
       ['discover', ['home', 'scholarships']],
       ['manage', ['saved', 'tracking']],
-      ['personal', ['profile']],
+      // Figma 2481:4980: Notifications leads the Personal group, before Profile.
+      ['personal', ['notifications', 'profile']],
     ]
   );
   assert.equal(messages.ar.StudentLayout.navGroups.manage, 'الإدارة');
@@ -287,9 +289,11 @@ const frameImport =
 test('the student layout mounts StudentShell once, inside RoleGuard', () => {
   const layout = fs.readFileSync(path.join(studentRoutePath, 'layout.tsx'), 'utf8');
   assert.equal(layout.includes("'use client'"), false);
+  // The notifications poller (Feature 011) may sit beside the shell, inside RoleGuard, so it only
+  // starts for a signed-in student.
   assert.match(
     layout,
-    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*<StudentShell[^>]*>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
+    /<RoleGuard allowedRoles=\{\['student'\]\}>\s*(?:\{\/\*[\s\S]*?\*\/\}\s*)?(?:\{notificationsEnabled \? <NotificationsCountDriver \/> : null\}\s*)?<StudentShell[^>]*>\{children\}<\/StudentShell>\s*<\/RoleGuard>/
   );
   assert.equal(layout.match(/<StudentShell\b/g)?.length, 1);
 });

@@ -1538,7 +1538,8 @@
       "pending": "Loading…"
     },
     "badge": {
-      "unread": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}"
+      "unread": "{count, plural, =0 {No unread notifications} one {1 unread notification} other {{count, number, integer} unread notifications}}",
+      "short": "{count, plural, =0 {none unread} one {1 unread} other {{count, number, integer} unread}}"
     }
   },
   "Settings": {

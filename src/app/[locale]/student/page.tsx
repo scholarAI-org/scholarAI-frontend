@@ -13,6 +13,8 @@ export default function Page() {
     <StudentHomePage
       detailsEnabled={featureFlags.scholarshipDetailsEnabled}
       savedEnabled={featureFlags.savedScholarshipsEnabled}
+      // Feature 011: the unread count is real, and its card links to the center.
+      notificationsEnabled={featureFlags.notificationsEnabled}
       // Demo data for sections without a backend API: local development only, never in
       // a production build or on Vercel Production/Preview (see resolveHomeMockSections).
       mockSections={resolveHomeMockSections(process.env)}

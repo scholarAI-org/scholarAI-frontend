@@ -9,9 +9,11 @@ import { StudentTabBar } from './StudentTabBar';
 import {
   studentNavigation,
   withHomeEnabled,
+  withNotificationsEnabled,
   withSavedEnabled,
   withTrackingEnabled,
 } from './student-navigation';
+import type { StudentNavigationItemId } from './types';
 
 interface StudentShellProps {
   children: ReactNode;
@@ -20,6 +22,11 @@ interface StudentShellProps {
   trackingEnabled?: boolean;
   // Whether the account menu links to Settings. Not a navigation item.
   settingsEnabled?: boolean;
+  // Whether the sidebar (and the drawer) show the Notifications item.
+  notificationsEnabled?: boolean;
+  // Optional content at the end of a navigation item's row (the unread count pill), supplied by
+  // the route layout so the shell stays free of feature code.
+  navigationBadges?: Partial<Record<StudentNavigationItemId, ReactNode>>;
   // Optional controls for the desktop header, supplied by the route layout so the shell
   // stays free of page-specific data.
   headerActions?: ReactNode;
@@ -32,14 +39,19 @@ export function StudentShell({
   homeEnabled = false,
   trackingEnabled = false,
   settingsEnabled = false,
+  notificationsEnabled = false,
+  navigationBadges,
   headerActions,
 }: StudentShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const closeNavigation = useCallback(() => setIsNavigationOpen(false), []);
-  const items = withTrackingEnabled(
-    withHomeEnabled(withSavedEnabled(studentNavigation, savedEnabled), homeEnabled),
-    trackingEnabled
+  const items = withNotificationsEnabled(
+    withTrackingEnabled(
+      withHomeEnabled(withSavedEnabled(studentNavigation, savedEnabled), homeEnabled),
+      trackingEnabled
+    ),
+    notificationsEnabled
   );
 
   return (
@@ -60,7 +72,11 @@ export function StudentShell({
           </main>
         </div>
         <aside className="hidden lg:sticky lg:top-0 lg:order-1 lg:row-span-2 lg:block lg:h-screen lg:self-start">
-          <StudentSidebar items={items} settingsEnabled={settingsEnabled} />
+          <StudentSidebar
+            items={items}
+            settingsEnabled={settingsEnabled}
+            navigationBadges={navigationBadges}
+          />
         </aside>
       </div>
       <StudentMobileNavigation
@@ -69,6 +85,7 @@ export function StudentShell({
         returnFocusRef={menuButtonRef}
         items={items}
         settingsEnabled={settingsEnabled}
+        navigationBadges={navigationBadges}
       />
       <StudentTabBar items={items} />
     </div>

@@ -7,6 +7,7 @@ import {
   env,
   featurePath,
   loadFeature,
+  loadPackage,
   loadSrc,
   messages,
   read,
@@ -366,4 +367,261 @@ test('US2 messages: success has no number, failures say what to do, both languag
     assert.doesNotMatch(copy.markAll.done, /[{}\d]/, `${locale} done has no number`);
     assert.ok(copy.markAll.failed && copy.markRead.failed && copy.markRead.hint);
   }
+});
+
+// ----------------------------- US3: shell, badge, bell (FR-040 to FR-045) --------------------
+
+const { QueryClient } = loadPackage('@tanstack/react-query');
+const { StudentSidebar } = loadSrc('features/student/layout/StudentSidebar.tsx');
+const { NotificationsNavBadge } = loadFeature('components/NotificationsNavBadge.tsx');
+const { NotificationsBell } = loadFeature('components/NotificationsBell.tsx');
+const { NotificationBell } = loadSrc('features/student/home/components/NotificationBell.tsx');
+const { StatCards } = loadSrc('features/student/home/components/StatCards.tsx');
+
+const COUNT_KEY = ['student-home', 'notifications', 'real'];
+
+// A client whose unread-count cache holds `count` (undefined: not loaded) or a stopped state.
+function clientWith({ count, stoppedBy } = {}) {
+  const client = new QueryClient();
+  if (count !== undefined) client.setQueryData(COUNT_KEY, { unreadCount: count });
+  if (stoppedBy) {
+    const query = client.getQueryCache().build(client, { queryKey: COUNT_KEY });
+    query.setState({
+      ...query.state,
+      status: 'error',
+      fetchStatus: 'idle',
+      error: new ApiError('x', [], stoppedBy),
+    });
+  }
+  return client;
+}
+
+const sidebar = (items, { pathname = '/student/profile', badges } = {}) => {
+  env.pathname = pathname;
+  return render(React.createElement(StudentSidebar, { items, navigationBadges: badges }), 'en');
+};
+
+test('US3 shell: the Notifications item shows only with the flag, leads Personal, and is active on its page', () => {
+  const off = sidebar(nav.studentNavigation);
+  assert.doesNotMatch(off, /\/student\/notifications/);
+
+  const items = nav.withNotificationsEnabled(nav.studentNavigation, true);
+  const html = sidebar(items, { pathname: '/student/notifications' });
+  assert.match(html, /<a href="\/student\/notifications"[^>]*aria-current="page"[^>]*>/);
+  assert.match(html, /border-s-4 border-orange-500/);
+  assert.match(html, />Notifications<\/span>/);
+  assert.ok(
+    html.indexOf('href="/student/notifications"') < html.indexOf('href="/student/profile"'),
+    'Notifications comes before Profile'
+  );
+  // A sub-route keeps it active; another page does not.
+  assert.match(
+    sidebar(items, { pathname: '/student/notifications/anything' }),
+    /<a href="\/student\/notifications"[^>]*aria-current="page"/
+  );
+  assert.doesNotMatch(
+    sidebar(items, { pathname: '/student/profile' }),
+    /<a href="\/student\/notifications"[^>]*aria-current/
+  );
+  assert.equal(
+    messages.ar.StudentLayout.nav.notifications,
+    'الإشعارات',
+    'the Arabic label follows the design'
+  );
+});
+
+test('US3 shell: the badge slot renders at the end of that item only', () => {
+  const items = nav.withNotificationsEnabled(nav.studentNavigation, true);
+  const html = sidebar(items, {
+    badges: { notifications: React.createElement('span', { 'data-slot': 'badge' }, '3') },
+  });
+  const link = /<a href="\/student\/notifications"[^>]*>([\s\S]*?)<\/a>/.exec(html);
+  assert.ok(link, 'the item renders');
+  assert.match(link[1], /<span>Notifications<\/span><span data-slot="badge">3<\/span>$/);
+  assert.equal((html.match(/data-slot="badge"/g) ?? []).length, 1);
+});
+
+test('US3 badge: nothing for no count, 0 or a stopped count; the number, then 99+', () => {
+  const badge = (options, locale = 'en') =>
+    render(React.createElement(NotificationsNavBadge), locale, clientWith(options));
+  assert.equal(badge({}), '', 'not loaded: no invented number');
+  assert.equal(badge({ count: 0 }), '');
+  for (const status of [401, 403, 404]) {
+    assert.equal(badge({ count: 3, stoppedBy: status }), '', `stopped by ${status}`);
+  }
+  const three = badge({ count: 3 });
+  assert.match(three, /data-testid="notifications-badge"/);
+  assert.match(three, /<span aria-hidden="true">3<\/span>/);
+  assert.match(three, /<span class="sr-only">3 unread<\/span>/);
+  assert.match(three, /ms-auto/);
+  assert.match(badge({ count: 99 }), /aria-hidden="true">99</);
+  const many = badge({ count: 100 });
+  assert.match(many, /aria-hidden="true">99\+</);
+  assert.match(many, /sr-only">100 unread</, 'the hidden text keeps the real number');
+  const arabic = badge({ count: 3 }, 'ar');
+  assert.match(arabic, /sr-only">3 غير مقروءة</);
+  assert.doesNotMatch(arabic, ARABIC_INDIC_DIGITS);
+});
+
+test('US3 bell: a link to the center with a dot only while something is unread', () => {
+  env.pathname = '/student/profile';
+  const bell = (options, props = {}) =>
+    render(React.createElement(NotificationsBell, props), 'en', clientWith(options));
+
+  const three = bell({ count: 3 });
+  assert.match(three, /<a href="\/student\/notifications"/);
+  assert.match(three, /aria-label="3 unread notifications"/);
+  assert.match(three, /data-bell-dot/);
+  assert.doesNotMatch(three, /aria-current/);
+
+  assert.doesNotMatch(bell({ count: 0 }), /data-bell-dot/);
+  assert.doesNotMatch(bell({}), /data-bell-dot/, 'no dot before the count loads');
+  assert.doesNotMatch(bell({ count: 5, stoppedBy: 404 }), /data-bell-dot/, 'no dot once stopped');
+  // The link stays when the count is unavailable: the page is still reachable.
+  assert.match(bell({ count: 5, stoppedBy: 403 }), /<a href="\/student\/notifications"/);
+
+  env.pathname = '/student/notifications';
+  assert.match(bell({ count: 1 }), /aria-current="page"/);
+  env.pathname = '/student/profile';
+
+  // The compact bell is a 44px target below sm (32px from sm), with the dot moved to match.
+  const compact = bell({ count: 2 }, { size: 'compact' });
+  assert.match(compact, /size-11 sm:size-8/);
+  assert.match(compact, /end-3 top-3 sm:end-1\.5 sm:top-1\.5/);
+  assert.match(bell({ count: 2 }), /size-8/);
+});
+
+test("US3 bell: Home's own bell is unchanged without an href (an indicator, not a link)", () => {
+  const html = render(React.createElement(NotificationBell, { unreadCount: 2 }), 'en');
+  assert.match(html, /^<span role="img" aria-label="2 unread notifications"/);
+  assert.match(html, /size-8/);
+  assert.match(html, /data-bell-dot/);
+  assert.doesNotMatch(html, /<a /);
+  assert.doesNotMatch(
+    render(React.createElement(NotificationBell, { unreadCount: null }), 'en'),
+    /data-bell-dot/
+  );
+});
+
+test('US3 Home: the unread card links to the center only when it is given a destination', () => {
+  const cards = (href) =>
+    render(
+      React.createElement(StatCards, {
+        notifications: { state: 'ready', value: 3, href },
+        saved: { state: 'ready', value: 1 },
+        inProgress: { state: 'ready', value: 2 },
+        upcoming: { state: 'ready', value: 0 },
+      }),
+      'en'
+    );
+  assert.match(cards('/student/notifications'), /<a href="\/student\/notifications"/);
+  assert.doesNotMatch(cards(null), /<a href="\/student\/notifications"/);
+});
+
+// ----------------------------- US3: wiring (FR-040, plan decisions 11 and 12) ----------------
+
+// Every element of a React tree, depth first (the layout is a Server Component: calling it gives
+// elements that were never rendered).
+function elements(node, found = []) {
+  if (Array.isArray(node)) node.forEach((child) => elements(child, found));
+  else if (node && typeof node === 'object' && 'props' in node) {
+    found.push(node);
+    elements(node.props.children, found);
+  }
+  return found;
+}
+const named = (tree, name) => tree.filter((element) => element.type?.name === name);
+
+test('US3 layout: with the flag on it mounts the poller inside RoleGuard and hands the shell its nodes', () => {
+  const Layout = loadSrc('app/[locale]/student/layout.tsx').default;
+  withEnv({ NOTIFICATIONS_ENABLED: 'true', STUDENT_HOME_ENABLED: undefined }, () => {
+    const tree = elements(Layout({ children: React.createElement('p') }));
+    const shell = named(tree, 'StudentShell')[0];
+    assert.equal(shell.props.notificationsEnabled, true);
+    assert.equal(shell.props.navigationBadges.notifications.type.name, 'NotificationsNavBadge');
+    assert.equal(shell.props.headerActions.type.name, 'NotificationsBell');
+    const guard = tree.find((element) => element.type?.name === 'RoleGuard');
+    const kids = [guard.props.children].flat();
+    assert.equal(kids[0].type.name, 'NotificationsCountDriver', 'the poller sits inside RoleGuard');
+    assert.equal(kids[1].type.name, 'StudentShell');
+  });
+});
+
+test('US3 layout: with the flag off nothing of the feature is mounted or passed down', () => {
+  const Layout = loadSrc('app/[locale]/student/layout.tsx').default;
+  for (const home of [undefined, 'true']) {
+    withEnv({ NOTIFICATIONS_ENABLED: undefined, STUDENT_HOME_ENABLED: home }, () => {
+      const tree = elements(Layout({ children: React.createElement('p') }));
+      const shell = named(tree, 'StudentShell')[0];
+      assert.equal(shell.props.notificationsEnabled, false);
+      assert.equal(shell.props.navigationBadges, undefined);
+      for (const name of [
+        'NotificationsCountDriver',
+        'NotificationsNavBadge',
+        'NotificationsBell',
+      ]) {
+        assert.equal(named(tree, name).length, 0, name);
+      }
+      // Home keeps its own indicator (and its demo source) exactly as before.
+      assert.equal(
+        shell.props.headerActions?.type?.name,
+        home ? 'HomeNotificationBell' : undefined
+      );
+    });
+  }
+});
+
+test('US3 Home route: the page gets the flag as a prop', () => {
+  const Page = loadSrc('app/[locale]/student/page.tsx').default;
+  withEnv({ STUDENT_HOME_ENABLED: 'true', NOTIFICATIONS_ENABLED: 'true' }, () => {
+    assert.equal(Page().props.notificationsEnabled, true);
+  });
+  withEnv({ STUDENT_HOME_ENABLED: 'true', NOTIFICATIONS_ENABLED: undefined }, () => {
+    assert.equal(Page().props.notificationsEnabled, false);
+  });
+});
+
+test('US3 guards: the shell never imports a feature, and Home is touched by three files only', () => {
+  const shellFiles = sourceFiles(path.join(srcPath, 'features/student/layout')).map(rel);
+  assert.ok(shellFiles.length >= 10);
+  for (const file of shellFiles) {
+    assert.doesNotMatch(
+      read(file),
+      /features\/student\/(home|notifications)/,
+      `${file} must stay generic`
+    );
+  }
+  const importsHome = sourceFiles(featurePath)
+    .filter((file) => /from ['"]@\/features\/student\/home/.test(read(rel(file))))
+    .map((file) => path.relative(featurePath, file).replaceAll('\\', '/'))
+    .sort();
+  assert.deepEqual(importsHome, [
+    'components/NotificationsBell.tsx',
+    'lib/relative-time.ts',
+    'lib/unread-source.ts',
+  ]);
+  // The data abstraction (source, query key, factory) is reached through one file.
+  const dataImports = sourceFiles(featurePath)
+    .filter((file) =>
+      /from ['"]@\/features\/student\/home\/(hooks\/useHomeSources|lib\/source-query|query-keys|sources)/.test(
+        read(rel(file))
+      )
+    )
+    .map((file) => path.relative(featurePath, file).replaceAll('\\', '/'));
+  assert.deepEqual(dataImports, ['lib/unread-source.ts']);
+});
+
+test('US3 tab bar: still the same five destinations, in the same order', () => {
+  assert.deepEqual(nav.studentTabBarOrder, [
+    'home',
+    'scholarships',
+    'saved',
+    'tracking',
+    'profile',
+  ]);
+  const everything = nav.studentNavigation.map((item) => ({ ...item, enabled: true }));
+  assert.deepEqual(
+    nav.getStudentTabBarItems(everything).map((item) => item.id),
+    ['home', 'scholarships', 'saved', 'tracking', 'profile']
+  );
 });

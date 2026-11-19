@@ -2,7 +2,7 @@
 
 import { GraduationCap, LogOut, Settings } from 'lucide-react';
 import Image from 'next/image';
-import { useId } from 'react';
+import { useId, type ReactNode } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from '@/features/auth/providers/AuthProvider';
@@ -14,7 +14,7 @@ import {
 } from './student-navigation';
 import { getStudentDisplayName, getStudentInitial } from './student-identity';
 import { navigationIcons } from './navigation-icons';
-import type { StudentNavigationItem } from './types';
+import type { StudentNavigationItem, StudentNavigationItemId } from './types';
 
 // Figma sidebar (2979:9136): brand, user pill and grouped navigation at the top,
 // logout pinned to the bottom.
@@ -30,6 +30,8 @@ interface StudentSidebarProps {
   // Shows the "Settings" link above "Log out". It is not a navigation item: it never
   // appears in the list above or in the tab bar. Off unless the server-only settings flag is on.
   settingsEnabled?: boolean;
+  // Content at the end of an item's row, by item id (for example the unread count pill).
+  navigationBadges?: Partial<Record<StudentNavigationItemId, ReactNode>>;
 }
 
 // Where Settings lives; matched by prefix so a sub-route keeps the link active.
@@ -40,6 +42,7 @@ export function StudentSidebar({
   onNavigate,
   items = studentNavigation,
   settingsEnabled = false,
+  navigationBadges,
 }: StudentSidebarProps) {
   const t = useTranslations('StudentLayout');
   const pathname = usePathname();
@@ -111,6 +114,7 @@ export function StudentSidebar({
                         >
                           <Icon aria-hidden className="size-5 shrink-0" />
                           <span>{t(item.labelKey)}</span>
+                          {navigationBadges?.[item.id]}
                         </Link>
                       </li>
                     );

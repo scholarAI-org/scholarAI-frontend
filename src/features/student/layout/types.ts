@@ -1,4 +1,5 @@
-export type StudentNavigationItemId = 'home' | 'profile' | 'scholarships' | 'saved' | 'tracking';
+export type StudentNavigationItemId =
+  'home' | 'profile' | 'scholarships' | 'saved' | 'tracking' | 'notifications';
 export type StudentNavigationGroupId = 'discover' | 'manage' | 'personal';
 
 export interface StudentNavigationItem {

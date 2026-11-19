@@ -123,7 +123,7 @@ Module._load = function (request, parent, ...rest) {
   if (request === 'next/image') return imageStub;
   if (request === '@/i18n/navigation') return navigationStub;
   if (request === '@/features/auth/providers/AuthProvider')
-    return { useAuth: () => ({ user: env.user }) };
+    return { useAuth: () => ({ user: env.user }), AuthProvider: ({ children }) => children };
   if (request === '@/features/auth/hooks/useLogout') {
     return { useLogout: () => ({ mutate() {}, isPending: false }) };
   }

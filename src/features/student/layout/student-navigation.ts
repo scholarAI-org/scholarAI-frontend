@@ -38,6 +38,13 @@ export const studentNavigation: StudentNavigationItem[] = [
     group: 'manage',
   },
   {
+    id: 'notifications',
+    labelKey: 'nav.notifications',
+    href: '/student/notifications',
+    enabled: false,
+    group: 'personal',
+  },
+  {
     id: 'profile',
     labelKey: 'nav.profile',
     href: '/student/profile',
@@ -57,6 +64,14 @@ export const withTrackingEnabled = (
   trackingEnabled: boolean
 ): StudentNavigationItem[] =>
   items.map((item) => (item.id === 'tracking' ? { ...item, enabled: trackingEnabled } : item));
+
+export const withNotificationsEnabled = (
+  items: readonly StudentNavigationItem[],
+  notificationsEnabled: boolean
+): StudentNavigationItem[] =>
+  items.map((item) =>
+    item.id === 'notifications' ? { ...item, enabled: notificationsEnabled } : item
+  );
 
 export const withHomeEnabled = (
   items: readonly StudentNavigationItem[],

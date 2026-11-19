@@ -15,11 +15,15 @@ import type { UnreadNotifications } from '@/features/student/home/schemas/notifi
 
 export type UnreadSource = HomeSource<UnreadNotifications>;
 
+// The sections Home may show demo data for (local development only), re-exported so the rest of
+// the feature does not import from Home.
+export type MockSections = readonly HomeSectionId[];
+
 interface UnreadSourceInput {
   // The server flag, passed down as a prop (never read in the browser).
   notificationsEnabled: boolean;
   // From resolveHomeMockSections() on the server; ignored in a production build.
-  mockSections?: readonly HomeSectionId[];
+  mockSections?: MockSections;
 }
 
 export function useUnreadSource({

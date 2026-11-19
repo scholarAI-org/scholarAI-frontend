@@ -47,8 +47,17 @@ test('the tab bar draws from the same nav config as the sidebar', () => {
   }
 });
 
-test('the tab order covers every nav item exactly once', () => {
-  assert.deepEqual([...studentTabBarOrder].sort(), studentNavigation.map((item) => item.id).sort());
+test('the tab order covers every nav item exactly once, except Notifications', () => {
+  // Notifications is a sidebar and drawer item (and a bell in the top bar); the bar keeps its five.
+  assert.deepEqual(
+    [...studentTabBarOrder].sort(),
+    studentNavigation
+      .map((item) => item.id)
+      .filter((id) => id !== 'notifications')
+      .sort()
+  );
+  assert.equal(studentTabBarOrder.length, 5);
+  assert.ok(!studentTabBarOrder.includes('notifications'));
   assert.equal(new Set(studentTabBarOrder).size, studentTabBarOrder.length);
 });
 

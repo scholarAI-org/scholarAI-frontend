@@ -27,6 +27,9 @@ interface StudentHomePageProps {
   // From server-only flags, read in the route (never hard-coded here).
   detailsEnabled?: boolean;
   savedEnabled?: boolean;
+  // Feature 011, from the server flag: the unread count comes from the real source and its card
+  // links to the notification center.
+  notificationsEnabled?: boolean;
   // Sections allowed to show demo data, from resolveHomeMockSections() on the server.
   mockSections?: readonly HomeSectionId[];
 }
@@ -46,6 +49,7 @@ const toStatView = (
 export function StudentHomePage({
   detailsEnabled = false,
   savedEnabled = false,
+  notificationsEnabled = false,
   mockSections = [],
 }: StudentHomePageProps) {
   const tLayout = useTranslations('StudentLayout');
@@ -57,7 +61,7 @@ export function StudentHomePage({
 
   // Sections without a backend API read through a source: real, demo (local development
   // only) or unavailable, in which case the section is not rendered at all.
-  const sources = useHomeSources(mockSections);
+  const sources = useHomeSources(mockSections, { notificationsEnabled });
   const notifications = useHomeSourceQuery('notifications', sources.notifications);
   const activity = useHomeSourceQuery('activity', sources.activity);
 
@@ -100,7 +104,7 @@ export function StudentHomePage({
             value: notifications.data?.unreadCount ?? 0,
           },
           () => void notifications.refetch(),
-          null,
+          notificationsEnabled ? '/student/notifications' : null,
           sources.notifications.kind === 'mock'
         );
 

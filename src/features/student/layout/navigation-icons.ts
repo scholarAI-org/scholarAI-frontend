@@ -1,4 +1,12 @@
-import { Bookmark, LayoutGrid, Search, SquarePen, UserRound, type LucideIcon } from 'lucide-react';
+import {
+  Bell,
+  Bookmark,
+  LayoutGrid,
+  Search,
+  SquarePen,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react';
 
 import type { StudentNavigationItemId } from './types';
 
@@ -10,4 +18,5 @@ export const navigationIcons: Record<StudentNavigationItemId, LucideIcon> = {
   scholarships: Search,
   saved: Bookmark,
   tracking: SquarePen,
+  notifications: Bell,
 };

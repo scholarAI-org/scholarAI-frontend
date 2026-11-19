@@ -431,7 +431,10 @@ test('sidebar: the tablet drawer carries the same link, behind the same flag', (
 
 test('sidebar: the flag reaches both sidebars from the shell', () => {
   const shell = read('src/features/student/layout/StudentShell.tsx');
-  assert.match(shell, /<StudentSidebar items=\{items\} settingsEnabled=\{settingsEnabled\} \/>/);
+  assert.match(
+    shell,
+    /<StudentSidebar\s+items=\{items\}\s+settingsEnabled=\{settingsEnabled\}[^>]*\/>/s
+  );
   assert.match(shell, /<StudentMobileNavigation[^>]*settingsEnabled=\{settingsEnabled\}/s);
   assert.match(
     read('src/features/student/layout/StudentMobileNavigation.tsx'),
