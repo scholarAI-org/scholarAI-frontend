@@ -34,11 +34,11 @@ Run commands as `corepack pnpm …` when `pnpm` is not on PATH.
 
 ## Phase 1: Setup (flag and configuration)
 
-- [ ] T001 [P] `src/lib/feature-flags.ts`: add the getter `notificationsEnabled` returning `process.env.NOTIFICATIONS_ENABLED === 'true'` (a getter, so it is read on every access), with the same style of comment as the other flags.
-- [ ] T002 [P] `.env.example`: document `NOTIFICATIONS_ENABLED=` empty (server-only, never `NEXT_PUBLIC_`, turn on in Production only after the BE-13 endpoints are verified against a real session).
-- [ ] T003 [P] `playwright.config.ts`: add `NOTIFICATIONS_ENABLED: flags ? 'true' : ''` to `appEnv`.
-- [ ] T004 [P] `package.json`: add `"test:student-notifications": "node --test tests/student-notifications.test.mjs tests/student-notifications-ui.test.mjs"`.
-- [ ] T005 Create `tests/student-notifications.test.mjs` with the flag tests: off unless the literal `"true"` (unset, empty, `"1"`, `"TRUE"` are off), flipping `process.env` between reads changes the value, no `NEXT_PUBLIC_NOTIFICATIONS` anywhere in `src/` or the env files, `.env.example` declares it empty, and `playwright.config.ts` sets it to `'true'` only on the flags-on branch. Commit: `feat(notifications): add the NOTIFICATIONS_ENABLED flag` (T001 to T005).
+- [x] T001 [P] `src/lib/feature-flags.ts`: add the getter `notificationsEnabled` returning `process.env.NOTIFICATIONS_ENABLED === 'true'` (a getter, so it is read on every access), with the same style of comment as the other flags.
+- [x] T002 [P] `.env.example`: document `NOTIFICATIONS_ENABLED=` empty (server-only, never `NEXT_PUBLIC_`, turn on in Production only after the BE-13 endpoints are verified against a real session).
+- [x] T003 [P] `playwright.config.ts`: add `NOTIFICATIONS_ENABLED: flags ? 'true' : ''` to `appEnv`.
+- [x] T004 [P] `package.json`: add `"test:student-notifications": "node --test tests/student-notifications.test.mjs tests/student-notifications-ui.test.mjs"`.
+- [x] T005 Create `tests/student-notifications.test.mjs` with the flag tests: off unless the literal `"true"` (unset, empty, `"1"`, `"TRUE"` are off), flipping `process.env` between reads changes the value, no `NEXT_PUBLIC_NOTIFICATIONS` anywhere in `src/` or the env files, `.env.example` declares it empty, and `playwright.config.ts` sets it to `'true'` only on the flags-on branch. Commit: `feat(notifications): add the NOTIFICATIONS_ENABLED flag` (T001 to T005).
 
 **Checkpoint**: the flag exists and is guarded; nothing reads it yet.
 

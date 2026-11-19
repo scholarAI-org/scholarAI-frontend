@@ -48,4 +48,10 @@ export const featureFlags = Object.freeze({
   get settingsEnabled(): boolean {
     return process.env.SETTINGS_ENABLED === 'true';
   },
+  // Feature 011: Student Notifications (the /student/notifications page, the sidebar
+  // badge and the header bell). Default: false. The literal string "true" is the only
+  // enabling value. Read on every access, so it follows the environment of the request.
+  get notificationsEnabled(): boolean {
+    return process.env.NOTIFICATIONS_ENABLED === 'true';
+  },
 });
