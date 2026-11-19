@@ -209,7 +209,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 - **FR-034**: Clicking an unread card, or pressing Enter or Space on it, marks it read. An unread card's text block is a button whose accessible description is "Mark as read"; the action control is a separate sibling, never nested in it. A read card has no button.
 - **FR-035**: Clicking an action marks the notification read (same as FR-034) and navigates immediately; it does not wait for the PATCH.
 - **FR-036**: Marking is optimistic: the card turns read and the unread count decreases by one (never below 0, and not at all when no count is loaded) before the server answers. One `PATCH /api/notifications/{id}/read` is sent per notification at a time; none for a read item and none while one is in flight for that id.
-- **FR-037**: On failure only that notification returns to unread, only its share of the count is restored, and a message with `role="alert"` says it could not be marked as read. Other optimistic changes stay.
+- **FR-037**: On failure only that notification returns to unread, only its share of the count is restored, and a message with `role="alert"` says it could not be marked as read. Other optimistic changes stay. The message stays until the next mark attempt on the page.
 - **FR-038**: "Mark all as read" is optimistic: every loaded card turns read and the count becomes 0; one `PATCH /api/notifications/read-all` is sent. On success the answer `{ updated }` is validated, the count is re-requested to reconcile, and a `role="status"` message says that all notifications were marked as read (no number, because the server's `updated` can differ from the loaded cards). On failure everything the action changed is restored and an alert shows.
 - **FR-039**: Starting a mark cancels any count request in flight. After the last pending mark settles (success or failure) the unread count is re-requested once to reconcile with the server. A mark does not change the count when there is no count loaded.
 
@@ -221,7 +221,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 - **FR-043**: The count is requested on mount, then about every 60 seconds while the tab is visible, with no request while the tab is hidden, and requested again when the tab becomes visible or the window fires `focus`. No automatic request is made while another count request or any mark request is in flight (the skipped tick is not queued).
 - **FR-044**: A 401, 403 or 404 from the count request stops all automatic requests for it (interval and focus) and hides the badge and dots. A 401 also re-checks the session through the existing current-user query. Automatic requests resume only after a reload or after a manual retry (FR-053) succeeds. Other failures keep the last known count and the normal rhythm.
 - **FR-045**: While the count has not loaded, or never loaded, or has stopped (FR-044), no badge and no dot show, but the sidebar item and the bell links stay (the page is still reachable and shows its own state). A number is never invented, defaulted or cached across sessions.
-- **FR-046**: The account menu (below 640px) has a "Notifications" link, only when the flag is on.
+- **FR-046**: The account menu link to the page is specified in FR-060.
 
 **List data, pagination and states**
 
@@ -234,7 +234,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 **Mobile**
 
 - **FR-060**: Below 1024px the compact top bar shows the bell between the language button and the account menu; below 640px the account menu also links to the page.
-- **FR-061**: At 390px the page is one column; the end column moves under the text and the action button spans the full width; "Mark all as read", the card text button, the action, "Load more" and Retry are at least 44px tall; the page never scrolls horizontally.
+- **FR-061**: At 390px the page is one column; the "New" pill stays on the title row at the inline end and the action button moves under the text, spanning the full width; "Mark all as read", the card text button, the action, "Load more" and Retry are at least 44px tall; the page never scrolls horizontally.
 
 **Localization, direction and accessibility**
 

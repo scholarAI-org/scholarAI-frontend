@@ -26,7 +26,7 @@ A flag-gated notification center (`/[locale]/student/notifications`, `NOTIFICATI
 
 **Constraints**: do not modify `src/lib/api-client.ts`, `src/proxy.ts`, `AuthProvider.tsx`, `RoleGuard.tsx`; flags server-only and never default true; `src/` never imports from `tests/`, `scripts/` or fixtures; logical CSS only and no bare `rtl:`; no hard-coded copy; no token logging or storage
 
-**Scale/Scope**: 1 new route, 1 new feature folder (about 30 files), small generic changes to 8 shell and Home files, 2 message files, 1 fake-backend extension, about 3 unit test files and 3 e2e specs
+**Scale/Scope**: 1 new route, 1 new feature folder (about 30 files), small generic changes to 8 shell and Home files, 2 message files, 1 fake-backend extension, 2 unit test files and 3 e2e specs
 
 ## Constitution Check
 
