@@ -308,3 +308,62 @@ test('US1 files: the feature has no hidden dependency on tests, scripts or fixtu
   void path;
   void srcPath;
 });
+
+// ----------------------------- US2: mark all and the page wiring (FR-015, FR-033 to FR-038) ----
+
+const { MarkAllReadButton } = loadFeature('components/MarkAllReadButton.tsx');
+
+test('US2 mark all: an outlined pill with the label, a double check and a 44px target', () => {
+  const html = render(
+    React.createElement(MarkAllReadButton, { onClick() {}, disabled: false }),
+    'en'
+  );
+  assert.match(html, /<button type="button"/);
+  assert.match(html, /<span>Mark all as read<\/span>/);
+  assert.match(html, /<svg/, 'the double-check icon');
+  assert.match(html, /min-h-11/);
+  assert.match(html, /rounded-full border border-\[#e2e8f0\]/);
+  assert.match(html, /focus-visible:outline-orange-500/);
+  assert.doesNotMatch(html, /\sdisabled(=|>)/);
+  const disabled = render(
+    React.createElement(MarkAllReadButton, { onClick() {}, disabled: true }),
+    'en'
+  );
+  assert.match(disabled, /\sdisabled=""/);
+  assert.ok(
+    render(
+      React.createElement(MarkAllReadButton, { onClick() {}, disabled: false }),
+      'ar'
+    ).includes(`<span>${messages.ar.StudentNotifications.markAll.label}</span>`)
+  );
+  assert.doesNotMatch(html, /\b(rtl|ltr):|[\s"](ml|mr|pl|pr)-/);
+});
+
+test('US2 page: mark all shows while something is unread, and the messages are role-tagged', () => {
+  const page = stripComments(
+    read('src/features/student/notifications/components/NotificationsPage.tsx')
+  );
+  // Offered while a loaded card is unread or the count says so, whether or not the count loaded.
+  assert.match(page, /hasUnread\(list\.data\)\s*\|\|\s*\(count \?\? 0\) > 0/);
+  assert.match(page, /disabled=\{markingAll\}/);
+  // A persistent live region for the success message, an alert for failures.
+  assert.match(page, /role="status"[\s\S]*markAll\.done/);
+  assert.match(page, /role="alert"[\s\S]*markRead\.failed[\s\S]*markAll\.failed/);
+  // Each attempt clears the previous message (it stays until the next attempt).
+  assert.equal((page.match(/setFeedback\(null\)/g) ?? []).length, 2);
+  // The cards get the handler, the action link marks through the same handler.
+  assert.match(page, /onMarkRead=\{/);
+  const card = stripComments(
+    read('src/features/student/notifications/components/NotificationCard.tsx')
+  );
+  assert.match(card, /onClick=\{markRead\}/);
+  assert.doesNotMatch(card, /preventDefault/, 'navigation is never delayed by the mark');
+});
+
+test('US2 messages: success has no number, failures say what to do, both languages', () => {
+  for (const locale of ['en', 'ar']) {
+    const copy = messages[locale].StudentNotifications;
+    assert.doesNotMatch(copy.markAll.done, /[{}\d]/, `${locale} done has no number`);
+    assert.ok(copy.markAll.failed && copy.markRead.failed && copy.markRead.hint);
+  }
+});

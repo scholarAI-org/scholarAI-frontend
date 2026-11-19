@@ -4,10 +4,12 @@ import path from 'node:path';
 import { test } from 'node:test';
 import { IntlMessageFormat } from 'intl-messageformat';
 import {
+  QueryClient,
   React,
   env,
   format,
   loadFeature,
+  loadPackage,
   loadSrc,
   lookup,
   messages,
@@ -910,4 +912,280 @@ test('home source: the static availability table is not edited by this feature',
     }
   );
   void env;
+});
+
+// ----------------------------- mark as read (FR-033 to FR-039) -------------
+
+const { MutationObserver } = loadPackage('@tanstack/react-query');
+const { markReadOptions, markAllOptions, shouldMark } = loadFeature('lib/mark-options.ts');
+
+const LIST_KEY = ['student-notifications', 'list'];
+const COUNT_KEY = ['student-home', 'notifications', 'real'];
+const wait = (ms = 15) => new Promise((resolve) => setTimeout(resolve, ms));
+const defer = () => {
+  let resolve;
+  const promise = new Promise((done) => (resolve = done));
+  return { promise, resolve };
+};
+
+// Replaces fetch for the apiClient: `handler({ url, method })` answers { status, body }.
+function stubFetch(handler) {
+  const calls = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = async (url, init = {}) => {
+    const call = { url: String(url), method: init.method ?? 'GET' };
+    calls.push(call);
+    const { status, body } = await handler(call);
+    return { ok: status < 400, status, json: async () => body };
+  };
+  return { calls, restore: () => (globalThis.fetch = original) };
+}
+
+const seeded = ({ count = 3, list = pagesOf([n(1, false), n(2, true), n(3, false)]) } = {}) => {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  client.setQueryData(LIST_KEY, list);
+  if (count !== null) client.setQueryData(COUNT_KEY, { unreadCount: count });
+  return client;
+};
+const listIds = (client) => ids(client.getQueryData(LIST_KEY));
+const countOf = (client) => client.getQueryData(COUNT_KEY)?.unreadCount;
+const readAnswer = (id) => ({
+  status: 200,
+  body: { id, is_read: true, read_at: '2026-11-19T12:00:00Z' },
+});
+
+test('mark: the card and the count change before the server answers, then one PATCH is sent', async () => {
+  const gate = defer();
+  const fetchStub = stubFetch(async () => {
+    await gate.promise;
+    return readAnswer(1);
+  });
+  try {
+    const client = seeded();
+    const pending = new Set([1]);
+    const done = new MutationObserver(client, markReadOptions(client, pending, {})).mutate(1);
+    await wait();
+    // Still waiting for the server: the optimistic state is already visible.
+    assert.deepEqual(listIds(client), ['1:r', '2:r', '3:u']);
+    assert.equal(countOf(client), 2);
+    assert.equal(fetchStub.calls.length, 1);
+    assert.equal(fetchStub.calls[0].method, 'PATCH');
+    assert.match(fetchStub.calls[0].url, /\/api\/notifications\/1\/read$/);
+
+    gate.resolve();
+    await done;
+    assert.deepEqual(listIds(client), ['1:r', '2:r', '3:u']);
+    assert.equal(countOf(client), 2);
+    assert.equal(pending.has(1), false, 'the id is free again');
+    assert.equal(client.getQueryState(COUNT_KEY).isInvalidated, true, 'the count is reconciled');
+    assert.equal(fetchStub.calls.length, 1, 'one request');
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: a failed PATCH restores only that card and its share of the count, and reports once', async () => {
+  const fetchStub = stubFetch(async () => ({ status: 500, body: { detail: 'boom' } }));
+  try {
+    const client = seeded();
+    let failures = 0;
+    const observer = new MutationObserver(
+      client,
+      markReadOptions(client, new Set([3]), { onFailed: () => (failures += 1) })
+    );
+    await observer.mutate(3).catch(() => {});
+    assert.deepEqual(listIds(client), ['1:u', '2:r', '3:u']);
+    assert.equal(countOf(client), 3);
+    assert.equal(failures, 1);
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: a 404 means already gone, so the card is dropped, the count is kept and nothing is reported', async () => {
+  const fetchStub = stubFetch(async () => ({
+    status: 404,
+    body: { detail: 'Notification not found' },
+  }));
+  try {
+    const client = seeded();
+    let failures = 0;
+    const observer = new MutationObserver(
+      client,
+      markReadOptions(client, new Set([1]), { onFailed: () => (failures += 1) })
+    );
+    await observer.mutate(1).catch(() => {});
+    assert.deepEqual(listIds(client), ['2:r', '3:u'], 'the card is gone, not rolled back');
+    assert.equal(countOf(client), 2, 'no rollback of the count either');
+    assert.equal(failures, 0, 'no error message');
+    assert.equal(client.getQueryState(COUNT_KEY).isInvalidated, true, 'the count is refetched');
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: overlapping marks are independent; a failure restores only its own change', async () => {
+  const gate = defer();
+  const fetchStub = stubFetch(async ({ url }) => {
+    if (url.endsWith('/1/read')) {
+      await gate.promise;
+      return readAnswer(1);
+    }
+    return { status: 500, body: { detail: 'boom' } };
+  });
+  try {
+    const client = seeded();
+    const pending = new Set([1, 3]);
+    const first = new MutationObserver(client, markReadOptions(client, pending, {})).mutate(1);
+    const second = new MutationObserver(client, markReadOptions(client, pending, {})).mutate(3);
+    await second.catch(() => {});
+    assert.deepEqual(listIds(client), ['1:r', '2:r', '3:u'], '1 stays read while 3 is restored');
+    assert.equal(countOf(client), 2, 'only the failed delta came back');
+    assert.equal(client.getQueryState(COUNT_KEY).isInvalidated, false, 'one mark is still pending');
+    gate.resolve();
+    await first;
+    assert.equal(client.getQueryState(COUNT_KEY).isInvalidated, true, 'reconciled after the last');
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: with no count loaded the count is left alone and the list still flips', async () => {
+  const gate = defer();
+  const fetchStub = stubFetch(async () => {
+    await gate.promise;
+    return { status: 500, body: { detail: 'boom' } };
+  });
+  try {
+    const client = seeded({ count: null });
+    const observer = new MutationObserver(client, markReadOptions(client, new Set([1]), {}));
+    const done = observer.mutate(1).catch(() => {});
+    await wait();
+    assert.deepEqual(listIds(client), ['1:r', '2:r', '3:u']);
+    assert.equal(client.getQueryData(COUNT_KEY), undefined);
+    gate.resolve();
+    await done;
+    assert.deepEqual(listIds(client), ['1:u', '2:r', '3:u']);
+    assert.equal(client.getQueryData(COUNT_KEY), undefined);
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: the count never goes below 0', async () => {
+  const fetchStub = stubFetch(async () => readAnswer(1));
+  try {
+    const client = seeded({ count: 0 });
+    await new MutationObserver(client, markReadOptions(client, new Set([1]), {})).mutate(1);
+    assert.equal(countOf(client), 0);
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark: nothing is sent for a read card or one already being marked', () => {
+  const client = seeded();
+  assert.equal(shouldMark(client, new Set(), 1), true, 'unread');
+  assert.equal(shouldMark(client, new Set(), 2), false, 'already read');
+  assert.equal(shouldMark(client, new Set([1]), 1), false, 'already in flight');
+  assert.equal(
+    shouldMark(client, new Set(), 99),
+    true,
+    'not in the loaded list: the backend decides'
+  );
+});
+
+test('mark: starting a mark cancels a count request in flight', async () => {
+  const fetchStub = stubFetch(async () => readAnswer(1));
+  try {
+    const client = seeded();
+    void client.prefetchQuery({
+      queryKey: COUNT_KEY,
+      queryFn: () => new Promise(() => {}),
+      staleTime: 0,
+    });
+    await wait(5);
+    assert.equal(client.isFetching({ queryKey: COUNT_KEY }), 1);
+    const done = new MutationObserver(client, markReadOptions(client, new Set([1]), {})).mutate(1);
+    await wait();
+    assert.equal(
+      client.isFetching({ queryKey: COUNT_KEY }),
+      0,
+      'the request in flight is cancelled'
+    );
+    await done;
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark all: every loaded card reads and the count is 0 at once, with one PATCH', async () => {
+  const gate = defer();
+  const fetchStub = stubFetch(async () => {
+    await gate.promise;
+    return { status: 200, body: { updated: 5 } };
+  });
+  try {
+    const client = seeded({ count: 5 });
+    let done = 0;
+    const observer = new MutationObserver(
+      client,
+      markAllOptions(client, { onDone: () => (done += 1) })
+    );
+    const request = observer.mutate();
+    await wait();
+    assert.deepEqual(listIds(client), ['1:r', '2:r', '3:r']);
+    assert.equal(countOf(client), 0);
+    assert.equal(fetchStub.calls.length, 1);
+    assert.equal(fetchStub.calls[0].method, 'PATCH');
+    assert.match(fetchStub.calls[0].url, /\/api\/notifications\/read-all$/);
+    gate.resolve();
+    await request;
+    assert.equal(done, 1);
+    assert.equal(client.getQueryState(COUNT_KEY).isInvalidated, true);
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark all: a failure restores exactly the cards it flipped and the previous count', async () => {
+  const fetchStub = stubFetch(async () => ({ status: 503, body: {} }));
+  try {
+    const client = seeded({ count: 5 });
+    let failures = 0;
+    const observer = new MutationObserver(
+      client,
+      markAllOptions(client, { onFailed: () => (failures += 1) })
+    );
+    await observer.mutate().catch(() => {});
+    assert.deepEqual(listIds(client), ['1:u', '2:r', '3:u']);
+    assert.equal(countOf(client), 5);
+    assert.equal(failures, 1);
+  } finally {
+    fetchStub.restore();
+  }
+});
+
+test('mark all: it works without a loaded list, and a bad answer is a failure', async () => {
+  const ok = stubFetch(async () => ({ status: 200, body: { updated: 0 } }));
+  try {
+    const client = new QueryClient();
+    client.setQueryData(COUNT_KEY, { unreadCount: 2 });
+    await new MutationObserver(client, markAllOptions(client)).mutate();
+    assert.equal(countOf(client), 0);
+  } finally {
+    ok.restore();
+  }
+  const bad = stubFetch(async () => ({ status: 200, body: { updated: 'many' } }));
+  try {
+    const client = seeded({ count: 4 });
+    let failures = 0;
+    await new MutationObserver(client, markAllOptions(client, { onFailed: () => (failures += 1) }))
+      .mutate()
+      .catch(() => {});
+    assert.equal(failures, 1);
+    assert.equal(countOf(client), 4);
+  } finally {
+    bad.restore();
+  }
 });

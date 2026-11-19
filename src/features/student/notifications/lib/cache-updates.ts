@@ -5,7 +5,7 @@ import type { NotificationPage, StudentNotification } from '../model/types';
 // Every one tolerates a missing cache entry: the list uses gcTime 0, so it can be gone when
 // an action has already navigated away, and the count may not have loaded.
 
-export type NotificationPages = InfiniteData<NotificationPage, number>;
+export type NotificationPages = InfiniteData<NotificationPage>;
 
 export interface UnreadCountData {
   unreadCount: number;

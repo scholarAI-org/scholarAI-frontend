@@ -10,7 +10,7 @@ Unattended run started 2026-11-19 20:54 (local). Resume from the first unchecked
 | 1     | Flag, env, e2e config, script, flag tests                             | S    | done   |
 | 2     | Adapter, model, registry, copy, messages, Home source, fake backend   | L    | done   |
 | 3     | US1 the list page (+ full build and e2e)                              | M    | done   |
-| 4     | US2 mark as read, mark all                                            | M    | todo   |
+| 4     | US2 mark as read, mark all                                            | M    | done   |
 | 5     | US3 badge, bells, poller, Home stat                                   | L    | todo   |
 | 6     | US4 flag off (+ full build and e2e)                                   | S    | todo   |
 | 7     | US5 load more and states                                              | M    | todo   |
@@ -31,3 +31,4 @@ Unattended run started 2026-11-19 20:54 (local). Resume from the first unchecked
 - Phase 1 done: flag getter, .env.example, e2e config, script, flag tests and a shared test harness (tests/helpers/notifications-harness.mjs). Baseline before the run: 671 unit tests passing, tsc clean, lint 0 errors (3 old warnings). Now 676 tests.
 - Phase 2 done: model, adapter (wire, params, parse-page, api), registry, actions, copy, lib helpers, messages (en/ar), Home availability override + unread-source, fake backend endpoints and control API, e2e support helpers. 41 notification unit tests. Decisions: English dates follow Intl (September 15, not 15 September); known document codes are the 8 in the Profile messages (adds motivation_letter to the 7 in the plan).
 - Phase 3 done: the notification center page (route gate, card, icon, loading/empty/error states, list hook, minute clock), page key in the shell, 13 UI unit tests, e2e list spec. First e2e run: 5 of 6 passed; the failure was a test bug (the Arabic body contains the word for 'new'), fixed with a data-testid on the pill; the re-run is part of Phase 4's e2e. Build OK.
+- Phase 4 done: optimistic mark-read and mark-all (lib/mark-options.ts as plain option builders so they are unit-tested with a QueryClient), hooks, MarkAllReadButton, page wiring with status/alert regions, passive useUnreadCount. 11 mark unit tests + 3 UI tests; e2e notifications.spec.ts 22 passed (list + marking, en and ar; this also re-verified the Phase 3 list tests). Decision: a 404 on a single mark drops the card and keeps the optimistic count (reconciled by the refetch), per the owner's BE-13 decision. useMarkRead/useMarkAllRead take callbacks bound at mutate time (no refs: the React Compiler lint forbids reading refs in render).

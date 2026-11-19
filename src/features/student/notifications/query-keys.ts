@@ -3,8 +3,8 @@
 export const studentNotificationsKeys = {
   all: ['student-notifications'] as const,
   list: () => [...studentNotificationsKeys.all, 'list'] as const,
-  // Prefix of every mark mutation, for useIsMutating.
+  // Prefix of every mark mutation, for isMutating / useIsMutating.
   marks: () => [...studentNotificationsKeys.all, 'mark'] as const,
-  mark: (id: number) => [...studentNotificationsKeys.marks(), id] as const,
+  markOne: () => [...studentNotificationsKeys.marks(), 'one'] as const,
   markAll: () => [...studentNotificationsKeys.marks(), 'all'] as const,
 };
