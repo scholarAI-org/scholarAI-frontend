@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useRef, useState } from 'react';
-import { GraduationCap, LogOut, Settings } from 'lucide-react';
+import { Bell, GraduationCap, LogOut, Settings } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from '@/features/auth/providers/AuthProvider';
@@ -12,6 +12,8 @@ interface StudentUserMenuProps {
   className?: string;
   // Shows the "Settings" item. Off unless the server-only settings flag is on.
   settingsEnabled?: boolean;
+  // Shows the "Notifications" item. Off unless the server-only notifications flag is on.
+  notificationsEnabled?: boolean;
   // Renders the menu already open, so a server render (the unit tests) can see its items.
   defaultOpen?: boolean;
 }
@@ -21,6 +23,7 @@ interface StudentUserMenuProps {
 export function StudentUserMenu({
   className = '',
   settingsEnabled = false,
+  notificationsEnabled = false,
   defaultOpen = false,
 }: StudentUserMenuProps) {
   const t = useTranslations('StudentLayout');
@@ -110,6 +113,17 @@ export function StudentUserMenu({
               </p>
             </div>
           </div>
+
+          {notificationsEnabled && (
+            <Link
+              href="/student/notifications"
+              role="menuitem"
+              className="text-text-label mt-1 flex min-h-11 w-full items-center justify-start gap-2 rounded-xl px-3 text-sm transition-colors hover:bg-[#f8fafc] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orange-500"
+            >
+              <Bell aria-hidden className="size-5 shrink-0" />
+              <span>{t('userMenu.notifications')}</span>
+            </Link>
+          )}
 
           {settingsEnabled && (
             <Link

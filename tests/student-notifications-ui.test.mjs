@@ -732,3 +732,140 @@ test('US5 list: pages are requested one by one with the server page size', () =>
   assert.match(hook, /gcTime: 0/);
   assert.match(hook, /refetchOnWindowFocus: false/);
 });
+
+// ----------------------------- US6: the phone layout (FR-060, FR-061) --------------------------
+
+const { StudentHeader } = loadSrc('features/student/layout/StudentHeader.tsx');
+const { StudentUserMenu } = loadSrc('features/student/layout/StudentUserMenu.tsx');
+
+const header = (props = {}) => {
+  env.pathname = '/student/notifications';
+  return render(
+    React.createElement(StudentHeader, {
+      isNavigationOpen: false,
+      onNavigationToggle() {},
+      menuButtonRef: { current: null },
+      ...props,
+    }),
+    'en'
+  );
+};
+
+test('US6 header: the compact bar carries the bell between the language button and the account menu', () => {
+  const slot = React.createElement('span', { 'data-slot': 'compact-bell' }, 'bell');
+  const html = header({ compactHeaderActions: slot, notificationsEnabled: true });
+  assert.equal(
+    (html.match(/data-slot="compact-bell"/g) ?? []).length,
+    1,
+    'only in the compact bar'
+  );
+  const language =
+    html.indexOf('aria-label="Change language"') >= 0 ? 'Change language' : 'languageSwitch';
+  void language;
+  const switchAt = html.search(/lang="ar"/);
+  const bellAt = html.indexOf('data-slot="compact-bell"');
+  const menuAt = html.indexOf('aria-label="Account menu"');
+  assert.ok(switchAt >= 0 && menuAt >= 0 && bellAt >= 0);
+  assert.ok(switchAt < bellAt && bellAt < menuAt, 'language button, then the bell, then the menu');
+  // The compact bar is below lg; the desktop group is not where it sits.
+  const compactBar = html.slice(0, html.indexOf('lg:h-[108px]'));
+  assert.ok(compactBar.includes('data-slot="compact-bell"'));
+  // Without it the header is unchanged.
+  assert.doesNotMatch(header(), /data-slot="compact-bell"/);
+});
+
+test('US6 account menu: a Notifications link, only with the flag, before Settings and Log out', () => {
+  const menu = (props) =>
+    render(React.createElement(StudentUserMenu, { defaultOpen: true, ...props }), 'en');
+  const on = menu({ notificationsEnabled: true, settingsEnabled: true });
+  assert.match(on, /<a href="\/student\/notifications" role="menuitem"[^>]*min-h-11[^>]*>/);
+  assert.match(on, />Notifications<\/span>/);
+  assert.ok(on.indexOf('/student/notifications') < on.indexOf('/student/settings'));
+  assert.ok(on.indexOf('/student/settings') < on.indexOf('>Log out<'));
+  assert.match(on, /focus-visible:outline-orange-500/);
+  const off = menu({ notificationsEnabled: false, settingsEnabled: true });
+  assert.doesNotMatch(off, /\/student\/notifications/);
+  assert.doesNotMatch(menu({}), /\/student\/notifications/);
+  assert.ok(
+    render(
+      React.createElement(StudentUserMenu, { defaultOpen: true, notificationsEnabled: true }),
+      'ar'
+    ).includes(`>${messages.ar.StudentLayout.userMenu.notifications}</span>`)
+  );
+});
+
+test('US6 card: one column on a phone, the action under the text at full width, the pill on the title row', () => {
+  const html = card('profile_incomplete', { onMarkRead: () => {} });
+  // The row wraps below sm and stays one row from sm; the wrapper around the pill and the action
+  // dissolves below sm (contents) so the action can take its own full-width line.
+  assert.match(html, /flex flex-wrap items-start gap-x-4 gap-y-3 sm:flex-nowrap/);
+  assert.match(html, /class="contents sm:flex sm:shrink-0 sm:flex-col sm:items-end sm:gap-2"/);
+  assert.match(html, /<a [^>]*class="[^"]*\bw-full\b[^"]*\bsm:w-auto\b/);
+  assert.match(html, /<a [^>]*min-h-11/);
+  // The text takes the free space and can shrink: a long title never forces horizontal scroll.
+  assert.match(html, /min-w-0 flex-1/);
+  assert.match(html, /line-clamp-2[^"]*break-words|break-words[^"]*line-clamp-2/);
+  // The pill comes before the action in the markup: it stays on the first row.
+  assert.ok(
+    html.indexOf('data-testid="notification-new"') < html.indexOf('<a href="/student/profile"')
+  );
+});
+
+test('US6 targets: every control of the feature is a 44px target on a phone', () => {
+  const sources = {
+    'components/MarkAllReadButton.tsx': /min-h-11/,
+    'components/LoadMoreButton.tsx': /min-h-11/,
+    'components/NotificationStates.tsx': /min-h-11/,
+    'components/NotificationCard.tsx': /min-h-11/,
+  };
+  for (const [file, pattern] of Object.entries(sources)) {
+    assert.match(read(`src/features/student/notifications/${file}`), pattern, file);
+  }
+  // The compact bell is 44px below sm; the unread card's text button is as tall as its text.
+  assert.match(
+    read('src/features/student/home/components/NotificationBell.tsx'),
+    /compact: 'size-11 sm:size-8'/
+  );
+});
+
+test('US6 layout: the compact bell is wired through the shell slot, not imported by it', () => {
+  const Layout = loadSrc('app/[locale]/student/layout.tsx').default;
+  withEnv({ NOTIFICATIONS_ENABLED: 'true' }, () => {
+    const shell = named(
+      elements(Layout({ children: React.createElement('p') })),
+      'StudentShell'
+    )[0];
+    assert.equal(shell.props.compactHeaderActions.type.name, 'NotificationsBell');
+    assert.equal(shell.props.compactHeaderActions.props.size, 'compact');
+    assert.equal(
+      shell.props.headerActions.props.size,
+      undefined,
+      'the desktop bell is the default size'
+    );
+  });
+  withEnv({ NOTIFICATIONS_ENABLED: undefined }, () => {
+    const shell = named(
+      elements(Layout({ children: React.createElement('p') })),
+      'StudentShell'
+    )[0];
+    assert.equal(shell.props.compactHeaderActions, undefined);
+  });
+});
+
+test('US6 guards: logical properties only and no bare rtl: variant in the feature and its shell edits', () => {
+  const files = [
+    ...sourceFiles(featurePath),
+    path.join(srcPath, 'features/student/home/components/NotificationBell.tsx'),
+  ].filter((file) => /\.tsx?$/.test(file));
+  const offenders = [];
+  for (const file of files) {
+    const code = stripComments(read(rel(file)));
+    if (/(^|[\s'"`])rtl:/.test(code)) offenders.push(`${rel(file)}: rtl:`);
+    if (/\b(ml|mr|pl|pr|left|right)-(\d|\[|px|auto)/.test(code))
+      offenders.push(`${rel(file)}: physical`);
+    if (/\btext-(left|right)\b/.test(code)) offenders.push(`${rel(file)}: text-left/right`);
+    if (/\b(border|rounded)-(l|r|tl|tr|bl|br)(-|\b)/.test(code))
+      offenders.push(`${rel(file)}: border/rounded side`);
+  }
+  assert.deepEqual(offenders, []);
+});

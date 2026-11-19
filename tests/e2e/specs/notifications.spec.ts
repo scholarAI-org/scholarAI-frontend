@@ -558,3 +558,199 @@ function rowsOf(unread: number): SeedNotification[] {
     notification('scholarship_match', { minutes_ago: 5 + index })
   );
 }
+
+// ----------------------------------------------------------------------------- the phone (US6)
+
+const PHONE = { width: 390, height: 844 };
+const TABLET = { width: 768, height: 1024 };
+
+const LONG_TITLE =
+  'A very long scholarship title that goes on and on and on without any natural break so that it has to wrap or clamp inside the card on a phone screen';
+
+/** The compact top bar's bell: the visible one (the desktop group is hidden below lg). */
+const visibleBell = (page: Page) => page.locator('a[data-notifications-bell]:visible');
+const tabBar = (page: Page, locale: Locale) =>
+  page.getByRole('navigation', { name: t(locale, 'StudentLayout.tabBarLabel') });
+
+const hasNoHorizontalScroll = (page: Page) =>
+  page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+
+for (const locale of LOCALES) {
+  test.describe(`on a phone (${locale})`, () => {
+    test('the top bar has the bell with its dot, and it opens the notification center', async ({
+      page,
+    }) => {
+      await startStudentSession(page, { notifications: sixTypes() });
+      await page.setViewportSize(PHONE);
+      await page.goto(`/${locale}/student/profile`);
+
+      const bell = visibleBell(page);
+      await expect(bell).toHaveCount(1);
+      await expect(bell.locator('[data-bell-dot]')).toBeVisible();
+      await expect(bell).toHaveAttribute(
+        'aria-label',
+        t(locale, 'StudentHome.bell.label', { count: 3 })
+      );
+      // A 44px touch target.
+      const box = (await bell.boundingBox())!;
+      expect(box.width).toBeGreaterThanOrEqual(44);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+
+      await bell.click();
+      await expect(page).toHaveURL(new RegExp(`/${locale}/student/notifications$`));
+      await expect(cards(page, locale)).toHaveCount(6);
+      await expect(visibleBell(page)).toHaveAttribute('aria-current', 'page');
+    });
+
+    test('the account menu has a Notifications link', async ({ page }) => {
+      await startStudentSession(page, { notifications: sixTypes() });
+      await page.setViewportSize(PHONE);
+      await page.goto(`/${locale}/student/profile`);
+
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.userMenu.label') }).click();
+      const link = page.getByRole('menuitem', {
+        name: t(locale, 'StudentLayout.userMenu.notifications'),
+      });
+      await expect(link).toBeVisible();
+      await expect(link).toHaveAttribute('href', new RegExp(`/${locale}/student/notifications$`));
+      const box = (await link.boundingBox())!;
+      expect(box.height).toBeGreaterThanOrEqual(44);
+      await link.click();
+      await expect(page).toHaveURL(new RegExp(`/${locale}/student/notifications$`));
+    });
+
+    test('the tab bar still has the same five destinations', async ({ page }) => {
+      await startStudentSession(page, { notifications: sixTypes() });
+      await page.setViewportSize(PHONE);
+      await page.goto(`/${locale}/student/notifications`);
+
+      const tabs = tabBar(page, locale).getByRole('link');
+      await expect(tabs).toHaveText(
+        ['home', 'scholarships', 'saved', 'tracking', 'profile'].map((key) =>
+          t(locale, `StudentLayout.tabs.${key}`)
+        )
+      );
+      await expect(tabs).toHaveCount(5);
+    });
+
+    test('one column, full-width actions, 44px targets and no horizontal scroll', async ({
+      page,
+    }) => {
+      await startStudentSession(page, {
+        notifications: [
+          notification('profile_incomplete', { minutes_ago: 1 }),
+          notification('scholarship_archived', {
+            minutes_ago: 3,
+            is_read: true,
+            params: { scholarship_id: 10, scholarship_title: LONG_TITLE },
+          }),
+          notification('deadline_reminder', {
+            minutes_ago: 5,
+            params: {
+              scholarship_id: 7,
+              scholarship_title: LONG_TITLE,
+              days_left: 3,
+              deadline: '2026-09-15',
+              reminder_index: 1,
+              reminder_total: 2,
+              missing_documents: ['cv', 'passport', 'recommendation_letters'],
+            },
+          }),
+          ...many(25, 10),
+        ],
+      });
+      await page.setViewportSize(PHONE);
+      await openNotifications(page, locale);
+      await expect(cards(page, locale)).toHaveCount(20);
+      expect(await hasNoHorizontalScroll(page)).toBe(true);
+
+      // Every control inside the page is at least 44px tall and wide.
+      const controls = page.getByRole('main').locator('button:visible, a:visible');
+      const count = await controls.count();
+      expect(count).toBeGreaterThan(3);
+      for (let index = 0; index < count; index += 1) {
+        const box = (await controls.nth(index).boundingBox())!;
+        const label = await controls.nth(index).innerText();
+        expect(box.height, `height of "${label.slice(0, 30)}"`).toBeGreaterThanOrEqual(43.5);
+        expect(box.width, `width of "${label.slice(0, 30)}"`).toBeGreaterThanOrEqual(43.5);
+      }
+
+      // The first card: icon and text on one row, the pill on that row, the action under the text.
+      const first = cards(page, locale).first();
+      const cardBox = (await first.boundingBox())!;
+      const action = first.getByRole('link');
+      const actionBox = (await action.boundingBox())!;
+      const pillBox = (await first.getByTestId('notification-new').boundingBox())!;
+      const textBox = (await first.locator('button').boundingBox())!;
+      expect(actionBox.width).toBeGreaterThan(cardBox.width - 40);
+      expect(actionBox.y).toBeGreaterThan(textBox.y + textBox.height - 4);
+      expect(pillBox.y + pillBox.height).toBeLessThan(actionBox.y);
+      expect(pillBox.y).toBeLessThan(textBox.y + textBox.height);
+
+      // Nothing inside a card is wider than the card.
+      const overflowing = await page.evaluate(
+        () =>
+          [...document.querySelectorAll('main li *')].filter(
+            (element) =>
+              element.getBoundingClientRect().right > window.innerWidth + 1 ||
+              element.getBoundingClientRect().left < -1
+          ).length
+      );
+      expect(overflowing).toBe(0);
+
+      await loadMore(page).click();
+      await expect(cards(page, locale)).toHaveCount(28);
+      expect(await hasNoHorizontalScroll(page)).toBe(true);
+    });
+
+    test('Mark all as read and the states also fit the phone', async ({ page }) => {
+      const user = await startStudentSession(page, { notifications: sixTypes() });
+      await page.setViewportSize(PHONE);
+      await delayEndpoint(user.email, 'list', 600);
+      await page.goto(`/${locale}/student/notifications`);
+      expect(await hasNoHorizontalScroll(page)).toBe(true);
+      const markAll = page.getByRole('button', { name: n(locale, 'markAll.label') });
+      await expect(markAll).toBeVisible();
+      const box = (await markAll.boundingBox())!;
+      expect(box.height).toBeGreaterThanOrEqual(43.5);
+      await markAll.click();
+      await expect(
+        page.getByRole('status').filter({ hasText: n(locale, 'markAll.done') })
+      ).toBeVisible();
+      expect(await hasNoHorizontalScroll(page)).toBe(true);
+    });
+
+    test('an empty list and an error fit the phone', async ({ page }) => {
+      await startStudentSession(page);
+      await page.setViewportSize(PHONE);
+      await openNotifications(page, locale);
+      await expect(page.getByTestId('notifications-empty')).toBeVisible();
+      expect(await hasNoHorizontalScroll(page)).toBe(true);
+      const cta = page.getByTestId('notifications-empty-cta');
+      expect((await cta.boundingBox())!.height).toBeGreaterThanOrEqual(43.5);
+    });
+
+    test('the tablet bar has the bell and the drawer has the item with its badge', async ({
+      page,
+    }) => {
+      await startStudentSession(page, { notifications: sixTypes() });
+      await page.setViewportSize(TABLET);
+      await page.goto(`/${locale}/student/profile`);
+
+      await expect(visibleBell(page)).toHaveCount(1);
+      await expect(visibleBell(page).locator('[data-bell-dot]')).toBeVisible();
+
+      await page.getByRole('button', { name: t(locale, 'StudentLayout.openNavigation') }).click();
+      const drawer = page.getByRole('dialog', {
+        name: t(locale, 'StudentLayout.navigationLabel'),
+      });
+      const item = drawer.getByRole('link', {
+        name: new RegExp(t(locale, 'StudentLayout.nav.notifications')),
+      });
+      await expect(item).toBeVisible();
+      await expect(item.getByTestId('notifications-badge')).toHaveText(/^3/);
+      await item.click();
+      await expect(page).toHaveURL(new RegExp(`/${locale}/student/notifications$`));
+    });
+  });
+}

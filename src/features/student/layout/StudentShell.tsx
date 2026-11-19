@@ -30,6 +30,8 @@ interface StudentShellProps {
   // Optional controls for the desktop header, supplied by the route layout so the shell
   // stays free of page-specific data.
   headerActions?: ReactNode;
+  // The same for the compact top bar below lg (a bell there opens the notification center).
+  compactHeaderActions?: ReactNode;
 }
 
 // Shared student frame, mounted once by src/app/[locale]/student/layout.tsx.
@@ -42,6 +44,7 @@ export function StudentShell({
   notificationsEnabled = false,
   navigationBadges,
   headerActions,
+  compactHeaderActions,
 }: StudentShellProps) {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -64,6 +67,8 @@ export function StudentShell({
             menuButtonRef={menuButtonRef}
             settingsEnabled={settingsEnabled}
             headerActions={headerActions}
+            compactHeaderActions={compactHeaderActions}
+            notificationsEnabled={notificationsEnabled}
           />
           {/* Below sm the fixed tab bar covers the foot of the page, so the content
               reserves its height plus the device's own inset. */}

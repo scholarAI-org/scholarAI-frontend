@@ -27,6 +27,8 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     navigationBadges: notificationsEnabled
       ? { notifications: <NotificationsNavBadge /> }
       : undefined,
+    // The same bell, at the 44px touch size, in the compact top bar below lg.
+    compactHeaderActions: notificationsEnabled ? <NotificationsBell size="compact" /> : undefined,
     // The bell renders nothing unless a notifications source exists; the shell itself
     // stays generic and only receives it as a node. With the flag on it is the link to the
     // center; with it off Home keeps its own indicator (and its local demo source).

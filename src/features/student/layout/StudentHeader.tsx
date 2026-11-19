@@ -20,6 +20,11 @@ interface StudentHeaderProps {
   settingsEnabled?: boolean;
   // Extra controls before the language button (desktop). Nothing renders when empty.
   headerActions?: ReactNode;
+  // Extra controls in the compact top bar (below lg), between the language button and the
+  // account menu. Nothing renders when empty.
+  compactHeaderActions?: ReactNode;
+  // Whether the account menu offers a link to Notifications.
+  notificationsEnabled?: boolean;
 }
 
 export function StudentHeader({
@@ -28,6 +33,8 @@ export function StudentHeader({
   menuButtonRef,
   settingsEnabled = false,
   headerActions,
+  compactHeaderActions,
+  notificationsEnabled = false,
 }: StudentHeaderProps) {
   const t = useTranslations('StudentLayout');
   const locale = useLocale();
@@ -99,6 +106,7 @@ export function StudentHeader({
         </div>
         <div className="flex shrink-0 items-center gap-2.5">
           {renderLanguageButton('size-11 sm:size-8')}
+          {compactHeaderActions}
           <span
             role="img"
             aria-label={name}
@@ -106,7 +114,11 @@ export function StudentHeader({
           >
             {initial}
           </span>
-          <StudentUserMenu className="sm:hidden" settingsEnabled={settingsEnabled} />
+          <StudentUserMenu
+            className="sm:hidden"
+            settingsEnabled={settingsEnabled}
+            notificationsEnabled={notificationsEnabled}
+          />
         </div>
       </div>
 
