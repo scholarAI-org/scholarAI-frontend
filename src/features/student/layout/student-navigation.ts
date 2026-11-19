@@ -160,6 +160,9 @@ export function getStudentPageKey(pathname: string): StudentPageKey | null {
   if (pathname === '/student/settings' || pathname.startsWith('/student/settings/')) {
     return 'settings';
   }
+  if (pathname === '/student/notifications' || pathname.startsWith('/student/notifications/')) {
+    return 'notifications';
+  }
   if (pathname === '/student/scholarships') return 'scholarships';
   if (/^\/student\/scholarships\/[^/]+$/.test(pathname)) return 'scholarshipDetails';
   return null;

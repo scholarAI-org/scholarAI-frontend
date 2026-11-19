@@ -26,4 +26,5 @@ export type StudentPageKey =
   | 'saved'
   | 'tracking'
   // A page with a header title but no navigation item: it is reached from the account menu.
-  | 'settings';
+  | 'settings'
+  | 'notifications';
