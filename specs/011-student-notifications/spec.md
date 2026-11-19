@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-19
 
-**Status**: Draft. The product owner took no questions for this feature; every open point is decided in **Assumptions** and repeated in the PR description.
+**Status**: Clarified. The product owner took no questions for this feature; every open point is decided in **Clarifications** (five) or **Assumptions** and repeated in the PR description.
 
 **Input**: User description: "Student Notifications. A signed-in student sees a notification center page, an unread badge on the sidebar item, and an unread indicator on the header bell. The backend generates the notifications; the frontend only displays them. The whole feature is behind a server-only flag `NOTIFICATIONS_ENABLED` (off unless the literal string `true`)." The full brief (user stories, six notification types, the BE-13 contract, constraints, acceptance) is reproduced in the sections below.
 
@@ -42,7 +42,15 @@ Sources: the code on `main` at `022ea5d`, `specs/009-student-home`, `specs/010-s
 
 ## Clarifications
 
-_(Filled by `/speckit.clarify`.)_
+### Session 2026-11-19
+
+Status: **resolved by the author.** The brief says to take no questions, so `/speckit.clarify` scanned the spec, picked the five points with the most impact on behavior and tests, and answered each with the most reasonable default. Every answer is applied to the requirement it changes. Smaller decisions stay in **Assumptions**.
+
+- Q1: When the unread count has stopped (401, 403 or 404) or never loaded, what do the sidebar item and "Mark all as read" do? → A: The sidebar item stays (the flag is on and the page is reachable) but shows no badge. An optimistic mark leaves the count alone when there is no count to change. "Mark all as read" is offered while a loaded card is unread, whatever the count says. (FR-033, FR-041, FR-045)
+- Q2: How do background count polling and optimistic marking avoid flipping the number back? → A: Starting a mark cancels any count request in flight, polling ticks and focus refetches are skipped while any mark request is pending, and one reconcile request runs after the last pending mark settles. (FR-036, FR-039, FR-043)
+- Q3: What does "refetch on window focus" mean when a tab can be visible but unfocused? → A: The count is requested again when the tab becomes visible or the window fires `focus`, whichever comes first, and never while a count request is already in flight. A visible but unfocused window keeps its 60-second rhythm. (FR-043)
+- Q4: What happens to the loaded list when the student leaves the page and comes back? → A: Leaving discards the loaded pages; every visit starts with a fresh request for page 1 and a skeleton. A mark made just before navigating through an action still updates the count at once, and a failure of that mark restores the count (there is no list left to restore). (FR-035, FR-050)
+- Q5: How is the deadline date written in a reminder? → A: Day and long month in the active language with Latin digits (as in the design, "15 September"), plus the year only when it is not the current year on the student's device. It is a calendar date and is never shifted by the time zone. (FR-020)
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -178,7 +186,7 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 
 **Types and copy** (all copy is built from `type` and `params` with next-intl messages in `ar` and `en`; the backend never sends a sentence)
 
-- **FR-020 `deadline_reminder`**: icon: the downloaded red alarm-clock SVG in an orange-tinted box (`rgba(255,141,40,0.1)`). Params: `scholarship_id`, `scholarship_title`, `days_left`, `deadline` (`YYYY-MM-DD`), `reminder_index`, `reminder_total`, `missing_documents` (optional string codes). Title: "Deadline approaching: {scholarship_title}". Body: the days left ("Due today", "1 day left", "N days left", with every Arabic plural form) and the deadline as a long calendar date; when `missing_documents` has known codes, a second sentence lists them ("Review your documents: {list} not uploaded yet"), and with only unknown codes it says "Some of your documents are still missing". Time line adds "Reminder {reminder_index} of {reminder_total}" after the time. Action: open the scholarship details.
+- **FR-020 `deadline_reminder`**: icon: the downloaded red alarm-clock SVG in an orange-tinted box (`rgba(255,141,40,0.1)`). Params: `scholarship_id`, `scholarship_title`, `days_left`, `deadline` (`YYYY-MM-DD`), `reminder_index`, `reminder_total`, `missing_documents` (optional string codes). Title: "Deadline approaching: {scholarship_title}". Body: the days left ("Due today", "1 day left", "N days left", with every Arabic plural form) and the deadline as a calendar date (day and long month, plus the year only when it is not the current year on the student's device; never shifted by the time zone); when `missing_documents` has known codes, a second sentence lists them ("Review your documents: {list} not uploaded yet"), and with only unknown codes it says "Some of your documents are still missing". Time line adds "Reminder {reminder_index} of {reminder_total}" after the time. Action: open the scholarship details.
 - **FR-021**: The reminder line never shows "(N days before)", because the contract has no such value.
 - **FR-022 `scholarship_match`**: icon `WandSparkles`, navy `#274383` on `#f1f1fb`. Params: `scholarship_id`, `scholarship_title`, `matched_count`, `total_count`. Title: "A new scholarship matches your profile". Body: "«{scholarship_title}» was added: it matches {matched_count} of {total_count} criteria." No match level (high, medium, low) is derived. Action: open the scholarship details.
 - **FR-023 `saved_scholarship_updated`**: icon `CircleCheck`, green `#16c172` on `rgba(22,193,114,0.06)`. Params: `scholarship_id`, `scholarship_title`, `change` (a stable code). Title: "A saved scholarship was updated". Body: a sentence per known `change` code (`language_requirement_added` is the one the contract names), otherwise "The details of «{scholarship_title}» were updated". Action: open the scholarship details.
@@ -197,27 +205,27 @@ Wherever the student is in the student area, the sidebar's Notifications item sh
 
 **Mark as read**
 
-- **FR-033**: "Mark all as read" is offered only while the unread count is above 0 or a loaded card is unread, and is disabled while its request is pending.
+- **FR-033**: "Mark all as read" is offered only while a loaded card is unread or the unread count is above 0, and is disabled while its request is pending. It does not depend on the count having loaded.
 - **FR-034**: Clicking an unread card, or pressing Enter or Space on it, marks it read. An unread card's text block is a button whose accessible description is "Mark as read"; the action control is a separate sibling, never nested in it. A read card has no button.
 - **FR-035**: Clicking an action marks the notification read (same as FR-034) and navigates immediately; it does not wait for the PATCH.
-- **FR-036**: Marking is optimistic: the card turns read and the unread count decreases by one (never below 0) before the server answers. One `PATCH /api/notifications/{id}/read` is sent per notification at a time; none for a read item and none while one is in flight for that id.
+- **FR-036**: Marking is optimistic: the card turns read and the unread count decreases by one (never below 0, and not at all when no count is loaded) before the server answers. One `PATCH /api/notifications/{id}/read` is sent per notification at a time; none for a read item and none while one is in flight for that id.
 - **FR-037**: On failure only that notification returns to unread, only its share of the count is restored, and a message with `role="alert"` says it could not be marked as read. Other optimistic changes stay.
-- **FR-038**: "Mark all as read" is optimistic: every loaded card turns read and the count becomes 0; one `PATCH /api/notifications/read-all` is sent. On success the answer `{ updated }` is validated, the count is re-requested to reconcile, and a `role="status"` message announces how many were marked. On failure everything the action changed is restored and an alert shows.
-- **FR-039**: After any mark (success or failure) the unread count is re-requested once to reconcile with the server.
+- **FR-038**: "Mark all as read" is optimistic: every loaded card turns read and the count becomes 0; one `PATCH /api/notifications/read-all` is sent. On success the answer `{ updated }` is validated, the count is re-requested to reconcile, and a `role="status"` message says that all notifications were marked as read (no number, because the server's `updated` can differ from the loaded cards). On failure everything the action changed is restored and an alert shows.
+- **FR-039**: Starting a mark cancels any count request in flight. After the last pending mark settles (success or failure) the unread count is re-requested once to reconcile with the server. A mark does not change the count when there is no count loaded.
 
 **Unread count, badge and bell**
 
 - **FR-040**: The count comes from the existing Home notifications source with kind `real` when the flag is on. One query feeds the sidebar badge, the bell, the compact-bar bell and the Home stat card, so they always show the same number.
 - **FR-041**: The sidebar has a "Notifications" item (bell icon) in the "Personal" group, before Profile, shown only when the flag is on. It is active on `/student/notifications` and its sub-routes. It shows the count in an orange pill: nothing at 0, the number from 1 to 99, "99+" above. The accessible name includes the count ("Notifications, 3 unread"). The tablet drawer renders the same sidebar, so it has the item too. The bottom tab bar is unchanged (five items).
 - **FR-042**: The desktop header bell and the compact-bar bell link to `/student/notifications`, show the dot only while the count is above 0, have an accessible name with the count, and have `aria-current="page"` on the page itself. The compact bell is at least 44×44px.
-- **FR-043**: The count is requested on mount, then about every 60 seconds while the tab is visible, with no request while the tab is hidden, and requested again when the tab becomes visible or the window regains focus.
+- **FR-043**: The count is requested on mount, then about every 60 seconds while the tab is visible, with no request while the tab is hidden, and requested again when the tab becomes visible or the window fires `focus`. No automatic request is made while another count request or any mark request is in flight (the skipped tick is not queued).
 - **FR-044**: A 401, 403 or 404 from the count request stops all automatic requests for it (interval and focus) and hides the badge and dots. A 401 also re-checks the session through the existing current-user query. Automatic requests resume only after a reload or after a manual retry (FR-053) succeeds. Other failures keep the last known count and the normal rhythm.
-- **FR-045**: While the count has not loaded, or never loaded, no badge and no dot show. A number is never invented, defaulted or cached across sessions.
+- **FR-045**: While the count has not loaded, or never loaded, or has stopped (FR-044), no badge and no dot show, but the sidebar item and the bell links stay (the page is still reachable and shows its own state). A number is never invented, defaulted or cached across sessions.
 - **FR-046**: The account menu (below 640px) has a "Notifications" link, only when the flag is on.
 
 **List data, pagination and states**
 
-- **FR-050**: The list is requested with `GET /api/notifications?page=1&page_size=20`. "Load more" requests the next page and appends it; the control is hidden when `page >= total_pages`. No `is_read` filter is sent (filters are out of scope).
+- **FR-050**: The list is requested with `GET /api/notifications?page=1&page_size=20`. "Load more" requests the next page and appends it; the control is hidden when `page >= total_pages`. No `is_read` filter is sent (filters are out of scope). Leaving the page discards the loaded pages: every visit requests page 1 again and shows the loading state first.
 - **FR-051**: Loading shows skeleton cards and an `sr-only` `role="status"` message; empty shows a card with a heading, a body and a "Search scholarships" link; first-page error shows a card with `role="alert"`, a reason-specific message (session expired, access unavailable, generic) and a Retry button (none for 403); a later-page error keeps the loaded items and shows an inline alert with Retry.
 - **FR-052**: A 401 from the list re-checks the session through the existing current-user query (the student is sent to login with a return path if the session is gone).
 - **FR-053**: Retry on the list also re-requests the count; if that succeeds, polling resumes.
@@ -288,7 +296,7 @@ Made without asking, as the brief requires; each is repeated in the PR descripti
 - **A5 (copy limited to the contract)**: sentences only use contract fields. Known `change` codes are `language_requirement_added` only; known `missing_documents` codes start with the document kinds the profile feature already knows (listed in the plan). Unknown codes get the generic sentence. The backend should publish the closed lists (Open Questions).
 - **A6 (page size 20)**: the first request uses `page_size=20`; the backend's maximum is not documented.
 - **A7 (order)**: the backend returns newest first (`created_at` descending, `id` descending as the tie-break); the frontend preserves that order.
-- **A8 (list freshness)**: only the count is polled. The list is requested when the page opens and is not refreshed in the background, so cards never move under the student's cursor. A "new notifications available" prompt is a follow-up.
+- **A8 (list freshness)**: only the count is polled. The list is requested when the page opens (page 1, every visit) and is not refreshed in the background, so cards never move under the student's cursor. A "new notifications available" prompt is a follow-up.
 - **A9 (60 seconds, 99+)**: the cadence is a product default ("about every 60 seconds"); the badge caps at "99+".
 - **A10 (time labels)**: one deterministic relative rule replaces the design's mixed formats (Design Notes); "Yesterday" uses the language's natural form.
 - **A11 (icons)**: Font Awesome glyphs map to `lucide-react` equivalents, the only static asset is the alarm-clock SVG, and the bell and sidebar item reuse `Bell` as the rest of the student shell does.
